@@ -283,10 +283,19 @@ def run(language):
                 failure = host.get("failure") if isinstance(host.get("failure"), dict) else {}
                 diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
                 search = diagnostic.get("search") if isinstance(diagnostic.get("search"), dict) else {}
+                profile_writes = diagnostic.get("profileWrites") if isinstance(diagnostic.get("profileWrites"), dict) else {}
                 def safe_code(value):
                     return value if isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,79}", value) else None
                 def safe_count(value, maximum=512):
                     return value if type(value) is int and 0 <= value <= maximum else None
+                def safe_utc(value):
+                    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", value):
+                        return None
+                    try:
+                        datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    except ValueError:
+                        return None
+                    return value
                 receipt.write_text(json.dumps({
                     "ok": False, "commit": selection["checkoutSHA"], "language": language,
                     "testID": test_id, "expectedRunnerContainerID": Path(containers[1]).name,
@@ -305,6 +314,18 @@ def run(language):
                         "failureElapsedMs": safe_count(diagnostic.get("failureElapsedMs"), 300000),
                         "loopbackApiRequests": safe_count(diagnostic.get("loopbackApiRequests")),
                         "tlsErrors": safe_count(diagnostic.get("tlsErrors"), 10000),
+                        "lastTlsErrorAtUTC": safe_utc(diagnostic.get("lastTlsErrorAtUTC")),
+                        "lastTlsErrorAgeMs": safe_count(diagnostic.get("lastTlsErrorAgeMs"), 1800000),
+                        "profileWrites": {
+                            "admitted": safe_count(profile_writes.get("admitted")),
+                            "completed": safe_count(profile_writes.get("completed")),
+                            "inFlight": safe_count(profile_writes.get("inFlight")),
+                            "lastAdmittedAtUTC": safe_utc(profile_writes.get("lastAdmittedAtUTC")),
+                            "lastCompletedAtUTC": safe_utc(profile_writes.get("lastCompletedAtUTC")),
+                            "lastDurationMs": safe_count(profile_writes.get("lastDurationMs"), 1800000),
+                            "lastStatusClass": profile_writes.get("lastStatusClass") if type(profile_writes.get("lastStatusClass")) is int
+                            and 2 <= profile_writes["lastStatusClass"] <= 5 else None,
+                        },
                         "search": {
                             "started": safe_count(search.get("started")),
                             "completed": safe_count(search.get("completed")),

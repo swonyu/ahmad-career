@@ -43,6 +43,9 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   const stats = {apiRequests: 0, documentRequests: { 'CV-A.pdf': 0, 'CV-B.pdf': 0 },
     deniedRequests: 0, proxyRequests: 0, socketErrors: 0, tlsErrors: 0};
   const search = {started:0, completed:0, lastDurationMs:null, lastStatusClass:null};
+  const profileWrites = {admitted:0, completed:0, inFlight:0,
+    lastAdmittedAtUTC:null, lastCompletedAtUTC:null, lastDurationMs:null, lastStatusClass:null};
+  let lastTlsErrorAtMs = null;
   const activeSearches = new Set();
   let server, closing, stopped = false, startupSettled = false, inFlight = 0;
   function event(code) {
@@ -55,12 +58,20 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   }
   async function handle(request, response) {
     inFlight++;
-    let searchRecord;
+    let searchRecord, profileStartedAt = null, profileFinished = false;
     const finishSearch = status => {
       if (!searchRecord) return;
       search.completed++;
       search.lastDurationMs = Math.min(300000, Math.round(performance.now() - searchRecord.startedAt));
       search.lastStatusClass = Math.floor(status / 100);
+    };
+    const finishProfile = status => {
+      if (profileStartedAt === null || profileFinished) return;
+      profileFinished = true;
+      profileWrites.completed++;
+      profileWrites.lastCompletedAtUTC = new Date().toISOString();
+      profileWrites.lastDurationMs = Math.min(1800000, Math.round(performance.now() - profileStartedAt));
+      profileWrites.lastStatusClass = Math.floor(status / 100);
     };
     try {
       if (stopped || signal?.aborted) fail('fixture_bridge_closed', 503);
@@ -81,6 +92,11 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       let route;
       try { route = nativeRoute(request.url, request.method); }
       catch (error) { if (error.code === 'fixture_dispatch_denied') harness.recordDispatchRejection(); throw error; }
+      if (route.pathname === '/api/apply/profile' && request.method === 'PUT') {
+        profileStartedAt = performance.now();
+        profileWrites.admitted++; profileWrites.inFlight++;
+        profileWrites.lastAdmittedAtUTC = new Date().toISOString();
+      }
       if (route.pathname === '/api/discovery/search') {
         searchRecord = {startedAt:performance.now()};
         activeSearches.add(searchRecord); search.started++;
@@ -123,12 +139,18 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       if (retryAfter !== null) responseHeaders['Retry-After'] = retryAfter;
       response.writeHead(result.status, responseHeaders); response.end(reply);
       finishSearch(result.status);
+      finishProfile(result.status);
     } catch (error) {
       stats.deniedRequests++;
       const status = error instanceof FixtureError ? error.status : 500;
       finishSearch(status);
+      finishProfile(status);
       publicFailure(response, error instanceof FixtureError ? error.code : 'fixture_bridge_failure', status);
-    } finally { if (searchRecord) activeSearches.delete(searchRecord); inFlight--; }
+    } finally {
+      if (searchRecord) activeSearches.delete(searchRecord);
+      if (profileStartedAt !== null) profileWrites.inFlight--;
+      inFlight--;
+    }
   }
   server = https.createServer({key, cert, minVersion: 'TLSv1.2', maxHeaderSize: 16384}, (req, res) => { void handle(req, res); });
   server.requestTimeout = 30000; server.headersTimeout = 10000; server.maxHeadersCount = 64;
@@ -136,7 +158,9 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
     sockets.add(socket); socket.on('close', () => sockets.delete(socket));
     socket.on('error', () => { stats.socketErrors++; event('fixture_socket_error'); });
   });
-  server.on('tlsClientError', () => { stats.tlsErrors++; event('fixture_tls_client_error'); });
+  server.on('tlsClientError', () => {
+    stats.tlsErrors++; lastTlsErrorAtMs = Date.now(); event('fixture_tls_client_error');
+  });
   server.on('clientError', (_error, socket) => rejectSocket(socket, 'fixture_http_client_error'));
   server.on('connect', (_request, socket) => { stats.proxyRequests++; rejectSocket(socket, 'fixture_connect_denied'); });
   server.on('upgrade', (_request, socket) => { stats.proxyRequests++; rejectSocket(socket, 'fixture_upgrade_denied'); });
@@ -174,7 +198,9 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
         const oldest = [...activeSearches].reduce((value, record) => Math.min(value, record.startedAt), Infinity);
         return {search:{...search, inFlight:activeSearches.size,
           oldestInFlightMs:Number.isFinite(oldest) ? Math.min(300000, Math.round(performance.now() - oldest)) : null},
-          apiRequests:stats.apiRequests, tlsErrors:stats.tlsErrors};
+          profileWrites:{...profileWrites}, apiRequests:stats.apiRequests, tlsErrors:stats.tlsErrors,
+          lastTlsErrorAtUTC:lastTlsErrorAtMs === null ? null : new Date(lastTlsErrorAtMs).toISOString(),
+          lastTlsErrorAgeMs:lastTlsErrorAtMs === null ? null : Math.min(1800000, Math.max(0, Date.now() - lastTlsErrorAtMs))};
       },
       privateConfiguration: {schemaVersion: 1, bridgeToken, port,
         iosOrigin: `https://127.0.0.1:${port}`, androidOrigin: `https://10.0.2.2:${port}`,

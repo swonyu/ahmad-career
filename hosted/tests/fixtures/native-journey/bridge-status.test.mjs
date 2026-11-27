@@ -7,7 +7,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {startNativeJourneyBridge} from './bridge.mjs';
 
-test('failure diagnostics expose only bounded loopback search timing', async () => {
+test('failure diagnostics expose bounded search, profile-write and TLS timing', async () => {
   const temp = await realpath(await mkdtemp(path.join(tmpdir(), 'career-bridge-status-')));
   const stateDirectory = path.join(temp, 'state');
   await mkdir(stateDirectory, {mode:0o700});
@@ -15,11 +15,18 @@ test('failure diagnostics expose only bounded loopback search timing', async () 
   await new Promise(resolve => reserve.listen(0, '127.0.0.1', resolve));
   const port = reserve.address().port;
   await new Promise(resolve => reserve.close(resolve));
-  let bridge, entered;
+  let bridge, entered, profileEntered, releaseProfile;
   const dispatched = new Promise(resolve => { entered = resolve; });
+  const profileDispatched = new Promise(resolve => { profileEntered = resolve; });
+  const profileRelease = new Promise(resolve => { releaseProfile = resolve; });
   try {
     bridge = await startNativeJourneyBridge({port, harness:{stateDirectory,
-      async dispatchNative() {
+      async dispatchNative(target) {
+        if (target === '/api/apply/profile') {
+          profileEntered();
+          await profileRelease;
+          return Response.json({ok:true});
+        }
         entered();
         await new Promise(resolve => setTimeout(resolve, 30));
         return Response.json({ok:true});
@@ -43,7 +50,36 @@ test('failure diagnostics expose only bounded loopback search timing', async () 
     assert.equal(diagnostic.search.inFlight, 0);
     assert.equal(diagnostic.search.lastStatusClass, 2);
     assert.ok(diagnostic.search.lastDurationMs >= 20);
+    assert.deepEqual(diagnostic.profileWrites, {admitted:0, completed:0, inFlight:0,
+      lastAdmittedAtUTC:null, lastCompletedAtUTC:null, lastDurationMs:null, lastStatusClass:null});
+    assert.equal(diagnostic.lastTlsErrorAtUTC, null);
+    assert.equal(diagnostic.lastTlsErrorAgeMs, null);
+    const profileResponse = new Promise((resolve, reject) => {
+      const request = https.request(`https://127.0.0.1:${port}/api/apply/profile`,
+        {method:'PUT', ca, headers:{authorization:'Bearer synthetic',
+          'x-native-journey-bridge':bridge.privateConfiguration.bridgeToken,
+          'content-type':'application/json'}}, result => {
+          result.resume(); result.on('end', () => resolve(result.statusCode));
+        });
+      request.on('error', reject); request.end('{}');
+    });
+    await profileDispatched;
+    const pending = bridge.status().profileWrites;
+    assert.equal(pending.admitted, 1);
+    assert.equal(pending.completed, 0);
+    assert.equal(pending.inFlight, 1);
+    assert.match(pending.lastAdmittedAtUTC, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    releaseProfile();
+    assert.equal(await profileResponse, 200);
+    const completed = bridge.status().profileWrites;
+    assert.equal(completed.admitted, 1);
+    assert.equal(completed.completed, 1);
+    assert.equal(completed.inFlight, 0);
+    assert.match(completed.lastCompletedAtUTC, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    assert.equal(completed.lastStatusClass, 2);
+    assert.ok(completed.lastDurationMs >= 0);
   } finally {
+    releaseProfile();
     if (bridge) await bridge.close();
     await rm(temp, {recursive:true, force:true});
   }

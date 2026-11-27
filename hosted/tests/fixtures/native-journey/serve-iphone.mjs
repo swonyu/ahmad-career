@@ -244,8 +244,11 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
         result.diagnostic ??= {};
         const status = bridge.status();
         result.diagnostic.search = status.search;
+        result.diagnostic.profileWrites = status.profileWrites;
         result.diagnostic.loopbackApiRequests = status.apiRequests;
         result.diagnostic.tlsErrors = status.tlsErrors;
+        result.diagnostic.lastTlsErrorAtUTC = status.lastTlsErrorAtUTC;
+        result.diagnostic.lastTlsErrorAgeMs = status.lastTlsErrorAgeMs;
       }
       try {
         const closed = await bridge.close();
