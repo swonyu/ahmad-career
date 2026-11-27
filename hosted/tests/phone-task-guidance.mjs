@@ -58,7 +58,8 @@ test('saved profile role shortcuts change only the explicit keyword field and ne
   const expression=nodes(tree,node=>ts.isVariableDeclaration(node)&&node.name.getText(tree)==='savedRoleSuggestions')[0].initializer.getText(tree);
   const shortcut=nodes(tree,node=>ts.isJsxElement(node)&&node.openingElement.attributes.properties.some(p=>ts.isJsxAttribute(p)&&p.name.text==='className'&&p.initializer?.text==='phone-profile-search'))[0].getText(tree);
   const ctx=fixture('ar',{snapshot:{profile:{targetRoles:['  Analyst  ','Analyst','ممرّض','Designer','Sales','']}},filters:{query:'old',location:'Riyadh',remoteOnly:true,sources:['lever:global:synthetic']},setFilters:value=>ctx.changed=value});
-  compile('globalThis.savedRoleSuggestions='+expression+';globalThis.shortcut=('+shortcut+');',ctx);
+  ctx.filterDraftRef = {current:ctx.filters}; ctx.snapshotRef = {current:ctx.snapshot};
+  compile(declaration('app/phone/PhoneApp.tsx','editFilter')+';globalThis.savedRoleSuggestions='+expression+';globalThis.shortcut=('+shortcut+');',ctx);
   assert.deepEqual(Array.from(ctx.savedRoleSuggestions),['Analyst','ممرّض','Designer']);
   const buttons=descendants(ctx.shortcut).filter(node=>node.type==='button');assert.equal(buttons.length,3);
   buttons[1].props.onClick();assert.equal(ctx.changed.query,'ممرّض');assert.equal(ctx.changed.location,'Riyadh');assert.equal(ctx.changed.remoteOnly,true);assert.equal(ctx.changed.sources,ctx.filters.sources);

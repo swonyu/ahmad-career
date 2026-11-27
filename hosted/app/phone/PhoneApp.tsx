@@ -115,6 +115,7 @@ export default function PhoneApp({ account }: { account: Account }) {
   const [boardsTouched, setBoardsTouched] = useState(false), [customBoard, setCustomBoard] = useState("");
   const [filters, setFiltersState] = useState<Filters>({ ...emptyFilters }), [searchPage, setSearchPage] = useState<DiscoveryPage | null>(null), [searchedFilters, setSearchedFilters] = useState<Filters | null>(null), [restored, setRestored] = useState(false);
   const filterDraftRef = useRef<Filters>({ ...emptyFilters });
+  const startupFilterEdits = useRef(new Set<keyof Filters>()), liveSearchShown = useRef(false);
   const searchForm = useRef<HTMLFormElement>(null), searchResultsHeading = useRef<HTMLHeadingElement>(null);
   const [searchNewResult, setSearchNewResult] = useState<SearchNewResult | null>(null), [showNewOnly, setShowNewOnlyState] = useState(false);
   const showNewOnlyRef = useRef(false);
@@ -153,6 +154,10 @@ export default function PhoneApp({ account }: { account: Account }) {
     filterDraftRef.current = value;
     setFiltersState(value);
   }
+  function editFilter<K extends keyof Filters>(key: K, value: Filters[K]) {
+    if (!snapshotRef.current) startupFilterEdits.current.add(key);
+    setFilters({ ...filterDraftRef.current, [key]: value });
+  }
   const putSnapshot = (value: PhoneSnapshot) => { snapshotRef.current = value; setSnapshot(value); };
   const putWorkspace = async (value: Workspace) => {
     workspaceRef.current = value; setWorkspace(value);
@@ -178,14 +183,27 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (!confirmed || confirmed.accountId !== remote.accountId || confirmed.workspaceId !== remote.workspaceId) { lock(); throw Error("Your workspace changed while its saved data was opening. Reload to continue."); }
       remote = confirmed;
     }
+    // Initial and visibility reads can overlap. Only the first verified load
+    // may adopt this scope; a later vault read must not replace live edits.
+    if (snapshotRef.current) {
+      if (snapshotRef.current.scope !== scope) { lock(); throw Error("Your workspace changed while its saved data was opening. Reload to continue."); }
+      return;
+    }
     const data = local ?? blankSnapshot(scope);
     const savedProfile = remote && !data.profileDirty ? withPDF(remote.profile, data.profile) : data.profile;
     const next = { ...data, profile: savedProfile, jobs: remote ? mergeJobs(local?.jobs ?? null, remote.jobs) : data.jobs };
-    putSnapshot(next); setProfile(savedProfile); setFilters(next.filters);
+    const draft = filterDraftRef.current, edits = startupFilterEdits.current;
+    const mergedFilters: Filters = {
+      query: edits.has("query") ? draft.query : next.filters.query,
+      location: edits.has("location") ? draft.location : next.filters.location,
+      remoteOnly: edits.has("remoteOnly") ? draft.remoteOnly : next.filters.remoteOnly,
+      sources: [...(edits.has("sources") ? draft.sources : next.filters.sources)],
+    };
+    putSnapshot(next); setProfile(savedProfile); setFilters(mergedFilters); edits.clear();
     try { const safety = await phoneSafety.load(scope); if (current()) setSafetyState(safety); }
     catch (error) { if (current()) setSafetyError(message(error)); }
     if (!current()) return;
-    if (next.lastSearch) {
+    if (next.lastSearch && !liveSearchShown.current) {
       setSearchPage({ ...next.lastSearch.page, nextCursor: null }); setSearchedFilters(next.lastSearch.filters); setRestored(true);
       const savedNew = next.lastSearch.newResult;
       setSearchNewResult(restoreRetainedSearchNewResult(savedNew, next.lastSearch.filters, next.searchHistory));
@@ -232,7 +250,7 @@ export default function PhoneApp({ account }: { account: Account }) {
       quarantine.current = { snapshot: current, profile, formChanged, dialog: recoverableDialog, dialogDirty: Boolean(recoverableDialog && dialogDirty), editorDraft: recoverableDialog?.kind === "record" ? editorDraft : null }; setHasQuarantinedEdits(true);
       if (drafts.length) { setRecoveryStatus("Keeping unfinished edits private for the original account…"); void preserveUnfinished(current.scope, drafts).then(() => setRecoveryStatus("Unfinished edits were saved privately for the original account. Sign in with that account to recover them.")).catch(() => setRecoveryStatus("Unfinished edits are kept on this page. Sign in with the original account and recover or export them before reloading.")); }
     }
-    setSafetyState({ holds: [], recovery: [] }); setSafetyError(""); setEditorDraft(null); setStorageCode(""); epoch.current++; identityUnverified.current = false; snapshotRef.current = null; workspaceRef.current = null; setSnapshot(null); setWorkspace(null); setProfile(blankProfile()); setFormChanged(false); setPlan(null); setSelected([]); setDialog(null); setDialogDirty(false); setConfirmDialogDiscard(false); setOlderDrafts([]); setStorageProblem(""); setSearchPage(null); setSearchedFilters(null); setSearchNewResult(null); setShowNewOnly(false); setFilters({ ...emptyFilters }); setEmployerAnswers({}); setReviewAccepted(false); setCheckingIdentity(false); setLocked(true); };
+    setSafetyState({ holds: [], recovery: [] }); setSafetyError(""); setEditorDraft(null); setStorageCode(""); epoch.current++; identityUnverified.current = false; snapshotRef.current = null; workspaceRef.current = null; startupFilterEdits.current.clear(); liveSearchShown.current = false; setSnapshot(null); setWorkspace(null); setProfile(blankProfile()); setFormChanged(false); setPlan(null); setSelected([]); setDialog(null); setDialogDirty(false); setConfirmDialogDiscard(false); setOlderDrafts([]); setStorageProblem(""); setSearchPage(null); setSearchedFilters(null); setSearchNewResult(null); setShowNewOnly(false); setFilters({ ...emptyFilters }); setEmployerAnswers({}); setReviewAccepted(false); setCheckingIdentity(false); setLocked(true); };
   const lockFromEffect = useEffectEvent(() => lock());
 
   useEffect(() => {
@@ -395,7 +413,7 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (searchSources.some(value => discoverySourceKey(value) === source.id)) throw Error("This board is already selected.");
       if (searchSources.length >= 4) throw Error("Uncheck one board before adding another. You can search four at a time.");
       setBoardsTouched(true);
-      setFilters({ ...filters, sources: [...searchSources, source.boardUrl] });
+      editFilter("sources", [...searchSources, source.boardUrl]);
       setCustomBoard("");
     } catch (error) { setNotice({ text: message(error), error: true }); }
   };
@@ -455,7 +473,7 @@ export default function PhoneApp({ account }: { account: Account }) {
       // The form remains an editable draft. A response must never replace
       // newer edits, including when retrying or paginating an earlier search.
       const keepNewOnly = more && showNewOnlyRef.current;
-      setSearchPage(result); setSearchedFilters(requested); setRestored(false); setSearchNewResult(null); setShowNewOnly(false);
+      liveSearchShown.current = true; setSearchPage(result); setSearchedFilters(requested); setRestored(false); setSearchNewResult(null); setShowNewOnly(false);
       if (snapshotRef.current && !storageProblem) {
         const data = local();
         const familiarity = evaluateSearchHistory({ history: data.searchHistory ?? emptySearchHistory(), filters: requested, page: result, now: Date.now(), previousResult: more ? searchNewResult ?? undefined : undefined });
@@ -1000,15 +1018,15 @@ export default function PhoneApp({ account }: { account: Account }) {
       {!checkingIdentity && !locked && tab === "search" && <>
         <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t(shownSearchJobs.length === 1 ? "{0} job shown. {1}" : "{0} jobs shown. {1}", [formatNumber(shownSearchJobs.length, language), searchSummary]) : ""}</p>
         <div className="phone-discovery-layout"><div className="phone-search-primary"><form ref={searchForm} className="phone-search-card" onSubmit={event => { event.preventDefault(); void searchJobs("new", true); }}>
-          <label>{t("Job title or keyword")}<div className="phone-input-icon"><Search size={19} aria-hidden="true" /><input dir="auto" autoComplete="off" maxLength={120} placeholder={t("e.g. Designer, nurse, sales")} value={filters.query} onChange={event => setFilters({ ...filters, query: event.target.value })} /></div></label>
-          {savedRoleSuggestions.length > 0 && <div className="phone-profile-search"><p className="phone-note">{t("Choose a job title from your saved profile")}</p><div className="phone-suggestions">{savedRoleSuggestions.map(role => <button type="button" key={role} onClick={() => setFilters({ ...filters, query: role })}><bdi>{displayHistoricalText(role)}</bdi></button>)}</div><p className="phone-note">{t("This fills the job title only. Choose Search jobs to run the search.")}</p></div>}
-          <label>{t("Location ")}<span className="optional">{t("optional")}</span><input dir="auto" maxLength={100} placeholder={t("City, country, or region")} value={filters.location} onChange={event => setFilters({ ...filters, location: event.target.value })} /></label>
-          <label className="phone-check"><input type="checkbox" checked={filters.remoteOnly} onChange={event => setFilters({ ...filters, remoteOnly: event.target.checked })} /><span>{t("Remote jobs only")}</span></label>
+          <label>{t("Job title or keyword")}<div className="phone-input-icon"><Search size={19} aria-hidden="true" /><input dir="auto" autoComplete="off" maxLength={120} placeholder={t("e.g. Designer, nurse, sales")} value={filters.query} onChange={event => editFilter("query", event.target.value)} /></div></label>
+          {savedRoleSuggestions.length > 0 && <div className="phone-profile-search"><p className="phone-note">{t("Choose a job title from your saved profile")}</p><div className="phone-suggestions">{savedRoleSuggestions.map(role => <button type="button" key={role} onClick={() => editFilter("query", role)}><bdi>{displayHistoricalText(role)}</bdi></button>)}</div><p className="phone-note">{t("This fills the job title only. Choose Search jobs to run the search.")}</p></div>}
+          <label>{t("Location ")}<span className="optional">{t("optional")}</span><input dir="auto" maxLength={100} placeholder={t("City, country, or region")} value={filters.location} onChange={event => editFilter("location", event.target.value)} /></label>
+          <label className="phone-check"><input type="checkbox" checked={filters.remoteOnly} onChange={event => editFilter("remoteOnly", event.target.checked)} /><span>{t("Remote jobs only")}</span></label>
           <details className="phone-search-options"><summary><span className="phone-search-options-heading"><SlidersHorizontal size={17} aria-hidden="true" /><span>{t(" Search options ")}</span><span className="phone-search-board-count">{t("Boards: {0}", [formatNumber(searchSources.length, language)])}</span></span>
             {searchSourceNames.length > 0 && <span className="phone-search-coverage"><span className="visually-hidden">{t("Selected employer boards:")} </span>{searchSourceNames.map((name, index) => <span key={searchSources[index]}>{index > 0 ? language === "ar" ? "، " : ", " : ""}<bdi>{displayHistoricalText(name)}</bdi></span>)}</span>}
           </summary><p className="phone-note">{t("Searches titles, employers and available summaries.")}</p><p className="phone-note">{t("Search up to four employer boards at a time. These results cover the boards you choose, not every job available.")}</p>
-            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.some(value => discoverySourceKey(value) === source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => discoverySourceKey(id) !== source.id); if (next.length <= 4) { setBoardsTouched(true); setFilters({ ...filters, sources: next }); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span dir="auto">{source.name}</span></label>)}
-            {searchSources.filter(source => !catalog?.sources.some(known => known.id === discoverySourceKey(source))).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); setFilters({ ...filters, sources: searchSources.filter(value => value !== source) }); }} /><span dir="auto">{source}</span></label>)}
+            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.some(value => discoverySourceKey(value) === source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => discoverySourceKey(id) !== source.id); if (next.length <= 4) { setBoardsTouched(true); editFilter("sources", next); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span dir="auto">{source.name}</span></label>)}
+            {searchSources.filter(source => !catalog?.sources.some(known => known.id === discoverySourceKey(source))).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); editFilter("sources", searchSources.filter(value => value !== source)); }} /><span dir="auto">{source}</span></label>)}
             <label>{t("Another employer’s board ")}<span className="optional">{t("optional")}</span><input type="url" dir="ltr" maxLength={2048} value={customBoard} onChange={event => setCustomBoard(event.target.value)} onKeyDown={event => { if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return; event.preventDefault(); addEmployerBoard(); }} placeholder="https://jobs.lever.co/employer" autoCapitalize="none" autoCorrect="off" /></label><button type="button" className="button secondary full" onClick={addEmployerBoard}>{t("Add employer board")}</button><p className="phone-note">{t("Use a public Lever or Greenhouse employer board link. Other job pages can be added directly in Saved.")}</p>
           </details>
           <button className="button primary full" type="submit" disabled={Boolean(busy)}><Search size={18} aria-hidden="true" />{t("Search jobs")}</button>
@@ -1018,7 +1036,7 @@ export default function PhoneApp({ account }: { account: Account }) {
         <a className="phone-link-card" href={linkedInSearch(filters)} target="_blank" rel="noopener noreferrer"><div><strong>{t("Search on LinkedIn")}</strong><span>{t("Open the same title and location on LinkedIn")}</span></div><ArrowUpRight size={21} aria-hidden="true" /></a>
         {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); setSavedStage("all"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Review follow-up dates")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
         </aside></div>
-        {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("EXAMPLE SEARCHES")}</p><h2>{t("Search by job field")}</h2><p>{t("Choose an example below or enter a job title above.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => setFilters({ ...filters, query: value })}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
+        {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("EXAMPLE SEARCHES")}</p><h2>{t("Search by job field")}</h2><p>{t("Choose an example below or enter a job title above.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => editFilter("query", value)}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
           <div className="phone-section-heading"><h2 ref={searchResultsHeading} tabIndex={-1}>{restored ? t("Previous results") : t("Search results")}</h2><span>{showNewOnly ? t("{0} of {1} shown", [formatNumber(shownSearchJobs.length, language), formatNumber(searchPage.jobs.length, language)]) : t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
           <p className="phone-search-coverage">{t("Results from:")} {searchPage.sources.map((source, index) => <span key={source.id}>{index > 0 ? language === "ar" ? "، " : ", " : ""}<bdi>{source.name}</bdi></span>)}</p>
           <p className="phone-note">{t("Search from ")}<bdi>{displayTime(searchPage.generatedAt)}</bdi>. {restored ? t("Search again to check current openings.") : t("An employer may close or change a job after this check.")}</p>

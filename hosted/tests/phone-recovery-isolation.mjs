@@ -118,6 +118,7 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
     account: { id: "synthetic-a" }, epoch: { current: 1 }, identityUnverified: { current: false },
     busyRef: { current: false }, readIssueRef: { current: null }, recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     snapshotRef: { current: saved }, workspaceRef: { current: { workspaceId: uuid(1), activePlanIds: [] } },
+    startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false },
     locked: false, checkingIdentity: false, storageProblem: "", profile: plain(saved.profile), formChanged: false,
     editorDraft: null, dialog: null, dialogDirty: false, closedJobDrafts: { current: new Set() }, quarantine: { current: null }, pdfCheck: { current: null }, discardReturn: { current: null }, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
     safetyState: await safety.load(scope), safetyError: "", notice: null, reloads: 0, navigation: [],
@@ -956,9 +957,11 @@ test("partial job links survive encrypted storage and a new page without becomin
 
 test("account lock hides Add fields and restores or exports them only after the original account returns", async () => {
   const h = await harness(), id = beginJobLink(h);
+  h.context.startupFilterEdits.current.add("query"); h.context.liveSearchShown.current = true;
   h.context.lock();
   await h.safety.load(scope); // Wait for the same recovery queue used by lock.
   assert.equal(h.context.dialog, null); assert.equal(h.context.locked, true);
+  assert.equal(h.context.startupFilterEdits.current.size, 0); assert.equal(h.context.liveSearchShown.current, false);
   assert.deepEqual(plain(h.context.quarantine.current.dialog.draft), jobLinkFields);
   assert.equal((await recoveryRows(h)).recovery.find(row => row.id === id).jobLink.company, jobLinkFields.company);
   await h.context.recoverLocked(true);

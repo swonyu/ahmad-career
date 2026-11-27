@@ -93,7 +93,7 @@ function harness({ initialPage, initialHistory, initialNewResult = null, restore
     filters: plain(initialFilters), searchedFilters, searchPage: displayedPage,
     restored, busy: '', busyRef: { current: false }, notice: null, epoch: { current: 3 },
     identityUnverified: { current: false }, identityCheckPending: { current: false }, identityCheckRef: { current() {} },
-    snapshotRef: { current: snapshot }, filterDraftRef: { current: plain(initialFilters) }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
+    snapshotRef: { current: snapshot }, filterDraftRef: { current: plain(initialFilters) }, startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
     discoveryPageSchema: model.discoveryPageSchema, discoveryPath: model.discoveryPath, jobIdentity: model.jobIdentity,
     parseSnapshot: model.parseSnapshot, ...searchHistory, searchNewResult: initialNewResult, showNewOnly: false, showNewOnlyRef: { current: false },
     fetch() { assert.fail('Search workflow tests must never contact a network'); },
@@ -267,6 +267,7 @@ test('successful Search preserves the preflight draft and then the newer visible
   assert.equal(h.writes.length, 1); assert.deepEqual(h.writes[0], { ...before, filters: draft() });
   h.edit(laterDraft()); request.resolve(page()); await pending;
   assert.equal(h.writes.length, 2);
+  assert.equal(h.context.liveSearchShown.current, true, 'An accepted live result must block a delayed saved-result restore');
   assert.deepEqual(h.readSaved().filters, laterDraft()); assert.deepEqual(h.readSaved().lastSearch.filters, draft());
   assert.equal(h.readSaved().lastSearch.page.jobs[0].id, 'synthetic-9');
   for (const field of ['profile', 'profileDirty', 'jobs', 'records']) assert.deepEqual(h.readSaved()[field], before[field]);
@@ -837,4 +838,81 @@ test('an all-board outage keeps earlier jobs and the latest draft without revivi
     assert.equal(h.context.restored, false);
     assert.deepEqual(plain(h.context.searchPage.jobs), [job(9)]);
   });
+});
+
+function startupHarness() {
+  const workspaceId = '00000000-0000-4000-8000-000000000001';
+  const scope = `account:synthetic-search-owner:${workspaceId}`;
+  const saved = model.blankSnapshot(scope);
+  saved.filters = { query: 'Designer', location: 'Amman', remoteOnly: true, sources: ['lever:synthetic-a'] };
+  saved.lastSearch = { filters: plain(saved.filters), page: page({ jobs: [job(1)] }) };
+  const remote = { accountId: 'synthetic-search-owner', workspaceId, profile: saved.profile, jobs: [] };
+  const loads = [];
+  const context = {
+    Error, URL, URLSearchParams, Intl, z: require('zod').z,
+    account: { id: remote.accountId }, epoch: { current: 5 }, workspaceRef: { current: remote }, snapshotRef: { current: null },
+    filterDraftRef: { current: { query: '', location: '', remoteOnly: false, sources: [] } },
+    startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, showNewOnlyRef: { current: false },
+    filters: { query: '', location: '', remoteOnly: false, sources: [] }, searchPage: null, searchedFilters: null, restored: false,
+    blankSnapshot: model.blankSnapshot, jobIdentity: model.jobIdentity, restoreRetainedSearchNewResult: searchHistory.restoreRetainedSearchNewResult,
+    loadPhoneSnapshot(owner) { assert.equal(owner, scope); const gate = deferred(); loads.push(gate); return gate.promise; },
+    listPhoneSnapshots(prefix) { assert.equal(prefix, 'account:synthetic-search-owner:'); return Promise.resolve([]); },
+    phoneSafety: { load: () => Promise.resolve({ holds: [], recovery: [] }), list: () => Promise.resolve([]) },
+    lock() { context.locked = true; context.epoch.current++; },
+    setFiltersState(value) { context.filters = value; }, setSnapshot(value) { context.snapshot = value; },
+    setProfile(value) { context.profile = value; }, setSafetyState(value) { context.safetyState = value; },
+    setSafetyError(value) { context.safetyError = value; }, setStorageProblem(value) { context.storageProblem = value; },
+    setStorageCode(value) { context.storageCode = value; }, setSearchPage(value) { context.searchPage = value; },
+    setSearchedFilters(value) { context.searchedFilters = value; }, setRestored(value) { context.restored = value; },
+    setSearchNewResult(value) { context.searchNewResult = value; }, setShowNewOnlyState(value) { context.showNewOnly = value; },
+    setOlderDrafts(value) { context.olderDrafts = value; },
+  };
+  vm.createContext(context);
+  for (const name of ['message', 'withPDF', 'mergeJobs', 'setFilters', 'editFilter', 'putSnapshot', 'setShowNewOnly', 'openSavedWorkspace']) install(name, context);
+  return { context, loads, remote, saved, scope, open: () => context.openSavedWorkspace(remote, 5, () => false) };
+}
+
+test('overlapping startup and visibility loads restore untouched fields once and retain later edits', async () => {
+  const h = startupHarness(), initial = h.open(), visibility = h.open();
+  assert.equal(h.loads.length, 2);
+  h.context.editFilter('query', 'Nurse');
+  h.loads[1].resolve(plain(h.saved)); await visibility;
+  assert.deepEqual(plain(h.context.filters), { query: 'Nurse', location: 'Amman', remoteOnly: true, sources: ['lever:synthetic-a'] });
+  h.context.editFilter('location', 'Jeddah');
+  h.loads[0].resolve(plain(h.saved)); await initial;
+  assert.deepEqual(plain(h.context.filters), { query: 'Nurse', location: 'Jeddah', remoteOnly: true, sources: ['lever:synthetic-a'] });
+  assert.equal(h.context.snapshotRef.current.scope, h.scope);
+  assert.equal(h.context.locked, undefined);
+});
+
+test('an explicitly cleared query and board selection survive saved-filter adoption', async () => {
+  const h = startupHarness(), pending = h.open();
+  h.context.editFilter('query', 'temporary'); h.context.editFilter('query', '');
+  h.context.editFilter('remoteOnly', true); h.context.editFilter('remoteOnly', false);
+  h.context.editFilter('sources', []);
+  h.loads[0].resolve(plain(h.saved)); await pending;
+  assert.deepEqual(plain(h.context.filters), { query: '', location: 'Amman', remoteOnly: false, sources: [] });
+  assert.deepEqual(plain(h.context.snapshotRef.current.filters), h.saved.filters, 'The private saved snapshot remains intact until a valid write');
+});
+
+test('a live result shown during delayed safety restoration is not replaced by stored results', async () => {
+  const h = startupHarness(), safety = deferred();
+  h.context.phoneSafety.load = () => safety.promise;
+  const pending = h.open(); h.loads[0].resolve(plain(h.saved)); await yieldEventLoop();
+  assert.equal(h.context.snapshotRef.current.scope, h.scope);
+  const live = page({ jobs: [job(9)] });
+  h.context.liveSearchShown.current = true; h.context.setSearchPage(live); h.context.setSearchedFilters({ ...h.saved.filters, query: 'Nurse' });
+  safety.resolve({ holds: [], recovery: [] }); await pending;
+  assert.equal(h.context.searchPage, live);
+  assert.equal(h.context.restored, false);
+  assert.equal(h.context.searchedFilters.query, 'Nurse');
+});
+
+test('a changed workspace cannot adopt a pending saved search', async () => {
+  const h = startupHarness(), pending = h.open();
+  h.context.workspaceRef.current = { ...h.remote, workspaceId: '00000000-0000-4000-8000-000000000002' };
+  h.loads[0].resolve(plain(h.saved));
+  await assert.rejects(pending, /workspace changed/);
+  assert.equal(h.context.snapshotRef.current, null);
+  assert.equal(h.context.locked, true);
 });

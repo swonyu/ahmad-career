@@ -133,13 +133,17 @@ function boardHarness({ url = "https://jobs.lever.co/synthetic-new", sources = [
     filters: { query: "Engineer مهندس", location: "Riyadh", remoteOnly: true, sources: [...sources] }, catalog: null, notice: null,
     setBoardsTouched(value) { context.boardsTouched = value; },
     setCustomBoard(value) { context.customBoard = value; },
-    setFilters(value) { context.filters = value; filterWrites.push(plain(value)); },
+    setFilters(value) { context.filters = value; context.filterDraftRef.current = value; filterWrites.push(plain(value)); },
     setNotice(value) { context.notice = value; },
     searchJobs() { searches.push(plain(context.filters)); },
   };
   vm.createContext(context);
   Object.defineProperty(context, "searchSources", { get: () => vm.runInContext("(" + declaration("searchSources") + ")", context) });
   install(context, "message");
+  context.filterDraftRef = { current: context.filters };
+  context.snapshotRef = { current: {} };
+  const edit = declaration("editFilter", true);
+  if (edit) install(context, "editFilter", edit);
   const add = declaration("addEmployerBoard", true);
   if (add) install(context, "addEmployerBoard", add);
   install(context, "clickAdd", attribute(boardButton, "onClick"));

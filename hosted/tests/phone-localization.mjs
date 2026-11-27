@@ -316,13 +316,16 @@ function renderBoardOptions(language) {
     ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'searchSourceNames');
   assert.equal(names.length, 1, 'Expected the actual selected board names declaration');
   assert(names[0].initializer, 'Expected the actual selected board names initializer');
-  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)}; const searchSourceNames = ${names[0].initializer.getText(phoneTree)};`;
+  const editFilter = app.body.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'editFilter');
+  const setup = `${editFilter.getText(phoneTree)}
+const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)}; const searchSourceNames = ${names[0].initializer.getText(phoneTree)};`;
   const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
   const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
   const changes = [], touched = [];
   const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
     ...sourceHelpers, ...sourceIdentity, catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
     SlidersHorizontal: () => null,
+    filterDraftRef: { current: filters }, snapshotRef: { current: {} },
     setFilters: value => changes.push(value),
     setBoardsTouched: value => touched.push(value),
     setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
