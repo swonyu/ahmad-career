@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy only bounded, schema-checked DEBUG browser diagnostics from the owned CI app."""
+"""Copy only bounded, schema-checked DEBUG lifecycle traces from the owned CI app."""
 import argparse
 import hashlib
 import itertools
@@ -16,6 +16,7 @@ MAX_BYTES = 64 * 1024
 MAX_SCOPES = 64
 MAX_RECORDS = 1024
 LOG_NAME = "browser-lifecycle.jsonl"
+FOCUS_LOG_NAME = "focus-lifecycle.jsonl"
 BUNDLE_ID = "com.ahmadalayed.career"
 NORMAL_FLAGS = {
     "requestedPresentation", "hasTrackedBrowser", "hasObservedController", "matchesTrackedBrowser",
@@ -34,6 +35,19 @@ EVENT_FLAGS.update({
     "teardown_dismiss_completed": {"hasObservedController", "observedHasPresenter", "observedIsBeingPresented", "observedIsBeingDismissed", "observedViewInWindow"},
     "capacity_reached": {"capacityReached"},
 })
+FOCUS_FIELDS = {"none", "url", "title", "company", "location", "unknown"}
+FOCUS_NORMAL_FLAGS = {
+    "bindingNone", "bindingURL", "bindingTitle", "bindingCompany", "bindingLocation", "bindingUnknown",
+    "busy", "sceneActive", "hasNativeField", "nativeIsFirstResponder", "nativeHasWindow",
+    "nativeEnabled", "nativeUserInteractionEnabled", "nativeIdentifierKnown",
+}
+FOCUS_NORMAL_EVENTS = {
+    "editor_appeared", "focus_binding_changed", "text_editing_began", "text_editing_ended",
+    "keyboard_will_show", "keyboard_did_show", "keyboard_will_hide", "keyboard_did_hide",
+    "done_action_entered", "editor_disappeared",
+}
+FOCUS_EVENT_FLAGS = {event: FOCUS_NORMAL_FLAGS for event in FOCUS_NORMAL_EVENTS}
+FOCUS_EVENT_FLAGS["capacity_reached"] = {"capacityReached"}
 BOUNDARY = "Original diagnostic bytes only. Missing callbacks may reflect logging failure or capacity; these logs do not establish UI, timing, visual, or release acceptance."
 
 class CollectionFailure(Exception):
@@ -47,7 +61,15 @@ def unique_object(pairs):
         result[key] = value
     return result
 
-def validate_log(data):
+def trace_schema(kind):
+    if kind == "browser":
+        return LOG_NAME, EVENT_FLAGS
+    if kind == "focus":
+        return FOCUS_LOG_NAME, FOCUS_EVENT_FLAGS
+    raise CollectionFailure("unknown_trace_kind")
+
+def validate_log(data, kind="browser"):
+    _, event_flags = trace_schema(kind)
     if not 0 < len(data) <= MAX_BYTES or not data.endswith(b"\n"):
         raise CollectionFailure("invalid_log_size_or_termination")
     try:
@@ -58,20 +80,24 @@ def validate_log(data):
     except (UnicodeError, ValueError, TypeError, RecursionError):
         raise CollectionFailure("invalid_json") from None
     for record in records:
-        if not isinstance(record, dict) or set(record) != {"event", "uptime", "flags"}:
+        expected_fields = {"event", "uptime", "flags"} | ({"field"} if kind == "focus" else set())
+        if not isinstance(record, dict) or set(record) != expected_fields:
             raise CollectionFailure("unexpected_record_fields")
         event, uptime, flags = record["event"], record["uptime"], record["flags"]
-        if not isinstance(event, str) or event not in EVENT_FLAGS:
+        if not isinstance(event, str) or event not in event_flags:
             raise CollectionFailure("unknown_event")
+        if kind == "focus" and (not isinstance(record["field"], str) or record["field"] not in FOCUS_FIELDS):
+            raise CollectionFailure("unknown_field")
         try:
             valid_uptime = type(uptime) in (int, float) and math.isfinite(uptime) and uptime >= 0
         except OverflowError:
             valid_uptime = False
         if not valid_uptime:
             raise CollectionFailure("invalid_uptime")
-        if not isinstance(flags, dict) or set(flags) != EVENT_FLAGS[event] or any(type(value) is not bool for value in flags.values()):
+        if not isinstance(flags, dict) or set(flags) != event_flags[event] or any(type(value) is not bool for value in flags.values()):
             raise CollectionFailure("unexpected_flags")
-        if event == "capacity_reached" and flags["capacityReached"] is not True:
+        if event == "capacity_reached" and (flags["capacityReached"] is not True or
+                                            (kind == "focus" and record["field"] != "none")):
             raise CollectionFailure("invalid_capacity_marker")
     return records
 
@@ -90,7 +116,8 @@ def bounded_read(path):
         raise CollectionFailure("source_changed")
     return data
 
-def collect(namespace, output):
+def collect(namespace, output, kind="browser"):
+    log_name, _ = trace_schema(kind)
     output.mkdir(parents=True, exist_ok=False)
     result = {"schemaVersion": 1, "status": "no_logs", "files": [], "errors": [], "boundary": BOUNDARY}
     if not namespace.exists() and not namespace.is_symlink():
@@ -112,13 +139,13 @@ def collect(namespace, output):
         seen.add(scope)
         if entry.is_symlink() or not entry.is_dir(follow_symlinks=False):
             result["errors"].append({"scope": scope, "code": "invalid_scope_directory"}); continue
-        source = Path(entry.path) / LOG_NAME
+        source = Path(entry.path) / log_name
         if not source.exists() and not source.is_symlink():
             continue
         try:
             source_attributes = source.lstat()
             data = bounded_read(source)
-            records = validate_log(data)
+            records = validate_log(data, kind=kind)
             if bounded_read(source) != data:
                 raise CollectionFailure("source_changed")
             final_attributes = source.lstat()
@@ -161,6 +188,7 @@ def main():
     parser.add_argument("--selection", required=True, type=Path)
     parser.add_argument("--device", required=True)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--kind", choices=("browser", "focus"), default="browser")
     args = parser.parse_args()
     output_was_absent = not args.output.exists() and not args.output.is_symlink()
     try:
@@ -181,10 +209,11 @@ def main():
             if len(lines) != 1 or not Path(lines[0]).is_absolute():
                 raise CollectionFailure("invalid_container_lookup")
             namespace = Path(lines[0]) / "Library/Application Support/CareerFinderUIAcceptance"
-            report = collect(namespace, args.output)
+            report = collect(namespace, args.output, kind=args.kind)
         report.update(checkoutSHA=checkout, ownedDevice=args.device.upper())
         (args.output / "manifest.json").write_text(json.dumps(report, indent=2) + "\n")
-        print("Browser lifecycle diagnostics: " + report["status"] + "; original logs: " + str(len(report["files"])))
+        print(args.kind.capitalize() + " lifecycle diagnostics: " + report["status"] +
+              "; original logs: " + str(len(report["files"])))
         return 1 if report["status"] == "failed_closed" else 0
     except (CollectionFailure, OSError, ValueError, TypeError, OverflowError, RecursionError, subprocess.SubprocessError) as error:
         # Do not echo arbitrary payloads, source paths, URLs or subprocess errors.
@@ -198,7 +227,7 @@ def main():
                                            "errors": [{"code": code}], "boundary": BOUNDARY}, indent=2) + "\n")
             except OSError:
                 pass
-        print("Browser lifecycle collection could not retain validated originals.")
+        print("Lifecycle collection could not retain validated originals.")
         return 1
 
 if __name__ == "__main__":

@@ -281,7 +281,7 @@ jobs:
           actual_sha=$(git rev-parse --verify HEAD)
           printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
           test "$actual_sha" = "$GITHUB_SHA"
-      - name: Verify browser lifecycle collection fixtures
+      - name: Verify sanitized lifecycle collection fixtures
         run: python3 apple/Checks/test-browser-lifecycle-collection.py
       - name: Verify fresh simulator selection fixtures
         run: python3 apple/Checks/test-simulator-selection.py
@@ -444,6 +444,16 @@ jobs:
             --selection "$RUNNER_TEMP/career-iphone-selection.json" \
             --device "$CAREER_UI_DEVICE" \
             --output "$RUNNER_TEMP/career-browser-lifecycle"
+      - name: Retain bounded DEBUG focus lifecycle diagnostics
+        if: ${{ always() && env.CAREER_UI_DEVICE != '' }}
+        shell: bash
+        timeout-minutes: 1
+        run: |
+          python3 apple/Checks/collect-browser-lifecycle.py \
+            --kind focus \
+            --selection "$RUNNER_TEMP/career-iphone-selection.json" \
+            --device "$CAREER_UI_DEVICE" \
+            --output "$RUNNER_TEMP/career-focus-lifecycle"
       - name: Export native interface evidence
         if: always()
         shell: bash
@@ -468,6 +478,7 @@ jobs:
             ${{ runner.temp }}/career-iphone-ui.log
             ${{ runner.temp }}/career-document-journey.json
             ${{ runner.temp }}/career-browser-lifecycle
+            ${{ runner.temp }}/career-focus-lifecycle
             ${{ runner.temp }}/CareerFinderUI.xcresult
             ${{ runner.temp }}/career-ui-screenshots
           if-no-files-found: ignore

@@ -2,9 +2,11 @@
 """Synthetic collector checks only; never starts simctl, a device, or a native build."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -19,6 +21,10 @@ def record(event="present_completed", uptime=12.0):
 
 def encoded(*records):
     return b"".join((json.dumps(value) + "\n").encode() for value in records)
+
+def focus_record(event="keyboard_did_show", field="company", uptime=12.0):
+    return {"event": event, "field": field, "uptime": uptime,
+            "flags": {key: False for key in module.FOCUS_EVENT_FLAGS[event]}}
 
 class BrowserLifecycleCollectionTests(unittest.TestCase):
     def setUp(self):
@@ -105,6 +111,86 @@ class BrowserLifecycleCollectionTests(unittest.TestCase):
         self.assertEqual(set(re.findall(r'= "([a-z_]+)"', events)), set(module.EVENT_FLAGS))
         swift_flags = {name.strip() for line in re.findall(r"\bcase ([^\n]+)", flags) for name in line.split(",")}
         self.assertEqual(swift_flags, set().union(*module.EVENT_FLAGS.values()))
+
+class FocusLifecycleCollectionTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.base = Path(self.temporary.name)
+        self.namespace = self.base / "acceptance"
+        self.source = self.namespace / SCOPE / module.FOCUS_LOG_NAME
+        self.source.parent.mkdir(parents=True)
+        self.output = self.base / "collected"
+    def tearDown(self):
+        self.temporary.cleanup()
+    def test_only_original_allowlisted_focus_metadata_is_exported(self):
+        original = encoded(focus_record(), focus_record("text_editing_began", "company", 12.1))
+        self.source.write_bytes(original)
+        result = module.collect(self.namespace, self.output, kind="focus")
+        self.assertEqual(result["status"], "copied")
+        self.assertEqual((self.output / (SCOPE + ".jsonl")).read_bytes(), original)
+        self.assertEqual(self.source.read_bytes(), original)
+        self.assertEqual(result["files"][0]["bytes"], len(original))
+        self.assertTrue(result["files"][0]["sourceReadTwiceMatched"])
+    def test_private_unbounded_or_malformed_focus_logs_are_not_exported(self):
+        cases = []
+        value = focus_record(); value["email"] = "private-fixture@example.invalid"; cases.append(encoded(value))
+        value = focus_record(); value["field"] = "private-fixture-employer"; cases.append(encoded(value))
+        value = focus_record(); value["event"] = "private-fixture-event"; cases.append(encoded(value))
+        value = focus_record(); value["flags"]["rawIdentifier"] = True; cases.append(encoded(value))
+        value = focus_record(); value["flags"]["nativeHasWindow"] = 1; cases.append(encoded(value))
+        value = focus_record(); value["uptime"] = float("nan"); cases.append(encoded(value))
+        value = focus_record("capacity_reached", "company"); value["flags"]["capacityReached"] = True; cases.append(encoded(value))
+        cases.append(encoded(focus_record())[:-1])
+        cases.append(b"x" * (module.MAX_BYTES + 1))
+        cases.append(b'{"event":"private-fixture-event","event":"capacity_reached","field":"none","uptime":1,"flags":{"capacityReached":true}}\n')
+        for index, original in enumerate(cases):
+            with self.subTest(index=index):
+                self.source.write_bytes(original)
+                target = self.base / ("invalid-" + str(index))
+                result = module.collect(self.namespace, target, kind="focus")
+                self.assertEqual(result["status"], "failed_closed")
+                self.assertFalse(list(target.glob("*.jsonl")))
+                self.assertNotIn("private-fixture", json.dumps(result))
+    def test_focus_collector_does_not_follow_links_or_copy_browser_log(self):
+        browser = self.source.parent / module.LOG_NAME
+        browser.write_bytes(encoded(record()))
+        absent = module.collect(self.namespace, self.output, kind="focus")
+        self.assertEqual(absent["status"], "no_logs")
+        self.source.symlink_to(browser)
+        result = module.collect(self.namespace, self.base / "linked", kind="focus")
+        self.assertEqual(result["status"], "failed_closed")
+        self.assertFalse(list((self.base / "linked").glob("*.jsonl")))
+    def test_owned_ci_command_selects_only_the_focus_trace(self):
+        container = self.base / "app-container"
+        namespace = container / "Library/Application Support/CareerFinderUIAcceptance"
+        scope = namespace / SCOPE
+        scope.mkdir(parents=True)
+        original = encoded(focus_record())
+        (scope / module.FOCUS_LOG_NAME).write_bytes(original)
+        (scope / module.LOG_NAME).write_bytes(encoded(record()))
+        selection = self.base / "selection.json"
+        checkout = "a" * 40
+        selection.write_text(json.dumps({"createdDevice": {"udid": SCOPE}, "checkoutSHA": checkout}))
+        arguments = ["collect-browser-lifecycle.py", "--kind", "focus", "--selection", str(selection),
+                     "--device", SCOPE, "--output", str(self.output)]
+        environment = {"GITHUB_ACTIONS": "true", "RUNNER_OS": "macOS", "GITHUB_SHA": checkout}
+        lookup = SimpleNamespace(returncode=0, stdout=str(container) + "\n")
+        with patch.dict(os.environ, environment), patch("sys.argv", arguments), patch.object(module.subprocess, "run", return_value=lookup):
+            self.assertEqual(module.main(), 0)
+        self.assertEqual((self.output / (SCOPE + ".jsonl")).read_bytes(), original)
+        self.assertEqual(json.loads((self.output / "manifest.json").read_text())["files"][0]["bytes"], len(original))
+    def test_swift_focus_allowlists_match_export_schema(self):
+        swift = (HERE.parent / "AhmadCareer/CareerAppEnvironment.swift").read_text()
+        events = re.search(r"enum OpportunityFocusEvent: String \{(.*?)\n    \}", swift, re.S).group(1)
+        fields = re.search(r"enum OpportunityFocusField: String \{(.*?)\n    \}", swift, re.S).group(1)
+        flags = re.search(r"enum OpportunityFocusFlag: String \{(.*?)\n    \}", swift, re.S).group(1)
+        self.assertEqual(set(re.findall(r'= "([a-z_]+)"', events)), set(module.FOCUS_EVENT_FLAGS))
+        self.assertEqual(set(re.search(r"\bcase ([^\n]+)", fields).group(1).replace(" ", "").split(",")), module.FOCUS_FIELDS)
+        swift_flags = {name.strip() for line in re.findall(r"\bcase ([^\n]+)", flags) for name in line.split(",")}
+        self.assertEqual(swift_flags, set().union(*module.FOCUS_EVENT_FLAGS.values()))
+        logger = swift.split("static func recordOpportunityFocus(", 1)[1]
+        payload = re.search(r"JSONSerialization\.data\(withJSONObject: \[(.*?)\], options:", logger, re.S).group(1)
+        self.assertEqual(set(re.findall(r'"([a-z]+)"\s*:', payload)), {"event", "field", "uptime", "flags"})
 
 if __name__ == "__main__":
     unittest.main()
