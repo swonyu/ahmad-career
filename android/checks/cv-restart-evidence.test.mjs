@@ -17,8 +17,8 @@ const source = Object.values(RESTART_METHODS).map(name => '@Test fun ' + name + 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const json = value => Buffer.from(JSON.stringify(value));
 const clone = value => structuredClone(value);
-const seedCalls = ['GET workspace', 'POST prepare', 'POST submit', 'GET workspace',
-  'PUT profile', 'POST prepare', 'POST submit', 'GET workspace'];
+const seedCalls = ['GET workspace', 'POST prepare', 'GET workspace', 'POST submit', 'GET workspace',
+  'PUT profile', 'GET workspace', 'POST prepare', 'GET workspace', 'POST submit', 'GET workspace'];
 const labels = {
   en: {confirmed: 'Test receipt · Confirmed', uncertain: 'Test receipt · Outcome uncertain', cancelled: 'Test receipt · Stopped'},
   ar: {confirmed: 'إيصال إرسال تجريبي · تم تأكيد الإرسال', uncertain: 'إيصال إرسال تجريبي · النتيجة غير مؤكدة',

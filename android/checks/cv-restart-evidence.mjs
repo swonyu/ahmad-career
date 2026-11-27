@@ -18,8 +18,8 @@ export const RESTART_CAPTURES = Object.freeze({
     'restore-ar-status-confirmed', 'restore-ar-status-uncertain', 'restore-ar-status-cancelled']),
 });
 const markerNames = {seed: 'seed-process.json', restore: 'restored-process.json'};
-const seedCalls = ['GET workspace', 'POST prepare', 'POST submit', 'GET workspace',
-  'PUT profile', 'POST prepare', 'POST submit', 'GET workspace'];
+const seedCalls = ['GET workspace', 'POST prepare', 'GET workspace', 'POST submit', 'GET workspace',
+  'PUT profile', 'GET workspace', 'POST prepare', 'GET workspace', 'POST submit', 'GET workspace'];
 const statusLabels = {
   en: {confirmed: 'Test receipt · Confirmed', uncertain: 'Test receipt · Outcome uncertain',
     cancelled: 'Test receipt · Stopped'},
