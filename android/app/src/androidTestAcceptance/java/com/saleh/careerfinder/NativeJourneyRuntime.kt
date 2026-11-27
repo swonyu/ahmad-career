@@ -442,8 +442,11 @@ internal class NativeJourneyRuntime {
         FileOutputStream(descriptor).use { output -> output.write(bytes); output.fd.sync() }
         require(!Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS))
         Files.move(temporary.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE)
-        val directoryFD = Os.open(directory.path, OsConstants.O_RDONLY or OsConstants.O_DIRECTORY or OsConstants.O_NOFOLLOW, 0)
-        try { Os.fsync(directoryFD) } finally { Os.close(directoryFD) }
+        val directoryFD = Os.open(directory.path, OsConstants.O_RDONLY or OsConstants.O_NOFOLLOW, 0)
+        try {
+            require(OsConstants.S_ISDIR(Os.fstat(directoryFD).st_mode)) { "Evidence directory changed" }
+            Os.fsync(directoryFD)
+        } finally { Os.close(directoryFD) }
     }
 
     private fun ownedDirectory(file: File, create: Boolean) {
