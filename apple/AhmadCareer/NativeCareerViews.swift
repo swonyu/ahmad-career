@@ -500,9 +500,10 @@ struct NativeSavedApplicationDetail: View {
                     if let location = job["location"]?.string, !location.isEmpty { Label(spokenListingLocation(location, l10n), systemImage: "mappin") }
                 }
                 Section {
-                    if let url = job["url"]?.string.flatMap(MobileApplicationPolicy.jobURL) {
+                    if let link = job["url"]?.string, let url = MobileApplicationPolicy.jobURL(link) {
                         Link(destination: url) { Label(l10n("Open employer posting"), systemImage: "arrow.up.right.square") }
-                        ShareLink(item: url) { Label(l10n("Share job link"), systemImage: "square.and.arrow.up") }
+                        NativeJobShare(title: job["title"]?.string ?? "", company: job["company"]?.string ?? "",
+                                       sourceName: job["sourceName"]?.string, link: link)
                     }
                     Button(l10n("Open application workspace")) { navigation.selectedTab = 2 }
                 } footer: {
@@ -933,6 +934,9 @@ private struct NativeJobDetail: View {
                 }
                 if let url = job.applicationURL {
                     Link(destination: url) { Label(l10n(job.isExpired ? "Check employer status" : store.status(for: job) == "Not started" ? "Open official application" : "View employer / existing application"), systemImage: "arrow.up.right.square") }
+                }
+                if CareerJob.safeURL(job.url) != nil {
+                    NativeJobShare(title: job.title, company: job.company, sourceName: nil, link: job.url)
                 }
                 NavigationLink { NativeNotesPreview(text: l10n.note(for: job, in: store, includeProfile: false), includesProfile: false) } label: { Label(l10n("Review preparation note"), systemImage: "doc.text") }
                 if let url = job.sourceURL { Link(l10n("Source and full requirements"), destination: url) }

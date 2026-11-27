@@ -1258,8 +1258,10 @@
     <string name="c_06923b7479a6" formatted="false">"إعداد الوصول إلى مساحة العمل أو استرجاعه"</string>
     <string name="c_74a883a037bc" formatted="false">"الإعدادات"</string>
     <string name="c_91b3952c23cf" formatted="false">"مشاركة رابط الوظيفة"</string>
+    <string name="c_96a1545a5065" formatted="false">"مشاركة الوظيفة مع صديق"</string>
     <string name="c_b84a859f2b2f" formatted="false">"مشاركة الملاحظات التي راجعتها"</string>
     <string name="c_9ec9845cd0d7" formatted="false">"المشاركة وملاحظات النسخة التجريبية"</string>
+    <string name="c_6a1b9c8e452f" formatted="false">"المشاركة غير متاحة لهذا الرابط. استخدم رابط إعلان وظيفة عام لا يحتوي على بيانات دخول خاصة."</string>
     <string name="c_fd436004505f" formatted="false">"اختصر الإنجازات قبل الحفظ."</string>
     <string name="c_70f24e9065de" formatted="false">"اختصر الكلمات المفتاحية أو الموقع ثم حاول مجددًا."</string>
     <string name="c_f0041eec99c5" formatted="false">"اختصر الكلمات المفتاحية أو الموقع لفتح بحث LinkedIn."</string>

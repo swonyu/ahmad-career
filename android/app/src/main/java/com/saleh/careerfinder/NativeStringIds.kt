@@ -1301,8 +1301,10 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Set up or recover workspace access" to R.string.c_06923b7479a6,
     "Settings" to R.string.c_74a883a037bc,
     "Share job link" to R.string.c_91b3952c23cf,
+    "Share job with a friend" to R.string.c_96a1545a5065,
     "Share reviewed notes" to R.string.c_b84a859f2b2f,
     "Sharing and beta feedback" to R.string.c_9ec9845cd0d7,
+    "Sharing is disabled for this link. Use a public job posting link without private access details." to R.string.c_6a1b9c8e452f,
     "Shorten achievements before saving." to R.string.c_fd436004505f,
     "Shorten the keywords or location and try again." to R.string.c_70f24e9065de,
     "Shorten the keywords or location to open LinkedIn search." to R.string.c_f0041eec99c5,
@@ -1392,11 +1394,11 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Test receipt · {0}" to R.string.c_7e73748ae6d2,
     "Test service: applications and receipts are simulated." to R.string.c_c2cb63111b06,
     "Test workspace — no real employer application" to R.string.c_6f3f8a774bd1,
-    "That application record is no longer available." to R.string.c_efc97d1ebc46,
-    "That record version changed. Reopen the record and choose again." to R.string.c_9583892e4d70,
 )
 
 private fun nativeCopyIds9(): Map<String, Int> = mapOf(
+    "That application record is no longer available." to R.string.c_efc97d1ebc46,
+    "That record version changed. Reopen the record and choose again." to R.string.c_9583892e4d70,
     "The JSON backup contains readable personal information, including your selected PDF when it is on this phone and this workspace's search draft/results. Keep it private. It does not contain connection credentials, online application approvals, provider receipts, or the separate planning notes." to R.string.c_d6d8dbda98b8,
     "The Professionals 2025 guide" to R.string.c_ce6054fc9401,
     "The Professionals 2025 reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49), including basic salary, housing and transportation (p.15). Different role definitions and samples are not interchangeable." to R.string.c_f0e3a0e9d7c4,
@@ -1545,11 +1547,11 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The workspace changed. Reopen the correct application record before saving." to R.string.c_bf3ced4a43b6,
     "The workspace changed. Reopen this record." to R.string.c_1122f7d3da28,
     "The workspace changed. Review its drafts again." to R.string.c_d1b99c4a5ca6,
-    "The workspace changed. Review the clear action again." to R.string.c_f3a05addb0a2,
-    "The workspace changed. Review the deletion choice again." to R.string.c_7f9de28f98d3,
 )
 
 private fun nativeCopyIds10(): Map<String, Int> = mapOf(
+    "The workspace changed. Review the clear action again." to R.string.c_f3a05addb0a2,
+    "The workspace changed. Review the deletion choice again." to R.string.c_7f9de28f98d3,
     "The workspace changed. Review the export target again." to R.string.c_88323b66d454,
     "There are no applications ready to send. A rate-limited application must finish its cooldown first." to R.string.c_1ea1b0e77bc6,
     "There is no saved phone draft to copy." to R.string.c_3ffdac926510,
@@ -1698,11 +1700,11 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "Unfinished profile saved privately. Review the field guidance before sharing it." to R.string.c_e6af8dd91a49,
     "Unfinished record edits" to R.string.c_cd3d786f5710,
     "Unfinished record kept on this phone. Its saved application status is unchanged." to R.string.c_a11be0beac71,
-    "Unknown status" to R.string.c_15eebb6f74cc,
-    "Unlock this phone to restore its secure application connection." to R.string.c_a9293a3fe05c,
 )
 
 private fun nativeCopyIds11(): Map<String, Int> = mapOf(
+    "Unknown status" to R.string.c_15eebb6f74cc,
+    "Unlock this phone to restore its secure application connection." to R.string.c_a9293a3fe05c,
     "Unpaired phone workspace" to R.string.c_5fac578e085a,
     "Unsaved draft. Kept for this session; export your notes before closing the app." to R.string.c_c6e8d6ec98f0,
     "Unsaved drafts and changes that failed to save will be lost. Save or export your notes first. Saved records stay on this device." to R.string.c_596e0833e6a8,
@@ -1851,11 +1853,11 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Your private files are preserved. Return to Jobs to retry storage or review recovery options." to R.string.c_cc5caa07e8b0,
     "Your private workspace" to R.string.c_1cfb16747882,
     "Your profile" to R.string.c_528d89ad72cb,
-    "Your profile changed in another window" to R.string.c_a8872706ab42,
-    "Your profile, application records and appearance preference remain separate. Connecting never submits an application." to R.string.c_c77b0f966aa1,
 )
 
 private fun nativeCopyIds12(): Map<String, Int> = mapOf(
+    "Your profile changed in another window" to R.string.c_a8872706ab42,
+    "Your profile, application records and appearance preference remain separate. Connecting never submits an application." to R.string.c_c77b0f966aa1,
     "Your progress" to R.string.c_433a720b7e1d,
     "Your record stays on this phone. Saving it does not send an application or a message." to R.string.c_f2719592360e,
     "Your record versions" to R.string.c_bd85bc5af88c,

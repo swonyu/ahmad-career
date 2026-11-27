@@ -50,6 +50,43 @@ enum MobileApplicationPolicy {
               !host.contains(":"), host.range(of: #"^\d+\.\d+\.\d+\.\d+$"#, options: .regularExpression) == nil else { return nil }
         return parts.url
     }
+    /// Only posting fields are accepted here. Applicant records and CVs are never part of this payload.
+    static func jobShareText(title: String, company: String, sourceName: String?, link: String) -> String? {
+        guard link.utf16.count <= 2_048, !link.contains("\\"),
+              !link.unicodeScalars.contains(where: unsafeShareLinkScalar),
+              let url = jobURL(link), var parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let host = parts.host?.lowercased(), !host.hasSuffix("."),
+              parts.percentEncodedHost?.contains("%") != true,
+              host.range(of: #"^[0-9.]+$"#, options: .regularExpression) == nil else { return nil }
+
+        let privatePath = #"^(?:invites?|invitations?|candidates?|applicants?|auth|session|reset|verify|magic-link|personal-invite|password[-_]reset)(?:[-_].*)?$"#
+        for raw in parts.percentEncodedPath.split(separator: "/") {
+            guard let segment = raw.removingPercentEncoding, segment != ".", segment != "..",
+                  !segment.unicodeScalars.contains(where: unsafeShareLinkScalar),
+                  segment.range(of: #"[@%/\\]|https?:"#, options: [.regularExpression, .caseInsensitive]) == nil,
+                  segment.range(of: privatePath, options: [.regularExpression, .caseInsensitive]) == nil else { return nil }
+        }
+        let postingKeys: Set<String> = ["jobid", "ghjid", "job", "postingid", "requisitionid", "reqid", "positionid", "vacancyid", "jobreqid", "source", "leversource", "leverorigin"]
+        let attributionKeys: Set<String> = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id"]
+        for item in parts.queryItems ?? [] {
+            let key = item.name.lowercased()
+            let postingKey = key.filter { $0 != "_" && $0 != "-" }
+            guard postingKeys.contains(postingKey) || attributionKeys.contains(key),
+                  let value = item.value,
+                  value.range(of: #"^[a-zA-Z0-9._~-]{1,150}\z"#, options: .regularExpression) != nil else { return nil }
+        }
+        parts.scheme = "https"; parts.host = host; parts.port = nil; parts.fragment = nil
+        if parts.path.isEmpty { parts.path = "/" }
+        guard let address = parts.url?.absoluteString, address.utf16.count <= 2_048 else { return nil }
+        let fields = [title, company, sourceName ?? ""].map {
+            $0.replacingOccurrences(of: #"[\r\n\t]+"#, with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return (fields.filter { !$0.isEmpty } + [address]).joined(separator: "\n")
+    }
+    private static func unsafeShareLinkScalar(_ scalar: Unicode.Scalar) -> Bool {
+        scalar.value <= 0x20 || (0x7f...0x9f).contains(scalar.value) || scalar.properties.generalCategory == .format
+    }
     /// This is a user-supplied public profile link, not a LinkedIn session or ownership check.
     static func linkedInProfileURL(_ text: String) -> URL? {
         func isControl(_ scalar: Unicode.Scalar) -> Bool {

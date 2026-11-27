@@ -1258,8 +1258,10 @@
     <string name="c_06923b7479a6" formatted="false">"Set up or recover workspace access"</string>
     <string name="c_74a883a037bc" formatted="false">"Settings"</string>
     <string name="c_91b3952c23cf" formatted="false">"Share job link"</string>
+    <string name="c_96a1545a5065" formatted="false">"Share job with a friend"</string>
     <string name="c_b84a859f2b2f" formatted="false">"Share reviewed notes"</string>
     <string name="c_9ec9845cd0d7" formatted="false">"Sharing and beta feedback"</string>
+    <string name="c_6a1b9c8e452f" formatted="false">"Sharing is disabled for this link. Use a public job posting link without private access details."</string>
     <string name="c_fd436004505f" formatted="false">"Shorten achievements before saving."</string>
     <string name="c_70f24e9065de" formatted="false">"Shorten the keywords or location and try again."</string>
     <string name="c_f0041eec99c5" formatted="false">"Shorten the keywords or location to open LinkedIn search."</string>

@@ -1256,8 +1256,10 @@
 "Set up or recover workspace access" = "إعداد الوصول إلى مساحة العمل أو استرجاعه";
 "Settings" = "الإعدادات";
 "Share job link" = "مشاركة رابط الوظيفة";
+"Share job with a friend" = "مشاركة الوظيفة مع صديق";
 "Share reviewed notes" = "مشاركة الملاحظات التي راجعتها";
 "Sharing and beta feedback" = "المشاركة وملاحظات النسخة التجريبية";
+"Sharing is disabled for this link. Use a public job posting link without private access details." = "المشاركة غير متاحة لهذا الرابط. استخدم رابط إعلان وظيفة عام لا يحتوي على بيانات دخول خاصة.";
 "Shorten achievements before saving." = "اختصر الإنجازات قبل الحفظ.";
 "Shorten the keywords or location and try again." = "اختصر الكلمات المفتاحية أو الموقع ثم حاول مجددًا.";
 "Shorten the keywords or location to open LinkedIn search." = "اختصر الكلمات المفتاحية أو الموقع لفتح بحث LinkedIn.";
