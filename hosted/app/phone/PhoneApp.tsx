@@ -993,9 +993,12 @@ export default function PhoneApp({ account }: { account: Account }) {
   ].filter(Boolean).join(" ");
 
   return <div className="phone-shell">
-    <a className="skip-link" href="#phone-main">{t("Skip to content")}</a>
+    <a className="skip-link" href="#phone-main" onClick={event => {
+      const main = event.currentTarget.ownerDocument.getElementById("phone-main");
+      if (main) { event.preventDefault(); main.focus(); }
+    }}>{t("Skip to content")}</a>
     <header className="phone-header"><a className="phone-brand" href="/phone"><span className="brand-icon"><BrandMark /></span><span>{t("Career Finder")}<small>{t("Job search and applications")}</small></span></a><div className="phone-header-actions">{!account && <button className="header-signin" onClick={() => setDialog({ kind: "signin" })}>{t("Sign in")}</button>}<button className={`header-settings${tab === "settings" ? " is-current" : ""}`} aria-label={t("Open Settings")} aria-current={tab === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><Settings2 size={20} aria-hidden="true" /><span>{t("Settings")}</span></button></div></header>
-    <main id="phone-main" className={`phone-main phone-tab-${tab}`}><OAuthFeedback />
+    <main id="phone-main" tabIndex={-1} className={`phone-main phone-tab-${tab}`}><OAuthFeedback />
       <div className={`phone-page-heading${tab === "saved" && !checkingIdentity && !locked ? " phone-saved-heading" : ""}`}>
         <h1 ref={heading} tabIndex={-1}>{t(titles[tab])}</h1>
         {tab === "saved" && !checkingIdentity && !locked ? <div className="phone-saved-heading-actions">

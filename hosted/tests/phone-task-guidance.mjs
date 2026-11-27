@@ -29,6 +29,25 @@ const apply=nodes(tree,node=>ts.isJsxExpression(node)&&node.getText(tree).starts
 function appView(ctx){compile('globalThis.result=('+apply.expression.getText(tree)+');',ctx);return ctx.result;}
 function descendants(node){if(!node||typeof node!=='object')return[];return[node,...React.Children.toArray(node.props?.children).flatMap(descendants)];}
 
+test('the phone skip link moves focus into the current tab without replacing its route', () => {
+  const link = nodes(tree, node => ts.isJsxElement(node) && node.openingElement.tagName.getText(tree) === 'a' &&
+    node.openingElement.attributes.getText(tree).includes('className="skip-link"'))[0];
+  const context = compile('globalThis.link = (' + link.getText(tree) + ');', {React, t: text => text});
+  const target = nodes(tree, node => ts.isJsxOpeningElement(node) && node.tagName.getText(tree) === 'main')[0];
+  const attributes = target.attributes.getText(tree);
+  assert.match(attributes, /id="phone-main"/);
+  assert.match(attributes, /tabIndex=\{-1\}/);
+  let focused = false, prevented = false;
+  context.link.props.onClick({
+    currentTarget: {ownerDocument: {getElementById(id) {
+      assert.equal('#' + id, context.link.props.href);
+      return {focus() { focused = true; }};
+    }}},
+    preventDefault() { prevented = true; },
+  });
+  assert(focused && prevented);
+});
+
 test('the actual guest Apply route offers manual work before optional sign-in and resets stale Saved filters',()=>{
   for(const recordKind of ['none','bookmark','record']){
     const hasJobs=recordKind!=='none';
