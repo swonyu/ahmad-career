@@ -130,7 +130,7 @@ def run(language):
             port = str(sock.getsockname()[1])
         args = ["node", "hosted/tests/fixtures/native-journey/serve-iphone.mjs", "--work-dir", str(private),
                 "--app-container", containers[0], "--runner-container", containers[1], "--test-id", test_id,
-                "--follow-up-day", tomorrow.isoformat(), "--port", port]
+                "--follow-up-day", tomorrow.isoformat(), "--port", port, "--runtime-runner-handoff", "enabled"]
         fixture = subprocess.Popen(args)
         try:
             deadline = time.monotonic() + 90

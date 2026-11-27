@@ -24,13 +24,15 @@ const sameIdentity = (a, b) => a.dev === b.dev && a.ino === b.ino && a.uid === b
 
 function argumentsFor(argv) {
   const names = ['--app-container', '--runner-container', '--work-dir', '--test-id', '--follow-up-day', '--port'];
-  if (argv.length !== names.length * 2) fail('iphone_arguments_invalid');
+  const handoffName = '--runtime-runner-handoff';
+  if (![names.length * 2, names.length * 2 + 2].includes(argv.length)) fail('iphone_arguments_invalid');
   const values = {};
   for (let i = 0; i < argv.length; i += 2) {
-    if (!names.includes(argv[i]) || Object.hasOwn(values, argv[i])) fail('iphone_arguments_invalid');
+    if (!(names.includes(argv[i]) || argv[i] === handoffName) || Object.hasOwn(values, argv[i])) fail('iphone_arguments_invalid');
     values[argv[i]] = argv[i + 1];
   }
-  if (names.some(name => !Object.hasOwn(values, name))) fail('iphone_arguments_invalid');
+  if (names.some(name => !Object.hasOwn(values, name)) ||
+      Object.hasOwn(values, handoffName) && values[handoffName] !== 'enabled') fail('iphone_arguments_invalid');
   const testID = values['--test-id'], port = Number(values['--port']), followUpDay = values['--follow-up-day'];
   const selected = new Date(followUpDay + 'T12:00:00Z');
   if (!UUID.test(testID) || testID !== testID.toUpperCase() ||
@@ -46,7 +48,8 @@ function argumentsFor(argv) {
         path.resolve(value) !== value || scope(value)) fail('iphone_path_invalid');
   }
   return {appContainer:values['--app-container'], runnerContainer:values['--runner-container'],
-    workDir:values['--work-dir'], testID, followUpDay, port};
+    workDir:values['--work-dir'], testID, followUpDay, port,
+    runtimeRunnerHandoff:values[handoffName] === 'enabled'};
 }
 
 async function directory(filename, privateMode = false) {
@@ -160,34 +163,42 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
     const documents = Object.fromEntries(Object.entries(bridge.privateConfiguration.documents)
       .map(([name, relative]) => [name, bridge.privateConfiguration.iosOrigin + relative]));
     if (Object.keys(documents).sort().join(',') !== 'CV-A.pdf,CV-B.pdf') fail('iphone_document_urls_invalid');
+    const bindController = async runtime => {
+      stage = 'checkpoint_controller';
+      controller = await createFileCheckpointController({harness, bridge, testID:config.testID,
+        workspaceID:connection.workspaceId, logicalOrigin:connection.origin,
+        workerSHA256:bundle.sha256, bootstrapSHA256, followUpDay:config.followUpDay,
+        appContainer:runtime.app, runnerContainer:runtime.runner, evidenceParent:config.workDir,
+        expectedSourceFiles:pins, stopAt});
+    };
+    if (!config.runtimeRunnerHandoff) await bindController(bound);
     await atomicPrivate(path.join(config.workDir, 'ready.json'), json({caPath:bridge.caPath, documents}));
-    // Xcode may reinstall the UI-test Runner when test-without-building starts,
-    // giving it a new data container. The supervisor observes the Runner's own
-    // exact test-ID control directory and hands back that runtime container.
-    stage = 'runner_handoff';
-    const handoffPath = path.join(config.workDir, 'runner-container-handoff.json');
-    while (true) {
-      if (signal?.aborted) fail('iphone_cancelled');
-      if (performance.now() >= stopAt) fail('iphone_deadline');
-      try { await lstat(handoffPath); break; }
-      catch (error) { if (error.code !== 'ENOENT') throw error; }
-      await delay(25);
+    if (config.runtimeRunnerHandoff) {
+      // Xcode may reinstall the UI-test Runner when test-without-building starts.
+      // The supervisor observes its exact test-ID control directory first.
+      stage = 'runner_handoff';
+      const handoffPath = path.join(config.workDir, 'runner-container-handoff.json');
+      while (true) {
+        if (signal?.aborted) fail('iphone_cancelled');
+        if (performance.now() >= stopAt) fail('iphone_deadline');
+        try { await lstat(handoffPath); break; }
+        catch (error) { if (error.code !== 'ENOENT') throw error; }
+        await delay(25);
+      }
+      const handoff = decodeBoundedJSON((await readCheckpointFile(handoffPath, 4096, {privateMode:true})).bytes, 4096);
+      if (!handoff || Object.keys(handoff).sort().join(',') !== 'appContainer,runnerContainer,schemaVersion,testID' ||
+          handoff.schemaVersion !== 1 || handoff.testID !== config.testID ||
+          [handoff.appContainer,handoff.runnerContainer].some(value =>
+            typeof value !== 'string' || value.length > 4096 || !path.isAbsolute(value) ||
+            path.resolve(value) !== value || scope(value))) fail('iphone_runner_handoff_invalid');
+      const runtime = await containers(handoff.appContainer, handoff.runnerContainer);
+      const runtimeBootstrap = path.join(runtime.app.path, 'Library', 'Application Support',
+        'CareerFinderUIAcceptance', config.testID, 'native-journey-bootstrap.private.json');
+      if ((await readCheckpointFile(runtimeBootstrap, 65536, {privateMode:true})).sha256 !== bootstrapSHA256) fail('iphone_bootstrap_changed');
+      await bindController(runtime);
+      await atomicPrivate(path.join(config.workDir, 'controller-ready.json'), json({schemaVersion:1,
+        testID:config.testID, runnerContainerID:path.basename(runtime.runner.path)}));
     }
-    const handoff = decodeBoundedJSON((await readCheckpointFile(handoffPath, 4096, {privateMode:true})).bytes, 4096);
-    if (!handoff || Object.keys(handoff).sort().join(',') !== 'appContainer,runnerContainer,schemaVersion,testID' ||
-        handoff.schemaVersion !== 1 || handoff.testID !== config.testID ||
-        handoff.appContainer !== bound.app.path || typeof handoff.runnerContainer !== 'string' ||
-        handoff.runnerContainer.length > 4096 || !path.isAbsolute(handoff.runnerContainer) ||
-        path.resolve(handoff.runnerContainer) !== handoff.runnerContainer || scope(handoff.runnerContainer)) fail('iphone_runner_handoff_invalid');
-    const runtime = await containers(handoff.appContainer, handoff.runnerContainer);
-    stage = 'checkpoint_controller';
-    controller = await createFileCheckpointController({harness, bridge, testID:config.testID,
-      workspaceID:connection.workspaceId, logicalOrigin:connection.origin,
-      workerSHA256:bundle.sha256, bootstrapSHA256, followUpDay:config.followUpDay,
-      appContainer:runtime.app, runnerContainer:runtime.runner, evidenceParent:config.workDir,
-      expectedSourceFiles:pins, stopAt});
-    await atomicPrivate(path.join(config.workDir, 'controller-ready.json'), json({schemaVersion:1,
-      testID:config.testID, runnerContainerID:path.basename(runtime.runner.path)}));
     stage = 'checkpoints';
     while (!controller.complete) {
       if (signal?.aborted) fail('iphone_cancelled');
