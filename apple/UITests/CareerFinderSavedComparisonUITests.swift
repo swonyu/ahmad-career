@@ -324,6 +324,37 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
     func testAfterEnglish() throws { try after(language: "en") }
     func testAfterArabic() throws { try after(language: "ar") }
 
+    private func systemShareGeometry(_ hierarchy: String, in appFrame: CGRect) -> (popup: CGRect, dismissal: CGRect?)? {
+        let lines = hierarchy.split(separator: "\n")
+        func matches(_ line: Substring, type: String, identifier: String) -> Bool {
+            line.drop(while: { $0.isWhitespace }).hasPrefix(type + ",")
+                && line.contains("identifier: '\(identifier)'")
+        }
+        func frame(_ line: Substring) -> CGRect? {
+            guard let start = line.range(of: "{{"), let end = line.range(of: "}}"),
+                  start.upperBound < end.lowerBound else { return nil }
+            let fields = line[start.upperBound..<end.lowerBound].split { "{} ,".contains($0) }
+            let values = fields.compactMap { Double($0) }
+            guard fields.count == 4, values.count == 4 else { return nil }
+            let frame = CGRect(x: values[0], y: values[1], width: values[2], height: values[3])
+            return finite(frame) ? frame : nil
+        }
+        let popups = lines.indices.filter { matches(lines[$0], type: "Other", identifier: "ActivityListView") }
+        guard popups.count == 1, let index = popups.first, let popup = frame(lines[index]),
+              appFrame.contains(popup) else { return nil }
+        let indent = lines[index].prefix(while: { $0.isWhitespace }).count
+        let descendants = lines.dropFirst(index + 1).prefix { $0.prefix(while: { $0.isWhitespace }).count > indent }
+        let copyCells = descendants.filter {
+            matches($0, type: "Cell", identifier: "actionGroupCell") && $0.contains("label: 'Copy'")
+        }
+        guard copyCells.count == 1, let cell = copyCells.first, let copy = frame(cell),
+              popup.insetBy(dx: -1, dy: -1).contains(copy), appFrame.contains(copy) else { return nil }
+        let dismissal = lines.filter {
+            matches($0, type: "Other", identifier: "PopoverDismissRegion") && $0.contains("label: 'dismiss popup'")
+        }
+        return (popup, dismissal.count == 1 ? dismissal.first.flatMap(frame) : nil)
+    }
+
     func testSavedOpeningSharesPublicDetailsAndCanCancel() throws {
         begin(language: "en", phase: "share")
         let app = try launch()
@@ -338,47 +369,25 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
 
         // Observe the system's Copy action without choosing it or any destination.
         let sheet = app.otherElements["ActivityListView"]
-        // The system's remote action list appeared after the ordinary five-second window.
+        // The full native accessibility hierarchy includes the remote system action list.
+        let appFrame = app.frame
         try wait("The system share sheet offers a visible Copy action", app: app, timeout: 10) {
-            // UIActivityViewController renders its action list in another process.
-            // Inspect one fresh accessibility tree for both the popup and its cell.
-            guard let root = try? app.snapshot(), finite(root.frame) else { return false }
-            var pending: [any XCUIElementSnapshot] = [root]
-            var sheets: [any XCUIElementSnapshot] = []
-            while let node = pending.popLast() {
-                if node.elementType == .other, node.identifier == "ActivityListView" { sheets.append(node) }
-                pending.append(contentsOf: node.children)
-            }
-            guard sheets.count == 1, let popup = sheets.first, finite(popup.frame) else { return false }
-            pending = popup.children
-            var actions: [any XCUIElementSnapshot] = []
-            while let node = pending.popLast() {
-                if node.elementType == .cell, node.identifier == "actionGroupCell", node.label == "Copy" {
-                    actions.append(node)
-                }
-                pending.append(contentsOf: node.children)
-            }
-            guard actions.count == 1, let copy = actions.first else { return false }
-            return finite(copy.frame) && root.frame.contains(copy.frame)
-                && popup.frame.insetBy(dx: -1, dy: -1).contains(copy.frame)
+            systemShareGeometry(app.debugDescription, in: appFrame) != nil
         }
         record("system-share-sheet", app: app)
-        let close = sheet.buttons["Close"]
-        if close.exists {
-            try chromeTap(close, app: app)
-        } else {
-            let dismissRegion = app.otherElements["PopoverDismissRegion"]
-            let region = dismissRegion.frame, sheetFrame = sheet.frame
-            try require(finite(region) && finite(sheetFrame) && dismissRegion.isHittable,
-                        "The system share popup exposes its outside dismiss region", app: app)
-            let outside = CGPoint(x: region.midX, y: (region.minY + sheetFrame.minY) / 2)
-            try require(region.contains(outside) && app.frame.contains(outside) && !sheetFrame.contains(outside),
+        let currentFrame = app.frame
+        if let presentation = systemShareGeometry(app.debugDescription, in: currentFrame), let region = presentation.dismissal {
+            let outside = CGPoint(x: region.midX, y: (region.minY + presentation.popup.minY) / 2)
+            try require(region.contains(outside) && currentFrame.contains(outside) && !presentation.popup.contains(outside),
                         "The cancellation touch stays outside the share sheet", app: app)
-            dismissRegion.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
-                dx: outside.x - region.minX, dy: outside.y - region.minY)).tap()
+            app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
+                dx: outside.x - currentFrame.minX, dy: outside.y - currentFrame.minY)).tap()
+        } else {
+            try chromeTap(sheet.buttons["Close"], app: app)
         }
         try wait("Cancelling returns to the same public preview", app: app) {
-            !sheet.exists && bars("Saved opportunity", app: app).count == 1 && preview.exists
+            !app.debugDescription.contains("identifier: 'ActivityListView'")
+                && bars("Saved opportunity", app: app).count == 1 && preview.exists
         }
     }
 }
