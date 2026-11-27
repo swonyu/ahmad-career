@@ -16,6 +16,8 @@ export const REQUIRED_SCREENSHOTS = Object.freeze({
     'cache/navigation-review-evidence/private-record-editor.png',
     'cache/navigation-review-evidence/profile-role-shortcut.png',
     'cache/navigation-review-evidence/record-only-phone-import.png',
+    'cache/navigation-review-evidence/saved-job-share-preview.png',
+    'cache/navigation-review-evidence/saved-job-system-chooser.png',
     'cache/navigation-review-evidence/settings-dark.png',
     'cache/navigation-review-evidence/settings-light.png',
     'cache/navigation-review-evidence/two-step-connection.png',
