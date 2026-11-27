@@ -284,6 +284,7 @@ def run(language):
                 diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
                 search = diagnostic.get("search") if isinstance(diagnostic.get("search"), dict) else {}
                 profile_writes = diagnostic.get("profileWrites") if isinstance(diagnostic.get("profileWrites"), dict) else {}
+                document_requests = diagnostic.get("documentRequests") if isinstance(diagnostic.get("documentRequests"), dict) else {}
                 operation_journal = diagnostic.get("operationJournal") if isinstance(diagnostic.get("operationJournal"), dict) else {}
                 def safe_code(value):
                     return value if isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,79}", value) else None
@@ -314,6 +315,10 @@ def run(language):
                         "failurePhase": safe_code(diagnostic.get("failurePhase")),
                         "failureElapsedMs": safe_count(diagnostic.get("failureElapsedMs"), 300000),
                         "loopbackApiRequests": safe_count(diagnostic.get("loopbackApiRequests")),
+                        "documentRequests": {
+                            "CV-A.pdf": safe_count(document_requests.get("CV-A.pdf"), 64),
+                            "CV-B.pdf": safe_count(document_requests.get("CV-B.pdf"), 64),
+                        },
                         "tlsErrors": safe_count(diagnostic.get("tlsErrors"), 10000),
                         "lastTlsErrorAtUTC": safe_utc(diagnostic.get("lastTlsErrorAtUTC")),
                         "lastTlsErrorAgeMs": safe_count(diagnostic.get("lastTlsErrorAgeMs"), 1800000),
