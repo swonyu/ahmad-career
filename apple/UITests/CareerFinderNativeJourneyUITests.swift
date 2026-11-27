@@ -148,7 +148,6 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         guard try FileManager.default.contentsOfDirectory(atPath: controlDirectory.path).isEmpty else {
             throw ObservationFailure.failed
         }
-        if XCUIDevice.shared.orientation != .portrait { XCUIDevice.shared.orientation = .portrait }
     }
     private func checkpoint(_ name: Checkpoint, app: XCUIApplication) throws -> Facts {
         sequence += 1
