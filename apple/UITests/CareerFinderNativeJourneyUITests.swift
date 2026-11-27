@@ -196,10 +196,32 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         app.launchEnvironment["CAREER_UI_TEST_ID"] = fixtureID
         app.launchEnvironment["CAREER_UI_NATIVE_JOURNEY"] = "blank-profile"
         app.launch()
+        var readyFrame: CGRect?
         try wait("The actual isolated app opens with five tabs", app: app) {
-            item("acceptance.offline", app: app).exists && app.tabBars.buttons.count == 5
+            guard let snapshot = try? app.snapshot() else { return false }
+            var pending: [any XCUIElementSnapshot] = [snapshot]
+            var offlineMarkers = 0
+            var tabBars: [any XCUIElementSnapshot] = []
+            while let element = pending.popLast() {
+                if element.elementType == .staticText && element.identifier == "acceptance.offline" {
+                    offlineMarkers += 1
+                }
+                if element.elementType == .tabBar { tabBars.append(element) }
+                pending.append(contentsOf: element.children)
+            }
+            guard offlineMarkers == 1, tabBars.count == 1 else { return false }
+            pending = tabBars[0].children
+            var tabButtons = 0
+            while let element = pending.popLast() {
+                if element.elementType == .button { tabButtons += 1 }
+                pending.append(contentsOf: element.children)
+            }
+            guard tabButtons == 5 else { return false }
+            readyFrame = snapshot.frame
+            return true
         }
-        try require(app.frame.height > app.frame.width, "The actual isolated app is portrait", app: app)
+        try require(readyFrame.map { finite($0) && $0.height > $0.width } == true,
+            "The actual isolated app is portrait", app: app)
         return app
     }
     private func realKeyboard(_ app: XCUIApplication) throws {
