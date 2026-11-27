@@ -491,6 +491,34 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try require(address.count == 1 && address.element.value as? String == requestedURL,
             "The full PDF URL is unchanged before closing its address editor", app: safari)
         try chromeTap(identifiedButton("CancelBarItemButton", app: safari), app: safari)
+        // Cold Safari can keep Start Page in front of a loaded PDF. Sharing
+        // there exports a link, so wait for the actual document surface.
+        let presentationDeadline = ProcessInfo.processInfo.systemUptime + 10
+        var pdfForeground = false
+        while ProcessInfo.processInfo.systemUptime < presentationDeadline {
+            if let snapshot = try? safari.snapshot() {
+                let observedAt = ProcessInfo.processInfo.systemUptime
+                if observedAt > presentationDeadline { break }
+                var startPages = 0, documentTexts = 0
+                var pending: [(any XCUIElementSnapshot, Bool)] = [(snapshot, false)]
+                while let (element, inWebView) = pending.popLast() {
+                    let webView = inWebView || element.elementType == .webView
+                    if element.elementType == .collectionView && element.identifier == "StartPageCollectionView" {
+                        startPages += 1
+                    }
+                    if webView && element.elementType == .staticText
+                        && element.label == "Synthetic integration fixture only"
+                        && finite(element.frame) && snapshot.frame.contains(element.frame) {
+                        documentTexts += 1
+                    }
+                    pending.append(contentsOf: element.children.map { ($0, webView) })
+                }
+                if startPages == 0 && documentTexts == 1 { pdfForeground = true; break }
+            }
+            let remaining = presentationDeadline - ProcessInfo.processInfo.systemUptime
+            if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
+        }
+        try require(pdfForeground, "Safari presents the one requested PDF above Start Page within ten seconds", app: safari)
         let moreButtons = safari.buttons.matching(NSPredicate(format: "identifier == %@", "MoreMenuButton"))
         try wait("The unique Safari More control is wholly visible and hittable", app: safari) {
             moreButtons.count == 1 && whole(moreButtons.element, app: safari, chrome: true)
