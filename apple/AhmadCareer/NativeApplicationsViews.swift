@@ -3,6 +3,9 @@ import SwiftUI
 import UniformTypeIdentifiers
 import UIKit
 import SafariServices
+#if DEBUG
+import Combine
+#endif
 
 private enum ApplyDesign {
     static let actionFill = NativeDesign.actionFill
@@ -939,6 +942,61 @@ struct NativeApplicationProfileEditor: View {
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
 }
 
+#if DEBUG
+/// These subscriptions observe only while this editor is mounted. Native field
+/// identity is classified from its exact allowlisted identifier, never inferred
+/// from the binding or a text value. Separate observations are not atomic.
+@MainActor
+private struct NativeOpportunityFocusObservation: ViewModifier {
+    let focusedField: String?
+    let busy: Bool
+    let sceneActive: Bool
+
+    static func record(_ event: CareerAppEnvironment.OpportunityFocusEvent, binding: String?,
+                       busy: Bool, sceneActive: Bool, nativeField: UITextField? = nil) {
+        guard CareerAppEnvironment.isUIAcceptance else { return }
+        let current = CareerAppEnvironment.OpportunityFocusField(binding: binding)
+        let isNativeEvent = event == .textEditingBegan || event == .textEditingEnded
+        let observed = nativeField.map {
+            CareerAppEnvironment.OpportunityFocusField(nativeIdentifier: $0.accessibilityIdentifier)
+        } ?? (isNativeEvent ? .unknown : current)
+        CareerAppEnvironment.recordOpportunityFocus(event, field: observed, flags: [
+            .bindingNone: current == .none, .bindingURL: current == .url,
+            .bindingTitle: current == .title, .bindingCompany: current == .company,
+            .bindingLocation: current == .location, .bindingUnknown: current == .unknown,
+            .busy: busy, .sceneActive: sceneActive,
+            .hasNativeField: nativeField != nil,
+            .nativeIsFirstResponder: nativeField?.isFirstResponder ?? false,
+            .nativeHasWindow: nativeField?.window != nil,
+            .nativeEnabled: nativeField?.isEnabled ?? false,
+            .nativeUserInteractionEnabled: nativeField?.isUserInteractionEnabled ?? false,
+            .nativeIdentifierKnown: nativeField != nil && observed != .unknown
+        ])
+    }
+    private func observe(_ event: CareerAppEnvironment.OpportunityFocusEvent, nativeField: UITextField? = nil) {
+        Self.record(event, binding: focusedField, busy: busy, sceneActive: sceneActive, nativeField: nativeField)
+    }
+    func body(content: Content) -> some View {
+        content
+            .onAppear { observe(.editorAppeared) }
+            .onDisappear { observe(.editorDisappeared) }
+            .onChange(of: focusedField) { value in
+                Self.record(.focusBindingChanged, binding: value, busy: busy, sceneActive: sceneActive)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { notification in
+                observe(.textEditingBegan, nativeField: notification.object as? UITextField)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidEndEditingNotification)) { notification in
+                observe(.textEditingEnded, nativeField: notification.object as? UITextField)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in observe(.keyboardWillShow) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in observe(.keyboardDidShow) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in observe(.keyboardWillHide) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in observe(.keyboardDidHide) }
+    }
+}
+#endif
+
 struct NativeOpportunityEditor: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
@@ -1012,7 +1070,13 @@ struct NativeOpportunityEditor: View {
                         } }.disabled(model.busy || draft.url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             .accessibilityIdentifier("opportunity.save")
                     }
-                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) { focusedField = nil } }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) {
+                        #if DEBUG
+                        NativeOpportunityFocusObservation.record(.doneActionEntered, binding: focusedField,
+                            busy: model.busy, sceneActive: scenePhase == .active)
+                        #endif
+                        focusedField = nil
+                    } }
                 }
                 .confirmationDialog(l10n("Keep this opportunity draft?"), isPresented: $dismissalChoice, titleVisibility: .visible) {
                     Button(l10n("Save draft on this phone")) {
@@ -1036,6 +1100,10 @@ struct NativeOpportunityEditor: View {
             .onChange(of: issue) { value in
                 if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
             }
+            #if DEBUG
+            .modifier(NativeOpportunityFocusObservation(focusedField: focusedField,
+                busy: model.busy, sceneActive: scenePhase == .active))
+            #endif
     }
 }
 

@@ -88,6 +88,96 @@ enum CareerAppEnvironment {
             browserLifecycleLoggingStopped = true
         }
     }
+
+    enum OpportunityFocusEvent: String {
+        case editorAppeared = "editor_appeared"
+        case focusBindingChanged = "focus_binding_changed"
+        case textEditingBegan = "text_editing_began"
+        case textEditingEnded = "text_editing_ended"
+        case keyboardWillShow = "keyboard_will_show"
+        case keyboardDidShow = "keyboard_did_show"
+        case keyboardWillHide = "keyboard_will_hide"
+        case keyboardDidHide = "keyboard_did_hide"
+        case doneActionEntered = "done_action_entered"
+        case editorDisappeared = "editor_disappeared"
+        case capacityReached = "capacity_reached"
+    }
+    enum OpportunityFocusField: String {
+        case none, url, title, company, location, unknown
+        init(binding: String?) {
+            switch binding {
+            case nil: self = .none
+            case "url": self = .url
+            case "title": self = .title
+            case "company": self = .company
+            case "location": self = .location
+            default: self = .unknown
+            }
+        }
+        init(nativeIdentifier: String?) {
+            switch nativeIdentifier {
+            case "opportunity.url": self = .url
+            case "opportunity.title": self = .title
+            case "opportunity.company": self = .company
+            case "opportunity.location": self = .location
+            default: self = .unknown
+            }
+        }
+    }
+    enum OpportunityFocusFlag: String {
+        case bindingNone, bindingURL, bindingTitle, bindingCompany, bindingLocation, bindingUnknown
+        case busy, sceneActive, hasNativeField, nativeIsFirstResponder, nativeHasWindow
+        case nativeEnabled, nativeUserInteractionEnabled, nativeIdentifierKnown, capacityReached
+    }
+    private static var opportunityFocusLoggingStopped = false
+
+    /// Passive, bounded observations for the existing UUID-scoped offline UI
+    /// fixture only. No text/value, notification userInfo or raw identifier is
+    /// serialized. Diagnostics failure never changes focus or an editor action.
+    static func recordOpportunityFocus(_ event: OpportunityFocusEvent, field: OpportunityFocusField,
+                                       flags: [OpportunityFocusFlag: Bool]) {
+        guard !opportunityFocusLoggingStopped, let root = acceptanceRoot else { return }
+        let observedAt = ProcessInfo.processInfo.systemUptime
+        guard observedAt.isFinite, observedAt >= 0 else { opportunityFocusLoggingStopped = true; return }
+        let maximumBytes: UInt64 = 64 * 1024
+        func encoded(_ event: OpportunityFocusEvent, field: OpportunityFocusField,
+                     flags: [OpportunityFocusFlag: Bool]) throws -> Data {
+            let state = Dictionary(uniqueKeysWithValues: flags.map { ($0.key.rawValue, $0.value) })
+            var bytes = try JSONSerialization.data(withJSONObject: [
+                "event": event.rawValue, "field": field.rawValue, "uptime": observedAt, "flags": state
+            ], options: [.sortedKeys])
+            bytes.append(0x0A)
+            return bytes
+        }
+        do {
+            let file = root.appendingPathComponent("focus-lifecycle.jsonl")
+            let manager = FileManager.default
+            try manager.createDirectory(at: root, withIntermediateDirectories: true)
+            if !manager.fileExists(atPath: file.path) {
+                guard manager.createFile(atPath: file.path, contents: Data(), attributes: [.posixPermissions: 0o600]) else {
+                    opportunityFocusLoggingStopped = true; return
+                }
+            }
+            let attributes = try manager.attributesOfItem(atPath: file.path)
+            guard let kind = attributes[.type] as? FileAttributeType, kind == .typeRegular else {
+                opportunityFocusLoggingStopped = true; return
+            }
+            let handle = try FileHandle(forWritingTo: file)
+            defer { try? handle.close() }
+            let size = try handle.seekToEnd()
+            guard size <= maximumBytes else { opportunityFocusLoggingStopped = true; return }
+            let bytes = try encoded(event, field: field, flags: flags)
+            if size + UInt64(bytes.count) > maximumBytes - 512 {
+                let marker = try encoded(.capacityReached, field: .none, flags: [.capacityReached: true])
+                if size + UInt64(marker.count) <= maximumBytes { try handle.write(contentsOf: marker) }
+                opportunityFocusLoggingStopped = true
+                return
+            }
+            try handle.write(contentsOf: bytes)
+        } catch {
+            opportunityFocusLoggingStopped = true
+        }
+    }
     #endif
     static func makeCareerStore() -> NativeCareerStore {
         NativeCareerStore(storageURL: acceptanceRoot?.appendingPathComponent("planning.json"))

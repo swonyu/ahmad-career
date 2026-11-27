@@ -55,6 +55,8 @@ Use JDK 21 (JDK 17 also meets AGP's baseline) and Android SDK Platform 36. AGP s
 bash checks/run-policy-checks.sh
 ```
 
+With a Gradle distribution cached locally, run `python3 checks/search-observation-jvm-harness.py` from this directory to check search-history persistence, outage recovery and cursor handling on a JVM. Set `GRADLE_HOME` to select a distribution and `JAVA_HOME` to select its compatible JDK.
+
 The checked-in wrapper launcher matches the official Gradle 8.13 checksum; it now downloads the security-patched Gradle 8.14.7 distribution and verifies its official SHA-256. The narrow distribution update follows the upstream security advisories and retains the documented AGP/Kotlin compatibility bounds. Pinned dependencies: AGP 8.13.2, Kotlin and Compose compiler plugin 2.3.10, Compose BOM 2025.10.01, Activity 1.11.0, Lifecycle 2.9.4. Minimum phone version: Android 8 / API 26. Current unreleased candidate: **0.6.0**, version code **7**. Debug package: `com.saleh.careerfinder.preview`. Release package: `com.saleh.careerfinder`; release signing is not configured.
 
 Compatibility references:
