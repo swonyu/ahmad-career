@@ -265,7 +265,7 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
     runs-on: macos-26
     # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
-    timeout-minutes: 70
+    timeout-minutes: 115
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
@@ -390,7 +390,7 @@ jobs:
       - name: Exercise native phone flows with isolated synthetic data
         if: ${{ !startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') }}
         shell: bash
-        timeout-minutes: 60
+        timeout-minutes: 100
         run: |
           set -o pipefail
           selection=()

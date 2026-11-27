@@ -107,7 +107,7 @@ object PublicDiscoveryService : DiscoveryService {
     fun supportedSource(input: String): Boolean =
         input.matches(Regex("(?:greenhouse:|lever:(?:global|eu):)[A-Za-z0-9_-]{1,80}")) || runCatching {
             val url = URI(BoundaryPolicy.opportunityURL(input))
-            url.host.lowercase() in boardHosts && url.port == -1 && !url.path.isNullOrBlank() && url.path != "/"
+            URI(input).rawAuthority.lowercase(Locale.ROOT) in boardHosts && !url.path.isNullOrBlank() && url.path != "/"
         }.getOrDefault(false)
 
     /** Same acceptance rules as the committed hosted parseDiscoverySource. A null result is not a supported board. */
@@ -168,7 +168,7 @@ object PublicDiscoveryService : DiscoveryService {
         val head = raw.substring(0, headEnd)
         if (Regex("""(?:/\.{1,2}(?:/|$)|%)""").containsMatchIn(head)) return null
         val uri = runCatching { URI(raw) }.getOrNull() ?: return null
-        if (uri.scheme?.lowercase(Locale.ROOT) != "https" || uri.userInfo != null || uri.port != -1) return null
+        if (uri.scheme?.lowercase(Locale.ROOT) != "https" || uri.rawAuthority?.lowercase(Locale.ROOT) !in boardHosts) return null
         if (!uri.fragment.isNullOrEmpty()) return null
         val rawPath = uri.rawPath ?: return null
         if (rawPath.contains('%')) return null

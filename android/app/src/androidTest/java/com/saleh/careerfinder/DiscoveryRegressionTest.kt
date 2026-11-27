@@ -89,7 +89,7 @@ class DiscoveryRegressionTest {
         assertTrue(url.rawQuery.contains("q=clinic+%26+care"))
         assertTrue(url.rawQuery.endsWith("remote=remote"))
         assertFalse(url.rawQuery.contains("token"))
-        for (source in listOf("https://evil.invalid/board", "https://jobs.lever.co.evil.invalid/board", "https://user@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board"))
+        for (source in listOf("https://evil.invalid/board", "https://jobs.lever.co.evil.invalid/board", "https://user@jobs.lever.co/board", "https://jobs.lever.co:443/board", "https://jobs.lever.co:/board", "http://jobs.lever.co/board"))
             assertFalse(source, PublicDiscoveryService.supportedSource(source))
         assertTrue(PublicDiscoveryService.supportedSource("https://jobs.eu.lever.co/example-board/00000000-0000-4000-8000-000000000001"))
         try { PublicDiscoveryService.searchURL(DiscoveryFilters(sources = (1..5).map { "greenhouse:board-$it" }), null); fail("Too many sources") }
@@ -227,7 +227,7 @@ class DiscoveryRegressionTest {
         assertEquals("lever:global:spotify", PublicDiscoveryService.canonicalBoard("https://jobs.lever.co/spotify/00000000-0000-4000-8000-000000000001/apply")?.id)
         assertNull(PublicDiscoveryService.canonicalBoard("https://jobs.eu.lever.co/example-board/123"))
         assertTrue(PublicDiscoveryService.supportedSource("https://jobs.eu.lever.co/example-board/123"))
-        val rejected = listOf("https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board",
+        val rejected = listOf("https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "https://jobs.lever.co:/board", "http://jobs.lever.co/board",
             "https://jobs.lever.co/board%2Fhidden", "https://job-boards.greenhouse.io/canonical/../other", "https://job-boards.greenhouse.io/canonical?extra=1",
             "https://boards.greenhouse.io/embed/job_board?for=one&for=two", "lever:GLOBAL:board", "https://job-boards.greenhouse.io/canonical#section")
         for (raw in rejected) assertNull(raw, PublicDiscoveryService.canonicalBoard(raw))
