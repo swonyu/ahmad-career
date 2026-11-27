@@ -52,7 +52,7 @@ function discoveryNoticeText(notice: string, t: (source: string) => string): str
     : t(notice);
 }
 
-function DiscoveryEmptyState({ status, busy, onRetry }: { status: DiscoveryPage["status"]; busy: boolean; onRetry?: () => void }) {
+function DiscoveryEmptyState({ status, busy, onRetry, retryComplete = false }: { status: DiscoveryPage["status"]; busy: boolean; onRetry?: () => void; retryComplete?: boolean }) {
   const { t } = useI18n();
   const title = status === "unavailable" ? "Current openings could not be checked."
     : status === "partial" ? "No matches in the results we could check."
@@ -60,7 +60,7 @@ function DiscoveryEmptyState({ status, busy, onRetry }: { status: DiscoveryPage[
   const detail = status === "unavailable" ? "The selected boards did not return results. Retry the same search, or review the source details."
     : status === "partial" ? "This search is incomplete. Review the source details, or retry the same search."
       : "Try a broader job title, another location, or a different employer board. You can also search LinkedIn above.";
-  return <div className="phone-empty compact"><h2>{t(title)}</h2><p>{t(detail)}</p>{status !== "complete" && onRetry && <button type="button" className="button secondary" disabled={busy} onClick={onRetry}>{t("Retry this search")}</button>}</div>;
+  return <div className="phone-empty compact"><h2>{t(title)}</h2><p>{t(detail)}</p>{(status !== "complete" || retryComplete) && onRetry && <button type="button" className="button secondary" disabled={busy} onClick={onRetry}>{t("Retry this search")}</button>}</div>;
 }
 
 function message(error: unknown): string {
@@ -448,6 +448,13 @@ export default function PhoneApp({ account }: { account: Account }) {
         page = discoveryPageSchema.parse(await phoneAPI(discoveryPath(requested, cursor), { signal: controller.signal }));
       } catch (error) {
         const ownerChanged = error instanceof APIError && (error.status === 401 || ["account_changed", "workspace_changed", "sign_in_required"].includes(error.code));
+        const changedPage = more && !ownerChanged && error instanceof APIError && error.status === 409;
+        const currentScope = snapshotRef.current?.scope;
+        const expectedStartupScope = account ? `account:${encodeURIComponent(account.id)}:${workspaceRef.current?.workspaceId ?? "new"}` : "guest";
+        const sameOwner = draftScope ? currentScope === draftScope : !currentScope || currentScope === expectedStartupScope;
+        // Retire a rejected cursor before draft storage, which may fail. Startup
+        // may adopt this account's scope while the public page read is pending.
+        if (changedPage && generation === epoch.current && !identityUnverified.current && !locked && sameOwner) setRestored(true);
         // Retain edits made while the request was pending, but never write into
         // a changed account. Vault failures before/after transport are not retried.
         if (!ownerChanged && generation === epoch.current && draftScope === snapshotRef.current?.scope && !identityUnverified.current) await saveFilterDraft();
@@ -1049,10 +1056,11 @@ export default function PhoneApp({ account }: { account: Account }) {
           {searchNewResult?.baselineReset && <p className="phone-inline-note">{t("Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new.")}</p>}
           {incompleteSearch && searchPage.jobs.length > 0 && <div className="phone-inline-note" role="status"><p>{t("This search is incomplete. Review the source details, or retry the same search.")}</p>{searchedFilters && <button className="text-button" disabled={Boolean(busy) || loading || locked || checkingIdentity} onClick={() => void searchJobs("retry")}>{t("Retry this search")}</button>}</div>}
           {searchPage.sources.filter(source => source.error || ["stale", "unavailable"].includes(source.status)).map(source => <div className="phone-source-note" key={source.id}><strong><bdi>{source.name}</bdi></strong><a className="text-button" href={source.boardUrl} target="_blank" rel="noopener noreferrer">{t("Open employer page ")}<span className="visually-hidden"><bdi>{source.name}</bdi></span></a>{source.status === "stale" && <p>{t("Showing an earlier check of this board.")}</p>}{(source.error?.message || source.status !== "stale") && <p>{source.error?.message ? t(source.error.message) : t("This board could not provide current results.")}</p>}</div>)}
-          {!searchPage.jobs.length && <DiscoveryEmptyState status={searchPage.status === "complete" && incompleteSearch ? "partial" : searchPage.status} busy={Boolean(busy) || loading || locked || checkingIdentity} onRetry={searchedFilters ? () => void searchJobs("retry") : undefined} />}
+          {!searchPage.jobs.length && <DiscoveryEmptyState status={searchPage.status === "complete" && incompleteSearch ? "partial" : searchPage.status} busy={Boolean(busy) || loading || locked || checkingIdentity} onRetry={searchedFilters ? () => void searchJobs("retry") : undefined} retryComplete={restored} />}
           {showNewOnly && !shownSearchJobs.length && searchPage.jobs.length > 0 && <div className="phone-empty compact"><h3>{t("No openings are new in the results compared.")}</h3><button type="button" className="text-button" onClick={() => setShowNewOnly(false)}>{t("Show all results")}</button></div>}
           {shownSearchJobs.map(job => <JobCard key={jobIdentity(job.url)} newToSearch={newSearchIDs.has(job.id)} job={{ ...job, country: job.country ?? "" }} saved={jobs.some(saved => jobIdentity(saved.url) === jobIdentity(job.url))} onSave={() => void saveJob({ ...job, country: job.country ?? "" })} onDetails={() => setDialog({ kind: "details", job: { ...job, country: job.country ?? "" } })} busy={cannotSave} />)}
           {localResultLimitReached && <p className="phone-inline-note">{t("You have viewed 200 results. Refine the job title, location, or employer boards to narrow your search.")}</p>}
+          {restored && !incompleteSearch && searchPage.jobs.length > 0 && searchedFilters && <button className="button secondary full" disabled={Boolean(busy) || loading || locked || checkingIdentity} onClick={() => void searchJobs("retry")}>{t("Retry this search")}</button>}
           {searchPage.nextCursor && !restored && !localResultLimitReached && <button className="button secondary full" disabled={Boolean(busy)} onClick={() => void searchJobs("more")}>{t("Load more jobs")}</button>}
           {searchPage.limited && <p className="phone-note">{t("Some boards have more jobs than can be checked at once. Open an employer’s website for its complete list.")}</p>}
           <p className="phone-note">{discoveryNoticeText(searchPage.notice, t)}</p>
