@@ -9,7 +9,7 @@
     "test:applications": "node applications-check.mjs",
     "applications": "node applications/server.mjs",
     "pair-phone": "node applications/pair.mjs",
-    "test:legacy-history": "cd historical/public1.3 && node check.mjs && node record-check.mjs && node feed-check.mjs && node followup-check.mjs && node backup-check.mjs && node role-review-check.mjs && node personalization-check.mjs"
+    "test:legacy-history": "bash test-legacy-history.sh"
   },
   "dependencies": {
     "pdf-lib": "1.17.1"
