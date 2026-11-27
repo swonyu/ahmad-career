@@ -416,6 +416,7 @@ jobs:
               cases=(CareerFinderApplicationHistoryUITests/testEnglishApplicationHistoryAcceptance
                 CareerFinderApplicationHistoryUITests/testArabicApplicationHistoryAcceptance
                 CareerFinderSearchHistoryUITests/testArabicSearchHistoryAcceptance
+                CareerFinderSearchHistoryUITests/testEnglishSearchHistoryAcceptance
                 CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply
                 CareerFinderUITests/testSavedSearchFindsArabicNotesAndKeepsOriginalText)
               ;;
