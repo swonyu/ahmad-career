@@ -82,10 +82,9 @@ class WorkspaceRegressionTest {
                             Resume(pdf.getString("name").trim(::jsWhitespace), bytes.size.toLong(), BoundaryPolicy.sha256(bytes))
                         }
                     })
-                    profile = saved
-                    JSONObject().put("ok", true).put("profile", if (malformedProfileReply) JSONObject() else profileData().apply {
-                        if (overrideProfileReplyResume) put("resume", profileReplyResume?.metadata() ?: JSONObject.NULL)
-                    })
+                    // The acknowledged response and later workspace read describe one committed revision.
+                    profile = if (overrideProfileReplyResume) saved.copy(resume = profileReplyResume) else saved
+                    JSONObject().put("ok", true).put("profile", if (malformedProfileReply) JSONObject() else profileData())
                 }
                 "jobs" -> {
                     if (rejectJobSave) throw ApiFailure(503, "fixture_unavailable", "Fixture save unavailable")
