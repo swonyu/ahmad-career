@@ -1,0 +1,201 @@
+{
+  "phase": "cleaned-up",
+  "syntheticOnly": true,
+  "productionAccountUsed": false,
+  "employerRequests": false,
+  "oldAvdChanged": false,
+  "appleToolingActions": false,
+  "startedAt": "2026-11-16T23:14:27.750837+00:00",
+  "oldAvdConfigSha256": "f9a9e577923d851a895ff689666baf8291ee95d65374d88d13453bcf1b7c8d79",
+  "shared5037Before": [
+    {
+      "pid": 40818,
+      "commandSha256": "65a8c25d088ee608b888ea3a11fbd871e95e8dc11bbd3210415a6dc410dbde58"
+    }
+  ],
+  "reason": "Independent review fixes: retain record-only imports without restoring bookmarks; active-plan status, approval and continuation guards; fail-closed conflicting application evidence. Six native regressions added. Long-title stage controls wrap; old lazy-list test navigation fixed; exact complete 200-result pagination is no longer marked truncated; bounded notes preserve complete Unicode code points.",
+  "preserved05Sha256": "20327d33b650f396694885a3331b03a7708a56b1f1efceea89dde6f9d7d95a9f",
+  "manifestSha256": "aca4bd284da0c9198a3231db946abe48dd7237015eb72a114479ee5f4921be8c",
+  "sourceFileCount": 44,
+  "buildExitCode": 0,
+  "buildElapsedSeconds": 57.627,
+  "apkSha256": "d9fe110d2dc436e0dd9174f4decb51b823ec0ce4f0349ecca029fba6b0a3dccf",
+  "testApkSha256": "43783efd3d40c110ebf6c7852c646bd757a41375ebaadac6f29d41d4264fe710",
+  "finalArtifact": {
+    "path": "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-navigation-check-20261116/run4/artifacts/Career-Finder-Android-0.6.0-preview.apk",
+    "bytes": 11825696,
+    "sha256": "d9fe110d2dc436e0dd9174f4decb51b823ec0ce4f0349ecca029fba6b0a3dccf",
+    "package": "com.saleh.careerfinder.preview",
+    "versionCode": 7,
+    "versionName": "0.6.0",
+    "certificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "matchesImmutable04Signer": true,
+    "immutable04ApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "originalDebugKeystoreUnchanged": true,
+    "normalSystemTrustOnly": true,
+    "fixtureCaEntries": []
+  },
+  "adbPid": 10792,
+  "emulatorPid": 10795,
+  "emulatorCommand": [
+    "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/tools/android-toolchain/sdk/emulator/emulator",
+    "-avd",
+    "CareerFinderNavigation20261116R4",
+    "-port",
+    "5578",
+    "-no-window",
+    "-no-audio",
+    "-no-snapshot-load",
+    "-no-snapshot-save"
+  ],
+  "isolatedEnvironment": {
+    "ANDROID_AVD_HOME": "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-navigation-check-20261116/run4/runtime/avd",
+    "ANDROID_USER_HOME": "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-navigation-check-20261116/run4/runtime/android-user",
+    "ANDROID_ADB_SERVER_PORT": "5053",
+    "ADB_SERVER_SOCKET": "tcp:127.0.0.1:5053",
+    "ANDROID_SERIAL": "emulator-5578",
+    "ADB_LOCAL_TRANSPORT_MAX_PORT": "0",
+    "ADB_MDNS_AUTO_CONNECT": "0"
+  },
+  "runtime-framebuffer": {
+    "width": 1080,
+    "height": 1920,
+    "bitDepth": 8,
+    "colorType": 6,
+    "bytes": 1276545,
+    "sha256": "7fb0985331af6da465b14138030d1e56b88cd2f679156457759e8314d201eed9"
+  },
+  "settings": {
+    "size": "Physical size: 1080x1920",
+    "density": "Physical density: 480",
+    "fontScale": "1.8",
+    "forceRtl": "1",
+    "night": "Night mode: yes",
+    "appLocales": "Locales for com.saleh.careerfinder.preview for user 0 are [ar]"
+  },
+  "testFilter": "com.saleh.careerfinder.WorkspaceRegressionTest,com.saleh.careerfinder.LinkedInRegressionTest,com.saleh.careerfinder.LinkedInPhoneAcceptanceTest,com.saleh.careerfinder.ApplicationRecordRegressionTest,com.saleh.careerfinder.DiscoveryRegressionTest,com.saleh.careerfinder.DiscoveryPersistenceRegressionTest,com.saleh.careerfinder.NavigationPhoneAcceptanceTest,com.saleh.careerfinder.PhonePolishAcceptanceTest,com.saleh.careerfinder.ContinuationRegressionTest,com.saleh.careerfinder.ExperienceModelRegressionTest,com.saleh.careerfinder.VaultAcceptanceTest,com.saleh.careerfinder.PhoneAcceptanceTest",
+  "instrumentationExitCode": 0,
+  "testsPassed": true,
+  "testCount": 83,
+  "confirmationCaptures": {
+    "linkedin-profile-guidance": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 147956,
+      "sha256": "f59a20866ee10b2c06bc700a1720368d7616c29067880770d8ac0180dd4c41af"
+    },
+    "linkedin-exact-review": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 123412,
+      "sha256": "466479ff6b4244cd35e937e78ea938be928558158583937b070d6e3312a5ee58"
+    },
+    "linkedin-search-handoff": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 143245,
+      "sha256": "847095f9ad0bd01b3714c60e1cdf50c5562511ab3ada7f217f3ba9351e1b0b53"
+    },
+    "private-record-date-picker": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 88380,
+      "sha256": "16de7831e7ff541ea993fd7d0b7189ce529d97471e4e107bf6e84c291e02ed51"
+    },
+    "private-record-editor": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 115127,
+      "sha256": "f61334a9020d3f813986f8795e62af1b944411ee0118170eff130e1feb9107e4"
+    },
+    "private-follow-up-list": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 153565,
+      "sha256": "d99d5ec12d2a5f4396ae97716f29544dc2b64e2f945ca383bf3e1045fa24dc9d"
+    },
+    "private-record-correction": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 131290,
+      "sha256": "e4aa7e244e83e03afbb178f9e7ba8745ad7d68e7a2258b503563665d4e85880f"
+    },
+    "two-step-connection": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 132905,
+      "sha256": "d26740307a89b52fef648c1b1dce1f8aa81f49ffbe9a3849556170643acb2bca"
+    },
+    "custom-connection-address": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 155984,
+      "sha256": "ceabe7a234eb2dde6ade98ff29e161bca0bd261678cdb854415071fb0c49687c"
+    },
+    "previous-search-results": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 155544,
+      "sha256": "20772e2597f94acc5b8868bc6ff23cb907e280b4d686fd201b55926e52dcd8cb"
+    },
+    "record-only-phone-import": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 156724,
+      "sha256": "f2137d6deba5f16b7dbd7a70489b527ece8d2e4e30401f230434b34dcafe979d"
+    },
+    "unfinished-opportunity-choices": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 102727,
+      "sha256": "f8a95a85dd665f3170b06e6c3fa4bd3f80c415a37e3e1ca57d8e1f45feb6f804"
+    },
+    "remove-local-opportunity-confirmation": {
+      "width": 1080,
+      "height": 1920,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 134805,
+      "sha256": "5116c80c2de9e9d76b30229e770fe8c55931834b50bc7a5610979d6ab1a34b0a"
+    }
+  },
+  "sourceInputsUnchangedAfterRun": true,
+  "completedAt": "2026-11-16T23:17:03.885854+00:00",
+  "cleanup": {
+    "at": "2026-11-16T23:17:03.886236+00:00",
+    "ownedEmulatorStopped": true,
+    "ownedAdbStopped": true,
+    "newAvdRemoved": true,
+    "oldAvdConfigUnchanged": true,
+    "shared5037Unchanged": true,
+    "portsAfter": {
+      "5053": false,
+      "5578": false,
+      "5579": false
+    }
+  }
+}

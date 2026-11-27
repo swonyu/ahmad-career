@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "version": 1,
+  "generatedAt": "2026-11-16T16:00:00.000Z",
+  "status": "partial",
+  "jobs": [
+    {
+      "id": "greenhouse:example-board:1001",
+      "sourceId": "greenhouse:example-board",
+      "sourceName": "Synthetic employer board",
+      "provider": "greenhouse",
+      "title": "Synthetic clinic operations coordinator",
+      "company": "Synthetic employer board",
+      "url": "https://job-boards.greenhouse.io/example-board/jobs/1001",
+      "location": "London",
+      "country": null,
+      "remote": null,
+      "summary": "Synthetic contract fixture. This is not a real vacancy.",
+      "publishedAt": null,
+      "updatedAt": "2026-11-15T12:00:00.000Z",
+      "checkedAt": "2026-11-16T15:59:00.000Z",
+      "stale": false
+    },
+    {
+      "id": "lever:eu:example-board:00000000-0000-4000-8000-000000000001",
+      "sourceId": "lever:eu:example-board",
+      "sourceName": "Synthetic remote board",
+      "provider": "lever",
+      "title": "Synthetic customer success specialist",
+      "company": "Synthetic remote board",
+      "url": "https://jobs.eu.lever.co/example-board/00000000-0000-4000-8000-000000000001",
+      "location": "Remote — United Kingdom",
+      "country": "GB",
+      "remote": true,
+      "summary": "Synthetic contract fixture. Confirm the employer's location restrictions.",
+      "publishedAt": null,
+      "updatedAt": null,
+      "checkedAt": "2026-11-16T14:30:00.000Z",
+      "stale": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "greenhouse:example-board",
+      "name": "Synthetic employer board",
+      "provider": "greenhouse",
+      "boardUrl": "https://job-boards.greenhouse.io/example-board",
+      "status": "cached",
+      "checkedAt": "2026-11-16T15:59:00.000Z",
+      "availableCount": 1,
+      "matchedCount": 1,
+      "limited": false,
+      "error": null
+    },
+    {
+      "id": "lever:eu:example-board",
+      "name": "Synthetic remote board",
+      "provider": "lever",
+      "boardUrl": "https://jobs.eu.lever.co/example-board",
+      "status": "stale",
+      "checkedAt": "2026-11-16T14:30:00.000Z",
+      "availableCount": 1,
+      "matchedCount": 1,
+      "limited": false,
+      "error": {"code": "source_unavailable", "message": "The employer board could not be refreshed. Earlier results are shown."}
+    }
+  ],
+  "nextCursor": null,
+  "totalMatches": 2,
+  "limited": false,
+  "notice": "Search covers only the selected public employer boards. Results can change or close; open the employer posting to confirm requirements and location eligibility."
+}

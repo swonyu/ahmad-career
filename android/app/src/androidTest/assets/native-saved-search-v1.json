@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "comparison_only": true,
+  "policy": "NFC, common Arabic vowel marks and tatweel removed, stable Unicode lowercase, every whitespace term; preserve distinct letters and raw data",
+  "cases": [
+    {
+      "id": "note-arabic-marks",
+      "fields": [
+        "Engineer",
+        "Fixture employer",
+        "Riyadh",
+        "SA",
+        "تَوَاصُل مع الموارد البشرية"
+      ],
+      "query": "تواصل",
+      "matches": true
+    },
+    {
+      "id": "note-tatweel",
+      "fields": [
+        "Engineer",
+        "Fixture employer",
+        "جــهة التوظيف"
+      ],
+      "query": "جهة",
+      "matches": true
+    },
+    {
+      "id": "marks-in-query",
+      "fields": [
+        "مهندس",
+        "اتصال لاحق"
+      ],
+      "query": "مُهَنْدِس",
+      "matches": true
+    },
+    {
+      "id": "both-fields-all-terms",
+      "fields": [
+        "Platform engineer",
+        "Fixture employer",
+        "متابعة CaseTracker"
+      ],
+      "query": "casetracker مهندس",
+      "matches": false
+    },
+    {
+      "id": "mixed-query-all-terms",
+      "fields": [
+        "مهندس",
+        "Fixture employer",
+        "متابعة CaseTracker"
+      ],
+      "query": "casetracker مهندس",
+      "matches": true
+    },
+    {
+      "id": "case-accented-name",
+      "fields": [
+        "Engineer",
+        "ÉLAN",
+        "Note"
+      ],
+      "query": "élan",
+      "matches": true
+    },
+    {
+      "id": "english-case",
+      "fields": [
+        "Platform Engineer",
+        "Fixture employer"
+      ],
+      "query": "ENGINEER",
+      "matches": true
+    },
+    {
+      "id": "extra-spaces",
+      "fields": [
+        "Platform Engineer",
+        "Fixture employer",
+        "اتصال لاحق"
+      ],
+      "query": "  engineer\tاتصال  ",
+      "matches": true
+    },
+    {
+      "id": "nbsp-spaces",
+      "fields": [
+        "Platform Engineer",
+        "اتصال لاحق"
+      ],
+      "query": "engineer اتصال",
+      "matches": true
+    },
+    {
+      "id": "empty-query",
+      "fields": [
+        "Engineer",
+        "متابعة"
+      ],
+      "query": "   ",
+      "matches": true
+    },
+    {
+      "id": "only-ignored-marks",
+      "fields": [
+        "Engineer",
+        "متابعة"
+      ],
+      "query": "ـَُ",
+      "matches": true
+    },
+    {
+      "id": "canonical-hamza",
+      "fields": [
+        "أمل",
+        "Fixture employer"
+      ],
+      "query": "أمل",
+      "matches": true
+    },
+    {
+      "id": "keep-hamza",
+      "fields": [
+        "أمل",
+        "Fixture employer"
+      ],
+      "query": "امل",
+      "matches": false
+    },
+    {
+      "id": "keep-maddah",
+      "fields": [
+        "آثار",
+        "Fixture employer"
+      ],
+      "query": "اثار",
+      "matches": false
+    },
+    {
+      "id": "keep-ta-marbuta",
+      "fields": [
+        "شركة",
+        "Fixture employer"
+      ],
+      "query": "شركه",
+      "matches": false
+    },
+    {
+      "id": "keep-alef-maqsura",
+      "fields": [
+        "على",
+        "Fixture employer"
+      ],
+      "query": "علي",
+      "matches": false
+    },
+    {
+      "id": "superscript-alef",
+      "fields": [
+        "هٰذا",
+        "Fixture employer"
+      ],
+      "query": "هذا",
+      "matches": true
+    },
+    {
+      "id": "punctuation-literal",
+      "fields": [
+        "Engineer",
+        "Saved {0} note"
+      ],
+      "query": "{0}",
+      "matches": true
+    },
+    {
+      "id": "missing-term",
+      "fields": [
+        "Engineer",
+        "متابعة"
+      ],
+      "query": "engineer nonexistent",
+      "matches": false
+    },
+    {
+      "id": "retain-latin-accent",
+      "fields": [
+        "Résumé specialist",
+        "Fixture employer"
+      ],
+      "query": "resume",
+      "matches": false
+    },
+    {
+      "id": "long-note-tail",
+      "fields": [
+        "Engineer",
+        "سسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسسس تَوَاصُل CaseTracker"
+      ],
+      "query": "casetracker تواصل",
+      "matches": true
+    }
+  ]
+}

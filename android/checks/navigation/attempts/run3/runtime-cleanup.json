@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-16T23:04:04.060002+00:00",
+  "ownedEmulatorStopped": true,
+  "ownedAdbStopped": true,
+  "newAvdRemoved": true,
+  "oldAvdConfigUnchanged": true,
+  "shared5037Unchanged": true,
+  "portsAfter": {
+    "5053": false,
+    "5578": false,
+    "5579": false
+  }
+}

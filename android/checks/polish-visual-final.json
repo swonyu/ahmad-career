@@ -1,0 +1,43 @@
+{
+  "observedAtUtc": "2026-11-16T16:31:29.938378+00:00",
+  "finalApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+  "configuration": {
+    "sizePixels": "720x1600",
+    "densityDpi": 320,
+    "widthDp": 360,
+    "fontScale": 1.8,
+    "theme": "dark",
+    "appLocale": "ar",
+    "layoutDirection": "RTL",
+    "hardwareKeyboardImeEnabled": true
+  },
+  "countryRowVisibleWithIme": true,
+  "confirmVisibleWithIme": true,
+  "titleAndCloseVisibleWithIme": true,
+  "systemBarContrastRestored": true,
+  "actualDoneKeyHidesIme": true,
+  "screenshots": [
+    {
+      "name": "country-keyboard-final.png",
+      "bytes": 106075,
+      "sha256": "796169c233cb51e8d970c8cc01bd025eb44185caa43f348df202df5353be3779",
+      "path": "<isolated-task-root>/android-proof/polish-v0.4.0/country-keyboard-final.png",
+      "apkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62"
+    },
+    {
+      "name": "country-done-final.png",
+      "bytes": 114483,
+      "sha256": "e9bdcf612c509c009185f13196aee20ed5f958fe2fa46a53193d92b44e85dd1a",
+      "path": "<isolated-task-root>/android-proof/polish-v0.4.0/country-done-final.png",
+      "apkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62"
+    },
+    {
+      "name": "discovery-live-results.png",
+      "bytes": 214115,
+      "sha256": "948dc245da66070239bfa6cb9bc84a88a18f6012c3b6fe8d83c5e62e4757bd2c",
+      "path": "<isolated-task-root>/android-proof/polish-v0.4.0/discovery-live-results.png",
+      "apkSha256": "d1d235edf5cefaa3880d09aaeba5dc0e858a86e484034c9801140934fd9599f2"
+    }
+  ],
+  "publicDiscoveryNote": "The real public-search screenshot was observed on the earlier 0.4 candidate before the dialog-only inset/Done fixes. The final candidate retains the identical discovery client/source hash. No unrelated public-network check was repeated."
+}

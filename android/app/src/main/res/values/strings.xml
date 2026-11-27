@@ -1,0 +1,4 @@
+<resources>
+    <!-- Keep the product brand identical to iOS and the hosted application. -->
+    <string name="app_name" translatable="false">Career Finder</string>
+</resources>

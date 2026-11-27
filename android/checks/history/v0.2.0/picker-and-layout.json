@@ -1,0 +1,51 @@
+{
+  "observedAtUtc": "2026-11-16T14:04:18.662682+00:00",
+  "systemPickerPackage": "com.android.documentsui",
+  "selectedFile": "Career-Finder-Picker-Check.pdf",
+  "fixtureBytes": 609,
+  "fixtureSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+  "returnedToApp": true,
+  "privateDraftSurvivedProcessRestart": true,
+  "configuration": {
+    "sizePixels": "720x1280",
+    "densityDpi": 320,
+    "widthDp": 360,
+    "fontScale": 1.8,
+    "theme": "dark",
+    "appLocale": "ar",
+    "layoutDirection": "RTL"
+  },
+  "controlsReachable": true,
+  "screenshots": [
+    {
+      "name": "compact-rtl-dark-final.png",
+      "path": "<isolated-task-root>/android-proof/reliability/compact-rtl-dark-final.png",
+      "bytes": 109153,
+      "sha256": "e19164587022c69299edca2a74ebc0ba40fe55c221f4b40ada60ac73a8d3afa9"
+    },
+    {
+      "name": "system-picker.png",
+      "path": "<isolated-task-root>/android-proof/reliability/system-picker.png",
+      "bytes": 55506,
+      "sha256": "963ec0f3b3365f53d2172492c64340ccde1ecc4bf37f96a41b4f33a8bd3f549c"
+    },
+    {
+      "name": "picker-restored.png",
+      "path": "<isolated-task-root>/android-proof/reliability/picker-restored.png",
+      "bytes": 98990,
+      "sha256": "569a5171c3705897eb27d251971584b018e7e1b87c338c9a3cc8a663315ffbcb"
+    },
+    {
+      "name": "prepared-review-final.png",
+      "path": "<isolated-task-root>/android-proof/reliability/prepared-review-final.png",
+      "bytes": 207854,
+      "sha256": "706431f0a86a011c1e65f5d119d4e9938e201c73b1871ebc38f0896a23b4151d"
+    },
+    {
+      "name": "test-receipts-final.png",
+      "path": "<isolated-task-root>/android-proof/reliability/test-receipts-final.png",
+      "bytes": 200782,
+      "sha256": "a6e21a0b3db802b63789d28b6384d545d643299b9f62bca6362afb349ef09eef"
+    }
+  ]
+}
