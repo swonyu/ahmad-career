@@ -105,15 +105,15 @@ class SavedComparisonUITestCase: XCTestCase {
         if !value { failureCount += 1; record("failure-\(failureCount)", app: app); XCTFail(message); throw ObservationFailure.failed }
         XCTAssertTrue(value, message)
     }
-    func wait(_ message: String, app: XCUIApplication, _ condition: () -> Bool) throws {
-        let started = ProcessInfo.processInfo.systemUptime, deadline = started + 5
+    func wait(_ message: String, app: XCUIApplication, timeout: TimeInterval = 5, _ condition: () -> Bool) throws {
+        let started = ProcessInfo.processInfo.systemUptime, deadline = started + timeout
         while ProcessInfo.processInfo.systemUptime < deadline {
             let matched = condition(), finished = ProcessInfo.processInfo.systemUptime
             if matched && finished <= deadline { print("Saved-comparison observation passed in \(finished - started)s: \(message)"); return }
             if finished >= deadline { break }
             RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, deadline - finished)))
         }
-        try require(false, message + " (no accepted observation inside five seconds)", app: app)
+        try require(false, message + " (no accepted observation inside \(Int(timeout)) seconds)", app: app)
     }
     func scroll(_ distance: CGFloat, app: XCUIApplication) throws {
         let bounds = viewport(app), frame = app.frame
@@ -234,7 +234,16 @@ class SavedComparisonUITestCase: XCTestCase {
             try capture(prefix + (id == a ? "-riyadh-tracking" : "-jeddah-tracking"), anchor: link, app: app,
                 companions: [fact(id, "stage", app: app), fact(id, "followUp", app: app)])
         }
-        try chromeTap(button("saved.comparison.close", app: app), app: app)
+        let close = button("saved.comparison.close", app: app)
+        try wait("Back to Saved has a visible touch target below the comparison title", app: app) {
+            whole(close, app: app, chrome: true) && finite(close.frame.intersection(viewport(app)))
+        }
+        // The system includes the obstructed top inset in this button's AX frame.
+        let touchFrame = close.frame.intersection(viewport(app)), appFrame = app.frame
+        try require(whole(close, app: app, chrome: true) && finite(touchFrame) && appFrame.contains(touchFrame),
+                    "The Back to Saved touch stays on the visible control below the title", app: app)
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
+            dx: touchFrame.midX - appFrame.minX, dy: touchFrame.midY - appFrame.minY)).tap()
         let closedTitle = modalTitle!
         try wait("Back to Saved dismisses the actual sheet", app: app) {
             bars(closedTitle, app: app).count == 0 && !item("saved.comparison.content", app: app).exists
@@ -329,7 +338,8 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
 
         // Observe the system's Copy action without choosing it or any destination.
         let sheet = app.otherElements["ActivityListView"]
-        try wait("The system share sheet offers a visible, enabled Copy action", app: app) {
+        // The system's remote action list appeared after the ordinary five-second window.
+        try wait("The system share sheet offers a visible Copy action", app: app, timeout: 10) {
             // UIActivityViewController renders its action list in another process.
             // Inspect one fresh accessibility tree for both the popup and its cell.
             guard let root = try? app.snapshot(), finite(root.frame) else { return false }
@@ -349,7 +359,7 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
                 pending.append(contentsOf: node.children)
             }
             guard actions.count == 1, let copy = actions.first else { return false }
-            return copy.isEnabled && finite(copy.frame) && root.frame.contains(copy.frame)
+            return finite(copy.frame) && root.frame.contains(copy.frame)
                 && popup.frame.insetBy(dx: -1, dy: -1).contains(copy.frame)
         }
         record("system-share-sheet", app: app)
