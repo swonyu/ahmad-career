@@ -1,0 +1,17 @@
+    t =    79.36s Tap "Done typing" Button
+    t =    79.36s     Wait for com.ahmadalayed.career to idle
+    t =    79.37s     Find the "Done typing" Button
+    t =    79.42s     Check for interrupting elements affecting "Done typing" Button
+    t =    79.46s     Synthesize event
+    t =    79.75s     Wait for com.ahmadalayed.career to idle
+    t =    81.63s Get all elements bound by index for: Descendants matching type Key
+    t =    81.67s Get all elements bound by index for: Elements matching predicate '"Done typing" IN identifiers'
+    t =    81.72s Checking existence of `Keyboard (First Match)`
+    t =    81.80s Find the "connection.code" SecureTextField
+    t =    81.85s Find the "connection.code" SecureTextField
+    t =    81.90s Find the "connection.connect" Button
+    t =    81.95s Find the Target Application 'com.ahmadalayed.career'
+    t =    82.06s Added attachment named '13a-hosted-browser-accessibility-text-before-browser'
+    t =    82.06s Requesting snapshot of accessibility hierarchy for app with pid 74497
+    t =    82.29s Requesting snapshot of accessibility hierarchy for app with pid 74497
+    t =    82.36s Added attachment named '13a-hosted-browser-accessibility-text-before-browser-geometry-and-original-AX'
