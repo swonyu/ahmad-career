@@ -302,7 +302,19 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let title = modalNavigationTitle!
         try nav(save ? localized("Save", "حفظ") : localized("Cancel", "إلغاء"), app: app)
         try wait("The profile editor closes through its actual action", app: app) {
-            modalIsClosed(title, app: app) && !item("application.firstName", app: app).exists
+            guard let snapshot = try? app.snapshot() else { return false }
+            var pending: [any XCUIElementSnapshot] = [snapshot]
+            var profileButtons = 0, editorBars = 0, firstNameFields = 0
+            while let element = pending.popLast() {
+                if element.elementType == .button && element.identifier == "applications.profile" {
+                    profileButtons += 1
+                    guard finite(element.frame), snapshot.frame.contains(element.frame) else { return false }
+                }
+                if element.elementType == .navigationBar && element.identifier == title { editorBars += 1 }
+                if element.elementType == .textField && element.identifier == "application.firstName" { firstNameFields += 1 }
+                pending.append(contentsOf: element.children)
+            }
+            return profileButtons == 1 && editorBars == 0 && firstNameFields == 0
         }
         modalNavigationTitle = nil
     }
@@ -463,7 +475,17 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try require(address.count == 1 && address.element.value as? String == requestedURL,
             "The full PDF URL is unchanged before closing its address editor", app: safari)
         try chromeTap(identifiedButton("CancelBarItemButton", app: safari), app: safari)
-        try chromeTap(identifiedButton("MoreMenuButton", app: safari), app: safari)
+        let moreButtons = safari.buttons.matching(NSPredicate(format: "identifier == %@", "MoreMenuButton"))
+        try wait("The unique Safari More control is wholly visible and hittable", app: safari) {
+            moreButtons.count == 1 && whole(moreButtons.element, app: safari, chrome: true)
+        }
+        let more = moreButtons.element
+        let safariFrame = safari.frame, moreFrame = more.frame
+        try require(moreButtons.count == 1 && finite(safariFrame) && finite(moreFrame)
+            && safariFrame.contains(moreFrame) && more.isHittable,
+            "The exact Safari More button has one fresh, wholly visible physical frame before its single touch", app: safari)
+        safari.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: moreFrame.midX - safariFrame.minX, dy: moreFrame.midY - safariFrame.minY)).tap()
         let share = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TabBarMoreMenu"))
             .buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "ShareButton", "Share"))
         try chromeTap(share.element, app: safari)
