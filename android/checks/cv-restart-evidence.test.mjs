@@ -84,7 +84,7 @@ function originals(phase, marker) {
       companionClippedBounds: companion ? [20, 510, 120, 610] : null, wholeCompanionVisible: true,
       currentProfileFilename: early ? 'CV-A.pdf' : 'CV-B.pdf', currentProfileRevision: early ? 1 : 2,
       receiptMetadata: early ? [marker.legacyReceipt] : [marker.legacyReceipt, marker.receiptA, marker.receiptB],
-      serviceCalls: early ? seedCalls.slice(0, 2) : marker.serviceCalls};
+      serviceCalls: early ? seedCalls.slice(0, 3) : marker.serviceCalls};
     const semantics = "ROOT 0\nPrinting with useUnmergedTree = 'true'\nNode #1 at (l=0.0, t=0.0, r=1080.0, b=1920.0)px\n" +
       " |-Node #2 at (l=20.0, t=400.0, r=1000.0, b=500.0)px, Tag: 'workspace-messages'\n" +
       " VerticalScrollAxisRange = 'ScrollAxisRange(value=0.0, maxValue=112.0, reverseScrolling=false)'\n" +

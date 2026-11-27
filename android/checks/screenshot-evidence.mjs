@@ -33,6 +33,7 @@ export const REQUIRED_SCREENSHOTS = Object.freeze({
   ]),
   'com.saleh.careerfinder.acceptance': Object.freeze([
     'files/acceptance-profile-large-text.png',
+    'files/acceptance-profile-save-action.png',
     'files/acceptance-prepared.png',
     'files/acceptance-receipts.png',
   ]),

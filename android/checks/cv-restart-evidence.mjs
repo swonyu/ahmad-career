@@ -251,7 +251,7 @@ export function validateRestartPhaseOriginals(files, context, seed) {
     assert.equal(data.currentProfileRevision, early ? 1 : 2);
     assert.deepEqual(data.receiptMetadata, early ? [marker.legacyReceipt] :
       [marker.legacyReceipt, marker.receiptA, marker.receiptB]);
-    assert.deepEqual(data.serviceCalls, early ? seedCalls.slice(0, 2) : marker.serviceCalls);
+    assert.deepEqual(data.serviceCalls, early ? seedCalls.slice(0, 3) : marker.serviceCalls);
     assert.ok(Array.isArray(data.observedStatusLabels));
     assert.deepEqual(data.observedStatusLabels, marker.observedStatusLabels.slice(0, data.observedStatusLabels.length));
     const semantics = text(files.get(stem + '-semantics.txt'));
