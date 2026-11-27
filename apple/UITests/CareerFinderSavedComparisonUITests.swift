@@ -314,5 +314,29 @@ final class CareerFinderSavedComparisonBeforeUITests: SavedComparisonUITestCase 
 final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
     func testAfterEnglish() throws { try after(language: "en") }
     func testAfterArabic() throws { try after(language: "ar") }
+
+    func testSavedOpeningSharesPublicDetailsAndCanCancel() throws {
+        begin(language: "en", phase: "share")
+        let app = try launch()
+        try tap(row("Riyadh", app: app), app: app)
+        try wait("The selected Saved opening is on screen", app: app) { bars("Saved opportunity", app: app).count == 1 }
+        try tap(app.buttons["Share job with a friend"], app: app)
+        let publicText = [role, employer, "Synthetic Harbor board",
+                          "https://example.com/synthetic/saved-comparison/riyadh"].joined(separator: "\n")
+        let preview = app.staticTexts[publicText]
+        try capture("public-preview", anchor: preview, app: app)
+        try tap(app.buttons["Share job link"], app: app)
+
+        // Observe the system's Copy action without choosing it or any destination.
+        let copy = app.descendants(matching: .any).matching(NSPredicate(format:
+            "identifier == %@ OR label == %@", "com.apple.UIKit.activity.CopyToPasteboard", "Copy")).firstMatch
+        try wait("The system share sheet offers Copy", app: app) { copy.exists && copy.isHittable }
+        record("system-share-sheet", app: app)
+        let close = app.buttons.matching(NSPredicate(format: "label IN %@", ["Close", "Cancel", "Dismiss"])).element
+        try chromeTap(close, app: app)
+        try wait("Cancelling returns to the same public preview", app: app) {
+            !copy.exists && bars("Saved opportunity", app: app).count == 1 && preview.exists
+        }
+    }
 }
 #endif
