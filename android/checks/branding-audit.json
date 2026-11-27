@@ -1,0 +1,11 @@
+{
+  "observedAtUtc": "2026-11-16T16:31:29.938378+00:00",
+  "label": "Career Finder",
+  "apkVersion": "0.4.0",
+  "ahmadMatchesInMainSourceAndResources": 0,
+  "blankFreshUserProfile": true,
+  "sampleVacanciesInNormalApk": false,
+  "syntheticDiscoveryAssetOnlyInInstrumentation": true,
+  "packageAndStorageNamespacesPreserved": true,
+  "evidence": "Packaged label/signing and normal assets inspected; blank initial app and deterministic profile/empty-workspace tests exercised."
+}

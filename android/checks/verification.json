@@ -1,0 +1,396 @@
+{
+  "schemaVersion": 4,
+  "observedAtUtc": "2026-11-16T16:31:29.938378+00:00",
+  "sourceRoot": "android/",
+  "scope": "Career Finder Android preview 0.4.0: public discovery, phone polish and bounded dialog keyboard repair. No owner pairing or employer submission.",
+  "buildInputs": {
+    "manifestSha256": "806ca55a3899f489bfc7e28c3f47b9a872babeb878fa5408a7168e6f41156bad",
+    "manifestEncoding": "SHA-256 of UTF-8 JSON mapping relative paths to SHA-256, keys sorted, compact separators, no trailing newline.",
+    "includes": "32 app/instrumentation/acceptance source and Gradle/wrapper files. Documentation, checks, generated resources, caches and local configuration excluded.",
+    "files": {
+      "app/build.gradle.kts": "6a1d5108addc5ea95c0b84b60e3d1bb03ec25f7a7065bff6acedbf7a1ec1fd46",
+      "app/src/acceptance/res/xml/network_security_config.xml": "aef8c30928856fe0ae846f20aa2253b923f6a724d5435dc58de946932e75221d",
+      "app/src/androidTest/assets/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
+      "app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt": "848251a8c2e8faa8305fa32f24dfe65cd16a9b1ab50f2d960b3070cdf22cb8ea",
+      "app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt": "9176a5afe5b51b40d14076aa2974703c2a9e769688cad51bc86bddb9764dd3e9",
+      "app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt": "ce786765af24f83631b3456cc70363ebd21452e67f5c419d136e15f5126f3793",
+      "app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "344e9a28e12fd0ed6f84711b02bbbeb6279801c24088f202d6eeb874dd809c97",
+      "app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": "0249dd605084f1e8cf58ffbd6f8dc0621c377744f24ddaa4644ab9c9904b5c6a",
+      "app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "4e06d0fea251889cd56018c946223d83fb73e531521121f9df18819740214ebd",
+      "app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt": "11d66866ac03ffc98021706d149836b7ca6f780f7841eacd167b13ce67f14968",
+      "app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt": "0aea63a3e0e0831ad2b1c8f261f3df43f6a6a3438e5a9fc5006c7cf0f6ffa184",
+      "app/src/main/AndroidManifest.xml": "d824b6e7681f09b3a148b212f16de1b308b9dd9742a8cbcea7cd9807cf7386b0",
+      "app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java": "307722cfcdf3672d58afc9a15f5f4e94d80ef48827150e2b26314cdf025d73fb",
+      "app/src/main/java/com/saleh/careerfinder/CareerApi.kt": "50962862e95f2589ace17e475e12e71bf183c9858e2ad95cea4b103e36ed3404",
+      "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "b118ff237189d1ec7b8e7796380005b720a36bbf5aad852b38645155415e7cb8",
+      "app/src/main/java/com/saleh/careerfinder/Discovery.kt": "c1a2383b9be52541ab7e137dd4b9d9dfecdfafbf76b6e88d098cf026f27d35b5",
+      "app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt": "b18a4801891e44c66f4db0e01fbba528379e2bc9d36fc6d3d6ed0c52344bc4f7",
+      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "f667bdc68088b3a0facab15759e49496d557826170fa98fa3cea8b783fe97636",
+      "app/src/main/java/com/saleh/careerfinder/Models.kt": "3fe439c16ad31b2bc7f7d9fdffc25366b704f3cd7b21e793b40548a71fefe498",
+      "app/src/main/java/com/saleh/careerfinder/SecureVault.kt": "c892be2f75738457c810cd6e3e317ebc5b717ddd6a90da162e6e53b2825f6999",
+      "app/src/main/res/drawable/ic_career_finder.xml": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746",
+      "app/src/main/res/values/strings.xml": "e9aafdbf8d3dba742e5c2fc6e562540c61a79d900bb2f4556437ae9087b3d796",
+      "app/src/main/res/values/styles.xml": "009e3572499e0fe03b6517824a6376ecade78911c1fd5f7d12cedecb566d326a",
+      "app/src/main/res/xml/data_extraction_rules.xml": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22",
+      "app/src/main/res/xml/network_security_config.xml": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2",
+      "build.gradle.kts": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a",
+      "gradle.properties": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
+      "gradle/wrapper/gradle-wrapper.jar": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
+      "gradle/wrapper/gradle-wrapper.properties": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2",
+      "gradlew": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933",
+      "gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "settings.gradle.kts": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036"
+    }
+  },
+  "toolchain": {
+    "host": "macOS ARM64",
+    "java": "JDK 21",
+    "gradle": "8.13",
+    "androidGradlePlugin": "8.13.2",
+    "kotlinAndComposeCompiler": "2.3.10",
+    "composeBom": "2025.10.01",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "minSdk": 26,
+    "agpSelectedBuildTools": "35.0.0",
+    "wrapperDistributionSha256": "20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78"
+  },
+  "build": {
+    "status": "passed",
+    "command": "./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :app:processReleaseResources",
+    "gradleDurationSeconds": 15,
+    "output": "polish-build-output.txt",
+    "compiledSourceOutput": "polish-compile-output.txt",
+    "lint": {
+      "errors": 0,
+      "advisories": 6,
+      "issues": [
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Warning",
+          "message": "A newer version of Gradle than 8.13 is available: 8.14.7"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Warning",
+          "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Warning",
+          "message": "Use the KTX extension function `String.toUri` instead?"
+        }
+      ]
+    },
+    "releaseScope": "Release resources processed and inspected; no signed release APK produced."
+  },
+  "policyChecks": {
+    "status": "passed",
+    "checks": 36,
+    "command": "bash checks/run-policy-checks.sh",
+    "executedOn": [
+      "isolated macOS JDK 21"
+    ],
+    "networkRequests": 0,
+    "output": "PASS: 36 executable Android boundary-policy checks (no network, no device claims)."
+  },
+  "instrumentation": {
+    "status": "passed",
+    "passed": 35,
+    "skipped": 0,
+    "durationSeconds": 17.304,
+    "output": "polish-instrumentation-output.txt",
+    "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r -e class com.saleh.careerfinder.PhoneAcceptanceTest,com.saleh.careerfinder.VaultAcceptanceTest,com.saleh.careerfinder.WorkspaceRegressionTest,com.saleh.careerfinder.ContinuationRegressionTest,com.saleh.careerfinder.DiscoveryRegressionTest,com.saleh.careerfinder.ExperienceModelRegressionTest,com.saleh.careerfinder.PhonePolishAcceptanceTest com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
+    "emulator": {
+      "api": 36,
+      "abi": "arm64-v8a",
+      "systemImage": "system-images;android-36;default;arm64-v8a",
+      "deviceProfile": "Pixel 7",
+      "name": "careerfinder_acceptance",
+      "adbPort": 5049
+    },
+    "cases": [
+      "PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "VaultAcceptanceTest.originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer",
+      "VaultAcceptanceTest.freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
+      "VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName",
+      "WorkspaceRegressionTest.concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
+      "WorkspaceRegressionTest.malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
+      "WorkspaceRegressionTest.savingTheSameLink_keepsItsIdentity_andManualTrackingInvalidatesAnEarlierReview",
+      "WorkspaceRegressionTest.explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
+      "WorkspaceRegressionTest.storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
+      "WorkspaceRegressionTest.editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
+      "WorkspaceRegressionTest.localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
+      "WorkspaceRegressionTest.disabledLiveSending_blocksApprovalBeforeAnySubmissionRequest",
+      "WorkspaceRegressionTest.oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
+      "WorkspaceRegressionTest.copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
+      "WorkspaceRegressionTest.backgroundProfileChange_cannotRestoreAStalePreparedPlan",
+      "WorkspaceRegressionTest.profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF",
+      "ContinuationRegressionTest.lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace",
+      "ContinuationRegressionTest.freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval",
+      "ContinuationRegressionTest.absentCapability_andFreshCooldownOrUncertainState_neverAdvance",
+      "ContinuationRegressionTest.setupPages_preservePairedOrigin_andNeverAttachTheSession",
+      "ContinuationRegressionTest.unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests",
+      "ContinuationRegressionTest.cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt",
+      "ContinuationRegressionTest.lostStopResponse_keepsContinuationHeldAcrossRestart",
+      "DiscoveryRegressionTest.lateCancelledResponse_cannotReplaceNewerSearchResults",
+      "DiscoveryRegressionTest.paginationDeduplicates_andChangedSnapshotRequiresExplicitRestart",
+      "DiscoveryRegressionTest.searchIsExplicit_andUsesOnlyPublicFiltersAtTheFixedOrigin",
+      "DiscoveryRegressionTest.retryAfterPreventsAnImmediateRepeatedRequest",
+      "DiscoveryRegressionTest.errorsAndUnavailableBoards_preserveEarlierResultsWithoutCallingThemZeroMatches",
+      "DiscoveryRegressionTest.sharedContract_preservesUnknownEligibilityAndExplicitStaleEvidence",
+      "DiscoveryRegressionTest.cancellingSearch_keepsDisplayedResults_andNeverRetriesByItself",
+      "ExperienceModelRegressionTest.applicationEssentials_supportSingleNames_andKeepIncompleteDraftsHonest",
+      "ExperienceModelRegressionTest.receiptFilters_neverTreatTestOrUnknownEvidenceAsVerified",
+      "PhonePolishAcceptanceTest.discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported",
+      "PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices"
+    ],
+    "scope": "Real Android ViewModel/Compose/Keystore behavior with isolated deterministic application and discovery doubles. No real HTTP provider requests in the 35-test run.",
+    "realEmployerRequests": 0,
+    "configuration": {
+      "sizePixels": "1080x2400",
+      "densityDpi": 420,
+      "fontScale": 1.0,
+      "theme": "light",
+      "appLocale": "en-US",
+      "hardwareKeyboardImeEnabled": true
+    }
+  },
+  "hostedContinuation": {
+    "capability": "client",
+    "freshServerActivePlanIdsRequired": true,
+    "maximumAdvanceCallsPerCycle": 1,
+    "minimumDelayAfterCycleMilliseconds": 4000,
+    "clientReadTimeoutMilliseconds": 25000,
+    "persistedStopIntent": true,
+    "automaticSubmit": false,
+    "cooldownRequiresVisibleApproval": true,
+    "uncertainNeverAutomaticallyResubmitted": true,
+    "legacyCompanionBehaviorPreserved": true,
+    "ownerAuthenticatedHostedFlowPerformed": false
+  },
+  "packagedTrust": {
+    "status": "passed",
+    "evidence": "polish-build-metadata.json",
+    "normalPreviewAndRelease": {
+      "systemAnchorsOnly": true,
+      "fixtureCaAbsent": true,
+      "emulatorDomainExceptionAbsent": true,
+      "cleartextDisabled": true
+    },
+    "systemTrustModified": false,
+    "acceptanceVariantRebuiltInThisRun": false,
+    "syntheticDiscoveryFixtureAbsentFromNormalPreviewAndRelease": true
+  },
+  "branding": {
+    "status": "passed",
+    "evidence": "branding-audit.json",
+    "label": "Career Finder",
+    "blankFreshUserProfile": true,
+    "ahmadMatchesInMainSourceAndResources": 0,
+    "packageAndStorageNamespacesPreserved": true
+  },
+  "preview": {
+    "package": "com.saleh.careerfinder.preview",
+    "versionName": "0.4.0",
+    "versionCode": 4,
+    "minSdk": 26,
+    "targetSdk": 36,
+    "signatureScheme": "APK v2",
+    "signerCertificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "signerMatchesPriorPreviews": true,
+    "productionSigned": false
+  },
+  "artifacts": [
+    {
+      "kind": "debug",
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 12071908,
+      "sha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+      "userDeliverable": true
+    },
+    {
+      "kind": "release_resources",
+      "path": "<isolated-task-root>/android-check/app/build/intermediates/linked_resources_binary_format/release/processReleaseResources/linked-resources-binary-format-release.ap_",
+      "bytes": 492063,
+      "sha256": "9d28ed92ce99ded263d29594e0795601553cf3df2157a1734160816fcd9ae4a6",
+      "userDeliverable": false
+    }
+  ],
+  "historicalEvidence": [
+    {
+      "version": "0.3.0",
+      "record": "history/v0.3.0/verification.json",
+      "description": "Previous release proof retained unchanged."
+    },
+    {
+      "version": "0.2.0",
+      "record": "history/v0.2.0/verification.json",
+      "description": "Previous actual synthetic HTTPS/TLS-refusal and system PDF-picker proof retained unchanged; not claimed as a new 0.4 run."
+    }
+  ],
+  "cleanup": {
+    "emulatorPid": 24170,
+    "emulatorExited": true,
+    "isolatedAdbPort": 5049,
+    "isolatedAdbServerStopped": true,
+    "emulatorSettingsRestored": true,
+    "physicalDevicesUsed": false,
+    "systemTrustModified": false,
+    "sharedAdbOrSimulatorsTouched": false
+  },
+  "limitations": [
+    "Locally debug-signed preview; no production signing or store submission.",
+    "Minimum SDK is API26; actual emulator execution covered API36 only.",
+    "No owner-authenticated hosted pairing or live employer acceptance performed in this pass.",
+    "Public search covers selected supported boards; source availability/counts can change and remote/location text does not establish eligibility.",
+    "Physical-device, TalkBack and wider device/OS acceptance remain separate release work.",
+    "Interface text remains English; country display names use the device locale and RTL layout is supported.",
+    "The actual system PDF picker was exercised in the historical0.2 proof; it was not repeated in0.4.",
+    "Six lint advisories concern newer dependencies and a Kotlin URI idiom; dependency versions were retained."
+  ],
+  "pathNote": "Machine-local paths normalized to <isolated-task-root>; hashes, sizes and observed results are unchanged. No session or pairing credentials included.",
+  "compactCountryRegression": {
+    "status": "passed",
+    "passed": 1,
+    "uniqueCaseNote": "One of the same 35 cases rerun at the compact configuration, not an additional unique test.",
+    "durationSeconds": 8.027,
+    "output": "polish-compact-country-output.txt",
+    "case": "PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+    "configuration": {
+      "sizePixels": "720x1600",
+      "densityDpi": 320,
+      "widthDp": 360,
+      "fontScale": 1.8,
+      "theme": "dark",
+      "appLocale": "ar",
+      "layoutDirection": "RTL",
+      "hardwareKeyboardImeEnabled": true
+    },
+    "assertions": [
+      "Single-name profile remains valid without surname.",
+      "JP confirmation updates the draft.",
+      "Selecting FR and dismissing the dialog preserves JP.",
+      "Saving preserves the single name and JP without application-service traffic."
+    ],
+    "interaction": "Actual dialog IME Done semantics; ISO suffix selection remains valid in localized country names."
+  },
+  "publicDiscovery": {
+    "status": "observed_in_ordinary_preview",
+    "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "explicitUserSearch": true,
+    "pairedConnection": false,
+    "profileOrPdfProvided": false,
+    "observedDisplayedJobs": 50,
+    "observedMatches": 855,
+    "countIsTimeSpecific": true,
+    "observedApkSha256": "d1d235edf5cefaa3880d09aaeba5dc0e858a86e484034c9801140934fd9599f2",
+    "finalDiscoveryClientSha256": "c1a2383b9be52541ab7e137dd4b9d9dfecdfafbf76b6e88d098cf026f27d35b5",
+    "sourceAttributionObserved": true,
+    "employerApplicationsSubmitted": 0,
+    "note": "The real public-search screenshot was observed on the earlier 0.4 candidate before the dialog-only inset/Done fixes. The final candidate retains the identical discovery client/source hash. No unrelated public-network check was repeated."
+  },
+  "visualAndKeyboard": {
+    "status": "passed_for_recorded_configuration",
+    "evidence": "polish-visual-final.json",
+    "observedAtUtc": "2026-11-16T16:31:29.938378+00:00",
+    "finalApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "configuration": {
+      "sizePixels": "720x1600",
+      "densityDpi": 320,
+      "widthDp": 360,
+      "fontScale": 1.8,
+      "theme": "dark",
+      "appLocale": "ar",
+      "layoutDirection": "RTL",
+      "hardwareKeyboardImeEnabled": true
+    },
+    "countryRowVisibleWithIme": true,
+    "confirmVisibleWithIme": true,
+    "titleAndCloseVisibleWithIme": true,
+    "systemBarContrastRestored": true,
+    "actualDoneKeyHidesIme": true,
+    "screenshots": [
+      {
+        "name": "country-keyboard-final.png",
+        "bytes": 106075,
+        "sha256": "796169c233cb51e8d970c8cc01bd025eb44185caa43f348df202df5353be3779",
+        "path": "<isolated-task-root>/android-proof/polish-v0.4.0/country-keyboard-final.png",
+        "apkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62"
+      },
+      {
+        "name": "country-done-final.png",
+        "bytes": 114483,
+        "sha256": "e9bdcf612c509c009185f13196aee20ed5f958fe2fa46a53193d92b44e85dd1a",
+        "path": "<isolated-task-root>/android-proof/polish-v0.4.0/country-done-final.png",
+        "apkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62"
+      },
+      {
+        "name": "discovery-live-results.png",
+        "bytes": 214115,
+        "sha256": "948dc245da66070239bfa6cb9bc84a88a18f6012c3b6fe8d83c5e62e4757bd2c",
+        "path": "<isolated-task-root>/android-proof/polish-v0.4.0/discovery-live-results.png",
+        "apkSha256": "d1d235edf5cefaa3880d09aaeba5dc0e858a86e484034c9801140934fd9599f2"
+      }
+    ],
+    "publicDiscoveryNote": "The real public-search screenshot was observed on the earlier 0.4 candidate before the dialog-only inset/Done fixes. The final candidate retains the identical discovery client/source hash. No unrelated public-network check was repeated."
+  },
+  "verificationAttempts": [
+    {
+      "run": "r2",
+      "passed": 33,
+      "failed": 2,
+      "reason": "New tests attempted direct scrolling to uncomposed lazy-list nodes.",
+      "evidence": "attempts/v0.4.0-initial-instrumentation.txt"
+    },
+    {
+      "run": "r3",
+      "passed": 35,
+      "failed": 0,
+      "reason": "Parent-list semantic scrolling corrected; pre-keyboard-review candidate.",
+      "evidence": "attempts/v0.4.0-instrumentation-r3.txt"
+    },
+    {
+      "run": "r4",
+      "passed": 33,
+      "failed": 2,
+      "reason": "Real keyboard follow-up exposed name/email test-navigation visibility races. Production dialog inset repair had been compiled.",
+      "evidence": "attempts/v0.4.0-instrumentation-r4.txt"
+    },
+    {
+      "run": "r5",
+      "status": "test_compile_failed",
+      "reason": "A test-only Espresso keyboard helper was unavailable. Replaced it with the existing Android framework API; no dependency added.",
+      "evidence": "attempts/v0.4.0-test-build-r5.txt"
+    },
+    {
+      "run": "r6",
+      "passed": 34,
+      "status": "interrupted_after_country_test_stalled",
+      "reason": "Country flow stalled after dialog search opened its keyboard. Ordinary UI inspection proved a positive viewport. Added explicit dialog-local Done/focus clearing and locale-stable ISO test matching, then reran affected and full suites.",
+      "evidence": "attempts/v0.4.0-instrumentation-r6-interrupted.txt"
+    },
+    {
+      "run": "final",
+      "passed": 35,
+      "failed": 0,
+      "evidence": "polish-instrumentation-output.txt"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+<resources>
+    <style name="CareerFinderLightTheme" parent="@style/CareerFinderLightBase">
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+    <style name="CareerFinderDarkTheme" parent="@style/CareerFinderDarkBase">
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

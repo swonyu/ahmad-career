@@ -1,0 +1,30 @@
+{
+  "observedAtUtc": "2026-11-16T15:05:26.162676+00:00",
+  "packagedResources": {
+    "debug": {
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 11563552,
+      "sha256": "89744c5b8b33f1bbdf94ff8381089b0242a80ba921741feb81b8abe759ea197a",
+      "fixtureCaEntries": [],
+      "networkSecurityXml": "E: network-security-config (line=2)\n    E: base-config (line=3)\n      A: cleartextTrafficPermitted=false\n        E: trust-anchors (line=4)\n            E: certificates (line=4)\n              A: src=\"system\" (Raw: \"system\")\n"
+    },
+    "release_resources": {
+      "path": "<isolated-task-root>/android-check/app/build/intermediates/linked_resources_binary_format/release/processReleaseResources/linked-resources-binary-format-release.ap_",
+      "bytes": 492063,
+      "sha256": "f644acba31816f053d27f7855184ce128e084fb98ef141377bbdc2146dfffceb",
+      "fixtureCaEntries": [],
+      "networkSecurityXml": "E: network-security-config (line=2)\n    E: base-config (line=3)\n      A: cleartextTrafficPermitted=false\n        E: trust-anchors (line=4)\n            E: certificates (line=4)\n              A: src=\"system\" (Raw: \"system\")\n"
+    }
+  },
+  "normalApksignerOutput": "Signer #1 certificate DN: C=US, O=Android, CN=Android Debug\nSigner #1 certificate SHA-256 digest: 8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17\nSigner #1 certificate SHA-1 digest: 156fa1f3b0be2e8fc7db4d8f6bfd481465eb4e2a\nSigner #1 certificate MD5 digest: f90eb7fc8ef9693c807400e259c689f8\n",
+  "normalPackageBadging": [
+    "package: name='com.saleh.careerfinder.preview' versionCode='3' versionName='0.3.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "minSdkVersion:'26'",
+    "targetSdkVersion:'36'",
+    "uses-permission: name='android.permission.INTERNET'",
+    "uses-permission: name='com.saleh.careerfinder.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
+    "application-label:'Career Finder'"
+  ],
+  "normalSignerMatchesPriorPreviews": true,
+  "systemTrustModified": false
+}

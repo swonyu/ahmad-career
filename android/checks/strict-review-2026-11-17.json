@@ -1,0 +1,40 @@
+{
+  "baselineCommit": "6f95db3a09a60be8f0b325c8ad01cdcd305dd8de",
+  "status": "uncommitted Android source; not native CI or store-release evidence",
+  "checks": {
+    "jvmPolicy": {
+      "command": "bash android/checks/run-policy-checks.sh",
+      "passed": 122,
+      "network": false,
+      "device": false
+    },
+    "sharedFixture": {
+      "strictPythonPDFParserPages": 1,
+      "pdfBytes": 624,
+      "metadataAndFingerprintMatched": true,
+      "newRecordDraftOmitsRevisionAndRecordID": true
+    }
+  },
+  "sha256": {
+    "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java": "54f162253812226923f0bedf7e80f05a33ac07d40df4ca2943e43ddcd0a53af2",
+    "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java": "4cced3e879ccb3197376c13ebfde19fadd52ade5318d99636910b597937a88cc",
+    "android/checks/BoundaryPolicyCheck.java": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29",
+    "android/checks/run-policy-checks.sh": "b1eaf6e0608a0eb1418b91befe613bcec97403684aac97dc7a5adac25c6340b2",
+    "android/app/src/androidTest/assets/phone-workspace-v1.json": "8cc13c2b2965b4966b25344088a8f993f8ac0fab7ad644638856b449aa40b2da"
+  },
+  "nativeGates": [
+    "compile and lint",
+    "new and full regression instrumentation",
+    "same physical wire fixture decoded by iPhone",
+    "real document-picker and process recreation",
+    "physical-device accessibility"
+  ],
+  "notPerformed": [
+    "Gradle build",
+    "emulator",
+    "signing",
+    "store release",
+    "provider account authorization",
+    "employer application"
+  ]
+}

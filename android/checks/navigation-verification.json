@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "candidate": "0.6.0/code7",
+  "status": "Passed bounded native verification. This is an unpublished debug-signed preview, not a store release.",
+  "verifiedAt": "2026-11-16T23:17:03.885854+00:00",
+  "compiledSource": {
+    "fileCount": 44,
+    "manifest": "navigation/runtime-source-manifest.json",
+    "sha256": "aca4bd284da0c9198a3231db946abe48dd7237015eb72a114479ee5f4921be8c",
+    "hashesMatchCloudSource": true,
+    "hashesMatchIsolatedBuildInput": true,
+    "unchangedAfterBuildAndRuntime": true,
+    "scope": "Manifest covers the exact compiled source, tests, resources, Gradle configuration, policy checks and README. This report and copied evidence were added after compilation and are not claimed as compiled inputs."
+  },
+  "artifact": {
+    "path": "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-navigation-check-20261116/run4/artifacts/Career-Finder-Android-0.6.0-preview.apk",
+    "bytes": 11825696,
+    "sha256": "d9fe110d2dc436e0dd9174f4decb51b823ec0ce4f0349ecca029fba6b0a3dccf",
+    "package": "com.saleh.careerfinder.preview",
+    "versionCode": 7,
+    "versionName": "0.6.0",
+    "certificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "matchesImmutable04Signer": true,
+    "immutable04ApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "originalDebugKeystoreUnchanged": true,
+    "normalSystemTrustOnly": true,
+    "fixtureCaEntries": []
+  },
+  "testApkSha256": "43783efd3d40c110ebf6c7852c646bd757a41375ebaadac6f29d41d4264fe710",
+  "build": {
+    "passed": true,
+    "exitCode": 0,
+    "elapsedSeconds": 57.627,
+    "offline": true,
+    "gradle": "8.13",
+    "jdk": "21.0.13+9",
+    "tasks": [
+      ":app:assembleDebug",
+      ":app:assembleDebugAndroidTest",
+      ":app:lintDebug",
+      ":app:processReleaseResources"
+    ],
+    "log": "navigation/runtime-build-output.log",
+    "lint": "No issues found.",
+    "lintReport": "navigation/lint-results-debug.txt"
+  },
+  "boundaryPolicy": {
+    "passed": true,
+    "checks": 91,
+    "command": "bash checks/run-policy-checks.sh",
+    "output": "navigation/boundary-policy-output.txt",
+    "networkUsed": false,
+    "sameChecksPassedLocallyAndOnExactMacInput": true
+  },
+  "instrumentation": {
+    "passed": true,
+    "tests": 83,
+    "failures": 0,
+    "elapsedSeconds": 64.77,
+    "output": "navigation/instrumentation-output.txt",
+    "testIndex": "navigation/test-index.json",
+    "classCounts": {
+      "com.saleh.careerfinder.WorkspaceRegressionTest": 17,
+      "com.saleh.careerfinder.LinkedInRegressionTest": 9,
+      "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest": 2,
+      "com.saleh.careerfinder.ApplicationRecordRegressionTest": 18,
+      "com.saleh.careerfinder.DiscoveryRegressionTest": 7,
+      "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest": 8,
+      "com.saleh.careerfinder.NavigationPhoneAcceptanceTest": 4,
+      "com.saleh.careerfinder.PhonePolishAcceptanceTest": 4,
+      "com.saleh.careerfinder.ContinuationRegressionTest": 7,
+      "com.saleh.careerfinder.ExperienceModelRegressionTest": 2,
+      "com.saleh.careerfinder.VaultAcceptanceTest": 3,
+      "com.saleh.careerfinder.PhoneAcceptanceTest": 2
+    },
+    "device": {
+      "type": "Isolated ARM emulator",
+      "androidApi": 36,
+      "widthDp": 360,
+      "pixels": "1080x1920",
+      "densityDpi": 480,
+      "fontScale": 1.8,
+      "darkMode": true,
+      "forcedRtl": true,
+      "appLocale": "ar",
+      "interfaceLanguage": "English"
+    },
+    "syntheticOnly": true,
+    "productionAccountUsed": false,
+    "employerRequests": false,
+    "linkedinRequests": false
+  },
+  "implemented": {
+    "privateApplicationRecords": "Saved, Applied, Interview, Offer and Closed stages; optional civil dates, follow-ups and private notes; retained records after bookmark removal; explicit import and conflict review; encrypted and scoped to account origin/workspace and canonical job identity.",
+    "appliedHistory": "Closed preserves prior applied status. Only Saved plus an explicit Mark as not applied confirmation can clear it. Choosing archived notes preserves the current correction; immutable prior versions remain available. New explicit applied stages or deliberate fresh applied imports can set it again.",
+    "planSafety": "Applied-status changes require Stop for matching active plans. Ready or cooldown reviews check current canonical manual evidence before prepare acceptance, recovery and approval. Foreground polling skips affected or unresolved plans after restored manual evidence while unrelated known work may continue; this local pause does not claim to stop the service or another phone.",
+    "lastSearch": "Encrypted per-scope result and filter snapshots retain original timestamps, restore at most 200 results and no cursor, token, profile or PDF. No startup fetch. Search again explicitly refreshes; failures preserve earlier evidence and support retry.",
+    "connection": "Two steps to browser sign-in and a one-time code, with an accurate Google sign-in helper. Advanced reveals a preserved custom service origin. Context checks protect stale disconnect/removal actions.",
+    "linkedinCanonicalization": "Raw decomposed Unicode now canonicalizes exactly like its percent-encoded form without NFC normalization, matching backend/iOS. Existing optional personal profile URL, exact review and reviewSchema 3 protections remain covered.",
+    "phoneLayout": "Wrapped stage controls, bounded notices, separate civil-date paragraphs, a plain note counter, native date confirmation/cancel, previous-result prominence and large-text connection wording."
+  },
+  "strictReviewCorrections": [
+    {
+      "finding": "Record-only phone drafts were omitted after bookmark removal.",
+      "resolution": "Explicit import includes retained record snapshots independently of bookmarks, preserves conflicts and does not recreate a removed bookmark.",
+      "test": "recordOnlyPhoneDraft_importsWithoutRestoringBookmarks_andKeepsConflicts"
+    },
+    {
+      "finding": "Changing manual applied status could race active approved work.",
+      "resolution": "A shared canonical-identity guard covers Save, quick status changes, conflict choices, import and sync, with Stop required for active targets and unknown targets failing closed. Notes remain editable.",
+      "test": "activeReview_allowsNotesButRequiresConfirmedStopBeforeAppliedChanges"
+    },
+    {
+      "finding": "Restored manual evidence could be bypassed by foreground continuation.",
+      "resolution": "Only matching or unresolved plans pause locally; unrelated known plans can continue. No false remote Stop is recorded.",
+      "test": "restoredAppliedEvidence_pausesOnlyMatchingContinuation_andUnknownTargetsFailClosed"
+    },
+    {
+      "finding": "An applied local source could be adopted by a still-active canonical destination during sync.",
+      "resolution": "Status changes are checked before the service request when known and again before local scope/identity reassignment; both records survive rejection.",
+      "test": "activeDestination_blocksAppliedSyncAdoption_withoutLosingEitherRecord"
+    },
+    {
+      "finding": "Cooldown recovery or a newly prepared review could ignore later manual application evidence.",
+      "resolution": "Recovered and newly prepared ready/rate-limited items are checked again against current canonical records before approval.",
+      "test": "manuallyAppliedCooldown_cannotBeRecoveredOrPreparedAsAReadyApplication"
+    },
+    {
+      "finding": "Malformed encrypted state could declare not applied while an unresolved active alternative was applied.",
+      "resolution": "Decode requires aggregate applied status for current/active alternatives, while historical applied records remain valid after a deliberate correction.",
+      "test": "activeAlternativeEvidence_mustNotDecodeAsUnapplied_butCorrectedHistoryRemainsValid"
+    },
+    {
+      "finding": "Long titles and large text made nested horizontally scrolling stage controls unreliable.",
+      "resolution": "Stage choices wrap; the native acceptance test asserts the chosen state before saving and exercises the resulting correction flow.",
+      "test": "clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory"
+    },
+    {
+      "finding": "Exactly 200 complete search results were incorrectly described as truncated.",
+      "resolution": "The bounded-result notice now requires actual omitted results or a further cursor.",
+      "test": "paginationHasABoundedRestorableWindow_andDoesNotReuseItsCursor"
+    }
+  ],
+  "visualReview": {
+    "capturesReviewed": 13,
+    "conditions": "360 dp phone, 180% text, dark mode, Arabic RTL; screenshots include deliberate scroll positions. Scrollable content is not claimed to fit entirely in one viewport.",
+    "captures": {
+      "linkedin-profile-guidance": {
+        "path": "navigation/captures/linkedin-profile-guidance.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 147956,
+        "sha256": "f59a20866ee10b2c06bc700a1720368d7616c29067880770d8ac0180dd4c41af"
+      },
+      "linkedin-exact-review": {
+        "path": "navigation/captures/linkedin-exact-review.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 123412,
+        "sha256": "466479ff6b4244cd35e937e78ea938be928558158583937b070d6e3312a5ee58"
+      },
+      "linkedin-search-handoff": {
+        "path": "navigation/captures/linkedin-search-handoff.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 143245,
+        "sha256": "847095f9ad0bd01b3714c60e1cdf50c5562511ab3ada7f217f3ba9351e1b0b53"
+      },
+      "private-record-date-picker": {
+        "path": "navigation/captures/private-record-date-picker.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 88380,
+        "sha256": "16de7831e7ff541ea993fd7d0b7189ce529d97471e4e107bf6e84c291e02ed51"
+      },
+      "private-record-editor": {
+        "path": "navigation/captures/private-record-editor.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 115127,
+        "sha256": "f61334a9020d3f813986f8795e62af1b944411ee0118170eff130e1feb9107e4"
+      },
+      "private-follow-up-list": {
+        "path": "navigation/captures/private-follow-up-list.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 153565,
+        "sha256": "d99d5ec12d2a5f4396ae97716f29544dc2b64e2f945ca383bf3e1045fa24dc9d"
+      },
+      "private-record-correction": {
+        "path": "navigation/captures/private-record-correction.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 131290,
+        "sha256": "e4aa7e244e83e03afbb178f9e7ba8745ad7d68e7a2258b503563665d4e85880f"
+      },
+      "two-step-connection": {
+        "path": "navigation/captures/two-step-connection.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 132905,
+        "sha256": "d26740307a89b52fef648c1b1dce1f8aa81f49ffbe9a3849556170643acb2bca"
+      },
+      "custom-connection-address": {
+        "path": "navigation/captures/custom-connection-address.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 155984,
+        "sha256": "ceabe7a234eb2dde6ade98ff29e161bca0bd261678cdb854415071fb0c49687c"
+      },
+      "previous-search-results": {
+        "path": "navigation/captures/previous-search-results.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 155544,
+        "sha256": "20772e2597f94acc5b8868bc6ff23cb907e280b4d686fd201b55926e52dcd8cb"
+      },
+      "record-only-phone-import": {
+        "path": "navigation/captures/record-only-phone-import.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 156724,
+        "sha256": "f2137d6deba5f16b7dbd7a70489b527ece8d2e4e30401f230434b34dcafe979d"
+      },
+      "unfinished-opportunity-choices": {
+        "path": "navigation/captures/unfinished-opportunity-choices.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 102727,
+        "sha256": "f8a95a85dd665f3170b06e6c3fa4bd3f80c415a37e3e1ca57d8e1f45feb6f804"
+      },
+      "remove-local-opportunity-confirmation": {
+        "path": "navigation/captures/remove-local-opportunity-confirmation.png",
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 134805,
+        "sha256": "5116c80c2de9e9d76b30229e770fe8c55931834b50bc7a5610979d6ab1a34b0a"
+      }
+    },
+    "observations": [
+      "Primary navigation remains visible.",
+      "Record Save and Cancel, date Use date and Cancel, and applied-correction actions remain reachable.",
+      "Private record and employer-receipt provenance are distinct.",
+      "Original search evidence is marked Previous results, with a visible Search again action.",
+      "The connection page makes browser sign-in the first step and keeps custom setup under Advanced.",
+      "Exact LinkedIn review text and external search disclosure remain readable."
+    ]
+  },
+  "earlierAttempts": [
+    {
+      "attempt": 1,
+      "manifestSha256": "eb5e14759d13e293be17dccbe7cc82a64df3f41324f623707ed55f526e81862a",
+      "result": "Compilation failed on two delegated nullable-state smart casts. Changed to safe local access. No APK or AVD was created.",
+      "evidence": "navigation/attempts/run1"
+    },
+    {
+      "attempt": 2,
+      "manifestSha256": "83323208b81e7be4da1fb7d06478ca7996defe7ed0c35cd900687be13235ce70",
+      "result": "Build/lint passed; 75 of 77 tests passed. Two prior Compose tests assumed lazy or off-screen content was already visible at large text. Screenshots also prompted shorter connection/success wording and civil-date direction fixes.",
+      "evidence": "navigation/attempts/run2"
+    },
+    {
+      "attempt": 3,
+      "manifestSha256": "a95b252bf5c0aa08b8da89d96d4a88c136cedbc97da7b4a70d8962b5acfbbdc2",
+      "result": "Build/lint passed; 75 of 77 tests passed. Long-title stage controls needed wrapping, and an older Auto Apply empty-state test needed explicit lazy-list scrolling. Independent review subsequently added six safety/import regression scenarios to the final run.",
+      "evidence": "navigation/attempts/run3"
+    }
+  ],
+  "preservedHistoricalCandidates": {
+    "0.5.0": {
+      "apkSha256": "20327d33b650f396694885a3331b03a7708a56b1f1efceea89dde6f9d7d95a9f",
+      "sourceManifestSha256": "da6c6e5175286ee4eab87e623248ac8f0f3fedf04253141f5d727175d523ab36",
+      "boundaryChecks": 77,
+      "instrumentedTests": 28,
+      "unchanged": true
+    },
+    "0.4.0": {
+      "apkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+      "samePreviewSigner": true
+    },
+    "github3c25AndroidAttempt1": "Separate historical CI failure while fetching Maven Central dependencies with HTTP 429. It is not this native run and is not reported as a Kotlin compiler failure."
+  },
+  "cleanup": {
+    "at": "2026-11-16T23:17:03.886236+00:00",
+    "ownedEmulatorStopped": true,
+    "ownedAdbStopped": true,
+    "newAvdRemoved": true,
+    "oldAvdConfigUnchanged": true,
+    "shared5037Unchanged": true,
+    "portsAfter": {
+      "5053": false,
+      "5578": false,
+      "5579": false
+    }
+  },
+  "isolation": {
+    "adbPort": 5053,
+    "emulatorPorts": [
+      5578,
+      5579
+    ],
+    "sharedAdb5037Unchanged": true,
+    "oldAvdUnchanged": true,
+    "appleToolingActions": false,
+    "originalDebugKeystoreUnchanged": true,
+    "normalSystemCertificateTrustOnly": true,
+    "fixtureCaEntries": []
+  },
+  "limitations": [
+    "Debug-signed preview only; production signing and Play Store publication are not configured by this verification.",
+    "This run covers one API 36 ARM emulator configuration. It does not claim physical-phone, TalkBack or a broad Android-version matrix testing.",
+    "Synthetic service seams exercised application state and native UI. No live employer application, LinkedIn sign-in or Google account sign-in was performed.",
+    "LinkedIn support stores a personal profile URL and offers an external search; it does not create a verified LinkedIn OAuth account connection.",
+    "Native HTTPS and real system PDF-picker evidence from earlier candidates remains historical; those separate acceptance classes were not selected in this run."
+  ],
+  "evidenceTransfer": {
+    "textFiles": 50,
+    "metadata": "Task folder text-evidence-transfer-metadata.json",
+    "allFileHashesVerified": true,
+    "finalPngs": 13,
+    "allPngHashesMatchRuntimeReceipt": true
+  }
+}

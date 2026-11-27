@@ -1,0 +1,10 @@
+{
+  "emulatorPid": 24170,
+  "emulatorExited": true,
+  "isolatedAdbPort": 5049,
+  "isolatedAdbServerStopped": true,
+  "emulatorSettingsRestored": true,
+  "physicalDevicesUsed": false,
+  "systemTrustModified": false,
+  "sharedAdbOrSimulatorsTouched": false
+}

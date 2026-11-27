@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 3,
+  "observedAtUtc": "2026-11-16 15:07:39 UTC",
+  "sourceRoot": "android/",
+  "scope": "Career Finder Android preview 0.3.0 with hosted setup and capability-gated continuation; no owner pairing or employer submission.",
+  "buildInputs": {
+    "manifestSha256": "df04a7d8cb184ce5c74cfd44b1c6580fea429d5e6a199ef966e4884649a82c65",
+    "manifestEncoding": "SHA-256 of UTF-8 JSON mapping relative paths to SHA-256, keys sorted, compact separators, no trailing newline.",
+    "includes": "26 app/instrumentation/acceptance source and Gradle/wrapper files. Documentation, checks, generated resources, caches and local configuration excluded.",
+    "files": {
+      "app/build.gradle.kts": "b098b80e50bbf1cd9133f4ee8c45ad903fdde87122fb1f79e979004a785fb9ea",
+      "app/src/acceptance/res/xml/network_security_config.xml": "aef8c30928856fe0ae846f20aa2253b923f6a724d5435dc58de946932e75221d",
+      "app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt": "848251a8c2e8faa8305fa32f24dfe65cd16a9b1ab50f2d960b3070cdf22cb8ea",
+      "app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "344e9a28e12fd0ed6f84711b02bbbeb6279801c24088f202d6eeb874dd809c97",
+      "app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": "4d306881e91a9031be157e857492dc5ac128c628c54f6a65b817f34a6c8239e7",
+      "app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt": "11d66866ac03ffc98021706d149836b7ca6f780f7841eacd167b13ce67f14968",
+      "app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt": "27cb1427039e9b382f3cf62e5708d9d9e6024a2bcf4dea11a625e709e282045e",
+      "app/src/main/AndroidManifest.xml": "d824b6e7681f09b3a148b212f16de1b308b9dd9742a8cbcea7cd9807cf7386b0",
+      "app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java": "307722cfcdf3672d58afc9a15f5f4e94d80ef48827150e2b26314cdf025d73fb",
+      "app/src/main/java/com/saleh/careerfinder/CareerApi.kt": "50962862e95f2589ace17e475e12e71bf183c9858e2ad95cea4b103e36ed3404",
+      "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "6ef3afc06ab2332429b3eb70e439c5d7843c2d9474299bf00171b9e6594b4b93",
+      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1628fc2d6f25afaa9369b508156cde69f7bc3c5abaf6595dbfb0854a07fdfff8",
+      "app/src/main/java/com/saleh/careerfinder/Models.kt": "1596a194911e467b04789a0157a5759d57227d6c4206f33dd0bfbfdc79a2b673",
+      "app/src/main/java/com/saleh/careerfinder/SecureVault.kt": "c892be2f75738457c810cd6e3e317ebc5b717ddd6a90da162e6e53b2825f6999",
+      "app/src/main/res/drawable/ic_career_finder.xml": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746",
+      "app/src/main/res/values/strings.xml": "e9aafdbf8d3dba742e5c2fc6e562540c61a79d900bb2f4556437ae9087b3d796",
+      "app/src/main/res/values/styles.xml": "009e3572499e0fe03b6517824a6376ecade78911c1fd5f7d12cedecb566d326a",
+      "app/src/main/res/xml/data_extraction_rules.xml": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22",
+      "app/src/main/res/xml/network_security_config.xml": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2",
+      "build.gradle.kts": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a",
+      "gradle.properties": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
+      "gradle/wrapper/gradle-wrapper.jar": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
+      "gradle/wrapper/gradle-wrapper.properties": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2",
+      "gradlew": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933",
+      "gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "settings.gradle.kts": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036"
+    }
+  },
+  "toolchain": {
+    "host": "macOS ARM64",
+    "java": "JDK 21",
+    "gradle": "8.13",
+    "androidGradlePlugin": "8.13.2",
+    "kotlinAndComposeCompiler": "2.3.10",
+    "composeBom": "2025.10.01",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "minSdk": 26,
+    "agpSelectedBuildTools": "35.0.0",
+    "wrapperDistributionSha256": "20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78"
+  },
+  "build": {
+    "status": "passed",
+    "command": "./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :app:processReleaseResources",
+    "gradleDurationSeconds": 29,
+    "output": "build-output.txt",
+    "lint": {
+      "errors": 0,
+      "advisories": 6,
+      "issues": [
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Warning",
+          "message": "A newer version of Gradle than 8.13 is available: 8.14.7"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Warning",
+          "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Warning",
+          "message": "Use the KTX extension function `String.toUri` instead?"
+        }
+      ]
+    },
+    "releaseScope": "Release resources processed and inspected; no signed release APK produced."
+  },
+  "policyChecks": {
+    "status": "passed",
+    "checks": 36,
+    "command": "bash checks/run-policy-checks.sh",
+    "executedOn": [
+      "isolated macOS JDK 21"
+    ],
+    "networkRequests": 0,
+    "output": "PASS: 36 executable Android boundary-policy checks (no network, no device claims)."
+  },
+  "instrumentation": {
+    "status": "passed",
+    "passed": 22,
+    "skipped": 0,
+    "durationSeconds": 6.437,
+    "output": "instrumentation-output.txt",
+    "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r -e class com.saleh.careerfinder.PhoneAcceptanceTest,com.saleh.careerfinder.VaultAcceptanceTest,com.saleh.careerfinder.WorkspaceRegressionTest,com.saleh.careerfinder.ContinuationRegressionTest com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
+    "emulator": {
+      "api": 36,
+      "abi": "arm64-v8a",
+      "systemImage": "system-images;android-36;default;arm64-v8a",
+      "deviceProfile": "Pixel 7",
+      "name": "careerfinder_acceptance",
+      "adbPort": 5049
+    },
+    "cases": [
+      "PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "VaultAcceptanceTest.originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer",
+      "VaultAcceptanceTest.freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
+      "VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName",
+      "WorkspaceRegressionTest.concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
+      "WorkspaceRegressionTest.malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
+      "WorkspaceRegressionTest.explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
+      "WorkspaceRegressionTest.storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
+      "WorkspaceRegressionTest.editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
+      "WorkspaceRegressionTest.localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
+      "WorkspaceRegressionTest.oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
+      "WorkspaceRegressionTest.copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
+      "WorkspaceRegressionTest.backgroundProfileChange_cannotRestoreAStalePreparedPlan",
+      "WorkspaceRegressionTest.profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF",
+      "ContinuationRegressionTest.lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace",
+      "ContinuationRegressionTest.freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval",
+      "ContinuationRegressionTest.absentCapability_andFreshCooldownOrUncertainState_neverAdvance",
+      "ContinuationRegressionTest.setupPages_preservePairedOrigin_andNeverAttachTheSession",
+      "ContinuationRegressionTest.unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests",
+      "ContinuationRegressionTest.cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt",
+      "ContinuationRegressionTest.lostStopResponse_keepsContinuationHeldAcrossRestart"
+    ],
+    "scope": "Real Android ViewModel/Compose/Keystore behavior with isolated deterministic service doubles. No real HTTP provider requests in this 22-test run.",
+    "realEmployerRequests": 0
+  },
+  "hostedContinuation": {
+    "capability": "client",
+    "freshServerActivePlanIdsRequired": true,
+    "maximumAdvanceCallsPerCycle": 1,
+    "minimumDelayAfterCycleMilliseconds": 4000,
+    "clientReadTimeoutMilliseconds": 25000,
+    "persistedStopIntent": true,
+    "automaticSubmit": false,
+    "cooldownRequiresVisibleApproval": true,
+    "uncertainNeverAutomaticallyResubmitted": true,
+    "legacyCompanionBehaviorPreserved": true,
+    "ownerAuthenticatedHostedFlowPerformed": false
+  },
+  "packagedTrust": {
+    "status": "passed",
+    "evidence": "trust-and-signing.json",
+    "normalPreviewAndRelease": {
+      "systemAnchorsOnly": true,
+      "fixtureCaAbsent": true,
+      "emulatorDomainExceptionAbsent": true,
+      "cleartextDisabled": true
+    },
+    "systemTrustModified": false,
+    "acceptanceVariantRebuiltInThisRun": false
+  },
+  "branding": {
+    "status": "passed",
+    "evidence": "branding-audit.json",
+    "label": "Career Finder",
+    "blankFreshUserProfile": true,
+    "ahmadMatchesInMainSourceAndResources": 0,
+    "packageAndStorageNamespacesPreserved": true
+  },
+  "preview": {
+    "package": "com.saleh.careerfinder.preview",
+    "versionName": "0.3.0",
+    "versionCode": 3,
+    "minSdk": 26,
+    "targetSdk": 36,
+    "signatureScheme": "APK v2",
+    "signerCertificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "signerMatchesPriorPreviews": true,
+    "productionSigned": false
+  },
+  "artifacts": [
+    {
+      "kind": "debug",
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 11563552,
+      "sha256": "89744c5b8b33f1bbdf94ff8381089b0242a80ba921741feb81b8abe759ea197a",
+      "userDeliverable": true
+    },
+    {
+      "kind": "release_resources",
+      "path": "<isolated-task-root>/android-check/app/build/intermediates/linked_resources_binary_format/release/processReleaseResources/linked-resources-binary-format-release.ap_",
+      "bytes": 492063,
+      "sha256": "f644acba31816f053d27f7855184ce128e084fb98ef141377bbdc2146dfffceb",
+      "userDeliverable": false
+    }
+  ],
+  "historicalEvidence": {
+    "version": "0.2.0",
+    "record": "history/v0.2.0/verification.json",
+    "description": "Complete prior build,17 instrumented checks, real synthetic HTTPS/TLS refusal, compact RTL/dark/large-text and actual PDF-picker evidence preserved here. Those observations are historical and are not relabeled as 0.3.0 results."
+  },
+  "cleanup": {
+    "emulatorPid": 17493,
+    "emulatorExited": true,
+    "isolatedAdbPort": 5049,
+    "isolatedAdbServerStopped": true,
+    "physicalDevicesUsed": false,
+    "systemTrustModified": false,
+    "sharedAdbOrSimulatorsTouched": false
+  },
+  "limitations": [
+    "Locally debug-signed preview; no production signing or store submission.",
+    "Minimum SDK is API 26; actual emulator execution covered API 36 only.",
+    "No actual owner-authenticated hosted pairing or live employer acceptance was performed in this run.",
+    "Public hosted service deployment checks are owned by the separate service verification; Android tests do not claim that evidence.",
+    "Physical-device, TalkBack and wider device/OS acceptance remain separate release work.",
+    "The interface remains English with RTL layout support.",
+    "Six lint advisories concern newer dependencies and a Kotlin URI idiom; dependency versions were retained."
+  ],
+  "pathNote": "Machine-local paths normalized to <isolated-task-root>; hashes, sizes and observed results are unchanged. No session or pairing credentials included."
+}

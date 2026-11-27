@@ -1,0 +1,39 @@
+{
+  "phase": "cleaned-up",
+  "syntheticOnly": true,
+  "productionAccountUsed": false,
+  "employerRequests": false,
+  "oldAvdChanged": false,
+  "appleToolingActions": false,
+  "startedAt": "2026-11-16T22:55:00.667909+00:00",
+  "oldAvdConfigSha256": "f9a9e577923d851a895ff689666baf8291ee95d65374d88d13453bcf1b7c8d79",
+  "shared5037Before": [
+    {
+      "pid": 40818,
+      "commandSha256": "65a8c25d088ee608b888ea3a11fbd871e95e8dc11bbd3210415a6dc410dbde58"
+    }
+  ],
+  "reason": "First frozen 0.6 navigation build: records/correction/history, encrypted last-search restoration, two-step connection and Unicode consistency; full affected model/storage/UI regression suite.",
+  "preserved05Sha256": "20327d33b650f396694885a3331b03a7708a56b1f1efceea89dde6f9d7d95a9f",
+  "manifestSha256": "eb5e14759d13e293be17dccbe7cc82a64df3f41324f623707ed55f526e81862a",
+  "sourceFileCount": 44,
+  "buildExitCode": 1,
+  "buildElapsedSeconds": 14.685,
+  "failure": {
+    "at": "2026-11-16T22:55:16.116730+00:00",
+    "error": "Synthetic debug build failed; see runtime-build-output.log"
+  },
+  "cleanup": {
+    "at": "2026-11-16T22:55:16.116853+00:00",
+    "ownedEmulatorStopped": true,
+    "ownedAdbStopped": true,
+    "newAvdRemoved": false,
+    "oldAvdConfigUnchanged": true,
+    "shared5037Unchanged": true,
+    "portsAfter": {
+      "5053": false,
+      "5578": false,
+      "5579": false
+    }
+  }
+}
