@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
-import {sourceRecord,parseDiscoverySourceIdentity} from '../server/discovery-source-identity.mjs';
+import {sourceRecord,parseDiscoverySourceIdentity} from '../shared/discovery-source-identity.mjs';
 import {createDiscoveryHandler,parseDiscoverySource,normalizeDiscoveryJob,DISCOVERY_SOURCES} from '../server/discovery.mjs';
 import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
@@ -116,7 +116,7 @@ test('an injected rejection callback receives the exact message and preserves it
 });
 
 test('the pure module loads independently without a server or Node dependency graph',async()=>{
-  const source=await readFile(new URL('../server/discovery-source-identity.mjs',import.meta.url),'utf8');
+  const source=await readFile(new URL('../shared/discovery-source-identity.mjs',import.meta.url),'utf8');
   assert.doesNotMatch(source,/^\s*import\b|\bimport\s*\(|\b(?:require|process|Buffer)\b/m);
   const standalone=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
   assert.deepEqual(standalone.parseDiscoverySourceIdentity(leverEUForms[2]),sourceRecord('lever','eu','spotify'));

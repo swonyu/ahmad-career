@@ -18,7 +18,7 @@ import { phoneSafety, heldPlan } from "./safety";
 import { phoneAPI as requestPhoneAPI, workspaceFromResponse, acknowledgeWorkspacePublication } from "./api";
 import { displayHistoricalText, hasHistoricalText, hasUnpairedText, historicalTextFields } from "./historical-text";
 import { PhoneReadError, readEvidence, readRecoveryURL } from "./read-transport";
-import { parseDiscoverySourceIdentity } from "../../server/discovery-source-identity.mjs";
+import { parseDiscoverySourceIdentity } from "../../shared/discovery-source-identity.mjs";
 import { discoverySourceKey, distinctDiscoverySources } from "./discovery-sources";
 import { emptySearchHistory, evaluateSearchHistory, restoreRetainedSearchNewResult, type SearchNewResult } from "./search-history";
 import { ApplicationGuide } from "./ApplicationGuide";
@@ -695,7 +695,16 @@ export default function PhoneApp({ account }: { account: Account }) {
     const request = profileRequest(profile);
     profileSchema.parse({ ...profile, ...request, resume: profile.resume });
     const result = await phoneAPI("/api/phone/profile", { method: "PUT", body: { expectedWorkspaceId: current.workspaceId, expectedRevision: profile.revision, profile: request } });
-    const saved = withPDF(profileSchema.parse(result.profile), profile); assertCurrent(generation, data.scope);
+    assertCurrent(generation, data.scope);
+    const confirmed = profileSchema.parse(result.profile);
+    const selected = profile.resume, received = confirmed.resume;
+    if (selected === null ? received !== null : selected.dataBase64 && (
+      received?.name !== selected.name.trim() || received.size !== selected.size || received.sha256 !== selected.sha256
+    )) {
+      await persist({ ...data, profile, profileDirty: true }, generation);
+      throw Error("The service did not confirm the CV change. Refresh the online profile and review your draft.");
+    }
+    const saved = withPDF(confirmed, profile);
     await putWorkspace({ ...current, profile: saved, activePlanIds: [], recoverablePlans: [] }); assertCurrent(generation, data.scope); setProfile(saved); setFormChanged(false); setPlan(null); setReviewAccepted(false);
     try { await persist({ ...data, profile: saved, profileDirty: false }, generation); }
     catch (error) { throw Error("Your profile was saved online, but this phone could not save its copy. " + message(error)); }

@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createRequire } from 'node:module';
-import * as sourceIdentity from "../server/discovery-source-identity.mjs";
+import * as sourceIdentity from "../shared/discovery-source-identity.mjs";
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -23,7 +23,7 @@ function execute(source, scope = {}, loader = require) {
   return context.exports;
 }
 historicalHelpers = execute(read("app/phone/historical-text.ts"));
-const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../shared/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const translator = language => (key, values) => translate(key, language, values);
 

@@ -13,6 +13,8 @@ enum ApplicationServicePage: String, CaseIterable {
 
 /// Phone clients never infer submission from an HTTP status, a tap, or a local note.
 enum MobileApplicationPolicy {
+    // JavaScript String.trim() is used by the service for uploaded filenames and search keys.
+    static let serviceWhitespace = CharacterSet(charactersIn: "\u{9}\u{a}\u{b}\u{c}\u{d}\u{20}\u{a0}\u{1680}\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2007}\u{2008}\u{2009}\u{200a}\u{2028}\u{2029}\u{202f}\u{205f}\u{3000}\u{feff}")
     static let maximumResumeBytes = 5 * 1024 * 1024
     static let hostedServiceOrigin = "https://career-finder-service.jazzy-drake-8323.chatgpt.site"
     /// English and Arabic keyboards use different commas for the same profile lists.
@@ -489,6 +491,15 @@ struct PhoneApplicationProfile: Codable, Equatable {
     mutating func removeResume() {
         resumeData = nil; resumeName = ""; resumeSize = nil; resumeSHA256 = nil
         resumeChanged = true; resumeRemoved = true
+    }
+    func confirmsResumeChange(in saved: PhoneApplicationProfile) -> Bool {
+        if resumeRemoved { return saved.resumeSHA256 == nil }
+        guard resumeChanged else { return true }
+        guard let data = resumeData else { return false }
+        let name = resumeName.trimmingCharacters(in: MobileApplicationPolicy.serviceWhitespace)
+        let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        return saved.resumeName.utf8.elementsEqual(name.utf8) && saved.resumeSize == data.count
+            && saved.resumeSHA256?.lowercased() == digest
     }
     mutating func adoptResumeMetadata(from other: PhoneApplicationProfile) {
         resumeName = other.resumeName; resumeSize = other.resumeSize; resumeSHA256 = other.resumeSHA256

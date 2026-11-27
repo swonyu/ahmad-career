@@ -1,4 +1,4 @@
-import { parseDiscoverySourceIdentity } from "../../server/discovery-source-identity.mjs";
+import { parseDiscoverySourceIdentity } from "../../shared/discovery-source-identity.mjs";
 import type { DiscoveryPage, Filters } from "./model";
 
 export type SearchHistoryBoard = { sourceId: string; seenIds: string[]; ready: boolean };

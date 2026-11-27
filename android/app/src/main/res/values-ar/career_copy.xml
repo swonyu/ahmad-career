@@ -1472,6 +1472,7 @@
     <string name="c_a593fbdce368" formatted="false">"منطقة التخزين الخاص المختارة غير متاحة."</string>
     <string name="c_71c259a4ff36" formatted="false">"تعذّر على الخدمة إكمال هذا الطلب."</string>
     <string name="c_f4db1ed6265f" formatted="false">"تعذر على الخدمة التأكد من استلام جهة العمل لهذا الطلب. لن يُرسل تلقائيًا مرة أخرى."</string>
+    <string name="c_9e9eb1a7bc59" formatted="false">"لم تؤكد الخدمة تغيير السيرة الذاتية. حدّث الملف الشخصي على الإنترنت وراجع مسودتك."</string>
     <string name="c_fef73d5e9ab4" formatted="false">"لم تؤكد الخدمة نسخة الملف الشخصي المتوقعة. احتُفظ بمسودة هاتفك."</string>
     <string name="c_057c5ebe8d33" formatted="false">"لم تؤكد الخدمة هذه الفرصة."</string>
     <string name="c_f3e79d20658d" formatted="false">"لم تؤكد الخدمة مساحة العمل هذه. اطلب دعوة جديدة."</string>

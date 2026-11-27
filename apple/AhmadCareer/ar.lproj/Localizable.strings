@@ -1470,6 +1470,7 @@
 "The selected private storage area is unavailable." = "منطقة التخزين الخاص المختارة غير متاحة.";
 "The service could not complete this request." = "تعذّر على الخدمة إكمال هذا الطلب.";
 "The service could not establish whether the employer accepted this application. It will not be sent again automatically." = "تعذر على الخدمة التأكد من استلام جهة العمل لهذا الطلب. لن يُرسل تلقائيًا مرة أخرى.";
+"The service did not confirm the CV change. Refresh the online profile and review your draft." = "لم تؤكد الخدمة تغيير السيرة الذاتية. حدّث الملف الشخصي على الإنترنت وراجع مسودتك.";
 "The service did not confirm the expected profile version. Your phone draft is kept." = "لم تؤكد الخدمة نسخة الملف الشخصي المتوقعة. احتُفظ بمسودة هاتفك.";
 "The service did not confirm this opportunity." = "لم تؤكد الخدمة هذه الفرصة.";
 "The service did not confirm this workspace. Request a new invitation." = "لم تؤكد الخدمة مساحة العمل هذه. اطلب دعوة جديدة.";

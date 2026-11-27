@@ -7,7 +7,7 @@ import ts from 'typescript';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { setImmediate as yieldEventLoop } from 'node:timers/promises';
-import * as sourceIdentity from '../server/discovery-source-identity.mjs';
+import * as sourceIdentity from '../shared/discovery-source-identity.mjs';
 
 const require = createRequire(import.meta.url);
 const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
@@ -25,7 +25,7 @@ const { APIError } = execute(read('app/components/api.ts'));
 const historicalHelpers = execute(read('app/phone/historical-text.ts'));
 const readTransport = execute(read('app/phone/read-transport.ts'), {}, name => name === '../components/api' ? { APIError } : name === './historical-text' ? historicalHelpers : require(name));
 const model = execute(read('app/phone/model.ts'), {}, name => name === './historical-text' ? historicalHelpers : name === './read-transport' ? readTransport : require(name));
-const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../server/discovery-source-identity.mjs' ? sourceIdentity : require(name));
+const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../shared/discovery-source-identity.mjs' ? sourceIdentity : require(name));
 const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
 const savedComparison = execute(read('app/phone/saved-comparison.ts'), {}, name => name === './model' ? model : require(name));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));

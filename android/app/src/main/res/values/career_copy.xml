@@ -1472,6 +1472,7 @@
     <string name="c_a593fbdce368" formatted="false">"The selected private storage area is unavailable."</string>
     <string name="c_71c259a4ff36" formatted="false">"The service could not complete this request."</string>
     <string name="c_f4db1ed6265f" formatted="false">"The service could not establish whether the employer accepted this application. It will not be sent again automatically."</string>
+    <string name="c_9e9eb1a7bc59" formatted="false">"The service did not confirm the CV change. Refresh the online profile and review your draft."</string>
     <string name="c_fef73d5e9ab4" formatted="false">"The service did not confirm the expected profile version. Your phone draft is kept."</string>
     <string name="c_057c5ebe8d33" formatted="false">"The service did not confirm this opportunity."</string>
     <string name="c_f3e79d20658d" formatted="false">"The service did not confirm this workspace. Request a new invitation."</string>

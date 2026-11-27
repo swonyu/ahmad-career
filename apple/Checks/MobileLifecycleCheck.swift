@@ -691,6 +691,64 @@ private final class LifecycleSuite {
             try check(service.calls.last?.body?["expectedRevision"]?.integer == 8, "The explicitly reviewed base is sent")
             scenarios += 1
         }
+        // A successful HTTP response can still omit or misidentify the selected CV.
+        do {
+            var state = try initial(), previous = PhoneApplicationProfile()
+            try previous.selectResume(pdf, filename: "Previous.pdf")
+            state.acknowledge(try ApplicationServerProfile(server(3, resume: metadata(previous))))
+            var replacement = state.profile
+            try replacement.selectResume(pdf, filename: "\u{feff} New.pdf")
+            var stored = metadata(replacement).object
+            stored["name"] = .string("New.pdf")
+            stored["sha256"] = .string(replacement.resumeSHA256!.uppercased())
+            var wrongSize = stored, wrongHash = stored
+            wrongSize["size"] = .number(Double(pdf.count + 1))
+            wrongHash["sha256"] = .string(String(repeating: "f", count: 64))
+            let incorrect: [ApplicationValue?] = [nil, .null, metadata(previous), .object(wrongSize), .object(wrongHash)]
+            for reply in incorrect {
+                let service = TestService()
+                service.handle = { _ in
+                    var response = self.server(4); response["resume"] = reply
+                    return ["ok": .bool(true), "profile": .object(response)]
+                }
+                let (store, folder, tokens) = try fixture(state, service: service)
+                let saved = await store.saveProfile(replacement, context: store.editContext)
+                try check(!saved && store.profileNeedsSync && store.profile == replacement && store.revision == 3,
+                          "A missing or mismatched CV acknowledgement keeps the exact replacement pending")
+                let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+                try check(reopened.profile == replacement && reopened.profileNeedsSync && reopened.revision == 3,
+                          "Reopening after an unconfirmed save keeps the replacement bytes and revision")
+                scenarios += 1
+            }
+            let service = TestService()
+            var reply = ApplicationValue.object(stored), revision = 4
+            service.handle = { _ in ["ok": .bool(true), "profile": .object(self.server(revision, resume: reply))] }
+            let (store, folder, tokens) = try fixture(state, service: service)
+            let replaced = await store.saveProfile(replacement, context: store.editContext)
+            try check(replaced && store.profile.resumeName == "New.pdf" && store.profile.resumeData == nil
+                      && !store.profileNeedsSync && store.revision == 4,
+                      "The exact PDF with the service-trimmed filename and equivalent digest is confirmed")
+
+            revision = 5
+            var removal = store.profile; removal.removeResume()
+            let rejected = await store.saveProfile(removal, context: store.editContext)
+            try check(!rejected && store.profile == removal && store.profileNeedsSync && store.revision == 4,
+                      "An uncleared server CV keeps the explicit removal pending")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(reopened.profile.resumeRemoved && reopened.profileNeedsSync,
+                      "The explicit removal survives relaunch until confirmed")
+            reply = .null
+            let removed = await reopened.saveProfile(reopened.profile, context: reopened.editContext)
+            try check(removed && !reopened.profile.resumeRemoved && !reopened.profileNeedsSync
+                      && reopened.profile.resumeName.isEmpty && reopened.revision == 5,
+                      "An explicit null confirms removal and clears the pending change")
+
+            revision = 6
+            let reused = await reopened.saveProfile(reopened.profile, context: reopened.editContext)
+            try check(reused && service.calls.last?.body?["profile"]?.object["resume"] == nil,
+                      "A profile edit without any CV change keeps the existing omission contract")
+            scenarios += 1
+        }
         // Existing drafts without the new revision field are preserved, never assumed to be revision zero.
         do {
             var state = try initial(4); state.profileNeedsSync = true; state.profile.firstName = "Legacy draft"

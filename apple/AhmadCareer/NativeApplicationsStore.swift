@@ -781,6 +781,9 @@ final class NativeApplicationsStore: ObservableObject {
             guard linkedInProfileSupported != true || server.profile.linkedin == draft.linkedin else {
                 throw MobileApplicationError(message: "The service did not confirm your LinkedIn profile change. Your phone draft is kept; refresh before applying.")
             }
+            guard draft.confirmsResumeChange(in: server.profile) else {
+                throw MobileApplicationError(message: "The service did not confirm the CV change. Refresh the online profile and review your draft.")
+            }
             var acknowledged = state; acknowledged.acknowledge(server)
             do { try persist(acknowledged) }
             catch {

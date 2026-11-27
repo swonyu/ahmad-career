@@ -1,4 +1,4 @@
-import { parseDiscoverySourceIdentity } from "../../server/discovery-source-identity.mjs";
+import { parseDiscoverySourceIdentity } from "../../shared/discovery-source-identity.mjs";
 
 /** Match a catalog ID, employer-board URL or supported posting URL by board. */
 export function discoverySourceKey(value: string): string {

@@ -5,7 +5,7 @@ import path from "node:path";
 import vm from "node:vm";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import * as sourceIdentity from "../server/discovery-source-identity.mjs";
+import * as sourceIdentity from "../shared/discovery-source-identity.mjs";
 
 // Evidence overrides select a source copy without changing the repository.
 // Normal project execution reads the real PhoneApp and installed dependencies.
@@ -27,7 +27,7 @@ const { APIError } = execute(read("app/components/api.ts"));
 const historicalHelpers = execute(read("app/phone/historical-text.ts"));
 const readTransport = execute(read("app/phone/read-transport.ts"), {}, name => name === "../components/api" ? { APIError } : name === "./historical-text" ? historicalHelpers : require(name));
 const model = execute(read("app/phone/model.ts"), {}, name => name === "./historical-text" ? historicalHelpers : name === "./read-transport" ? readTransport : require(name));
-const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../shared/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { PhoneVaultError } = execute(read("app/phone/vault.ts"), {}, name => name === "./model" ? model : require(name));
 const source = process.env.CAREER_ACTIONS_SOURCE ? fs.readFileSync(process.env.CAREER_ACTIONS_SOURCE, "utf8") : read("app/phone/PhoneApp.tsx");
 const tree = ts.createSourceFile("PhoneApp.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);

@@ -139,6 +139,49 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
   install(context, "discardConfirmed", action("Discarding recovery copy"));
   return { context, main, safety, mainPort, recoveryPort };
 }
+test("online profile save preserves the local CV until the service confirms the change", async () => {
+  const bytes = Buffer.from("%PDF-1.4 fixture");
+  const digest = Buffer.from(await webcrypto.subtle.digest("SHA-256", bytes)).toString("hex");
+  const metadata = { name: "سيرة.pdf", mime: "application/pdf", size: bytes.length, sha256: digest };
+  const selected = { ...metadata, name: "  سيرة.pdf", dataBase64: bytes.toString("base64") };
+  for (const [draft, reply, accepted] of [
+    [selected, null, false], [selected, { ...metadata, name: "Other.pdf" }, false],
+    [selected, { ...metadata, size: bytes.length + 1 }, false],
+    [selected, { ...metadata, sha256: "b".repeat(64) }, false],
+    [null, metadata, false], [selected, metadata, true], [null, null, true],
+  ]) {
+    const { context, main } = await harness();
+    install(context, "online"); install(context, "withPDF"); install(context, "saveOnlineProfile");
+    const workspace = validWorkspace();
+    workspace.profile.resume = { ...metadata, name: "Previous.pdf" };
+    context.workspaceRef.current = workspace;
+    context.profile = { ...workspace.profile, resume: draft };
+    context.formChanged = true;
+    let writes = 0;
+    context.phoneAPI = async (path, options) => {
+      assert.equal(path, "/api/phone/profile"); assert.equal(options.method, "PUT"); writes++;
+      return { profile: { ...workspace.profile, revision: 1, resume: reply } };
+    };
+    if (accepted) {
+      await context.saveOnlineProfile();
+      assert.equal(context.formChanged, false);
+      assert.equal(context.profile.revision, 1);
+      assert.equal(context.profile.resume?.dataBase64, draft?.dataBase64);
+      assert.equal(context.profile.resume?.name, reply?.name);
+      assert.equal((await main.loadPhoneSnapshot(scope)).profileDirty, false);
+    } else {
+      await assert.rejects(context.saveOnlineProfile(), /did not confirm the CV change/);
+      const restored = await main.loadPhoneSnapshot(scope);
+      assert.deepEqual(restored.profile.resume, draft);
+      assert.equal(restored.profileDirty, true);
+      assert.equal(context.workspaceRef.current, workspace);
+      assert.equal(context.formChanged, true);
+      assert.equal(restored.profile.revision, 0);
+    }
+    assert.equal(writes, 1);
+  }
+});
+
 function markUnfinished(h) {
   const c = h.context;
   c.profile = { ...c.profile, firstName: "Current unsaved profile" }; c.formChanged = true;

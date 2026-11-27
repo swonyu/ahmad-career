@@ -1470,6 +1470,7 @@
 "The selected private storage area is unavailable." = "The selected private storage area is unavailable.";
 "The service could not complete this request." = "The service could not complete this request.";
 "The service could not establish whether the employer accepted this application. It will not be sent again automatically." = "The service could not establish whether the employer accepted this application. It will not be sent again automatically.";
+"The service did not confirm the CV change. Refresh the online profile and review your draft." = "The service did not confirm the CV change. Refresh the online profile and review your draft.";
 "The service did not confirm the expected profile version. Your phone draft is kept." = "The service did not confirm the expected profile version. Your phone draft is kept.";
 "The service did not confirm this opportunity." = "The service did not confirm this opportunity.";
 "The service did not confirm this workspace. Request a new invitation." = "The service did not confirm this workspace. Request a new invitation.";

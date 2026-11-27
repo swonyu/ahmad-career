@@ -1518,6 +1518,7 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The selected private storage area is unavailable." to R.string.c_a593fbdce368,
     "The service could not complete this request." to R.string.c_71c259a4ff36,
     "The service could not establish whether the employer accepted this application. It will not be sent again automatically." to R.string.c_f4db1ed6265f,
+    "The service did not confirm the CV change. Refresh the online profile and review your draft." to R.string.c_9e9eb1a7bc59,
     "The service did not confirm the expected profile version. Your phone draft is kept." to R.string.c_fef73d5e9ab4,
     "The service did not confirm this opportunity." to R.string.c_057c5ebe8d33,
     "The service did not confirm this workspace. Request a new invitation." to R.string.c_f3e79d20658d,
@@ -1546,10 +1547,10 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The service returned incomplete or invalid data. Your phone draft was kept. Refresh before trying again." to R.string.c_094deee4c2f5,
     "The service saved your profile, but this phone could not save the confirmation. Your draft is preserved; refresh before applying." to R.string.c_fc0bc6aaf902,
     "The workspace changed while choosing a PDF. Choose it again from the intended profile." to R.string.c_3db20a5e7e11,
-    "The workspace changed while choosing a backup. Choose the file again from the destination workspace." to R.string.c_21d6a0d488e7,
 )
 
 private fun nativeCopyIds10(): Map<String, Int> = mapOf(
+    "The workspace changed while choosing a backup. Choose the file again from the destination workspace." to R.string.c_21d6a0d488e7,
     "The workspace changed while choosing the export destination. Export again from the intended account." to R.string.c_7bafa3ed11c7,
     "The workspace changed while choosing the export destination. Open export again for the workspace you want." to R.string.c_cbbba81e107d,
     "The workspace changed. Keep this editor open and reconnect to the original workspace before saving its draft." to R.string.c_e7b1cc059a69,
@@ -1699,10 +1700,10 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "UTC" to R.string.c_7e5f76c94a63,
     "Unable to complete this action. Check your connection and try again." to R.string.c_cdce7f7d4251,
     "Unavailable" to R.string.c_ca1844969742,
-    "Unavailable — this does not mean there are no openings" to R.string.c_708daefcbdb8,
 )
 
 private fun nativeCopyIds11(): Map<String, Int> = mapOf(
+    "Unavailable — this does not mean there are no openings" to R.string.c_708daefcbdb8,
     "Uncertain" to R.string.c_4e313210bf91,
     "Unfinished changes discarded. Saved notes, history and application status are kept." to R.string.c_573474575b30,
     "Unfinished opportunity" to R.string.c_676b3ed833c8,
@@ -1852,10 +1853,10 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Your phone profile and records were imported, but the previous search was preserved: " to R.string.c_ef900ccc59ba,
     "Your phone profile and records were imported, but the previous search was preserved: {0}" to R.string.c_f8acf84b40b7,
     "Your phone workspace remains available while it is disconnected." to R.string.c_b7342fd0da0a,
-    "Your preparation checklist" to R.string.c_079a625ffa4a,
 )
 
 private fun nativeCopyIds12(): Map<String, Int> = mapOf(
+    "Your preparation checklist" to R.string.c_079a625ffa4a,
     "Your previous record says you applied. Clearing that mark allows a new application review; it does not withdraw an employer application." to R.string.c_ab3adbd43684,
     "Your previous search could not be opened. Its saved file is preserved. You can search now; new results stay in this session until saved-search recovery succeeds." to R.string.c_c37c21b5a298,
     "Your previously saved record will stay unchanged." to R.string.c_49946a90853b,

@@ -2,7 +2,7 @@ import {createHmac,randomBytes,randomUUID} from 'node:crypto';
 import {sha256,countryCodes} from './validation.mjs';
 import {SERVICE_ORIGIN} from './applications.mjs';
 import {createDiscoveryKeywordMatcher,DISCOVERY_KEYWORD_MATCHING_VERSION} from './discovery-keywords.mjs';
-import {sourceRecord,parseDiscoverySourceIdentity} from './discovery-source-identity.mjs';
+import {sourceRecord,parseDiscoverySourceIdentity} from '../shared/discovery-source-identity.mjs';
 
 export const DISCOVERY_LIMITS=Object.freeze({maxSources:4,pageSize:50,maxJobsPerSource:500,maxCachedSources:128,maxCustomCachedSources:96,maxCacheBytes:512*1024,maxResponseBytes:4*1024*1024,freshMilliseconds:10*60000,staleMilliseconds:24*3600000,sourceMilliseconds:10000,requestMilliseconds:5000,leaseMilliseconds:20000,requestsPerMinute:120,customRequestsPerMinute:60,requestsPerClientMinute:20,unknownClientRequestsPerMinute:6,upstreamRequestsPerMinute:60,customUpstreamRequestsPerMinute:30,refreshesPerClientMinute:8});
 export const DISCOVERY_NOTICE='Search covers only the selected public employer boards. Results can change or close; open the employer posting to confirm requirements and location eligibility.';

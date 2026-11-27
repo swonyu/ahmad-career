@@ -445,8 +445,7 @@ enum DiscoveryHistoryPolicy {
     }
     private static func fold(_ value: String) -> String {
         // Match JavaScript trim + NFKD + removal of all Unicode Mark categories.
-        let whitespace = CharacterSet(charactersIn: "\u{9}\u{a}\u{b}\u{c}\u{d}\u{20}\u{a0}\u{1680}\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2007}\u{2008}\u{2009}\u{200a}\u{2028}\u{2029}\u{202f}\u{205f}\u{3000}\u{feff}")
-        let normalized = value.trimmingCharacters(in: whitespace).decomposedStringWithCompatibilityMapping
+        let normalized = value.trimmingCharacters(in: MobileApplicationPolicy.serviceWhitespace).decomposedStringWithCompatibilityMapping
         return String(String.UnicodeScalarView(normalized.unicodeScalars.filter {
             switch $0.properties.generalCategory {
             case .nonspacingMark, .spacingMark, .enclosingMark: return false
