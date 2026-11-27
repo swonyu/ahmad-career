@@ -1,0 +1,2053 @@
+{
+  "schemaVersion": 1,
+  "task": "WF-04 spreadsheet consumer acceptance",
+  "startedAtUTC": "2026-11-18T19:06:17.896404+00:00",
+  "sourceCommit": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "sourceBlobs": {
+    "hosted/app/phone/record-tools.ts": "5c6cefd0daf5cadb57ebad2b24160ae3e56578a8",
+    "hosted/app/phone/model.ts": "1dfce84b490e1c6b4eaffd546ff07089c3446b37",
+    "hosted/app/i18n/core.ts": "5381f87aa378a6836af83432d7e29e180ef449cb"
+  },
+  "generatorNodeVersion": "v24.22.3",
+  "generatorScope": "Actual production export functions executed directly with synthetic fixtures. Browser download not tested by this generator.",
+  "transport": {
+    "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/fixture-transport.json",
+    "bytes": 17558,
+    "sha256": "f55398afa010338dd554317b87f5f91766f76a1a759eabe767d15ba5e611ba07"
+  },
+  "script": {
+    "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/verify-libreoffice-consumer.py",
+    "bytes": 17466,
+    "sha256": "6ae42a9e07442b78b12ca350253d2feb531ab5826fae969fa420bdad81c51823"
+  },
+  "engine": {
+    "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+    "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+    "mode": "headless native Calc CSV import to native ODS"
+  },
+  "filter": {
+    "string": "Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true,false,false",
+    "tokens": [
+      "44",
+      "34",
+      "76",
+      "1",
+      "",
+      "1033",
+      "false",
+      "false",
+      "true",
+      "false",
+      "false",
+      "0",
+      "true",
+      "false",
+      "false"
+    ],
+    "documentation": "https://help.libreoffice.org/latest/en-US/text/shared/guide/csv_params.html",
+    "columnFormat": "Standard default; no forced-text column formatting",
+    "quotedFieldsAsText": false,
+    "evaluateFormulaExpressions": true,
+    "detectSpecialNumbers": false,
+    "detectScientificNumbers": false,
+    "trimSpaces": false,
+    "languageIdentifier": 1033,
+    "characterSet": "UTF-8 (76)"
+  },
+  "allowedComparisonNormalization": "CRLF to LF only; no other content normalization",
+  "exports": [
+    {
+      "language": "en",
+      "input": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-en.csv",
+        "bytes": 3147,
+        "sha256": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5"
+      },
+      "expectedSHA256": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5",
+      "hasUTF8BOM": true,
+      "inputUnmodified": true,
+      "recordCount": 18,
+      "columnCount": 9,
+      "nativeRowsIncludingHeader": 19,
+      "nativeUsedColumns": 9,
+      "nativeCellCount": 171,
+      "all171CellsString": false,
+      "nonTextCells": [
+        {
+          "cell": "F2",
+          "actual": {
+            "row": 2,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G2",
+          "actual": {
+            "row": 2,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F3",
+          "actual": {
+            "row": 3,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G3",
+          "actual": {
+            "row": 3,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F4",
+          "actual": {
+            "row": 4,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G4",
+          "actual": {
+            "row": 4,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F5",
+          "actual": {
+            "row": 5,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G5",
+          "actual": {
+            "row": 5,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F6",
+          "actual": {
+            "row": 6,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G6",
+          "actual": {
+            "row": 6,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F7",
+          "actual": {
+            "row": 7,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G7",
+          "actual": {
+            "row": 7,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F8",
+          "actual": {
+            "row": 8,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G8",
+          "actual": {
+            "row": 8,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F9",
+          "actual": {
+            "row": 9,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G9",
+          "actual": {
+            "row": 9,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F10",
+          "actual": {
+            "row": 10,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G10",
+          "actual": {
+            "row": 10,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F11",
+          "actual": {
+            "row": 11,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G11",
+          "actual": {
+            "row": 11,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F12",
+          "actual": {
+            "row": 12,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G12",
+          "actual": {
+            "row": 12,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F13",
+          "actual": {
+            "row": 13,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G13",
+          "actual": {
+            "row": 13,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F14",
+          "actual": {
+            "row": 14,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G14",
+          "actual": {
+            "row": 14,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F15",
+          "actual": {
+            "row": 15,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G15",
+          "actual": {
+            "row": 15,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F16",
+          "actual": {
+            "row": 16,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G16",
+          "actual": {
+            "row": 16,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F17",
+          "actual": {
+            "row": 17,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G17",
+          "actual": {
+            "row": 17,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F18",
+          "actual": {
+            "row": 18,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G18",
+          "actual": {
+            "row": 18,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F19",
+          "actual": {
+            "row": 19,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G19",
+          "actual": {
+            "row": 19,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        }
+      ],
+      "exactValuesAfterAllowedNormalization": false,
+      "mismatches": [
+        {
+          "cell": "A8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 1,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "B8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 2,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "H8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 8,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        }
+      ],
+      "allowedNormalizations": [
+        {
+          "cell": "H2",
+          "kind": "CRLF to LF",
+          "original": "line one\nline two, \"quoted\"\r\nنص خاص",
+          "compared": "line one\nline two, \"quoted\"\nنص خاص"
+        }
+      ],
+      "formulaCount": 0,
+      "externalLinks": [],
+      "externalSources": [],
+      "formulaLikeVariants": 17,
+      "formulaLikeCells": [
+        {
+          "cell": "A3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        }
+      ],
+      "profileCVAndSecretSentinelsAbsent": true,
+      "nativeOutput": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en/career-finder-export-en.ods",
+        "bytes": 17679,
+        "sha256": "3ace9f83a8350f4f1f662b849fdccbe493cf119f28c835dcefab70ea2eea4cc4"
+      },
+      "contentXML": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en/career-finder-export-en.content.xml",
+        "bytes": 28512,
+        "sha256": "1045a9b6f68c1de06557a2982efd169fef668c277cd1c1751ddba5722d8be349"
+      },
+      "nativeInspection": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en/native-inspection.json",
+      "invocation": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+          "-env:UserInstallation=file:///workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-en",
+          "--headless",
+          "--nologo",
+          "--nodefault",
+          "--nofirststartwizard",
+          "--norestore",
+          "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true,false,false",
+          "--convert-to",
+          "ods:calc8",
+          "--outdir",
+          "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en",
+          "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-en.csv"
+        ],
+        "isolatedUserProfile": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-en",
+        "environmentOverrides": {
+          "SAL_USE_VCLPLUGIN": "svp",
+          "TMPDIR": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/temp-en"
+        },
+        "exitCode": 0,
+        "elapsedSeconds": 13.258,
+        "stdout": "convert /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-en.csv as a Calc document -> /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en/career-finder-export-en.ods using filter : calc8\n",
+        "stderr": "",
+        "inputHashBefore": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5",
+        "inputHashAfter": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5"
+      },
+      "passed": false
+    },
+    {
+      "language": "ar",
+      "input": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-ar.csv",
+        "bytes": 3421,
+        "sha256": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873"
+      },
+      "expectedSHA256": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873",
+      "hasUTF8BOM": true,
+      "inputUnmodified": true,
+      "recordCount": 18,
+      "columnCount": 9,
+      "nativeRowsIncludingHeader": 19,
+      "nativeUsedColumns": 9,
+      "nativeCellCount": 171,
+      "all171CellsString": false,
+      "nonTextCells": [
+        {
+          "cell": "F2",
+          "actual": {
+            "row": 2,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G2",
+          "actual": {
+            "row": 2,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F3",
+          "actual": {
+            "row": 3,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G3",
+          "actual": {
+            "row": 3,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F4",
+          "actual": {
+            "row": 4,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G4",
+          "actual": {
+            "row": 4,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F5",
+          "actual": {
+            "row": 5,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G5",
+          "actual": {
+            "row": 5,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F6",
+          "actual": {
+            "row": 6,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G6",
+          "actual": {
+            "row": 6,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F7",
+          "actual": {
+            "row": 7,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G7",
+          "actual": {
+            "row": 7,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F8",
+          "actual": {
+            "row": 8,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G8",
+          "actual": {
+            "row": 8,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F9",
+          "actual": {
+            "row": 9,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G9",
+          "actual": {
+            "row": 9,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F10",
+          "actual": {
+            "row": 10,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G10",
+          "actual": {
+            "row": 10,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F11",
+          "actual": {
+            "row": 11,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G11",
+          "actual": {
+            "row": 11,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F12",
+          "actual": {
+            "row": 12,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G12",
+          "actual": {
+            "row": 12,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F13",
+          "actual": {
+            "row": 13,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G13",
+          "actual": {
+            "row": 13,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F14",
+          "actual": {
+            "row": 14,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G14",
+          "actual": {
+            "row": 14,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F15",
+          "actual": {
+            "row": 15,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G15",
+          "actual": {
+            "row": 15,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F16",
+          "actual": {
+            "row": 16,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G16",
+          "actual": {
+            "row": 16,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F17",
+          "actual": {
+            "row": 17,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G17",
+          "actual": {
+            "row": 17,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F18",
+          "actual": {
+            "row": 18,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G18",
+          "actual": {
+            "row": 18,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "F19",
+          "actual": {
+            "row": 19,
+            "column": 6,
+            "type": "date",
+            "text": "2026-11-18",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "G19",
+          "actual": {
+            "row": 19,
+            "column": 7,
+            "type": "date",
+            "text": "2026-11-24",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        }
+      ],
+      "exactValuesAfterAllowedNormalization": false,
+      "mismatches": [
+        {
+          "cell": "A8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 1,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "B8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 2,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        },
+        {
+          "cell": "H8",
+          "expected": "Text: \r=1",
+          "actual": {
+            "row": 8,
+            "column": 8,
+            "type": "string",
+            "text": "Text: \n=1",
+            "formula": null,
+            "numericValue": null,
+            "stringValue": null
+          }
+        }
+      ],
+      "allowedNormalizations": [
+        {
+          "cell": "H2",
+          "kind": "CRLF to LF",
+          "original": "line one\nline two, \"quoted\"\r\nنص خاص",
+          "compared": "line one\nline two, \"quoted\"\nنص خاص"
+        }
+      ],
+      "formulaCount": 0,
+      "externalLinks": [],
+      "externalSources": [],
+      "formulaLikeVariants": 17,
+      "formulaLikeCells": [
+        {
+          "cell": "A3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H3",
+          "sourceVariant": "=1+1",
+          "nativeType": "string",
+          "nativeText": "Text: =1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H4",
+          "sourceVariant": "+SUM(1,2)",
+          "nativeType": "string",
+          "nativeText": "Text: +SUM(1,2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H5",
+          "sourceVariant": "-1+2",
+          "nativeType": "string",
+          "nativeText": "Text: -1+2",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H6",
+          "sourceVariant": "@SUM(A1:A2)",
+          "nativeType": "string",
+          "nativeText": "Text: @SUM(A1:A2)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H7",
+          "sourceVariant": "\t=1",
+          "nativeType": "string",
+          "nativeText": "Text: \t=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H8",
+          "sourceVariant": "\r=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H9",
+          "sourceVariant": "\n=1",
+          "nativeType": "string",
+          "nativeText": "Text: \n=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H10",
+          "sourceVariant": "  =1",
+          "nativeType": "string",
+          "nativeText": "Text:   =1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H11",
+          "sourceVariant": "﻿=1",
+          "nativeType": "string",
+          "nativeText": "Text: ﻿=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H12",
+          "sourceVariant": "⁦=1",
+          "nativeType": "string",
+          "nativeText": "Text: ⁦=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H13",
+          "sourceVariant": "'=1",
+          "nativeType": "string",
+          "nativeText": "Text: '=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H14",
+          "sourceVariant": "\"=1",
+          "nativeType": "string",
+          "nativeText": "Text: \"=1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H15",
+          "sourceVariant": "＝1+1",
+          "nativeType": "string",
+          "nativeText": "Text: ＝1+1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H16",
+          "sourceVariant": "＋1",
+          "nativeType": "string",
+          "nativeText": "Text: ＋1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H17",
+          "sourceVariant": "－1",
+          "nativeType": "string",
+          "nativeText": "Text: －1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H18",
+          "sourceVariant": "＠SUM(1)",
+          "nativeType": "string",
+          "nativeText": "Text: ＠SUM(1)",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "A19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "B19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        },
+        {
+          "cell": "H19",
+          "sourceVariant": "　＝1",
+          "nativeType": "string",
+          "nativeText": "Text: 　＝1",
+          "formula": null,
+          "literalTextPrefix": true
+        }
+      ],
+      "profileCVAndSecretSentinelsAbsent": true,
+      "nativeOutput": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar/career-finder-export-ar.ods",
+        "bytes": 17828,
+        "sha256": "b46312be4a24d1d616b31a4a4dd265ff94d24bf95394c0c47a07ce99bfc313e7"
+      },
+      "contentXML": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar/career-finder-export-ar.content.xml",
+        "bytes": 28786,
+        "sha256": "0dce296a7877133970d3cb25726180002e7718adf5ff2a14be1c29ed7b0153c5"
+      },
+      "nativeInspection": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar/native-inspection.json",
+      "invocation": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+          "-env:UserInstallation=file:///workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-ar",
+          "--headless",
+          "--nologo",
+          "--nodefault",
+          "--nofirststartwizard",
+          "--norestore",
+          "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true,false,false",
+          "--convert-to",
+          "ods:calc8",
+          "--outdir",
+          "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar",
+          "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-ar.csv"
+        ],
+        "isolatedUserProfile": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-ar",
+        "environmentOverrides": {
+          "SAL_USE_VCLPLUGIN": "svp",
+          "TMPDIR": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/temp-ar"
+        },
+        "exitCode": 0,
+        "elapsedSeconds": 14.138,
+        "stdout": "convert /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-ar.csv as a Calc document -> /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar/career-finder-export-ar.ods using filter : calc8\n",
+        "stderr": "",
+        "inputHashBefore": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873",
+        "inputHashAfter": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873"
+      },
+      "passed": false
+    }
+  ],
+  "limitations": [
+    "One LibreOfficeDev 26.8.0.0.alpha0 engine in this Linux environment, not Excel or Numbers.",
+    "Actual production export functions were executed directly by the parent generator; this task does not claim browser-download acceptance.",
+    "This checks imported native cell values, types, formulas and external sources; it does not claim desktop visual layout or UI usability.",
+    "No calendar consumer, repeated import, app re-import, or follow-up synchronization was tested.",
+    "Synthetic fixtures only; no real account, employer, profile, resume or secret data used."
+  ],
+  "positiveControl": {
+    "input": {
+      "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control.csv",
+      "bytes": 68,
+      "sha256": "6e1670307b8ecc2d337ba9438cd76dcc0e41c107ffc3801c887fab91ec870ae9"
+    },
+    "passed": true,
+    "checks": {
+      "B2": {
+        "row": 2,
+        "column": 2,
+        "type": "float",
+        "text": "2",
+        "formula": "of:=1+1",
+        "numericValue": "2",
+        "stringValue": null
+      },
+      "B3": {
+        "row": 3,
+        "column": 2,
+        "type": "float",
+        "text": "2",
+        "formula": "of:=1+1",
+        "numericValue": "2",
+        "stringValue": null
+      },
+      "B4": {
+        "row": 4,
+        "column": 2,
+        "type": "string",
+        "text": "Text: =1+1",
+        "formula": null,
+        "numericValue": null,
+        "stringValue": null
+      }
+    },
+    "nativeOutput": {
+      "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control/positive-control.ods",
+      "bytes": 9111,
+      "sha256": "48a8c4f24baeb4ebe3bbda4988686250117b79a319e0810b4fae95db4a182833"
+    },
+    "invocation": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+        "-env:UserInstallation=file:///workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-positive-control",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--norestore",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true,false,false",
+        "--convert-to",
+        "ods:calc8",
+        "--outdir",
+        "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control",
+        "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control.csv"
+      ],
+      "isolatedUserProfile": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/profile-positive-control",
+      "environmentOverrides": {
+        "SAL_USE_VCLPLUGIN": "svp",
+        "TMPDIR": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/temp-positive-control"
+      },
+      "exitCode": 0,
+      "elapsedSeconds": 23.997,
+      "stdout": "convert /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control.csv as a Calc document -> /workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control/positive-control.ods using filter : calc8\n",
+      "stderr": "",
+      "inputHashBefore": "6e1670307b8ecc2d337ba9438cd76dcc0e41c107ffc3801c887fab91ec870ae9",
+      "inputHashAfter": "6e1670307b8ecc2d337ba9438cd76dcc0e41c107ffc3801c887fab91ec870ae9"
+    }
+  },
+  "transportUnchanged": true,
+  "passed": false,
+  "finishedAtUTC": "2026-11-18T19:07:09.313466+00:00",
+  "logPath": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/consumer.log"
+}

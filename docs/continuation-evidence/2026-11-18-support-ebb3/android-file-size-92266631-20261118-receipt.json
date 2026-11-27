@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-18T14:33:36.720676+00:00",
+  "reviewer": "/root/publication_review",
+  "worktree": "/Users/saleh/Developer/career-finder-android-file-size-20261118-ebb3",
+  "branch": "review/android-file-size-20261118-ebb3",
+  "commit": "a3d4dccfcd3d8c46d5c1421cb405f12f7cb33bea",
+  "parent": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "tree": "4cb8b68dbe1d48fe193affea3511c9f574f1f0dd",
+  "clean": true,
+  "change": {
+    "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+    "beforeSHA256": "16aa3856a3dd2e39574948570765fcaf52bc697c74e92168030bd226d9a2cf0d",
+    "afterSHA256": "54b351a3ed29f2e5ff0949e54246ca5a040e5ea49cb205f443e27476a2f6641b",
+    "diff": "one file; 7 additions and3 removals; formatter plus its two callsites",
+    "behavior": "B for bytes<1024, KiB for bytes<1048576, MiB thereafter; zero displays0B and positive tiny values display their exact whole-byte count. Values in KiB/MiB remain rounded to one decimal. l10n.locale selects display formatting.",
+    "preserved": "No change to Resume.size, PDF bytes/hash, reviews, submission authority, file limits, copy catalog, generated resources, tests, source selections or notice layout."
+  },
+  "finding": {
+    "image": "linkedin-search-handoff.png",
+    "imageSHA256": "329d0c5d9a4dedfce86dae93b5ee648708c90a4c1f9b6821281e9ec922e8c1ff",
+    "source": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt:104–105",
+    "fact": "The synthetic ReviewItem Resume metadata is Fixture.pdf,size20; the original image shows0.0MiB. The old formatter reproduced that value under the existing JDK. This is a metadata-display finding, not a claim that an actual valid PDF contains20bytes."
+  },
+  "validation": {
+    "sourceDerivedJVMExpressionBoundaries": 39,
+    "locales": [
+      "en",
+      "ar",
+      "ar-u-nu-arab"
+    ],
+    "sizes": [
+      0,
+      1,
+      20,
+      1023,
+      1024,
+      1025,
+      51200,
+      52428,
+      52429,
+      1048575,
+      1048576,
+      1048577,
+      5242880
+    ],
+    "exactInverseRestoresBase": true,
+    "generatorCheck": {
+      "stringsPerLanguage": 1824,
+      "templates": 149,
+      "passed": true
+    },
+    "diffCheckPassed": true,
+    "limits": "The JDK ran the exact extracted guard/arithmetic/String.format expressions in a Java wrapper. Kotlin compiler unavailable; no Kotlin/Android compilation, native execution, emulator UI, Gradle or full-CI run. Initial bare-Arabic digit assumption failure is preserved; final references use locale symbols and explicit Arabic numbering without changing app preferences."
+  },
+  "noticeClassification": {
+    "status": "Intentional capped scrolling; no lost-content or fixed-line truncation defect established. No notice source patch.",
+    "source": "MainActivity.kt:179–191,478–486",
+    "facts": [
+      "Outer workspace-messages scroll region uses maximum35% of the available height; each message Text also permits scrolling within150dp.",
+      "Original prepared/profile-large-text/receipts captures visibly cut the notice at the scroll viewport boundary. The body begins below that viewport.",
+      "There is no maxLines or ellipsis truncation on MessageBanner. The capture sequences scroll body lists; they do not exercise workspace-messages scrolling.",
+      "The checked MainActivity, NativeHttpsAcceptanceTest and LinkedInPhoneAcceptanceTest blobs are byte-identical between CI1c253f0 and owner9226663."
+    ],
+    "remainingVerification": "Owner should scroll the outer message viewport and any inner long message at Arabic at least180% font, confirm the full notice ending and Dismiss action remain reachable, and retain usable body height. A screenshot alone does not prove unreachability. If discovery is poor despite successful scrolling, consider a visible scroll affordance as a separate UI decision without removing bounds.",
+    "primaryReference": {
+      "url": "https://developer.android.com/develop/ui/compose/touch-input/scroll/scroll-modifiers",
+      "ref": "turn817547368view1",
+      "fact": "Official Compose guidance describes verticalScroll as allowing content larger than its maximum-size constraints to be scrolled."
+    }
+  },
+  "artifacts": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/android-file-size-precision.patch",
+      "bytes": 3484,
+      "sha256": "f9083db1609050ad38dc36d7fe7d1801b6fbc95c0a0fc7718a35e52500b69e71"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/source-validation.json",
+      "bytes": 4205,
+      "sha256": "951447859031fb6a7c848a7e0f2b1db86fa10b03797d966ca7d3986ca930453a"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/FormatterBoundaryCheck.java",
+      "bytes": 2472,
+      "sha256": "45293f6e225156300bdd225be598863529cc13c0e0618b48c2c720c05d7b20fa"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/FormatterBoundaryCheck.initial-locale-assumption.java.txt",
+      "bytes": 1967,
+      "sha256": "739c09b8655a6ab33bf16e1ac3fd51cefb29a341763c94ede57bec586454e74b"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/formatter-source.kt.txt",
+      "bytes": 279,
+      "sha256": "79a5aef3b4f89bcc6e6027d9586cb3ced3497ccc958f76253d4cf00927790b5c"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/jvm-expression-compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/jvm-expression-boundaries.log",
+      "bytes": 1040,
+      "sha256": "c36e26b0450d2371891c46c13de21b33c47e6929e490185e3e5573ece0013b4d"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/jvm-expression-compile-initial-locale-assumption.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/jvm-expression-boundaries-initial-locale-assumption.log",
+      "bytes": 428,
+      "sha256": "ec96673183036c21ab6fa77fbdf8cfb836d9b7d00b068293f772907c4f6108c2"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/localization-generator-check.log",
+      "bytes": 522,
+      "sha256": "e7e9e60df5a44f2ae1e5cc6b092910cfdd022173c32ea3750aa10b8bba82e701"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "ownership": "Active585 remains sole integrator. This isolated candidate is for review/handoff only; no shared-owner source edits, push, PR change, CI dispatch, Site mutation, deployment or native action."
+}

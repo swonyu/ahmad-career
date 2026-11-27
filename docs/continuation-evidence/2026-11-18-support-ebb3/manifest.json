@@ -1,0 +1,67 @@
+{
+  "createdAtUTC": "2026-11-18T14:54:27.352150+00:00",
+  "sourceParent": "b95f41495267ee40588fc2f61dd19daf2c1934c2",
+  "purpose": "Evidence-only continuation support. Current owner20698 retains integration and runtime responsibility. This folder does not certify full release acceptance.",
+  "files": [
+    {
+      "name": "Career-Finder-Continuation-Status-2026-11-18.md",
+      "bytes": 13593,
+      "sha256": "0fabedf91fbd6f5386da3ce2ecc8516c790c2be84a5712d42d0bedadbf09445b"
+    },
+    {
+      "name": "android-file-size-92266631-20261118-receipt.json",
+      "bytes": 7778,
+      "sha256": "12f35b2b62bea6cc43cd0c8ffc2b8cc187bd132d9751c44f836216c5ac9fbc81"
+    },
+    {
+      "name": "android-file-size-92266631-independent-review.json",
+      "bytes": 1876,
+      "sha256": "172eed691f44df5c24786eac67b906953817f45abc2a8e56bb141eb621e252d0"
+    },
+    {
+      "name": "owner585-android-profile-timeout-readonly-20261118.json",
+      "bytes": 5505,
+      "sha256": "02aec6ee7a3fd98455b97625811f4bc43c02305eddf3f06ef3f9edd6b2046fa5"
+    },
+    {
+      "name": "owner20698-android-diagnostics-independent-review-20261118.json",
+      "bytes": 7977,
+      "sha256": "3862a357529220beb11ccd9713643dc24b56f66b78f2bcd1cbf28162543b8934"
+    },
+    {
+      "name": "owner20698-d24b-final-independent-review.json",
+      "bytes": 11028,
+      "sha256": "8c9e899e9887f808d8aaacde28f030ea506798b2853294cdbf689087b4fdf9c6"
+    },
+    {
+      "name": "owner20698-d24b-source-observation.json",
+      "bytes": 64066,
+      "sha256": "fa32fbd0b623d06dc8d88189f758c781a77bbb2e76aa1a25e5a96e029ff3ce0d"
+    },
+    {
+      "name": "owner20698-reviewed-changes-integration.json",
+      "bytes": 3188,
+      "sha256": "d12be42ee8d22f73f903c2d1adc71a13b3318495cd97748935f9c054fb13fab4"
+    },
+    {
+      "name": "light-hierarchy-d24b-review.patch",
+      "bytes": 1101,
+      "sha256": "d5197cb1fd0cd61612f5c32fef97ece083817c40c63552b386a569d857de8b11"
+    },
+    {
+      "name": "light-hierarchy-d24b-review.json",
+      "bytes": 3247,
+      "sha256": "9ad9026965018696478df540230dedc3364a3f7dc554a59461bd16025a0d6184"
+    },
+    {
+      "name": "android-22-capture-root-review.json",
+      "bytes": 25915,
+      "sha256": "729fe104810c7e79f45930667f0df338ad1197eb457614c731fb90e3c4a2d6fe"
+    },
+    {
+      "name": "android-22-capture-hash-recheck.json",
+      "bytes": 319,
+      "sha256": "e9783fadc548940ebb4bc7e7e5ce2f572e838505284bfff7ae249f1450f0197a"
+    }
+  ]
+}

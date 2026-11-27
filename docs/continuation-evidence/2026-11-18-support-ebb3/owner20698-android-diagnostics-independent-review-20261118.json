@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-18T14:52:46.014Z",
+  "reviewer": "/root/publication_review",
+  "disposition": "Accepted for the bounded source review; no supported source blocker found. This is not native execution, diagnostic-output or full-CI acceptance.",
+  "currentOwner": "20698f1e14d3",
+  "ownerRepository": "/Users/saleh/Developer/career-finder-owner-20261118-20698",
+  "observedOwnerHEAD": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+  "observedOwnerClean": true,
+  "diagnosticCommit": "dd78b0f7b259ad7394694aa24a264727dc746402",
+  "diagnosticParent": "da316558a2c4ff05864cafd7c9f9a8f319dcfb10",
+  "diagnosticTree": "875b2295a731619cae12948a5c2fb2e6e8538816",
+  "diagnosticCommitIsAncestorOfOwnerHEAD": true,
+  "sourceBinding": {
+    "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+    "beforeSHA256": "47d904f87656dbcc5bde0435d00dbd52266bb8df5c11530d0f91b284470f22d7",
+    "afterSHA256": "4692795d493b78cfcee1643f2a4ec659d5355eac9f96dbf3285ec0962c1b68ed",
+    "afterBytes": 21475,
+    "identicalAtDiagnosticCommitAndOwnerHEAD": true,
+    "patchBytes": 11284,
+    "patchSHA256": "cd1f968a2a4901e199c6b7208d9a96ade58669858771c377d45a25121caf0ded",
+    "changedFiles": 1,
+    "addedLines": 88,
+    "removedLines": 9
+  },
+  "evidenceGapAddressed": [
+    "The prior historical run retained only the aggregate profile-save timeout and post-rule PID/screen evidence. The new test catch invokes captureFailureEvidence before Compose's rule disposes the activity, after the method's existing fixture cleanup.",
+    "failedStep preserves the first failed fixed phase, so pdf-document-remove cleanup phases do not replace profile-saved as the diagnostic location.",
+    "The snapshot records busy, profileDirty and profileRevision separately, along with readiness/storage/conflict flags and categorical model error/notice labels.",
+    "The failure screenshot bypasses Compose waitForIdle only on the failure path, avoiding reliance on the same possibly busy Compose state. Regular success captures retain the original default idle wait.",
+    "Each diagnostic operation is best effort and reports only a fixed unavailable message on its own failure. The caught test failure is rethrown."
+  ],
+  "preservedAcceptance": {
+    "methodInventoryBasis": "Static file path plus @Test function identity comparison across the diagnostic parent, diagnostic commit and observed owner HEAD.",
+    "totalAndroidMethodsBefore": 116,
+    "totalAndroidMethodsAfter": 116,
+    "exactMethodIdentityListPreserved": true,
+    "methodsInChangedFile": [
+      "TlsBoundaryAcceptanceTest.normalPreview_refusesTheIsolatedFixtureCertificate",
+      "NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
+    ],
+    "defaultWaitMilliseconds": 10000,
+    "explicitLongWaitMilliseconds": 30000,
+    "waitExpressionsUnchanged": true,
+    "sdkSuppressMinimum": 29,
+    "originalAssumeTrueConditionsUnchanged": true,
+    "originalAssertionsRetained": true,
+    "assertions": {
+      "assertTrue": {
+        "before": 5,
+        "after": 13
+      },
+      "assertFalse": {
+        "before": 1,
+        "after": 2
+      },
+      "assertEquals": {
+        "before": 15,
+        "after": 15
+      },
+      "assertNull": {
+        "before": 2,
+        "after": 2
+      },
+      "assertNotNull": {
+        "before": 1,
+        "after": 1
+      },
+      "assertIsDisplayed": {
+        "before": 4,
+        "after": 4
+      },
+      "assertIsOff": {
+        "before": 1,
+        "after": 1
+      },
+      "assertHeightIsAtLeast": {
+        "before": 1,
+        "after": 1
+      },
+      "assertIsEnabled": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    "addedChecks": "The fixture is loaded, connected, idle and in test mode; storage is available; no prior model error/conflict exists; exact known synthetic fields and selected PDF metadata reached the model; real profile validation passes; the profile remains dirty; and the Save control is enabled.",
+    "noRetrySkipOrGateWeakening": true,
+    "noWorkflowOrProductSourceChangeInDiagnosticCommit": true
+  },
+  "privacyReview": {
+    "structuredStateKeys": [
+      "schemaVersion",
+      "phase",
+      "failureClass",
+      "modelAvailable",
+      "loaded",
+      "busy",
+      "profileDirty",
+      "profileRevision",
+      "storageBlocked",
+      "requiresPairing",
+      "connected",
+      "testService",
+      "profileConflict",
+      "errorCode",
+      "noticeCode",
+      "validationFields",
+      "fixtureFirstNameMatches",
+      "fixtureEmailMatches",
+      "fixturePdfMatches",
+      "pdfBytesPresent"
+    ],
+    "stateValues": "Only booleans, the revision number, fixed phase/class labels, controlled error/notice categories and fixed validation-field identifiers are emitted. Fixture name/email/PDF comparisons emit booleans, never the compared values.",
+    "errorCategories": [
+      "none",
+      "profile-validation",
+      "connection-expired",
+      "stale-profile",
+      "invalid-service-data",
+      "other"
+    ],
+    "noticeCategories": [
+      "none",
+      "profile-saved",
+      "newer-draft",
+      "other"
+    ],
+    "validationFieldSource": "ProfileValidation.kt builds its map from fixed field keys; no user-controlled key or validation message is included in validationFields.",
+    "structuredOutputIncludesRawProfileValues": false,
+    "structuredOutputIncludesPairingOrAuthorizationCodes": false,
+    "structuredOutputIncludesTokensOrHeaders": false,
+    "structuredOutputIncludesRawPayloads": false,
+    "structuredOutputIncludesRawServiceErrors": false,
+    "structuredOutputIncludesSemanticsTreeDump": false,
+    "screenshotBoundary": "The best-effort image is allowed only after the existing acceptance-package plus fixture-origin precondition. It may display the isolated fixture's synthetic UI values; this review does not claim that a screenshot contains no visible fixture text. Keep this diagnostic restricted to the authorized synthetic acceptance environment."
+  },
+  "limits": [
+    "Read-only Git/source inspection only. No Kotlin/Android compile, test, native execution, CI dispatch, source mutation or new artifact download was performed by this reviewer.",
+    "No actual new diagnostic output or failure screenshot was observed. The source gives the owner a way to obtain the previously missing state; it does not establish the historical timeout's cause.",
+    "An error classified as other still needs interpretation from the owner's actual result. This change does not add service request-start/result tracing, and the review does not infer a service request occurred.",
+    "No assertion, timeout or acceptance requirement was relaxed to make the historical failure pass."
+  ],
+  "concreteRemainingSourceIssues": [],
+  "historicalEvidence": {
+    "runID": "44316849501",
+    "historicalRunOwner": "585525",
+    "cloudPath": "/workspace/scratch/ebb3eed5ee2b/owner585-android-profile-timeout-readonly-20261118.json",
+    "ownedMacPath": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/owner20698-android-diagnostics-review-20261118/owner585-android-profile-timeout-readonly-20261118.json",
+    "bytes": 5505,
+    "sha256": "02aec6ee7a3fd98455b97625811f4bc43c02305eddf3f06ef3f9edd6b2046fa5",
+    "handling": "Preserve exact historical bytes, including the owner label as observed at that time. Current ownership for all new work is 20698f1e14d3."
+  },
+  "reviewPaths": {
+    "cloud": "/workspace/scratch/ebb3eed5ee2b/owner20698-android-diagnostics-independent-review-20261118.json",
+    "ownedMac": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/owner20698-android-diagnostics-review-20261118/owner20698-android-diagnostics-independent-review-20261118.json"
+  },
+  "ownership": "Current owner20698 remains the sole integrator and executor. This source review adds evidence only."
+}

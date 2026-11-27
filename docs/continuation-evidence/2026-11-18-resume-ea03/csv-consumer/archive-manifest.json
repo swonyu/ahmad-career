@@ -1,0 +1,33 @@
+{
+  "filename": "native-consumer-evidence.zip",
+  "sha256": "5202b25852ce647d194bd35431312a8715b28c1fa1b7e2d31bab52de38adadef",
+  "bytes": 82685,
+  "files": [
+    "consumer-disposition.json",
+    "consumer-disposition.log",
+    "consumer-evidence.json",
+    "consumer.log",
+    "fixture-transport.json",
+    "inspect-libreoffice-disposition.py",
+    "run-20261118T190617Z/ar/career-finder-export-ar.content.xml",
+    "run-20261118T190617Z/ar/career-finder-export-ar.ods",
+    "run-20261118T190617Z/ar/invocation.json",
+    "run-20261118T190617Z/ar/native-inspection.json",
+    "run-20261118T190617Z/career-finder-export-ar.csv",
+    "run-20261118T190617Z/career-finder-export-en.csv",
+    "run-20261118T190617Z/consumer-evidence.json",
+    "run-20261118T190617Z/consumer.log",
+    "run-20261118T190617Z/en/career-finder-export-en.content.xml",
+    "run-20261118T190617Z/en/career-finder-export-en.ods",
+    "run-20261118T190617Z/en/invocation.json",
+    "run-20261118T190617Z/en/native-inspection.json",
+    "run-20261118T190617Z/positive-control/invocation.json",
+    "run-20261118T190617Z/positive-control/native-inspection.json",
+    "run-20261118T190617Z/positive-control/positive-control.content.xml",
+    "run-20261118T190617Z/positive-control/positive-control.ods",
+    "run-20261118T190617Z/positive-control.csv",
+    "verify-libreoffice-consumer.py"
+  ],
+  "source": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "scope": "Synthetic native CSV consumer evidence; initial strict mismatch retained; partial WF-04 only"
+}
