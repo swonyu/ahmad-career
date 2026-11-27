@@ -100,15 +100,24 @@ test('clipboard denial leaves selectable details available with a recovery messa
   assert.match(ctx.notice,/Copy is unavailable/);assert(renderToStaticMarkup(ctx.reuse).includes('maya@example.invalid'));assert.equal(ctx.profile.email,'maya@example.invalid');
 });
 
-test('job link accessible names retain the visible label, exact title and exact destination in both languages',()=>{
+test('job actions name the employer and location of same-title openings in both languages',()=>{
   for(const language of ['en','ar']){
     const ctx=fixture(language,{ArrowUpRight:icon,Bookmark:icon});
-    ctx.job={title:'محلل / Analyst',company:'Synthetic employer',url:'https://example.com/careers/analyst?source=qa',location:'',sourceName:'Example board'};
-    compile(declaration('app/phone/components.tsx','JobCard')+';globalThis.card=JobCard({job,saved:false,onDetails:()=>{}});',ctx);
-    const anchor=descendants(ctx.card).find(node=>node.type==='a');assert(anchor);
-    const visible=React.Children.toArray(anchor.props.children).filter(value=>typeof value==='string').join('').trim();
-    assert(visible);assert(anchor.props['aria-label'].includes(visible));assert(anchor.props['aria-label'].includes(ctx.job.title));assert.equal(anchor.props.href,ctx.job.url);
-    assert.equal(anchor.props.rel,'noopener noreferrer');
+    for(const location of ['Amman','Toronto','']){
+      ctx.job={title:'محلل / Analyst',company:'Synthetic employer',url:'https://example.com/careers/'+(location||'remote'),location,sourceName:'Example board'};
+      compile(declaration('app/phone/components.tsx','JobCard')+';globalThis.card=JobCard({job,saved:false,onSave:()=>{},onDetails:()=>{}});',ctx);
+      const actions=descendants(ctx.card).filter(node=>node.type==='button'||node.type==='a');
+      assert.equal(actions.length,4);
+      for(const {props} of actions){
+        const label=props['aria-label'];
+        for(const field of [ctx.job.title,ctx.job.company,location].filter(Boolean))assert(label.includes(field));
+        assert(!label.trimEnd().endsWith('·'));
+      }
+      const anchor=actions.find(node=>node.type==='a');
+      const visible=React.Children.toArray(anchor.props.children).filter(value=>typeof value==='string').join('').trim();
+      assert(visible);assert(anchor.props['aria-label'].includes(visible));assert.equal(anchor.props.href,ctx.job.url);
+      assert.equal(anchor.props.rel,'noopener noreferrer');
+    }
   }
 });
 
