@@ -23,12 +23,13 @@ on:
   workflow_dispatch:
     inputs:
       acceptance_scope:
-        description: Full five gates, all iPhone UI only, or one iPhone connection regression
+        description: All five gates, Android only, iPhone UI only, or the iPhone connection regression
         required: true
         default: full
         type: choice
         options:
           - full
+          - android
           - iphone-connection
           - iphone-ui
 
@@ -42,7 +43,7 @@ concurrency:
 jobs:
   service:
     name: Service and synthetic HTTPS
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -75,7 +76,7 @@ jobs:
 
   hosted:
     name: Hosted HTTPS service and durable storage
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -133,7 +134,7 @@ jobs:
 
   android:
     name: Android compile, lint and native acceptance
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'android' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -208,7 +209,7 @@ jobs:
 
   iphone-policy:
     name: iPhone logic and unsigned build
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' }}
     runs-on: macos-26
     timeout-minutes: 20
     steps:
@@ -259,6 +260,7 @@ jobs:
 
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || 'iPhone native interface acceptance' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
     runs-on: macos-26
     # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
     timeout-minutes: 70
