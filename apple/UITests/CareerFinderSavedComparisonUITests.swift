@@ -325,7 +325,14 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
     func testAfterArabic() throws { try after(language: "ar") }
 
     private func systemShareGeometry(_ hierarchy: String, in appFrame: CGRect) -> (popup: CGRect, dismissal: CGRect?)? {
-        let lines = hierarchy.split(separator: "\n")
+        // Multiline AX labels can continue at column zero. Only real element
+        // headers can end the popup's indented subtree.
+        let lines = hierarchy.split(separator: "\n").filter { line in
+            let parts = line.split(separator: ",", maxSplits: 2)
+            guard parts.count == 3 else { return false }
+            let address = parts[1].drop(while: { $0.isWhitespace })
+            return address.hasPrefix("0x") && address.count > 2 && address.dropFirst(2).allSatisfy(\.isHexDigit)
+        }
         func matches(_ line: Substring, type: String, identifier: String) -> Bool {
             line.drop(while: { $0.isWhitespace }).hasPrefix(type + ",")
                 && line.contains("identifier: '\(identifier)'")

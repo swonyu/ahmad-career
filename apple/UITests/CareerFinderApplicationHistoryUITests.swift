@@ -189,6 +189,9 @@ class ApplicationHistoryUITestCase: XCTestCase {
         app.launchEnvironment["CAREER_UI_TEST_ID"] = fixtureID
         app.launchEnvironment["CAREER_UI_APPLICATION_HISTORY"] = "cv-details"
         app.launch()
+        let frame = app.frame
+        try require(frame.width.isFinite && frame.height.isFinite && frame.width > 0 && frame.height > frame.width,
+            "The actual application-history screen is portrait", app: app)
         try wait("The launch identifies offline synthetic acceptance", app: app) { item("acceptance.offline", app: app).exists }
         try require(app.tabBars.buttons.count == 5, "The real five-tab navigation remains present", app: app)
         try tab("Apply", "التقديم", app: app)
@@ -257,7 +260,12 @@ class ApplicationHistoryUITestCase: XCTestCase {
         }
     }
     func currentCV(_ app: XCUIApplication) throws {
-        try tap(item("applications.profile", app: app), app: app, forward: false)
+        let profile = item("applications.profile", app: app)
+        try reveal(profile, app: app, forward: false)
+        try require(whole(profile, app: app), "The application profile row is visible and hittable", app: app)
+        // Exercise the empty space between the profile title and chevron.
+        let gapX: CGFloat = language == "ar" ? 0.2 : 0.8
+        profile.coordinate(withNormalizedOffset: CGVector(dx: gapX, dy: 0.5)).tap()
         let modalTitle = localized("Application profile", "ملف التقديم")
         modalNavigationTitle = modalTitle
         try wait("The actual profile editor has one identified navigation bar", app: app) {
@@ -324,7 +332,7 @@ class ApplicationHistoryUITestCase: XCTestCase {
     }
     func begin(language: String, phase: String) {
         self.language = language; self.phase = phase; fixtureID = UUID().uuidString
-        XCUIDevice.shared.orientation = .portrait
+        if XCUIDevice.shared.orientation != .portrait { XCUIDevice.shared.orientation = .portrait }
         print("CV-history fixture \(fixtureID), \(language), \(phase)")
         let value: [String: Any] = ["schemaVersion": 1, "fixtureID": fixtureID, "language": language, "phase": phase,
             "expectedWorkspaceReads": phase == "before" ? 1 : 2, "expectedRejectedRequests": 0,

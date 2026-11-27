@@ -681,7 +681,7 @@ final class CareerFinderUITests: XCTestCase {
         let observations: [(String, () -> Bool)] = [
             ("keyboard container", { !keyboards.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
             ("typing keys", { !keys.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
-            ("Done actions", { !actions.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } })
+            ("Done actions", { actions.count == 0 || !actions.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } })
         ]
         for (stage, isDismissed) in observations {
             var lastObserved = false

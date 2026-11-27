@@ -420,6 +420,7 @@ jobs:
                 CareerFinderSearchHistoryUITests/testArabicSearchHistoryAcceptance
                 CareerFinderSearchHistoryUITests/testEnglishSearchHistoryAcceptance
                 CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply
+                CareerFinderUITests/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit
                 CareerFinderUITests/testSavedSearchFindsArabicNotesAndKeepsOriginalText)
               ;;
             iphone-saved-actions)

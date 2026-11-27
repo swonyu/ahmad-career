@@ -373,7 +373,7 @@ struct NativeApplicationsScreen: View {
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
-            }
+            }.contentShape(Rectangle())
           }.buttonStyle(.plain).disabled(model.busy).accessibilityIdentifier("applications.profile")
           NativeProfileEssentials(profile: model.profile)
         }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 20))
