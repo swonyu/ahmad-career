@@ -234,10 +234,14 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
       catch { clean = false; }
       const status = controller.status();
       result.checkpoints = status.checkpointCount;
-      if (!completed) result.diagnostic = {controlDirectorySeen:status.controlDirectorySeen,
-        requestsObserved:status.requestsObserved, controllerFailureCode:status.lastFailureCode,
-        failureRetention:status.failureRetention, failurePhase:status.lastFailurePhase,
-        failureElapsedMs:status.lastFailureElapsedMs};
+      if (!completed) {
+        result.diagnostic = {controlDirectorySeen:status.controlDirectorySeen,
+          requestsObserved:status.requestsObserved, controllerFailureCode:status.lastFailureCode,
+          failureRetention:status.failureRetention, failurePhase:status.lastFailurePhase,
+          failureElapsedMs:status.lastFailureElapsedMs};
+        try { result.diagnostic.operationJournal = await controller.failureJournalSummary(); }
+        catch { result.diagnostic.operationJournal = {state:'unavailable'}; }
+      }
     }
     if (bridge) {
       if (!completed) {

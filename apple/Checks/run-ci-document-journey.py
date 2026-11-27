@@ -284,6 +284,7 @@ def run(language):
                 diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
                 search = diagnostic.get("search") if isinstance(diagnostic.get("search"), dict) else {}
                 profile_writes = diagnostic.get("profileWrites") if isinstance(diagnostic.get("profileWrites"), dict) else {}
+                operation_journal = diagnostic.get("operationJournal") if isinstance(diagnostic.get("operationJournal"), dict) else {}
                 def safe_code(value):
                     return value if isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,79}", value) else None
                 def safe_count(value, maximum=512):
@@ -325,6 +326,13 @@ def run(language):
                             "lastDurationMs": safe_count(profile_writes.get("lastDurationMs"), 1800000),
                             "lastStatusClass": profile_writes.get("lastStatusClass") if type(profile_writes.get("lastStatusClass")) is int
                             and 2 <= profile_writes["lastStatusClass"] <= 5 else None,
+                        },
+                        "operationJournal": {
+                            "state": operation_journal.get("state") if operation_journal.get("state") in (
+                                "absent", "profile_intent_present", "present_without_profile_intent", "rejected", "unavailable") else None,
+                            "intentCount": safe_count(operation_journal.get("intentCount"), 1000),
+                            "profileIntentCount": safe_count(operation_journal.get("profileIntentCount"), 1000),
+                            "acknowledgementCount": safe_count(operation_journal.get("acknowledgementCount"), 1000),
                         },
                         "search": {
                             "started": safe_count(search.get("started")),

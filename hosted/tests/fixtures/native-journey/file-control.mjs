@@ -314,6 +314,44 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     status(){return {schemaVersion:1,testID,completed:state.complete,stopped,nextSequence:state.nextSequence,
       checkpointCount:checkpoints.length,unsettledHarnessOperations:pending.size,failureRetention,
       controlDirectorySeen:!!controlIdentity,requestsObserved,lastFailureCode,lastFailurePhase,lastFailureElapsedMs};},
+    async failureJournalSummary() {
+      const summary = (state, intentCount = null, profileIntentCount = null, acknowledgementCount = null) =>
+        ({state, intentCount, profileIntentCount, acknowledgementCount});
+      if (!stopped || polling || pending.size) return summary('unavailable');
+      try {
+        await directory(appContainer.path,appContainer);
+        await directory(appRoot);
+        await directory(path.dirname(operationJournalPath));
+        const file = await readCheckpointFile(operationJournalPath,CONTROL_LIMITS.phoneBytes);
+        const journal = decodeBoundedJSON(file.bytes,CONTROL_LIMITS.phoneBytes);
+        const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+        if (!object(journal) || Object.keys(journal).sort().join(',') !== 'entries,intents,origin,version,workspaceId' ||
+            journal.version !== 1 || journal.origin !== logicalOrigin || journal.workspaceId !== workspaceID ||
+            !Array.isArray(journal.entries) || !Array.isArray(journal.intents) ||
+            journal.entries.length + journal.intents.length > 1000) return summary('rejected');
+        const routes = new Set(['workspace','profile','jobs','prepare','submit','advance','stop','session/revoke']);
+        const ids = new Set();
+        for (const intent of journal.intents) {
+          if (!object(intent) || Object.keys(intent).sort().join(',') !== 'journalID,route,workspaceId' ||
+              !UUID.test(intent.journalID ?? '') || intent.workspaceId !== workspaceID || !routes.has(intent.route) ||
+              ids.has(intent.journalID)) return summary('rejected');
+          ids.add(intent.journalID);
+        }
+        for (const entry of journal.entries) {
+          if (!object(entry) || !UUID.test(entry.journalID ?? '') || entry.workspaceId !== workspaceID ||
+              !routes.has(entry.kind) || ids.has(entry.journalID)) return summary('rejected');
+          ids.add(entry.journalID);
+        }
+        const profileIntentCount = journal.intents.filter(intent => intent.route === 'profile').length;
+        return summary(profileIntentCount ? 'profile_intent_present' : 'present_without_profile_intent',
+          journal.intents.length,profileIntentCount,journal.entries.length);
+      } catch (error) {
+        return summary(error?.code === 'checkpoint_file_missing' ? 'absent' : 'rejected',
+          error?.code === 'checkpoint_file_missing' ? 0 : null,
+          error?.code === 'checkpoint_file_missing' ? 0 : null,
+          error?.code === 'checkpoint_file_missing' ? 0 : null);
+      }
+    },
     async poll() {
       if (polling) fail('checkpoint_concurrent_poll'); polling = true;
       const pollStartedAt = mono();

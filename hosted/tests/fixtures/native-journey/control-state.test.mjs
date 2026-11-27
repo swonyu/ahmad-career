@@ -264,9 +264,29 @@ async function failureFixture(t,{evidenceResult,boardResult}={}) {
     runnerContainer:await bound(runner),appContainer:await bound(app),evidenceParent:evidence,
     expectedSourceFiles:{[source]:sha256(await readFile(source))},stopAt:performance.now()+10000});
   const output=path.join(evidence,'control-'+binding.testID);
-  return {controller,control,output,set,counters:()=>({evidenceCalls,boardCalls,closeCalls}),
+  return {controller,control,output,appRoot,set,counters:()=>({evidenceCalls,boardCalls,closeCalls}),
     manifest:async prefix=>JSON.parse(await readFile(path.join(output,prefix+'-failure-manifest.json'),'utf8'))};
 }
+test('failure journal summary reads only the bound scope and exposes counts without identities',async t=>{
+  const f=await failureFixture(t);f.controller.stop();await f.controller.settle();
+  assert.deepEqual(await f.controller.failureJournalSummary(),
+    {state:'absent',intentCount:0,profileIntentCount:0,acknowledgementCount:0});
+  const journal=path.join(f.appRoot,'applications',operationJournalFilename(binding.logicalOrigin,binding.workspaceID));
+  const value={version:1,origin:binding.logicalOrigin,workspaceId:binding.workspaceID,entries:[],
+    intents:[{journalID:id(9),route:'profile',workspaceId:binding.workspaceID}]};
+  await writeFile(journal,encode(value),{mode:0o600});
+  const summary=await f.controller.failureJournalSummary();
+  assert.deepEqual(summary,{state:'profile_intent_present',intentCount:1,profileIntentCount:1,acknowledgementCount:0});
+  const publicBytes=JSON.stringify(summary);
+  assert.equal(publicBytes.includes(binding.logicalOrigin),false);
+  assert.equal(publicBytes.includes(binding.workspaceID),false);
+  assert.equal(publicBytes.includes(id(9)),false);
+  await writeFile(journal,encode({...value,workspaceId:id(99)}));
+  assert.deepEqual(await f.controller.failureJournalSummary(),
+    {state:'rejected',intentCount:null,profileIntentCount:null,acknowledgementCount:null});
+  await writeFile(journal,encode(value));await chmod(journal,0o666);
+  assert.equal((await f.controller.failureJournalSummary()).state,'rejected');
+});
 test('rejected state retains observed originals and a fixed failure receipt without a success reply',async t=>{
   const f=await failureFixture(t,{evidenceResult:proof=>({...proof,providerPostAttempts:1})});
   await assert.rejects(f.controller.poll(),{code:'checkpoint_zero_dispatch'});
