@@ -22,6 +22,8 @@ On November 27 the hosted service was reachable, and its health endpoint reporte
 
 ### November 17 baseline and development handoff
 
+The [November 17 acceptance archive](https://github.com/swonyu/ahmad-career/tree/636d79a808bd4ecdd7ebd386b0f98a16ab3d2a32/docs/strict-review-evidence/continuation-2026-11-17-cloud) preserves the publisher’s partial iPhone results, test logs and supporting research from that date.
+
 On November 17 the public deployment ran **version 7**, from hosted commit `1135a3270435d3719c6f62f1a2e3a53e2c040146`. At the `949ce0ad327beab79fa7033423b462ebc7bd98be` handoff, its 186 tracked source files matched the repository mirror. Live discovery returned 50 jobs; a bookmark survived navigation, the prior synthetic local record survived reload, and Account/Connect loaded without changing the owner's cloud data. See the [deployment receipt](docs/strict-review-evidence/hosted-v7-deployment.json) and [bounded browser receipt](docs/strict-review-evidence/hosted-v7-browser-verification.json).
 
 Further work is an **isolated, unpublished development candidate**. Its changes require their own source-bound test receipts; the baseline results below do not certify later edits. The publishing branch remains separate at `fd9c5399f2b7001b234b3b86bf72e2b36b5114c1`. Its owner's current acknowledgment could not be obtained, so no release integration, shared Mac build, signing or store change is established by this continuation. The [release integration checklist](docs/Release-Integration-Checklist-2026-11-17.md) records the exact publishing changes to preserve and the remaining gates.
