@@ -1,5 +1,6 @@
 package com.saleh.careerfinder
 
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
@@ -76,13 +77,18 @@ class NavigationPhoneAcceptanceTest {
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
     @After fun clearPhone() { compose.runOnIdle { owner.clear() } }
-    private fun hideKeyboard() {
-        compose.runOnIdle {
-            val activity = compose.activity
-            (activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
-                .hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+    private fun hideKeyboard(visibleAfterDismiss: String? = null) {
+        PhoneWindowObservation().use { windows ->
+            // FullScreenForm owns a Dialog window, so the activity window token does not
+            // necessarily dismiss the IME attached to its focused text field.
+            if (windows.imeVisible()) {
+                InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            }
+            compose.waitUntil(5_000) {
+                !windows.imeVisible() && (visibleAfterDismiss == null ||
+                    runCatching { compose.onNodeWithText(strings(visibleAfterDismiss)).assertIsDisplayed() }.isSuccess)
+            }
         }
-        compose.waitForIdle()
     }
     private fun capture(name: String) {
         compose.waitForIdle()
@@ -148,7 +154,10 @@ class NavigationPhoneAcceptanceTest {
         compose.onNodeWithContentDescription(strings("Application record for ${job.title} at ${job.company}")).performClick()
         compose.onNodeWithTag("application-record-editor").performScrollToNode(hasText(strings("Private note (optional)")) and hasSetTextAction())
         compose.onNode(hasText(strings("Private note (optional)")) and hasSetTextAction()).performTextReplacement("Discard this edit")
-        hideKeyboard(); compose.onNodeWithText(strings("Close record")).performClick()
+        hideKeyboard(visibleAfterDismiss = "Close record")
+        val closeRecord = compose.onNodeWithText(strings("Close record"))
+        assertFullyVisible(closeRecord)
+        closeRecord.performClick()
         compose.onNodeWithText(strings("Keep your unfinished record?")).assertIsDisplayed()
         compose.onNodeWithText(strings("Discard unfinished changes")).performClick()
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.applicationRecordEditor == null }
