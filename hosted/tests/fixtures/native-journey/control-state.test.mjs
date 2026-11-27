@@ -6,9 +6,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {performance} from 'node:perf_hooks';
 import {CHECKPOINTS, CheckpointError, sha256, decodeBoundedJSON,
-  decodeControlRequest, createCheckpointState, discoveryFilename} from './control-state.mjs';
+  decodeControlRequest, createCheckpointState, discoveryFilename, operationJournalFilename, needsReconciledJournal} from './control-state.mjs';
 import {createFileCheckpointController, readCheckpointFile} from './file-control.mjs';
-import {PDF, SOURCE_ID, postingId, postingURL} from './data.mjs';
+import {BOARD, PDF, SOURCE_ID, postings, postingId, postingURL} from './data.mjs';
 
 const id = n => `10000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const binding = {testID:id(1).toUpperCase(),workspaceID:id(2),
@@ -31,10 +31,12 @@ function witness(n,{beforeControl=false}={}) {
   const [puts,jobs,prepare,search,serverJobs,localJobs]=counts[n-1], cv=puts<2?null:puts===2?'CV-A.pdf':'CV-B.pdf';
   const call=(method,url,status=200)=>({method,path:url,status,requestBodySHA256:'0'.repeat(64),
     requestBytes:method==='GET'?0:16,nativeTokenPresent:url.startsWith('/api/apply/'),startedAt:'2026-11-22T00:00:00Z',finishedAt:'2026-11-22T00:00:00Z'});
-  const nativeCalls=[call('GET','/api/apply/status'),call('GET','/api/apply/workspace'),
+  const writes=[
     ...Array.from({length:puts},()=>call('PUT','/api/apply/profile')),
     ...Array.from({length:jobs},(_,i)=>call('POST','/api/apply/jobs',i===0?201:409)),
-    ...Array.from({length:prepare},()=>call('POST','/api/apply/prepare',201)),
+    ...Array.from({length:prepare},()=>call('POST','/api/apply/prepare',201))];
+  const nativeCalls=[call('GET','/api/apply/status'),call('GET','/api/apply/workspace'),
+    ...writes.flatMap(mutation => mutation.status < 300 ? [mutation, call('GET','/api/apply/workspace')] : [mutation]),
     ...Array.from({length:search},()=>call('GET','/api/discovery/search'))];
   const controlCount=(n>=11?2:n>=9?1:0)-(beforeControl&&[9,11].includes(n)?1:0);
   const attempt={id:id(3),planId:id(4),jobId:id(5),state:'ready',mode:'test',dispatchCount:0,
@@ -46,10 +48,13 @@ function witness(n,{beforeControl=false}={}) {
   if(cv)Object.assign(currentProfile,{resumeName:cv,resumeSize:PDF.bytes,resumeSHA256:PDF.sha256});
   const blankDraft={scope:{origin:'',workspaceID:''},profile:profile(true),profileNeedsSync:false,jobs:[],
     opportunityDraft:{url:'',title:'',company:'',location:'',country:''}};
+  const original=postings[0], checkedAt='2026-11-22T00:00:00Z';
+  const primaryBackup={id:'local-'+id(7),localOnly:true,url:postingURL(1),title:original.text,company:BOARD,
+    location:original.categories.location,country:original.country,provider:'lever',workMode:original.workplaceType,sourceName:BOARD,checkedAt};
   const phone={profile:currentProfile,profileRevision:puts,profileNeedsSync:false,
     workspaceID:binding.workspaceID,serviceAddress:binding.logicalOrigin,connectionEnabled:true,
     credentialAccount:'native-journey.'+binding.testID,workspaceDrafts:[blankDraft],jobs:localJobs?[
-      {id:id(5),url:postingURL(1),title:'Service Designer',company:'Synthetic Native Journey Studio'},
+      primaryBackup,
       ...(localJobs===2?[{id:'local-secondary',url:postingURL(2),localOnly:true}]:[])]:[],
     applicationRecords:n>=8?[{id:id(6),scope:{workspaceID:binding.workspaceID,origin:binding.logicalOrigin},
       job:{url:postingURL(1)},stage:'saved',appliedElsewhere:false,archived:false,appliedOn:'',followUpOn:binding.followUpDay,
@@ -66,9 +71,11 @@ function witness(n,{beforeControl=false}={}) {
     bridge:{host:'127.0.0.1',port:binding.bridgePort,caFingerprint256:binding.caFingerprint256,inFlight:0,
       apiRequests:nativeCalls.length,documentRequests:{'CV-A.pdf':n>=5?1:0,'CV-B.pdf':n>=7?1:0},
       proxyRequests:0,deniedRequests:0,socketErrors:0,tlsErrors:0,pdf:{sha256:PDF.sha256,bytes:PDF.bytes,names:PDF.names},events:[]}};
-  const discovery=search?{jobs:[1,2].map(i=>({sourceId:SOURCE_ID,id:SOURCE_ID+':'+postingId(i),url:postingURL(i)})),
+  const discovery=search?{jobs:[1,2].map(i=>({sourceId:SOURCE_ID,id:SOURCE_ID+':'+postingId(i),url:postingURL(i),checkedAt})),
     page:{status:n>=12?'partial':'ok',sources:[{id:SOURCE_ID,status:n>=12?'stale':'ok',...(n>=12?{error:{code:'upstream_unavailable'}}:{})}]}}:null;
-  return {proof,phone,discovery,sourceBound:true,transportClosed:n>=13&&!(n===13&&beforeControl),
+  const operationJournal=needsReconciledJournal(n) ? {version:1,origin:binding.logicalOrigin,
+    workspaceId:binding.workspaceID,entries:[],intents:[]} : null;
+  return {proof,phone,discovery,operationJournal,sourceBound:true,transportClosed:n>=13&&!(n===13&&beforeControl),
     seedReceipt:{schemaVersion:1,testID:binding.testID,bootstrapSHA256:binding.bootstrapSHA256,initialStateSHA256:'d'.repeat(64),onlyBlankConnection:true},
     seedReceiptSHA256:'e'.repeat(64)};
 }
@@ -160,6 +167,12 @@ test('scoped discovery filename uses exact origin/NUL/workspace and never the gu
   assert.notEqual(discoveryFilename(binding.logicalOrigin,binding.workspaceID),discoveryFilename(binding.logicalOrigin,id(99)));
 });
 
+async function writePhoneDraft(appRoot,current) {
+  const directory=path.join(appRoot,'applications');
+  await writeFile(path.join(directory,'phone-draft.json'),encode(current.phone),{mode:0o600});
+  if(current.operationJournal) await writeFile(path.join(directory,operationJournalFilename(binding.logicalOrigin,binding.workspaceID)),
+    encode(current.operationJournal),{mode:0o600});
+}
 async function temporary(t) {
   const root=await realpath(await mkdtemp(path.join(os.tmpdir(),'career-control-unit-')));await chmod(root,0o700);
   t.after(()=>rm(root,{recursive:true,force:true}));return root;
@@ -199,7 +212,7 @@ test('owned file IPC completes all16 with each fixed control once and retains or
   assert.deepEqual(await readFile(path.join(evidence,'control-'+binding.testID,'001-phone-draft.original.json')),encode(w.phone));
   for(let n=2;n<=16;n++) {
     current=witness(n,{beforeControl:[9,11,13].includes(n)});
-    await writeFile(path.join(appRoot,'applications','phone-draft.json'),encode(current.phone),{mode:0o600});
+    await writePhoneDraft(appRoot,current);
     if(current.discovery)await writeFile(path.join(appRoot,discoveryFilename(binding.logicalOrigin,binding.workspaceID)),encode(current.discovery),{mode:0o600});
     const prefix=String(n).padStart(3,'0');await writeFile(path.join(control,prefix+'-request.json'),encode(request(n)),{mode:0o600});
     assert.equal(await controller.poll(),true,'file checkpoint '+n);
@@ -228,7 +241,7 @@ async function failureFixture(t,{evidenceResult,boardResult}={}) {
   await writeFile(path.join(appRoot,'native-journey-bootstrap.private.json'),bootstrap,{mode:0o600});
   async function set(n) {
     current=witness(n,{beforeControl:[9,11,13].includes(n)});
-    await writeFile(path.join(appRoot,'applications','phone-draft.json'),encode(current.phone),{mode:0o600});
+    await writePhoneDraft(appRoot,current);
     if(current.discovery)await writeFile(path.join(appRoot,discoveryFilename(binding.logicalOrigin,binding.workspaceID)),encode(current.discovery),{mode:0o600});
     await writeFile(path.join(control,String(n).padStart(3,'0')+'-request.json'),encode(request(n)),{mode:0o600});
   }
