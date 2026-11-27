@@ -194,9 +194,13 @@ class LinkedInRegressionTest {
         main { model.toggleJob("fixture-job"); model.prepare() }
         await { !model.state.value.busy && model.state.value.error != null }
         assertNull(model.state.value.plan)
+        assertTrue(model.state.value.readReconciliationRequired)
+        main { model.refresh() }; await { !model.state.value.busy && !model.state.value.readReconciliationRequired }
         service.omitReviewLinkedIn = false; service.reviewLinkedIn = "https://www.linkedin.com/in/another-person"
         main { model.prepare() }; await { !model.state.value.busy && model.state.value.error != null }
         assertNull(model.state.value.plan)
+        assertTrue(model.state.value.readReconciliationRequired)
+        main { model.refresh() }; await { !model.state.value.busy && !model.state.value.readReconciliationRequired }
         service.reviewLinkedIn = null
         main { model.prepare() }; await { !model.state.value.busy && model.state.value.plan != null }
         val validPlan = model.state.value.plan!!

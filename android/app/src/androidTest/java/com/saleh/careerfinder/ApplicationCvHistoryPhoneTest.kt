@@ -314,7 +314,8 @@ class ApplicationCvHistoryPhoneTest {
         if (phase == "before") {
             compose.onNodeWithTag("application-record-manual-cv").assertDoesNotExist()
             capture(language, "manual-record-no-field", "application-record-editor", hasText(strings("Stage")))
-            assertEquals(4, service.calls.count { it == "GET workspace" })
+            // The three durable prepare/profile intents now reconcile through workspace reads.
+            assertEquals(7, service.calls.count { it == "GET workspace" })
             assertServiceCounts()
             return
         }
@@ -361,7 +362,7 @@ class ApplicationCvHistoryPhoneTest {
         compose.onNode(cvTarget(restoredKey)).assertTextEquals("Manual-CV-A.pdf")
         assertEquals("CV-A.pdf", receiptEvidence("cv-attempt-1").getString("resumeName"))
         assertEquals("CV-B.pdf", model.state.value.profile.resume!!.name)
-        assertEquals(5, service.calls.count { it == "GET workspace" })
+        assertEquals(8, service.calls.count { it == "GET workspace" })
         assertServiceCounts()
     }
     private fun assertServiceCounts() {

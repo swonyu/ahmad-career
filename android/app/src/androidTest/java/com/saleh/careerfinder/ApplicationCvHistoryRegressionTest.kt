@@ -125,8 +125,15 @@ class ApplicationCvHistoryRegressionTest {
             assertTrue(ApplicationCvEvidence.validRecordedName(name))
             assertEquals(name, ApplicationReceipt.fromServer(receipt(name)).resumeName)
         }
+        // Historical receipt text is displayed exactly, including legacy unpaired surrogates;
+        // the stricter name check still governs newly selected and manually entered PDFs.
+        for (name in listOf("x\uD800.pdf", "x\uDC00.pdf")) {
+            assertFalse(ApplicationCvEvidence.validRecordedName(name))
+            assertTrue(ApplicationCvEvidence.validHistoricalRecordedName(name))
+            assertEquals(name, ApplicationReceipt.fromServer(receipt(name)).resumeName)
+        }
         val bad: List<Any> = listOf("", ".hidden.pdf", "CV.txt", "../CV.pdf", "folder/CV.pdf", "C:\\CV.pdf",
-            "CV:A.pdf", " CV.pdf", "CV.pdf ", "CV\nA.pdf", "CV\u007fA.pdf", "x\uD800.pdf",
+            "CV:A.pdf", " CV.pdf", "CV.pdf ", "CV\nA.pdf", "CV\u007fA.pdf",
             "A".repeat(177) + ".pdf", 7, true, JSONObject(), JSONArray())
         for (name in bad) reject { ApplicationReceipt.fromServer(receipt(name)) }
     }

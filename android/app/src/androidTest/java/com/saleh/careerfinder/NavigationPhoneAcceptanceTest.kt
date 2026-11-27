@@ -2,6 +2,7 @@ package com.saleh.careerfinder
 
 import android.app.Instrumentation
 import android.content.Intent
+import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.activity.ComponentActivity
@@ -84,12 +85,14 @@ class NavigationPhoneAcceptanceTest {
         PhoneWindowObservation().use { windows ->
             // FullScreenForm owns a Dialog window, so the activity window token does not
             // necessarily dismiss the IME attached to its focused text field.
-            if (windows.imeVisible()) {
-                InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
-            }
-            compose.waitUntil(5_000) {
-                !windows.imeVisible() && (visibleAfterDismiss == null ||
-                    runCatching { compose.onNodeWithText(strings(visibleAfterDismiss)).assertIsDisplayed() }.isSuccess)
+            // Text insertion can finish before the real keyboard window appears.
+            val deadline = SystemClock.elapsedRealtime() + 5_000
+            fun remaining() = (deadline - SystemClock.elapsedRealtime()).coerceAtLeast(1)
+            compose.waitUntil(remaining()) { windows.imeVisible() }
+            InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            compose.waitUntil(remaining()) { !windows.imeVisible() }
+            if (visibleAfterDismiss != null) compose.waitUntil(remaining()) {
+                runCatching { compose.onNodeWithText(strings(visibleAfterDismiss)).assertIsDisplayed() }.isSuccess
             }
         }
     }

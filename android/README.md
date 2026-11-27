@@ -171,13 +171,14 @@ The captured refusal is also routed through an injected service to check the
 ViewModel recovery offer. This does not exercise real HTTPS recovery or the system
 document chooser.
 
-The ordinary CI runner records this exact method as separately scoped and excludes
-only this newly added method with AndroidJUnitRunner's `notClass Class#method`
-selector. Every original regression remains selected. Ordinary CI does not claim
-that the pressure proof passed. Generic direct runs report an explicit assumption
-unless `careerRecoveryPressure192MiB=true` is supplied; that assumption is not
-acceptance evidence. A dedicated run must select the method, pass the opt-in
-argument, verify `Runtime.maxMemory() == 201326592`, and obtain an actual pass:
+The CI runner excludes this method and the three exact-handler capacity methods
+from its combined ordinary invocation with AndroidJUnitRunner's `notClass`
+selector. It then runs each of the four methods in a separate fresh app process,
+checks each exact one-method pass, and accounts for every method in the source
+inventory. A missing capacity or pressure pass fails CI. Generic direct runs of
+the pressure method report an explicit assumption unless
+`careerRecoveryPressure192MiB=true` is supplied; that assumption is not acceptance
+evidence. The dedicated invocation verifies `Runtime.maxMemory() == 201326592`:
 
 ```sh
 adb -s <owned-serial> shell am instrument -w -r \

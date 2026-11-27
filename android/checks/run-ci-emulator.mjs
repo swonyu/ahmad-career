@@ -346,7 +346,21 @@ async function configure(packageName) {
   assert.equal(settings.fontScale,'1.8');assert.equal(settings.rtl,'1');assert.match(settings.locales,/ar/);
   fs.writeFileSync(path.join(evidence,`${packageName}-settings.json`),JSON.stringify(settings,null,2));
 }
-async function instrument(label,packageName,classes,argumentsMap={},minimum=1,restartPhase) {
+function completedMethods(output) {
+  let testClass, method;
+  const completed=[];
+  for(const line of output.split(/\r?\n/)) {
+    if(line.startsWith('INSTRUMENTATION_STATUS: class='))testClass=line.slice('INSTRUMENTATION_STATUS: class='.length);
+    else if(line.startsWith('INSTRUMENTATION_STATUS: test='))method=line.slice('INSTRUMENTATION_STATUS: test='.length);
+    else if(line==='INSTRUMENTATION_STATUS_CODE: 0') {
+      assert.ok(testClass&&method,'A completed instrumentation test needs its class and method.');
+      completed.push(`${testClass}#${method}`);
+      testClass=method=undefined;
+    }
+  }
+  return completed;
+}
+async function instrument(label,packageName,classes,argumentsMap={},minimum=1,restartPhase,exactMethod) {
   const args=['-s',env.ANDROID_SERIAL,'shell','am','instrument','-w','-r','-e','class',classes.join(',')];
   for(const [name,value] of Object.entries(argumentsMap))args.push('-e',name,String(value));
   args.push(`${packageName}.test/androidx.test.runner.AndroidJUnitRunner`);
@@ -362,8 +376,13 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1,re
     const count=Number(output.match(/OK \((\d+) tests?\)/)?.[1]??0);
     assert.ok(count>=minimum,`${label} did not report the required completed test count; inspect its log.`);
     assert.doesNotMatch(output,/FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_STATUS_CODE: -(?:1|2|3|4)\b/);
+    const passedMethods=completedMethods(output);
+    assert.equal(passedMethods.length,count,`${label} has a missing or repeated completed method status.`);
+    assert.equal(new Set(passedMethods).size,count,`${label} repeated a method.`);
+    if(exactMethod)assert.deepEqual(passedMethods,[exactMethod],`${label} must pass exactly its selected method.`);
     const exactExecution=restartPhase?assertSingleRestartExecution(output,restartPhase):undefined;
-    results.push({label,classes,tests:count,result:'passed',...(exactExecution?{exactExecution}:{})});
+    results.push({label,classes,tests:count,passedMethods,result:'passed',...(exactMethod?{freshProcessBoundary:'force-stop/no-PID'}:{}),
+      ...(exactExecution?{exactExecution}:{})});
     console.log(label+': '+count+' instrumented tests passed.');
     return exactExecution;
   } catch(error) {
@@ -373,6 +392,14 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1,re
     }
     throw error;
   }
+}
+async function isolatedMethod(label,method,argumentsMap={}) {
+  const packageName='com.saleh.careerfinder.preview';
+  await device('shell','am','force-stop','--user','0',packageName);
+  const inactive=await run(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n','/system/bin/toybox','pidof',packageName],
+    {timeout:10000,exitCodes:[0,1],withExitCode:true});
+  assert.deepEqual(parseOwnedPackagePids(inactive),[],`${label} needs a stopped app before its fresh instrumentation process.`);
+  await instrument(label,packageName,[method],argumentsMap,1,undefined,method);
 }
 try {
   await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs'),path.join(root,'android/checks/cv-restart-evidence.test.mjs')],
@@ -401,17 +428,36 @@ try {
   assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
   const pressureMethod='com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace';
   assert.ok(classes.includes(pressureMethod.split('#')[0]),'The pressure fixture class must remain in ordinary discovery.');
+  const capacityMethods=['actualHandlerLegacyURL','actualHandlerHistoricalSurrogates','actualHandlerValidUnicode']
+    .map(name=>`com.saleh.careerfinder.CareerReadTransportRegressionTest#${name}`);
+  const isolatedMethods=[...capacityMethods,pressureMethod];
+  const sourceMethods=classes.flatMap(testClass=>{
+    const source=fs.readFileSync(path.join(testDirectory,testClass.split('.').at(-1)+'.kt'),'utf8');
+    return [...source.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>`${testClass}#${match[1]}`);
+  });
+  assert.equal(new Set(sourceMethods).size,sourceMethods.length,'The discovered method inventory contains duplicates.');
+  assert.ok(isolatedMethods.every(method=>sourceMethods.includes(method)),'Every isolated method must exist in the ordinary source inventory.');
+  const ordinaryMethods=sourceMethods.filter(method=>!isolatedMethods.includes(method));
   fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
-    discovered,ordinary:classes,ordinaryMinimum:105,requiredRestartClass:selection.restart,
+    discovered,ordinary:classes,ordinaryMethods,ordinaryMinimum:105,requiredRestartClass:selection.restart,
     requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false,
-    separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',
+    separatelyScopedCapacity:{methods:capacityMethods,ordinaryExcludedBy:'notClass exact methods',requiredSeparatePasses:3},
+    separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',requiredSeparatePasses:1,
       requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
-      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsExcluded:false}},null,2));
-  // This new bounded pressure proof has a dedicated reviewed 192 MiB run. Every
-  // original regression remains selected; a larger generic CI heap is not a product failure.
-  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:pressureMethod},105);
+      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true}},null,2));
+  // Each large exact-handler case starts without retained ordinary-suite heap.
+  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:isolatedMethods.join(',')},105);
+  assert.deepEqual([...results.at(-1).passedMethods].sort(),[...ordinaryMethods].sort(),
+    'The ordinary run must execute every source method except the four separately scoped methods.');
   // Preserve completed preview evidence before the acceptance build and later device work.
   await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
+  for(const method of capacityMethods)await isolatedMethod('capacity-'+method.split('#')[1],method);
+  await isolatedMethod('historical-recovery-pressure-192mib',pressureMethod,{careerRecoveryPressure192MiB:true});
+  const isolatedResults=results.filter(result=>result.freshProcessBoundary==='force-stop/no-PID');
+  assert.deepEqual(isolatedResults.flatMap(result=>result.passedMethods).sort(),[...isolatedMethods].sort(),
+    'All four isolated methods must pass once in fresh instrumentation processes.');
+  fs.writeFileSync(path.join(evidence,'isolated-methods.json'),JSON.stringify({commit:process.env.GITHUB_SHA,
+    requiredMethods:isolatedMethods,results:isolatedResults},null,2));
   // Restart is an additional required phase, not an excluded or renamed test.
   const checkout=(await run('git',['rev-parse','HEAD'])).trim();
   assert.equal(checkout,process.env.GITHUB_SHA);

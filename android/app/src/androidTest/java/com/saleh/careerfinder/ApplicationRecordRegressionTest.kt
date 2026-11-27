@@ -401,6 +401,10 @@ class ApplicationRecordRegressionTest {
         main { model.syncOpportunity(tracked) }; await { !model.state.value.busy }
         assertEquals("LinkedIn follow-up", model.state.value.applicationRecords.getValue(identity(tracked)).current.record.note)
         assertTrue(model.state.value.jobs.any { it.id == tracked.id })
+        assertTrue(model.state.value.readReconciliationRequired)
+        // The failed write may have reached the service; reconcile its durable intent before a retry.
+        main { model.refresh() }; await { !model.state.value.busy && !model.state.value.readReconciliationRequired }
+        assertEquals("LinkedIn follow-up", model.state.value.applicationRecords.getValue(identity(tracked)).current.record.note)
         service.failJobSave = false
         main { model.syncOpportunity(tracked) }; await { !model.state.value.busy && model.state.value.jobs.any { it.id == "synced-record-job" } }
         assertEquals(1, model.state.value.applicationRecords.size)
