@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent-native-source-review",
+  "reviewedAt": "2026-11-18T14:49:16.462665+00:00",
+  "reviewer": "/root/ci_evidence",
+  "owner": "coordinator20698",
+  "reviewedSource": {
+    "path": "/Users/saleh/Developer/career-finder-owner-20261118-20698",
+    "head": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+    "tree": "e61eafc98d0a1daeff975b2650a6b31e51e2b245",
+    "workingTreeCleanAtObservation": true,
+    "baseline": "87c3849bba6e1f03914a7a16943cd50a9b4f6f49",
+    "files": {
+      "apple/AhmadCareer/NativeCareerViews.swift": {
+        "beforeSHA256": "c090fa4c6c36a7952ee53975136ea56b8819436c80a9dac9daf07c0a0848fb8e",
+        "afterSHA256": "0b1869bd6ff8664b74bec5f9ae48b435cc78cc054b93dfceb2a6214657aef1d0"
+      },
+      "apple/UITests/CareerFinderUITests.swift": {
+        "beforeSHA256": "5e55d1024d75b14d9b0e48271224825af4d031c12cd2e4aea5635c52298aefe3",
+        "afterSHA256": "dcf0bf950033cc13d64ea7c092f46fa1e577c12586e5cfc21b4d6571436c7d2f"
+      }
+    }
+  },
+  "evidence": {
+    "sourceObservation": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/native-identity-focus-independent-review-20261118/owner20698-d24b-source-observation.json",
+      "bytes": 64066,
+      "sha256": "fa32fbd0b623d06dc8d88189f758c781a77bbb2e76aa1a25e5a96e029ff3ce0d"
+    },
+    "priorCompetingDraft": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/native-identity-focus-independent-review-20261118/initial-reviewed.patch",
+      "bytes": 7673,
+      "sha256": "8ce914e23b3a0e9331a30d2a07921de36073cabb964f4d191be31a377f30fa94",
+      "disposition": "Preserved as historical review input only. Owner20698's integrated source supersedes approval of the competing draft."
+    },
+    "lightHierarchyRefinement": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/native-identity-focus-independent-review-20261118/light-hierarchy-d24b-observation.json",
+      "bytes": 5099,
+      "sha256": "56abd646c77aad54a6e66638216e0b933f9c1389d3c4f2a611c746b3218744d3",
+      "patchPath": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-identity-focus-20261118T143349Z-69fd65/light-hierarchy-d24b-review.patch",
+      "patchBytes": 1101,
+      "patchSHA256": "d5197cb1fd0cd61612f5c32fef97ece083817c40c63552b386a569d857de8b11",
+      "authorReceiptPath": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-identity-focus-20261118T143349Z-69fd65/light-hierarchy-d24b-review.json",
+      "authorReceiptSHA256": "9ad9026965018696478df540230dedc3364a3f7dc554a59461bd16025a0d6184",
+      "proposedAfterSHA256": "38667dee7bf347acbccb0769a4e8479a09045406786719ade8e7c3c3ee4ead66"
+    }
+  },
+  "disposition": {
+    "sourceReviewComplete": true,
+    "currentJourneyBlockerProven": false,
+    "lightAppearancePreservationFullyEstablished": false,
+    "ownerDispositionNeeded": [
+      "Integrate and verify the reviewed light hierarchy refinement or record the owner disposition; no extra mandatory test is requested by this source review."
+    ],
+    "nativeRuntimeAccepted": false,
+    "fullCIAccepted": false,
+    "mergeAuthorizedByThisReceipt": false,
+    "stableIdentityAndTypingVisibilitySourceFixesAcceptedSubjectToRuntime": true,
+    "reviewedLightRefinementSourceAccepted": true,
+    "reviewedLightRefinementIntegrationObserved": false
+  },
+  "invariants": {
+    "methods": [
+      "testFreshStartAndFiveTabs",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+    ],
+    "methodCount": 17,
+    "all17MethodBodiesAndPostconditionsByteIdenticalToBaseline": true,
+    "assertionTokens": {
+      "baseline": 204,
+      "current": 203,
+      "explanation": "One helper XCTAssertTrue(field.waitForExistence(timeout:5)) was replaced with guard field.waitForExistence(timeout:5) else { XCTFail(...); return false }. Existence remains a failing gate; no behavioral assertion was removed from any test method."
+    },
+    "timeoutTokens": {
+      "baselineCount": 86,
+      "currentCount": 86,
+      "orderedValuesIdentical": true
+    },
+    "realInputPath": "Original field.tap(), actual keyboard/key readiness, user-visible clear/select-all interactions, field.typeText, and exact-value postconditions remain.",
+    "noNewPrivateFocusAPI": true,
+    "noPostSelectionSettingsRescroll": true,
+    "viewportLoop": "11 observations, at most10 real drags, fixed existing-style distance min(180,height*0.36) and press duration0.05. No added timed wait beyond the moved5-second existence gate.",
+    "workflowScope": "Observed workflow diff changes explicit checkout binding and verified fresh simulator selection/receipt. It does not change strict boot verifier/budget, native execution block, test timeouts, filtering, or retry policy. This review did not execute or independently validate the new selection fixture suite."
+  },
+  "findings": [
+    {
+      "id": "S1",
+      "topic": "Stable native view identity",
+      "classification": "supported_source_improvement",
+      "status": "present_in_owner_source",
+      "source": "apple/AhmadCareer/NativeCareerViews.swift:53-70",
+      "evidence": "NativeScrollPalette now keeps content in one modifier chain while style values vary by color scheme. The prior conditional content branch is gone. The exact dark palette values are retained.",
+      "limit": "The source mechanism is compatible with preserving structural identity; this review does not prove that it caused or resolves a particular observed scroll failure."
+    },
+    {
+      "id": "S2",
+      "topic": "Light foreground hierarchy",
+      "classification": "source_compatibility_recommendation",
+      "status": "two-line-refinement-source-reviewed-not-observed-integrated",
+      "source": "apple/AhmadCareer/NativeCareerViews.swift:62-63",
+      "evidence": "The prior light branch inherited native foreground style; owner source now explicitly applies Color.primary and Color.secondary. Apple's Material documentation distinguishes hierarchical foreground styles from custom styles for material vibrancy.",
+      "recommendation": "Keep the stable chain but use erased hierarchical primary/secondary styles in light appearance and erased existing palette colors in dark, subject to the owner's normal source validation.",
+      "limit": "No measured light-theme visual regression or current test failure is claimed.",
+      "refinementReview": "Exact two-line patch d5197cb1fd0cd61612f5c32fef97ece083817c40c63552b386a569d857de8b11 retains NativeDesign.text and NativeDesign.muted in dark, uses erased HierarchicalShapeStyle.primary/secondary in light, and leaves the stable content chain, background, toolbar material/visibility and all UI test source untouched. Source review accepts this narrow refinement; no compilation or render was performed."
+    },
+    {
+      "id": "S3",
+      "topic": "Multiline typing target geometry",
+      "classification": "bounded_helper_compatibility_limit",
+      "status": "no_current_fixture_failure_proven",
+      "source": "apple/UITests/CareerFinderUITests.swift:126-153; apple/AhmadCareer/NativeCareerViews.swift:546; apple/AhmadCareer/NativeApplicationsViews.swift:603-604",
+      "evidence": "revealForTyping requires viewport.contains(field.frame), so an editor taller than the available unobscured viewport cannot satisfy the precondition regardless of scrolling. Actual replace call sites include a TextEditor with minHeight140 and an unbounded vertical targetRoles TextField.",
+      "currentFixtureDisposition": "The existing17 methods use the ordinary-size140-point private-note editor and a short Research role value; source alone does not establish an impossible fit in any current fixture.",
+      "recommendation": "For a generic typing helper, a finite, visible/hittable field with a clear tap center inside the unobscured viewport is the narrower prerequisite; keep whole-frame policy for controls whose entire affordance must remain reachable. No source edit was made."
+    },
+    {
+      "id": "S4",
+      "topic": "Keyboard accessory and navigation scope",
+      "classification": "supported_source_guard",
+      "status": "present_in_owner_source",
+      "source": "apple/UITests/CareerFinderUITests.swift:126-153,312-329",
+      "evidence": "Typing viewport is calculated once per attempt, includes navigation only for actual searchField elements, and narrows accessory lookup to exact English/Arabic Done typing toolbars with finite visible/hittable geometry. It does not enumerate every toolbar or substitute a textField-only ancestor.",
+      "crossReview": "Recovery reviewer checked all existing replace routes: application profile, opportunity, connection, record note and discovery share the recognized Done typing action; Done-only preference/salary sheets are not existing replace call sites.",
+      "limit": "Runtime focus, keyboard presentation and tap delivery still require the owner's ordinary native acceptance; no private keyboard-focus inference is used."
+    }
+  ],
+  "primarySources": [
+    {
+      "url": "https://developer.apple.com/videos/play/wwdc2021/10022/",
+      "title": "Demystify SwiftUI",
+      "use": "Conditional branches and structural identity."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/swiftui/material.md",
+      "title": "Material",
+      "use": "Hierarchical foreground styles preserve material vibrancy; custom styles differ. The bar material matches system toolbars."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/swiftui/hierarchicalshapestyle.md",
+      "title": "HierarchicalShapeStyle",
+      "use": "Primary and secondary map to levels of the current content style."
+    }
+  ],
+  "constraints": [
+    "No source edits, native build, simulator boot, test execution, browser use, CI action, push, merge or deployment.",
+    "This exact d24b snapshot cannot accept any later owner source or native run.",
+    "Historical failed CI and partial native evidence remain distinct from source review.",
+    "Only evidence artifacts were written in this agent's owned review directory."
+  ]
+}

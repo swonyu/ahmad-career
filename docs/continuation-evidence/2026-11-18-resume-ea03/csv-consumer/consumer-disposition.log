@@ -1,0 +1,25 @@
+{
+  "initialStrictPassed": false,
+  "initialEvidenceUnchanged": true,
+  "positiveControlProved": true,
+  "exports": [
+    {
+      "language": "en",
+      "lineEndingChanges": 4,
+      "nonLineBreakChanges": 0,
+      "civilDatesUnchanged": true,
+      "guardedCellsLiteral": true,
+      "emptyFieldCases": 0
+    },
+    {
+      "language": "ar",
+      "lineEndingChanges": 4,
+      "nonLineBreakChanges": 0,
+      "civilDatesUnchanged": true,
+      "guardedCellsLiteral": true,
+      "emptyFieldCases": 0
+    }
+  ],
+  "evidence": "/workspace/scratch/ea03ff4360f5/csv-consumer/consumer-disposition.json",
+  "sha256": "ef0632bf421d77e0d093c1a5a8a3438f18ed93b8cf106b177c9c585ec0ea2c3c"
+}

@@ -1,0 +1,84 @@
+{
+  "observedAtUTC": "2026-11-18T14:43:24.010997+00:00",
+  "worktree": "/Users/saleh/Developer/career-finder-owner-20261118-20698",
+  "head": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+  "scope": "Read-only content integration verification, not runtime acceptance",
+  "joblink": [
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "sha256": "f4b226d1a7d294f7ee902a5b09a968b9226a1bf806f8e9f34575c377b0e5e32c",
+      "matchesReviewed7063": true
+    },
+    {
+      "path": "hosted/tests/phone-recovery-isolation.mjs",
+      "sha256": "460001e624418592696de8ec10efc8265e3ebb635909d6cff29d7e25e52781d0",
+      "matchesReviewed7063": true
+    }
+  ],
+  "copy": [
+    {
+      "path": "localization/native-copy.json",
+      "sha256": "cd8c37e5de64a97d9a9454562cb399b7c82a452d2b35ba7671073d4819de9a28",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "sha256": "c59fc53cb776cf10de57df08c70e20e660e1e38d7cb4edba991f503680e24ee8",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "sha256": "7171018028af5a03347910c716e250c7589e458c00acce825ed43d77c02f5ede",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "sha256": "5e0880f9207d3de713bac46b60bffca20e8ca39abc00cdccb40b13d00e3649ed",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "sha256": "35990bd80cb45fb4519a5651ded983d23a4ce19628a1408e8672bd50b4977b23",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "sha256": "4634f54b4a66f7841f84c5e9f5a2dcd9b55cfab4ac6c5f86570bb83168670134",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "sha256": "2ff0873db1f5323fd04356dbe62754e7df78eb072c0c06743ecd4b206d7e3b1f",
+      "matchesReviewedCopy": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "sha256": "401a29b4f862f8c33bc3a4af8c209602e6d032b4ac4708ead10a26210a8ca321",
+      "matchesReviewedCopy": true
+    }
+  ],
+  "warnings": [
+    {
+      "path": "apple/AhmadCareer.xcodeproj/project.pbxproj",
+      "sha256": "1dd6073b54aa39ca1f330a52541ae748e90e3c111d1726dbadd8de8ac3a501ef",
+      "matchesCompiled87": true
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "sha256": "cd0ef28fdf9dc6cbed97d3dfa8842af45034f244f0c2171d12e254d7544bbbd3",
+      "matchesCompiled87": true
+    },
+    {
+      "path": "apple/AhmadCareer/NativeLocalization.swift",
+      "sha256": "256f554969d2de0eee4f5970445f5544ec378e0e99eaf09876281ad07cf61e82",
+      "matchesCompiled87": true
+    }
+  ],
+  "size": {
+    "reviewedCommit": "a3d4dccfcd3d8c46d5c1421cb405f12f7cb33bea",
+    "integratedCommit": "da316558a2c4ff05864cafd7c9f9a8f319dcfb10",
+    "reviewedPatchID": "e2098bbfbb0c184e449fc09edf8a257bd8aadbdb",
+    "integratedPatchID": "e2098bbfbb0c184e449fc09edf8a257bd8aadbdb",
+    "samePatch": true
+  }
+}

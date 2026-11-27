@@ -1,0 +1,327 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-11-18T14:26:21.523Z",
+  "reviewer": "/root",
+  "runId": 44317593106,
+  "candidate": "1c253f0503dab1c2739754b6abce10cd33660272",
+  "actualCheckout": "5c0f3a44bb1ee5e005871523873a905d59412e88",
+  "tree": "b607101d1f3659f8718a9e649a138559b67a2b24",
+  "androidTree": "d12086f997f50a9d6f14395e1374ff7e56bccc6f",
+  "sourceIndex": {
+    "file": "android-only-media-index.json",
+    "sha256": "7b311219e50c636d8ebc16129383181c050db8e2a1f6e48c0e3d89b166038c7f"
+  },
+  "method": "Root visually inspected all22 original PNG images at displayed full resolution; capture5 used an independently SHA-verified byte-identical analysis copy after one read response was unavailable. Exact source/archive/test joins come from the independently reviewed collector, with current file hashes rechecked before sealing.",
+  "visualReviewCompleted": true,
+  "reviewedCount": 22,
+  "scope": "Arabic UI at large accessibility text in the 22 captured synthetic Android states. Some input values are English. Component-only fixture14 is identified explicitly. No general English-native, physical-device, screen-reader or universal accessibility claim.",
+  "observations": [
+    {
+      "indices": [
+        0,
+        1,
+        2
+      ],
+      "observed": "Inspected original PNGs full resolution. Navy/periwinkle surfaces and ivory text visible; Arabic reads RTL with controls right aligned. Custom URL has expected horizontally scrollable single-line text; vertical screenshot cropping is scroll position, not demonstrated clipping defect. Previous-results notice distinguishes stale results and explicit search; private follow-up status distinguishes self-reported application. At large text bottom navigation is horizontally scrollable, screenshot shows partial neighboring tab; reachability separately established by tests. Arabic pairing sentence 'الاتصال لا يرفع مسودة هاتفك...' is awkward and can be simplified without changing upload meaning; record wording 'موعد المتابعة المستحق' also a candidate for natural rewrite. No new functionality acceptance from screenshot alone."
+    },
+    {
+      "indices": [
+        3,
+        4
+      ],
+      "observed": "Correction dialog and date picker inspected full original PNGs. Large Arabic text wraps within surfaces; both correction actions and date actions visible with no overlap. Distinct secondary text remains legible on raised navy. Correction paragraph is unnecessarily dense and literal; propose natural EN/AR rewrite preserving local-only mark change, unchanged employer applications/receipts, new-review eligibility and preserved history. No visual acceptance outside these captured states."
+    },
+    {
+      "indices": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "observed": "Reviewed original PNGs. Role chooser items wrap and retain a clear explicit-search explanation; saved-role values remain literal, not mistranslated. Imported record-only review distinguishes bookmarks and private records; no accidental claim of submission. Dark and light settings show mutually exclusive radio selection and consistent hierarchy. Large text scroll regions crop at viewport boundaries, while bottom navigation remains visible. Arabic import wording 'الملف الشخصي المتصل' is literal and awkward; source/copy followup needed. Palette matches icon direction; no new layout overlap demonstrated."
+    },
+    {
+      "indices": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "observed": "Reviewed original PNGs. Pairing first step and explicit sign-in CTA wrap legibly; target one-time-code explanation needs the already-identified copy rewrite. Employer-review contact URLs/email render multiline instead of ellipsis; blank phone is truthfully not shared. LinkedIn optional-link explanation and external-search handoff avoid claiming login connection or submission. Exact PDF filename displayed. Observed small fixture PDF size rounds to0.0MiB; actual file nonzero, should display a nonzero byte/KB value for sub0.05MiB files to avoid implying empty attachment. This needs source confirmation, not speculative data loss."
+    },
+    {
+      "indices": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "observed": "Reviewed original PNGs. Expanded multiline note displays all lines including last; this is a component fixture on white host background, not a complete app appearance capture. Contact-copy feedback names explicit paste/review action; Android clipboard overlay masks copied contents and can transiently cover bottom navigation (system-owned surface, not an app-layout defect). Bookmark removal differentiates private record/history; body appears at scrolled position while both choices visible. Country chooser retains JP query/check and committed-action button; Arabic selected count reads visually30/1 and should use '1 من30' to avoid slash bidi ambiguity. Exact layout runtime remains limited to captured state/associated tests."
+    },
+    {
+      "indices": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "observed": "Reviewed originals: unfinished draft dialog has three distinct readable outcomes; synthetic HTTPS context is clearly labeled as test service, and prepared/review/receipt states remain distinct. Large-text purple notice strips visibly end midline at their scrolling viewport boundary; source review confirms capped nested scrolling rather than overpaint/lost data. Current screenshots do not prove users can reach every notice line; do not claim this as complete notice accessibility acceptance. Record as an intentional constrained viewport with further affordance/reachability review, not a proven content-loss bug."
+    },
+    {
+      "indices": [
+        5
+      ],
+      "observed": "Inspected byte-identical analysis copy bound to original PNG SHA9ca74121d7c6d3a51c80f371f1e0257c9838567609bef8a345037fe2fe02de1d. Private note field retains full synthetic note at large text; counter uses Arabic 'من' and Save/Close actions are visible. Focus outline and ivory/periwinkle contrast are coherent. Upper label is outside the scrolled viewport, not evidence of clipped field contents."
+    }
+  ],
+  "findings": [
+    {
+      "id": "NATIVE-COPY-20261118",
+      "status": "Six-entry natural EN/AR isolated correction in preparation",
+      "impact": "Repeated English in/in, literal Arabic connection/import descriptions, due follow-up wording and overly dense applied-mark explanation."
+    },
+    {
+      "id": "AR-SELECTED-COUNT",
+      "status": "Included in six-entry copy correction",
+      "impact": "Selected1of30 displays ambiguous slash ordering in Arabic; use localized '1 من30' pattern already present in the private-note counter."
+    },
+    {
+      "id": "SMALL-PDF-SIZE",
+      "status": "Source-confirmed precision issue; narrow candidate in preparation",
+      "impact": "A nonempty tiny PDF displays0.0MiB from one-decimal MiB formatting; does not imply missing uploaded bytes."
+    },
+    {
+      "id": "NOTICE-VIEWPORT",
+      "status": "Intentional nested scroll viewport, not proven data-loss or overpaint defect; source/affordance review ongoing",
+      "impact": "Long notice visually ends midline at bounded viewport. Current screenshot does not prove reachability of remaining lines; body height protection must remain."
+    }
+  ],
+  "acceptance": {
+    "overallRunPassed": false,
+    "fullAppAccepted": false,
+    "mergeAuthorizedByThisReceipt": false,
+    "reason": "Overall run failed hosted lint and iPhone strict startup; copy/precision followups remain, and this is partial native visual coverage. A successor needs its own exact-source gates and relevant visual replay."
+  },
+  "items": [
+    {
+      "captureName": "custom-connection-address.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+      "sha256": "3a01d78bc4abe428fb65ce48edee2defcbb1f4f8c1d18c8f017182fb48c06536",
+      "memberId": "0fa493da3378e7626e8106531e2c61fcffd440f45137e6191871afc9a3df2a39",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/custom-connection-address.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/custom-connection-address.png",
+      "visualObservationGroup": 0,
+      "rootViewed": true
+    },
+    {
+      "captureName": "previous-search-results.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest",
+      "sha256": "06703177ce7e37438922229b7d9ba48bdbb2cb8b6299daa4c1033199a2048b4b",
+      "memberId": "bcd5ab2dc7018f0297ad61c036b4860430db524ae2c72bf7d2006c044a670dff",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/previous-search-results.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/previous-search-results.png",
+      "visualObservationGroup": 0,
+      "rootViewed": true
+    },
+    {
+      "captureName": "private-follow-up-list.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+      "sha256": "c3e1509956e16d71d64c3af2ea9ad23c1d246b2df6c8d64f4d60e582da583c03",
+      "memberId": "a303443055fcaae207daf6d6b025e164dc38c3d6712539fd295c540b5bcfe755",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-follow-up-list.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-follow-up-list.png",
+      "visualObservationGroup": 0,
+      "rootViewed": true
+    },
+    {
+      "captureName": "private-record-correction.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory",
+      "sha256": "e1f4339176b543e9d0a081e34f573c66fbcddb6a3e9b55f5b47f3a5bc7dd5c2b",
+      "memberId": "b95f654b75ff661bc2afe19396cdb8f918cde5678368fd2b7618398363936600",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-correction.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-correction.png",
+      "visualObservationGroup": 1,
+      "rootViewed": true
+    },
+    {
+      "captureName": "private-record-date-picker.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+      "sha256": "1ce86b42d0fe2efd1166ea62a6abea4f803a69055e7ab6a3a0e29d44766d8d1d",
+      "memberId": "311713f98b57fafd1bf509fa0f188af403dea4b4cea38de6b8dc28c3b7d589fc",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-date-picker.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-date-picker.png",
+      "visualObservationGroup": 1,
+      "rootViewed": true
+    },
+    {
+      "captureName": "private-record-editor.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+      "sha256": "9ca74121d7c6d3a51c80f371f1e0257c9838567609bef8a345037fe2fe02de1d",
+      "memberId": "c85a979e39c94b210f30e76e7108cb2949cd0f1b0c913dc1a674d4ce06305dfa",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-editor.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-editor.png",
+      "visualObservationGroup": 6,
+      "rootViewed": true
+    },
+    {
+      "captureName": "profile-role-shortcut.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest",
+      "sha256": "ad02745a04f1ef48c6e4c46d3fedca7a94d8796e0ec632c1f64ec830b78d63db",
+      "memberId": "4f83e06bf4f172217f05b0dd1218fceb5665eb4da7b540582857a134d4e8f131",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/profile-role-shortcut.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/profile-role-shortcut.png",
+      "visualObservationGroup": 2,
+      "rootViewed": true
+    },
+    {
+      "captureName": "record-only-phone-import.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+      "sha256": "96996ecaf1341b377fdceb2093a06d33bc487910601d8ea071affc660b5198e5",
+      "memberId": "11fba8edc7f5bd8f1693798a7c5feb514adfcf52c536a2475cc2a6676177f307",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/record-only-phone-import.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/record-only-phone-import.png",
+      "visualObservationGroup": 2,
+      "rootViewed": true
+    },
+    {
+      "captureName": "settings-dark.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.settingsAppearance_survivesActivityRecreation_withoutChangingWorkspaceOrCallingService",
+      "sha256": "08a6988e76f62f79b5d98320f479d6c9fab277e4eeb787f40aed8e38573bf10c",
+      "memberId": "a7ea448bf2f7c656e0eda375ae2c1a4043603779859c638636d452d6fc2270e1",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-dark.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-dark.png",
+      "visualObservationGroup": 2,
+      "rootViewed": true
+    },
+    {
+      "captureName": "settings-light.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.settingsAppearance_survivesActivityRecreation_withoutChangingWorkspaceOrCallingService",
+      "sha256": "fded515ba5a95a9ec37cdcc9f2ca45611d75feb232e8206ece69d3250679534e",
+      "memberId": "f81a09c53a1be8226f12a5f15db7607319133e767b4b911b9ba2263ed7e6d72f",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-light.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-light.png",
+      "visualObservationGroup": 2,
+      "rootViewed": true
+    },
+    {
+      "captureName": "two-step-connection.png",
+      "testIdentifier": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+      "sha256": "2465bb8a9b92a2b5b78885b69bb3e003399b2f157a5485e29f088ff56046d761",
+      "memberId": "8f1ba6ea841c824125c19bbff67f6a60b0080dc6e7ab3c58054a94d5b1136f85",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/two-step-connection.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/two-step-connection.png",
+      "visualObservationGroup": 3,
+      "rootViewed": true
+    },
+    {
+      "captureName": "linkedin-exact-review.png",
+      "testIdentifier": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest.exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+      "sha256": "9a199ab9eb21759e14291b9e1fa546ceea9d6810eefb9766f482f17039827624",
+      "memberId": "61071ff60cb678ae65a1f167c0578a177f870e534a3b91bd62fbf7ce7e130fc7",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-exact-review.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-exact-review.png",
+      "visualObservationGroup": 3,
+      "rootViewed": true
+    },
+    {
+      "captureName": "linkedin-profile-guidance.png",
+      "testIdentifier": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest.optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText",
+      "sha256": "3598212bdad88aac70fd98d6b862d708dae69af6f6e94335809cad1b72584f6b",
+      "memberId": "bb6555b5b7cb583ed01bb38873edb41ddc3bda53ea39c935e68195db716a8a84",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-profile-guidance.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-profile-guidance.png",
+      "visualObservationGroup": 3,
+      "rootViewed": true
+    },
+    {
+      "captureName": "linkedin-search-handoff.png",
+      "testIdentifier": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest.exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+      "sha256": "329d0c5d9a4dedfce86dae93b5ee648708c90a4c1f9b6821281e9ec922e8c1ff",
+      "memberId": "c5bfb0fa3f852b432c5695ecdd67e814500619e210fb1dc28c9622a261790505",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-search-handoff.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-search-handoff.png",
+      "visualObservationGroup": 3,
+      "rootViewed": true
+    },
+    {
+      "captureName": "expanded-private-note-large-text.png",
+      "testIdentifier": "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest.shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+      "sha256": "d26d193ec74770c0cf8f7f3e20870335055ae17a5bcee23f18d1cdcabab06b53",
+      "memberId": "6b26e9c86995e23840506758c12b689d4b1e87291a34ae8008446e96172c2a43",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "visualObservationGroup": 4,
+      "rootViewed": true
+    },
+    {
+      "captureName": "profile-contact-copy.png",
+      "testIdentifier": "com.saleh.careerfinder.PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+      "sha256": "00a3e7de27bc9bac4ee7fd316b2206b304dd9a7d8579282bc57ef4ae55f19b9e",
+      "memberId": "d7eac27b6785432c605c09dbf8c976893e0475d85378c78ae8b1a0b88c012d3f",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/profile-contact-copy.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/profile-contact-copy.png",
+      "visualObservationGroup": 4,
+      "rootViewed": true
+    },
+    {
+      "captureName": "remove-local-opportunity-confirmation.png",
+      "testIdentifier": "com.saleh.careerfinder.PhonePolishAcceptanceTest.localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles",
+      "sha256": "26f6ffdf608c9ec0e9f072170bd2e934c9d1d56d71879e6de403ec93361e646a",
+      "memberId": "2f5ab8bd7e7b02c889297b991f55c6d23f5ad74a35595a136367eb51a3bc10ad",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/remove-local-opportunity-confirmation.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/remove-local-opportunity-confirmation.png",
+      "visualObservationGroup": 4,
+      "rootViewed": true
+    },
+    {
+      "captureName": "target-country-jp-draft-after-ime.png",
+      "testIdentifier": "com.saleh.careerfinder.PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+      "sha256": "dfa4085e7bb9df1571eb2191ca4be91a6e9c6d57b742f189bc02cdc23cbb7ecc",
+      "memberId": "3820c552ac50bd60003261f64463f07319bb6bdae74c5ee2d61b8d13134fdfa4",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "visualObservationGroup": 4,
+      "rootViewed": true
+    },
+    {
+      "captureName": "unfinished-opportunity-choices.png",
+      "testIdentifier": "com.saleh.careerfinder.PhonePolishAcceptanceTest.unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+      "sha256": "4bb2ee9d3508fa511563c0276e06ddafd86898cc2d91bce12af970a88c8fc817",
+      "memberId": "e073b5c4707c352a5060a71c57238279cbf491b8a49f557ffdbbc5b00f6664fd",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/unfinished-opportunity-choices.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/unfinished-opportunity-choices.png",
+      "visualObservationGroup": 5,
+      "rootViewed": true
+    },
+    {
+      "captureName": "acceptance-prepared.png",
+      "testIdentifier": "com.saleh.careerfinder.NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries",
+      "sha256": "826ef4edfc77ee847d31109e6c370dabb4c9939a1cbc0a2ae4e5ce6f0c909f7c",
+      "memberId": "a677a90409e0eb2b683fda465ac883d9f7fc65900136c133a626f0e07b92b720",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-prepared.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-prepared.png",
+      "visualObservationGroup": 5,
+      "rootViewed": true
+    },
+    {
+      "captureName": "acceptance-profile-large-text.png",
+      "testIdentifier": "com.saleh.careerfinder.NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries",
+      "sha256": "2d159437f7388b1ac7ed8a47a320fd3a86b0765060474e89fa9160137c121511",
+      "memberId": "748df240b2702c03b47951a5ff4526ef6df23b20bb4873f1bab83051fe4ff7ea",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-profile-large-text.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-profile-large-text.png",
+      "visualObservationGroup": 5,
+      "rootViewed": true
+    },
+    {
+      "captureName": "acceptance-receipts.png",
+      "testIdentifier": "com.saleh.careerfinder.NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries",
+      "sha256": "c1a9c25868c8c866aa041a389da0f1008e4218c7142d8f76f644086c5a584315",
+      "memberId": "73b00d3ff301acfb1fb5c90150c33da470be509eac6e0843a1f49498b1d5f681",
+      "memberPath": "ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-receipts.png",
+      "path": "artifacts/android-lint-44317593106/ahmad-career/ahmad-career/android/checks/ci-evidence/captures/com.saleh.careerfinder.acceptance/files/acceptance-receipts.png",
+      "visualObservationGroup": 5,
+      "rootViewed": true
+    }
+  ]
+}

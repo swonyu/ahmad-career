@@ -1,0 +1,1051 @@
+{
+  "schemaVersion": 1,
+  "observedAtUTC": "2026-11-18T19:08:56.203100+00:00",
+  "sourceCommit": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "initialEvidence": {
+    "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/consumer-evidence.json",
+    "sha256": "31791edcb4b0de7bb2fecbc67508c41f00b50723596704964047afe6a082e185",
+    "passed": false
+  },
+  "engine": {
+    "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+    "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+    "mode": "headless native Calc CSV import to native ODS"
+  },
+  "scope": "Read-only inspection of the retained native ODS output; no new imports or source edits.",
+  "disposition": "Partial WF-04 spreadsheet consumer evidence. Strict initial fidelity failure remains. The only observed text differences are consumer line-ending normalization; no non-line-break content or civil date change was found.",
+  "initialTypeDiagnostic": "The initial all171CellsString diagnostic is false because 36 civil-date fields per language became native date cells. Formula-like fields are all strings. The task did not require dates to remain strings.",
+  "viewingComparison": "A separate comparison allows CRLF and lone CR to become LF; it does not replace the initial CRLF-only strict criterion.",
+  "exportContractAssessment": "Parent coordinator inspected the existing source disclosure: CSV is a viewing export, formula-like cells get a Text: marker, and JSON is the original-value path. This consumer result does not validate an app defect under that contract.",
+  "jsonAcceptance": "Not executed here; JSON original-value behavior was not newly tested by this consumer task.",
+  "sourceChangeRecommended": false,
+  "exports": [
+    {
+      "language": "en",
+      "input": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-en.csv",
+        "bytes": 3147,
+        "sha256": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5"
+      },
+      "nativeOutput": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/en/career-finder-export-en.ods",
+        "bytes": 17679,
+        "sha256": "3ace9f83a8350f4f1f662b849fdccbe493cf119f28c835dcefab70ea2eea4cc4"
+      },
+      "records": 18,
+      "columns": 9,
+      "populatedCellsIncludingHeader": 171,
+      "stringCells": 135,
+      "nativeDateCells": 36,
+      "lineEndingChanges": [
+        {
+          "cell": "H2",
+          "source": "line one\nline two, \"quoted\"\r\nنص خاص",
+          "native": "line one\nline two, \"quoted\"\nنص خاص",
+          "kind": "CRLF to LF"
+        },
+        {
+          "cell": "A8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        },
+        {
+          "cell": "B8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        },
+        {
+          "cell": "H8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        }
+      ],
+      "nonLineBreakContentChanges": [],
+      "viewingContentPreservedAfterLineEndingNormalization": true,
+      "civilDateChecks": [
+        {
+          "cell": "F2",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G2",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F3",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G3",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F4",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G4",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F5",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G5",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F6",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G6",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F7",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G7",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F8",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G8",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F9",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G9",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F10",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G10",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F11",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G11",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F12",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G12",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F13",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G13",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F14",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G14",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F15",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G15",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F16",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G16",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F17",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G17",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F18",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G18",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F19",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G19",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        }
+      ],
+      "all36CivilDatesUnchanged": true,
+      "lastEditedTimestamps": {
+        "checked": 18,
+        "allUnchangedStrings": true
+      },
+      "emptyFields": [],
+      "emptyCivilDatesPresent": 0,
+      "formulaLikeCells": {
+        "checked": 51,
+        "all51LiteralStringsWithPrefix": true
+      },
+      "formulaCount": 0,
+      "externalLinks": [],
+      "externalSources": [],
+      "profileCVAndSecretSentinelsAbsent": true,
+      "strictInitialPassed": false
+    },
+    {
+      "language": "ar",
+      "input": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/career-finder-export-ar.csv",
+        "bytes": 3421,
+        "sha256": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873"
+      },
+      "nativeOutput": {
+        "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/ar/career-finder-export-ar.ods",
+        "bytes": 17828,
+        "sha256": "b46312be4a24d1d616b31a4a4dd265ff94d24bf95394c0c47a07ce99bfc313e7"
+      },
+      "records": 18,
+      "columns": 9,
+      "populatedCellsIncludingHeader": 171,
+      "stringCells": 135,
+      "nativeDateCells": 36,
+      "lineEndingChanges": [
+        {
+          "cell": "H2",
+          "source": "line one\nline two, \"quoted\"\r\nنص خاص",
+          "native": "line one\nline two, \"quoted\"\nنص خاص",
+          "kind": "CRLF to LF"
+        },
+        {
+          "cell": "A8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        },
+        {
+          "cell": "B8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        },
+        {
+          "cell": "H8",
+          "source": "Text: \r=1",
+          "native": "Text: \n=1",
+          "kind": "lone CR to LF"
+        }
+      ],
+      "nonLineBreakContentChanges": [],
+      "viewingContentPreservedAfterLineEndingNormalization": true,
+      "civilDateChecks": [
+        {
+          "cell": "F2",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G2",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F3",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G3",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F4",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G4",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F5",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G5",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F6",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G6",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F7",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G7",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F8",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G8",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F9",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G9",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F10",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G10",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F11",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G11",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F12",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G12",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F13",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G13",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F14",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G14",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F15",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G15",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F16",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G16",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F17",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G17",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F18",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G18",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "F19",
+          "source": "2026-11-18",
+          "native": {
+            "type": "date",
+            "text": "2026-11-18",
+            "dateValue": "2026-11-18",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        },
+        {
+          "cell": "G19",
+          "source": "2026-11-24",
+          "native": {
+            "type": "date",
+            "text": "2026-11-24",
+            "dateValue": "2026-11-24",
+            "numericValue": null,
+            "formula": null
+          },
+          "unchanged": true
+        }
+      ],
+      "all36CivilDatesUnchanged": true,
+      "lastEditedTimestamps": {
+        "checked": 18,
+        "allUnchangedStrings": true
+      },
+      "emptyFields": [],
+      "emptyCivilDatesPresent": 0,
+      "formulaLikeCells": {
+        "checked": 51,
+        "all51LiteralStringsWithPrefix": true
+      },
+      "formulaCount": 0,
+      "externalLinks": [],
+      "externalSources": [],
+      "profileCVAndSecretSentinelsAbsent": true,
+      "strictInitialPassed": false
+    }
+  ],
+  "limitations": [
+    "One LibreOfficeDev 26.8.0.0.alpha0 engine in this Linux environment, not Excel or Numbers.",
+    "Actual production export functions were executed directly by the parent generator; this task does not claim browser-download acceptance.",
+    "This checks imported native cell values, types, formulas and external sources; it does not claim desktop visual layout or UI usability.",
+    "No calendar consumer, repeated import, app re-import, or follow-up synchronization was tested.",
+    "Synthetic fixtures only; no real account, employer, profile, resume or secret data used.",
+    "No empty civil-date or other empty-field fixture was present; empty-field behavior is not established by this run."
+  ],
+  "positiveControl": {
+    "nativeOutput": {
+      "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/run-20261118T190617Z/positive-control/positive-control.ods",
+      "bytes": 9111,
+      "sha256": "48a8c4f24baeb4ebe3bbda4988686250117b79a319e0810b4fae95db4a182833"
+    },
+    "bareAndQuotedEqualsOnePlusOneBecameFormulaWithValueTwo": true,
+    "B2": {
+      "type": "float",
+      "text": "2",
+      "dateValue": null,
+      "numericValue": "2",
+      "formula": "of:=1+1"
+    },
+    "B3": {
+      "type": "float",
+      "text": "2",
+      "dateValue": null,
+      "numericValue": "2",
+      "formula": "of:=1+1"
+    }
+  },
+  "initialEvidenceUnchanged": true,
+  "script": {
+    "path": "/workspace/scratch/ea03ff4360f5/csv-consumer/inspect-libreoffice-disposition.py",
+    "sha256": "5e82fdf7d24070e0b3b1a46fd4f5a4f641a40bb778e72dfd33e105d6eb7b44a2"
+  }
+}

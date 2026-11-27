@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-18T14:41:30.151570+00:00",
+  "reviewer": "/root/publication_review",
+  "mode": "Bounded read-only diagnosis of already downloaded evidence. No new download, source edit, test, native execution, CI or Site action.",
+  "runID": "44316849501",
+  "archive": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/newer-owner-readonly/14433012761-android.zip",
+    "bytes": 4419765,
+    "sha256": "4e56caa385fa467c3fabd78b4058105a48b85edecfa6938a88ccf117fc63ba3a",
+    "independentlyHashed": true
+  },
+  "members": [
+    {
+      "path": "ahmad-career/ahmad-career/android/checks/ci-evidence/native-https-failure-logcat.log",
+      "bytes": 11077,
+      "sha256": "afaeaa3ae4fe1406a971316da5666bd3648bb649518d41c9b97260be736b401f"
+    },
+    {
+      "path": "ahmad-career/ahmad-career/android/checks/ci-evidence/native-https-failure-pid.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ahmad-career/ahmad-career/android/checks/ci-evidence/native-https-phone.log",
+      "bytes": 9647,
+      "sha256": "ec79a67e184941bab7e63ee94747ad012e40254aaa6536d0510b6d9e09cde2b7"
+    },
+    {
+      "path": "ahmad-career/ahmad-career/android/checks/ci-evidence/native-https-failure-diagnostics.json",
+      "bytes": 778,
+      "sha256": "de49d88e14b9d0703a5af11c7a2f23107719a82ff5b955795737f020df7a98d6"
+    }
+  ],
+  "sourceRead": {
+    "ref": "92266631b5eba3eb7d66810e6553535fe42cce86",
+    "files": [
+      {
+        "path": "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+        "sha256": "faf6035abd43f695996feff608b0cf2cd6a844c50a8c2c3305b0104cb524388f",
+        "reviewedLines": [
+          "173–199",
+          "339–378"
+        ]
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+        "sha256": "47d904f87656dbcc5bde0435d00dbd52266bb8df5c11530d0f91b284470f22d7",
+        "reviewedLines": [
+          "105–123",
+          "215",
+          "238"
+        ]
+      }
+    ],
+    "limit": "Source was read at the requested owner checkpoint. This bounded diagnosis did not independently establish the run checkout/PR merge SHA or whole-source tree equivalence."
+  },
+  "observed": [
+    "Instrumentation phase markers complete pairing, profile field edits, keyboard dismissal, PDF selection/readiness, profile-content capture and scrolling to Save.",
+    "profile-save-click:after is present. profile-saved:before is present, but profile-saved:after is absent. The failure is ComposeTimeoutException after 10000 ms at test line120.",
+    "The awaited conjunction is !busy && !profileDirty && profile.revision > 0. Neither individual values nor the model error/notice/request outcome were retained at timeout.",
+    "The PDF-document cleanup markers run before test-body:failed and the activity-rule failure/finish markers.",
+    "Filtered logcat begins at activity-rule:failed at13:57:13.511 UTC, then rule-finished and TestRunner failure/finish. It records the Compose timeout stack; no retained app-crash, ANR, TLS or API-cause entry is present in this member.",
+    "Diagnostics were captured at13:57:14.925 UTC, after TestRunner run-finished at13:57:13.679. PID lookup failed with exit1 and its retained file is empty. No thread backtrace was obtained."
+  ],
+  "sourceInterpretation": [
+    "A completed performClick step does not prove that the model initiated or completed its service request; the artifact contains no callback/request-start marker.",
+    "The model action wrapper can decline work when unloaded, already busy or storage-blocked. It catches ordinary exceptions into model state and clears busy in finally; it does not log those errors in this source path.",
+    "saveProfile validates and persists the captured draft before a connected PUT request. It handles stale-profile responses and can intentionally keep profileDirty true if the current fields differ from the captured profile. These are possible code paths, not established causes in this run."
+  ],
+  "conclusion": "The retained evidence establishes failure of the profile-save completion predicate, but does not identify why it stayed false. Empty post-test PID evidence and the root-observed launcher screenshot do not establish an app crash. Do not select a validation, storage, network, concurrency or click-target cause from these logs.",
+  "nextEvidenceBoundary": "The active owner is already investigating. If its chosen diagnostic captures state, the useful missing facts are the individual completion-predicate values, storageBlocked, a sanitized model error code/category, and whether the save callback/request started and completed before teardown. No credentials, profile fields, headers or raw request payloads are needed. No additional diagnostic was implemented or run here.",
+  "sizeHandoffConfirmed": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/android-file-size-92266631-20261118/candidate-receipt.json",
+    "bytes": 7778,
+    "sha256": "12f35b2b62bea6cc43cd0c8ffc2b8cc187bd132d9751c44f836216c5ac9fbc81",
+    "readBackVerified": true
+  },
+  "ownership": "Later explicitly authorized takeover585 remains active and sole integrator. Its ongoing diagnostics may supersede this bounded observation. Review stopped once the remaining evidence gap was clear."
+}

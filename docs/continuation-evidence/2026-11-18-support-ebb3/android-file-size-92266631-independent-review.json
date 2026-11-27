@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "reviewedUTC": "2026-11-18T14:36:06.325997+00:00",
+  "reviewer": "/root/ci_evidence",
+  "candidate": "a3d4dccfcd3d8c46d5c1421cb405f12f7cb33bea",
+  "parent": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "worktree": "/Users/saleh/Developer/career-finder-android-file-size-20261118-ebb3",
+  "actualCleanHEADVerified": true,
+  "actualMainActivitySHA256": "54b351a3ed29f2e5ff0949e54246ca5a040e5ea49cb205f443e27476a2f6641b",
+  "authorReceipt": {
+    "path": "/workspace/scratch/ebb3eed5ee2b/android-file-size-92266631-20261118-receipt.json",
+    "sha256": "12f35b2b62bea6cc43cd0c8ffc2b8cc187bd132d9751c44f836216c5ac9fbc81"
+  },
+  "patch": {
+    "path": "/workspace/scratch/ebb3eed5ee2b/android-file-size-92266631-20261118.patch",
+    "sha256": "f9083db1609050ad38dc36d7fe7d1801b6fbc95c0a0fc7718a35e52500b69e71"
+  },
+  "disposition": "Bounded source sanity review accepted; no supported blocker found in these three hunks.",
+  "findings": [
+    "The two actual fileSize callers now supply the public CareerStrings.locale property declared at CareerLocalization.kt:193. No caller was missed; there are exactly two calls and one definition.",
+    "Below1024 the existing positive tiny metadata value retains an exact whole-byte display. KiB and MiB use Double division and retain one-decimal formatting.",
+    "Outer localized templates, bidi handling, PDF size limits, metadata and binary bytes are unchanged.",
+    "The formatter hunks at922 lines764/905/1356 are distinct from the six-entry copy candidate MainActivity hunks430/1215/1255; owner source reconciliation is still required."
+  ],
+  "limits": [
+    "This reviewer did not rerun the author JDK checks.",
+    "No Kotlin/Android compilation, native UI, emulator, full-CI, merge or deployment acceptance is implied.",
+    "Active585 owns integration; no owner source mutation was performed."
+  ]
+}
