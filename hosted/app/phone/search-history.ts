@@ -27,6 +27,32 @@ const canonical = (value: string): string | null => {
 
 export function emptySearchHistory(): SearchHistory { return { version: 1, searches: [] }; }
 
+/** Older saved pages may have reset metadata with an obsolete comparison count. */
+export function restoreSearchNewResult(result: SearchNewResult | undefined, filters: Filters): SearchNewResult | null {
+  if (!result || result.key !== searchHistoryKey(filters)) return null;
+  // The matching query key alone does not prove the saved comparison came
+  // from its selected boards. Keep the page, but suppress inconsistent evidence.
+  const sources = new Set(filters.sources.map(canonical));
+  if ([result.comparedSourceIds, result.baselinedSourceIds, result.pendingSourceIds]
+      .some(ids => ids.some(id => !sources.has(id)))) return null;
+  if (result.baselineReset) return { ...result, newIds: [], comparedSourceIds: [], coverageLimited: true };
+  if (result.newIds.some(id => !validId(id) || !result.comparedSourceIds.some(source => belongsTo(id, source)))) return null;
+  return result;
+}
+
+/** A restored count is a claim about retained observations, not just a saved marker. */
+export function restoreRetainedSearchNewResult(result: SearchNewResult | undefined, filters: Filters, input: SearchHistory | undefined): SearchNewResult | null {
+  const restored = restoreSearchNewResult(result, filters);
+  if (!restored || restored.baselineReset) return restored;
+  const copied = copyHistory(input);
+  const search = copied.history.searches.find(value => value.key === restored.key);
+  const sources = new Set(filters.sources.map(canonical));
+  if (copied.reset || !search || search.boards.some(board => !sources.has(board.sourceId))) return null;
+  if (restored.comparedSourceIds.some(source => !search.boards.some(board => board.sourceId === source && board.ready))) return null;
+  if (restored.newIds.some(id => !search.boards.some(board => restored.comparedSourceIds.includes(board.sourceId) && board.ready && belongsTo(id, board.sourceId) && board.seenIds.includes(id)))) return null;
+  return restored;
+}
+
 /** The caller supplies resolved boards, never an implicit server-default selection. */
 export function searchHistoryKey(filters: Filters): string | null {
   if (typeof filters.query !== "string" || filters.query.length > 120 || typeof filters.location !== "string" || filters.location.length > 100 ||
@@ -131,7 +157,9 @@ export function evaluateSearchHistory({ history: input, filters, page, now, prev
     if (!oldest) throw new Error("Search history bounds could not be maintained.");
     history.searches.splice(history.searches.indexOf(oldest), 1); baselineReset = true;
   }
-  if (baselineReset) { newIds.clear(); coverageLimited = true; }
+  // A reset intentionally suppresses the entire comparison, not just its badges.
+  // Otherwise the UI offers New only and falsely describes a suppressed count as zero.
+  if (baselineReset) { newIds.clear(); compared.clear(); coverageLimited = true; }
   history.searches.sort((a, b) => b.lastUsedAt - a.lastUsedAt || a.key.localeCompare(b.key));
   return { history, result: {
     key, newIds: sorted(newIds), comparedSourceIds: sorted(compared), baselinedSourceIds: sorted(baselined),

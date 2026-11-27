@@ -301,8 +301,45 @@ final class CareerFinderUITests: XCTestCase {
         field.tap()
         // A cold system keyboard can still be opening after the field is focused.
         // Wait for that presentation before starting the unchanged real-key gate.
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
-                      "The native keyboard must appear before checking its typing key")
+        let presentationStarted = ProcessInfo.processInfo.systemUptime
+        let keyboardPresented = app.keyboards.firstMatch.waitForExistence(timeout: 5)
+        let presentationEnded = ProcessInfo.processInfo.systemUptime
+        if !keyboardPresented {
+            // Capture the screen before querying accessibility again.
+            let screenSampleStarted = ProcessInfo.processInfo.systemUptime
+            let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+            let screenSampleEnded = ProcessInfo.processInfo.systemUptime
+            screenshot.name = "keyboard-presentation-timeout-screen"
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
+
+            let fieldSampleStarted = ProcessInfo.processInfo.systemUptime
+            let fieldSnapshot = try? field.snapshot()
+            let fieldSampleEnded = ProcessInfo.processInfo.systemUptime
+            let fieldDetails = fieldSnapshot.map {
+                "Identifier: \($0.identifier). UI focus: \($0.hasFocus). Enabled: \($0.isEnabled). Frame: \($0.frame)."
+            } ?? "The field snapshot could not be read."
+            let hierarchySampleStarted = ProcessInfo.processInfo.systemUptime
+            let hierarchy = app.debugDescription
+            let hierarchySampleEnded = ProcessInfo.processInfo.systemUptime
+            let evidence = XCTAttachment(string: """
+                Keyboard wait returned false after \(presentationEnded - presentationStarted) seconds.
+                Screen capture requested \(screenSampleStarted - presentationEnded) seconds after the wait.
+                Screen capture completed \(screenSampleEnded - presentationEnded) seconds after the wait.
+                Field snapshot requested \(fieldSampleStarted - presentationEnded) seconds after the wait.
+                Field snapshot completed \(fieldSampleEnded - presentationEnded) seconds after the wait.
+                \(fieldDetails)
+                Accessibility hierarchy requested \(hierarchySampleStarted - presentationEnded) seconds after the wait.
+                Accessibility hierarchy completed \(hierarchySampleEnded - presentationEnded) seconds after the wait.
+
+                \(hierarchy)
+                """)
+            evidence.name = "keyboard-presentation-timeout-focus-and-AX"
+            evidence.lifetime = .keepAlways
+            add(evidence)
+        }
+        XCTAssertTrue(keyboardPresented, "The native keyboard must appear before checking its typing key")
+        guard keyboardPresented else { return }
         let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let readiness = waitForTypingKey(deleteKey, in: app)
         if readiness != .completed { print(app.debugDescription) }

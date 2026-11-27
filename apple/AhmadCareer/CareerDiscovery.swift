@@ -481,15 +481,35 @@ enum DiscoveryHistoryPolicy {
         return true
     }
     static func valid(_ result: DiscoveryNewResult, query: DiscoveryQuery, sources: [String], jobs: [DiscoveryJob], history: DiscoverySearchHistory) -> Bool {
-        guard let canonical = canonicalIDs(sources), canonical == sources,
-              result.key == key(for: query, sourceIDs: sources), history.searches.contains(where: { $0.key == result.key }),
+        guard valid(history), let canonical = canonicalIDs(sources), canonical == sources,
+              result.key == key(for: query, sourceIDs: sources),
+              let search = history.searches.first(where: { $0.key == result.key }),
+              search.boards.allSatisfy({ sources.contains($0.sourceId) }),
               result.newIds.count <= DiscoveryPolicy.maximumStoredJobs, Set(result.newIds).count == result.newIds.count,
               Set(result.newIds).isSubset(of: Set(jobs.map(\.id))) else { return false }
         if !query.sources.isEmpty, sourceIDs(for: query, defaults: []) != sources { return false }
         for values in [result.comparedSourceIds, result.baselinedSourceIds, result.pendingSourceIds] {
             if values.count > DiscoveryPolicy.maximumSources || Set(values).count != values.count || !Set(values).isSubset(of: Set(sources)) { return false }
         }
-        return result.newIds.allSatisfy { id in validID(id) && sources.contains(where: { belongs(id, to: $0) }) }
+        if !result.baselineReset {
+            let readySources = Set(search.boards.filter(\.ready).map(\.sourceId))
+            guard Set(result.comparedSourceIds).isSubset(of: readySources) else { return false }
+        }
+        return result.newIds.allSatisfy { id in
+            guard validID(id), let job = jobs.first(where: { $0.id == id }),
+                  sources.contains(job.sourceId), belongs(id, to: job.sourceId) else { return false }
+            // A visible badge needs a retained, ready baseline for the board
+            // actually compared. Legacy reset markers are suppressed on restore.
+            return result.baselineReset || (result.comparedSourceIds.contains(job.sourceId)
+                && search.boards.contains { $0.sourceId == job.sourceId && $0.ready && $0.seenIds.contains(id) })
+        }
+    }
+    // Older snapshots may contain comparison metadata suppressed by a baseline reset.
+    // Normalize only the displayed result, after validating the original saved bytes.
+    static func restoredResult(_ result: DiscoveryNewResult?) -> DiscoveryNewResult? {
+        guard var value = result, value.baselineReset else { return result }
+        value.newIds = []; value.comparedSourceIds = []; value.coverageLimited = true
+        return value
     }
     static func evaluate(history input: DiscoverySearchHistory, query: DiscoveryQuery, page: DiscoveryPage, jobs: [DiscoveryJob], now: Int64,
                          previous: DiscoveryNewResult? = nil) -> (history: DiscoverySearchHistory, result: DiscoveryNewResult?, sources: [String]) {
@@ -549,7 +569,7 @@ enum DiscoveryHistoryPolicy {
             }
             history.searches.removeAll { $0.key == oldest.key }; reset = true
         }
-        if reset { newIDs.removeAll(); limited = true }
+        if reset { newIDs.removeAll(); compared.removeAll(); limited = true }
         history.searches.sort { $0.lastUsedAt == $1.lastUsedAt ? $0.key < $1.key : $0.lastUsedAt > $1.lastUsedAt }
         return (history, DiscoveryNewResult(key: key, newIds: newIDs.sorted(), comparedSourceIds: compared.sorted(), baselinedSourceIds: baselined.sorted(),
             pendingSourceIds: sources.filter { id in !search.boards.contains(where: { $0.sourceId == id && $0.ready }) }, coverageLimited: limited, baselineReset: reset), sources)
@@ -704,7 +724,7 @@ final class CareerDiscoveryStore: ObservableObject {
             let repairedQuery = repaired(saved.query)
             let repairedLast = saved.lastQuery.map(repaired)
             query = repairedQuery; lastQuery = repairedLast; page = saved.page; jobs = saved.jobs
-            searchHistory = saved.searchHistory ?? DiscoverySearchHistory(); searchNewResult = saved.newResult
+            searchHistory = saved.searchHistory ?? DiscoverySearchHistory(); searchNewResult = DiscoveryHistoryPolicy.restoredResult(saved.newResult)
             lastSearchSourceIds = saved.lastSearchSourceIds; showNewOnly = false
             restoredResults = saved.page != nil || !saved.jobs.isEmpty
             if repairedQuery.validationError != nil || repairedLast?.validationError != nil {
@@ -729,10 +749,10 @@ final class CareerDiscoveryStore: ObservableObject {
     }
     var canLoadMore: Bool { page?.nextCursor != nil && lastQuery == query && !isSearching && !restoredResults && !needsNewSearch }
     var criteriaChanged: Bool { lastQuery != nil && lastQuery != query }
-    var newJobIDs: Set<String> { Set(searchNewResult?.newIds ?? []) }
+    var newJobIDs: Set<String> { searchNewResult?.baselineReset == true ? [] : Set(searchNewResult?.newIds ?? []) }
     var newJobCount: Int { let ids = newJobIDs; return jobs.filter { ids.contains($0.id) }.count }
-    var visibleJobs: [DiscoveryJob] { let ids = newJobIDs; return showNewOnly ? jobs.filter { ids.contains($0.id) } : jobs }
-    var hasSearchComparison: Bool { !(searchNewResult?.comparedSourceIds.isEmpty ?? true) }
+    var visibleJobs: [DiscoveryJob] { let ids = newJobIDs; return showNewOnly && hasSearchComparison ? jobs.filter { ids.contains($0.id) } : jobs }
+    var hasSearchComparison: Bool { searchNewResult?.baselineReset != true && !(searchNewResult?.comparedSourceIds.isEmpty ?? true) }
     func loadCatalog() async {
         guard catalog == nil, !loadingCatalog else { return }
         loadingCatalog = true; catalogError = nil; defer { loadingCatalog = false }
@@ -845,6 +865,7 @@ final class CareerDiscoveryStore: ObservableObject {
             if let result = familiarity.result {
                 searchHistory = familiarity.history; searchNewResult = result; lastSearchSourceIds = familiarity.sources
             } else { searchNewResult = nil; lastSearchSourceIds = nil }
+            if !hasSearchComparison { showNewOnly = false }
             isSearching = false; requestID = nil; requestTask = nil
             if !persist() {
                 // A failed local save cannot publish a result as saved history.

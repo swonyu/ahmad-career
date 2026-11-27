@@ -1430,5 +1430,13 @@
   "This browser cannot safely coordinate online changes. Your saved records are still available.": "لا يستطيع هذا المتصفح تنسيق التغييرات عبر الإنترنت بأمان. ما زالت سجلاتك المحفوظة متاحة.",
   "This browser could not confirm safe access to pending changes. Reload and try again.": "تعذّر على هذا المتصفح تأكيد الوصول الآمن إلى التغييرات المعلّقة. أعد تحميل الصفحة وحاول مجددًا.",
   "Confirm this page’s account before opening its workspace.": "أكّد حساب هذه الصفحة قبل فتح مساحة عمله.",
-  "Some saved characters are shown as \\uXXXX escapes. The original text is preserved. Repair affected details before sending new information.": "تُعرض بعض الأحرف المحفوظة برموز \\uXXXX. النص الأصلي محفوظ. صحّح التفاصيل المتأثرة قبل إرسال معلومات جديدة."
+  "Some saved characters are shown as \\uXXXX escapes. The original text is preserved. Repair affected details before sending new information.": "تُعرض بعض الأحرف المحفوظة برموز \\uXXXX. النص الأصلي محفوظ. صحّح التفاصيل المتأثرة قبل إرسال معلومات جديدة.",
+  "Share job with a friend": "مشاركة الوظيفة مع صديق",
+  "Review the job details below before sharing. Your application record and CV are not included.": "راجع تفاصيل الوظيفة أدناه قبل المشاركة. لن تتم مشاركة سجل التقديم أو سيرتك الذاتية.",
+  "Job share preview": "معاينة مشاركة الوظيفة",
+  "Share or copy job details": "مشاركة تفاصيل الوظيفة أو نسخها",
+  "Job details copied.": "تم نسخ تفاصيل الوظيفة.",
+  "Sharing is unavailable. Select and copy the preview instead.": "المشاركة غير متاحة. حدّد نص المعاينة وانسخه بدلًا من ذلك.",
+  "Sharing is disabled for this link. Use a public job posting link without private access details.": "المشاركة غير متاحة لهذا الرابط. استخدم رابط إعلان وظيفة عام لا يحتوي على بيانات دخول خاصة.",
+  "Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included.": "راجع تفاصيل الوظيفة والرابط أدناه قبل المشاركة. شارك روابط إعلانات الوظائف العامة فقط، وليس الدعوات الشخصية. لا يتضمن النص سجل تقديمك أو سيرتك الذاتية."
 }

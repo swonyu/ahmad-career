@@ -16,6 +16,8 @@ import org.junit.Test
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 internal object DiscoveryHistoryFixture {
     const val BOARD = "greenhouse:career-feature-fixture"
@@ -43,9 +45,21 @@ internal object DiscoveryHistoryFixture {
 internal class DiscoveryHistoryMemoryStore : PrivateStore {
     val records = ConcurrentHashMap<String, String>()
     @Volatile var failWrites = false
+    @Volatile var failAfterGateOnce = false
+    @Volatile var writeEntered: CountDownLatch? = null
+    @Volatile var writeRelease: CountDownLatch? = null
     override fun read(name: String) = records[name]?.let(::JSONObject)
     override fun write(name: String, value: JSONObject) {
         if (failWrites) throw IOException("Synthetic private write unavailable")
+        val gate = writeRelease
+        if (gate != null) {
+            writeEntered?.countDown()
+            check(gate.await(8, TimeUnit.SECONDS)) { "Synthetic write gate timed out" }
+        }
+        if (failAfterGateOnce) {
+            failAfterGateOnce = false
+            throw IOException("Synthetic pending private write failed")
+        }
         records[name] = value.toString()
     }
     override fun remove(name: String) { records.remove(name) }
@@ -228,9 +242,15 @@ class DiscoverySearchHistoryRegressionTest {
             listOf(DiscoveryHistoryBoard(fixture.BOARD, (0 until 1000).map { fixture.id("old-$it") }, true)))))
         val reset = evaluate(large, fixture.page("C"), time = 2)
         assertTrue(reset.result!!.baselineReset); assertTrue(reset.result!!.newIds.isEmpty())
+        assertTrue(reset.result!!.comparedSourceIds.isEmpty())
         assertEquals(listOf(fixture.id("C")), reset.history.searches.single().boards.single().seenIds)
         val more = evaluate(reset.history, fixture.page("C", "D"), time = 3, prior = reset.result)
         assertTrue(more.result!!.baselineReset); assertTrue(more.result!!.newIds.isEmpty())
+        assertTrue(more.result!!.comparedSourceIds.isEmpty())
+        val fresh = evaluate(more.history, fixture.page("C", "D", "E"), time = 4)
+        assertFalse(fresh.result!!.baselineReset)
+        assertEquals(listOf(fixture.BOARD), fresh.result!!.comparedSourceIds)
+        assertEquals(listOf(fixture.id("E")), fresh.result!!.newIds)
     }
     @Test fun queryAndTotalIdBoundsEvictWholeQueriesWithoutMarkingOldJobsNew() {
         var history = DiscoverySearchHistory()
@@ -275,6 +295,35 @@ class DiscoverySearchHistoryRegressionTest {
         old.remove("searchHistory"); old.remove("newResult"); old.remove("lastSearchSourceIds")
         val decoded = DiscoverySnapshotCodec.decode(old)
         assertNull(decoded.searchHistory); assertNull(decoded.newResult); assertNull(decoded.lastSearchSourceIds)
+    }
+    @Test fun zeroNewComparisonRequiresReadyBoardEvidence_evenWhenNoJobIdNeedsValidation() {
+        val page = fixture.page("A", "B")
+        val repeated = evaluate(baseline().history, page, time = 2)
+        val result = repeated.result!!
+        assertTrue(result.newIds.isEmpty()); assertEquals(listOf(fixture.BOARD), result.comparedSourceIds)
+        val ready = DiscoverySnapshot(fixture.filters, fixture.filters, page, repeated.history, result, repeated.sourceIds)
+        assertEquals(ready, DiscoverySnapshotCodec.decode(DiscoverySnapshotCodec.encode(ready)))
+        val query = repeated.history.searches.single()
+        val unready = repeated.history.copy(searches = listOf(query.copy(boards =
+            listOf(query.boards.single().copy(ready = false)))))
+        val missing = repeated.history.copy(searches = listOf(query.copy(boards = emptyList())))
+        for (history in listOf(unready, missing)) {
+            assertTrue(DiscoveryHistoryPolicy.valid(history))
+            assertFalse(DiscoveryHistoryPolicy.valid(result, fixture.filters, repeated.sourceIds, page.jobs, history))
+            val stored = DiscoverySnapshotCodec.encode(DiscoverySnapshot(fixture.filters, fixture.filters,
+                page, history, null, repeated.sourceIds))
+            stored.put("newResult", DiscoveryHistoryPolicy.encode(result))
+            val before = stored.toString()
+            reject { DiscoverySnapshotCodec.decode(stored) }
+            assertEquals(before, stored.toString())
+
+            // Legacy reset metadata carries no active comparison and remains readable.
+            val legacyReset = result.copy(baselineReset = true, newIds = emptyList(), coverageLimited = false)
+            assertTrue(DiscoveryHistoryPolicy.valid(legacyReset, fixture.filters, repeated.sourceIds, page.jobs, history))
+            val legacy = DiscoverySnapshot(fixture.filters, fixture.filters, page, history, legacyReset, repeated.sourceIds)
+            assertEquals(legacyReset, DiscoverySnapshotCodec.decode(DiscoverySnapshotCodec.encode(legacy)).newResult)
+            assertTrue(DiscoveryHistoryPolicy.restoredResult(legacyReset).comparedSourceIds.isEmpty())
+        }
     }
     @Test fun forgedOrUnboundStoredMarkersAreRejected_withoutRewritingOriginalEvidence() {
         val repeat = evaluate(baseline().history, fixture.page("B", "C"), time = 2)
@@ -335,6 +384,31 @@ class DiscoverySearchHistoryRegressionTest {
         assertEquals(listOf(fixture.BOARD), DiscoverySnapshotCodec.decode(current.exportSnapshot()).lastSearchSourceIds)
         assertEquals(before, current.exportSnapshot().toString())
     }
+    @Test fun fullOutageRetainsRowsAndComparisonButBlocksTheOldMoreCursor() {
+        val store = DiscoveryHistoryMemoryStore(); val service = DiscoveryHistoryService(); val current = controller(service)
+        suspendMain { current.attachPrivateSession(store, "outage-cursor") }
+        main { current.editFilters { fixture.filters } }
+        search(current)
+        service.result = fixture.page("B", "C", matched = 3, cursor = "page-2")
+        search(current)
+        assertEquals(listOf(fixture.id("C")), current.state.value.newResult!!.newIds)
+        assertEquals("page-2", current.state.value.nextCursor)
+        val saved = store.records.getValue("outage-cursor")
+        service.result = fixture.page(sourceStatus = "unavailable", sourceError = "Synthetic timeout")
+        search(current)
+        assertEquals(listOf(fixture.id("B"), fixture.id("C")), current.state.value.jobs.map { it.id })
+        assertEquals(listOf(fixture.id("C")), current.state.value.newResult!!.newIds)
+        assertNull(current.state.value.nextCursor); assertTrue(current.state.value.cursorInvalid)
+        assertEquals(saved, store.records.getValue("outage-cursor"))
+        val calls = service.requests.size
+        main { current.search(more = true) }
+        assertEquals(calls, service.requests.size)
+        service.result = fixture.page("B", "C")
+        search(current)
+        assertFalse(current.state.value.cursorInvalid)
+        assertTrue(current.state.value.newResult!!.newIds.isEmpty())
+        assertEquals(calls + 1, service.requests.size)
+    }
     @Test fun aNewFilterDraftDoesNotRebindTheDisplayedComparisonOrTriggerARequest() {
         val store = DiscoveryHistoryMemoryStore(); val service = DiscoveryHistoryService(); val current = controller(service)
         suspendMain { current.attachPrivateSession(store, "search-A") }; main { current.editFilters { fixture.filters } }
@@ -363,6 +437,121 @@ class DiscoverySearchHistoryRegressionTest {
             assertEquals(3, current.state.value.jobs.size); assertEquals(3, service.requests.size)
         }
     }
+    @Test fun resetClearsPriorComparisonWhileMoreIsSavingAndAfterRestart() {
+        val store = DiscoveryHistoryMemoryStore()
+        val seed = baseline()
+        val query = seed.history.searches.single()
+        val board = query.boards.single()
+        val large = seed.history.copy(searches = listOf(query.copy(boards = listOf(
+            board.copy(seenIds = board.seenIds + (0 until 997).map { fixture.id("old-$it") })))))
+        assertEquals(999, large.searches.single().boards.single().seenIds.size)
+        store.records["search-cap"] = DiscoverySnapshotCodec.encode(DiscoverySnapshot(fixture.filters,
+            fixture.filters, fixture.page("A", "B"), large, seed.result, seed.sourceIds)).toString()
+        val service = DiscoveryHistoryService(fixture.page("B", "C", matched = 3, cursor = "page-2"))
+        val current = controller(service)
+        suspendMain { current.attachPrivateSession(store, "search-cap") }
+        search(current)
+        assertEquals(listOf(fixture.id("C")), current.state.value.newResult!!.newIds)
+        assertEquals(1000, DiscoverySnapshotCodec.decode(current.exportSnapshot()).searchHistory!!.searches.single().boards.single().seenIds.size)
+        main { current.setShowNewOnly(true) }
+        assertEquals(listOf(fixture.id("C")), current.state.value.visibleJobs.map { it.id })
+        val previousBytes = store.records.getValue("search-cap")
+        val entered = CountDownLatch(1); val release = CountDownLatch(1)
+        store.writeEntered = entered; store.writeRelease = release
+        service.result = fixture.page("D", matched = 3)
+        try {
+            main { current.search(more = true) }
+            assertTrue("Expected pending private write", entered.await(5, TimeUnit.SECONDS))
+            assertTrue(current.state.value.loadingMore)
+            assertFalse(current.state.value.hasSearchComparison)
+            assertFalse(current.state.value.showNewOnly)
+            assertTrue(current.state.value.newJobIds.isEmpty())
+            assertEquals(listOf(fixture.id("B"), fixture.id("C"), fixture.id("D")), current.state.value.visibleJobs.map { it.id })
+            assertEquals(previousBytes, store.records.getValue("search-cap"))
+        } finally {
+            store.writeRelease = null; store.writeEntered = null; release.countDown()
+        }
+        await { !current.state.value.loading }
+        val reset = current.state.value.newResult!!
+        assertTrue(reset.baselineReset); assertTrue(reset.coverageLimited)
+        assertTrue(reset.comparedSourceIds.isEmpty()); assertTrue(reset.newIds.isEmpty())
+        assertFalse(current.state.value.showNewOnly); assertEquals(3, current.state.value.visibleJobs.size)
+        val calls = service.requests.size
+        suspendMain { current.stopPrivateSession(flush = true); current.attachPrivateSession(store, "search-cap") }
+        assertEquals(reset, current.state.value.newResult); assertEquals(calls, service.requests.size)
+        assertFalse(current.state.value.hasSearchComparison); assertEquals(3, current.state.value.visibleJobs.size)
+    }
+
+    @Test fun legacyResetMetadataIsNormalizedOnlyAfterValidationWithoutRewritingOnOpen() {
+        val seed = baseline()
+        val compared = evaluate(seed.history, fixture.page("B", "C"), time = 2)
+        val old = compared.result!!.copy(newIds = emptyList(), baselineReset = true, coverageLimited = false)
+        assertTrue(old.comparedSourceIds.isNotEmpty())
+        val original = DiscoverySnapshotCodec.encode(DiscoverySnapshot(fixture.filters, fixture.filters,
+            fixture.page("B", "C"), compared.history, old, compared.sourceIds)).toString()
+        assertEquals(old, DiscoverySnapshotCodec.decode(JSONObject(original)).newResult)
+        val store = DiscoveryHistoryMemoryStore(); store.records["legacy-cap"] = original
+        val service = DiscoveryHistoryService(); val current = controller(service)
+        suspendMain { current.attachPrivateSession(store, "legacy-cap") }
+        val actual = current.state.value.newResult!!
+        assertTrue(actual.baselineReset); assertTrue(actual.coverageLimited)
+        assertTrue(actual.comparedSourceIds.isEmpty()); assertTrue(actual.newIds.isEmpty())
+        assertFalse(current.state.value.hasSearchComparison); assertFalse(current.state.value.showNewOnly)
+        assertEquals(2, current.state.value.visibleJobs.size)
+        assertEquals(original, store.records.getValue("legacy-cap")); assertTrue(service.requests.isEmpty())
+        // A reset with fabricated new IDs must still fail the original strict codec.
+        val forged = JSONObject(original)
+        forged.getJSONObject("newResult").put("newIds", org.json.JSONArray(listOf(fixture.id("C"))))
+        reject { DiscoverySnapshotCodec.decode(forged) }
+        val valid = compared.result!!
+        assertEquals(valid, DiscoveryHistoryPolicy.restoredResult(valid))
+    }
+
+    private fun cancelledPendingWrite(firstWriteFails: Boolean, outageNext: Boolean = false, failureNext: Boolean = false) {
+        val store = DiscoveryHistoryMemoryStore()
+        val service = DiscoveryHistoryService()
+        val current = controller(service)
+        suspendMain { current.attachPrivateSession(store, "pending-search") }
+        main { current.editFilters { fixture.filters } }
+        search(current)
+        val savedBaseline = store.records.getValue("pending-search")
+        service.result = fixture.page("B", "C")
+        val entered = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        store.writeEntered = entered
+        store.writeRelease = release
+        store.failAfterGateOnce = firstWriteFails
+        try {
+            main { current.search() }
+            assertTrue("Expected the first private write to start", entered.await(5, TimeUnit.SECONDS))
+            assertEquals(savedBaseline, store.records.getValue("pending-search"))
+            if (outageNext) service.result = fixture.page(sourceStatus = "unavailable", sourceError = "Synthetic timeout")
+            if (failureNext) service.failure = IOException("Synthetic network failure")
+            main { current.search() } // Cancels the first request while its write is pending.
+            await { service.requests.size == 3 }
+            instrumentation.waitForIdleSync() // Let the second response reach the observation boundary.
+        } finally {
+            store.writeRelease = null
+            store.writeEntered = null
+            release.countDown()
+        }
+        await { store.records.getValue("pending-search") != savedBaseline }
+        instrumentation.waitForIdleSync()
+        await { !current.state.value.loading }
+        val expected = if (firstWriteFails || outageNext || failureNext) listOf(fixture.id("C")) else emptyList()
+        assertEquals(expected, current.state.value.newResult!!.newIds)
+        val saved = DiscoverySnapshotCodec.decode(JSONObject(store.records.getValue("pending-search")))
+        assertEquals(expected, saved.newResult!!.newIds)
+        assertEquals(listOf(fixture.id("A"), fixture.id("B"), fixture.id("C")),
+            saved.searchHistory!!.searches.single().boards.single().seenIds)
+        assertEquals(3, service.requests.size)
+    }
+
+    @Test fun cancelledFailedWriteDoesNotTeachTheNextSearchAnUncommittedRole() = cancelledPendingWrite(true)
+    @Test fun cancelledCommittedWriteIsObservedBeforeTheNextSearchCompares() = cancelledPendingWrite(false)
+    @Test fun outageAfterPendingCommitPreservesTheSavedComparison() = cancelledPendingWrite(false, outageNext = true)
+    @Test fun networkFailureAfterPendingCommitPreservesTheSavedComparison() = cancelledPendingWrite(false, failureNext = true)
+
     @Test fun cancelledOldScopeResponseCannotPublishIntoTheNextAccount() {
         val store = DiscoveryHistoryMemoryStore(); val service = DiscoveryHistoryService(); val current = controller(service)
         suspendMain { current.attachPrivateSession(store, "search-A") }; main { current.editFilters { fixture.filters } }

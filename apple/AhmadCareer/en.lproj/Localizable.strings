@@ -634,6 +634,7 @@
 "Job links and applications" = "Job links and applications";
 "Job preferences" = "Job preferences";
 "Job results could not be verified. Earlier results are still available." = "Job results could not be verified. Earlier results are still available.";
+"Job share preview" = "Job share preview";
 "Job title or keyword" = "Job title or keyword";
 "Jobs" = "Jobs";
 "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below." = "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.";
@@ -1105,6 +1106,7 @@
 "Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted." = "Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted.";
 "Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission." = "Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission.";
 "Review the exact details below. Only eligible applications in this review will be sent." = "Review the exact details below. Only eligible applications in this review will be sent.";
+"Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included." = "Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included.";
 "Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed." = "Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed.";
 "Review the original details before approving any remaining application. Nothing was resumed automatically." = "Review the original details before approving any remaining application. Nothing was resumed automatically.";
 "Review the recorded outcome before preparing another application." = "Review the recorded outcome before preparing another application.";
@@ -1259,8 +1261,11 @@
 "Set up or recover workspace access" = "Set up or recover workspace access";
 "Settings" = "Settings";
 "Share job link" = "Share job link";
+"Share job with a friend" = "Share job with a friend";
 "Share reviewed notes" = "Share reviewed notes";
 "Sharing and beta feedback" = "Sharing and beta feedback";
+"Sharing is disabled for this link. Use a public job posting link without private access details." = "Sharing is disabled for this link. Use a public job posting link without private access details.";
+"Sharing is unavailable. Select and copy the preview instead." = "Sharing is unavailable. Select and copy the preview instead.";
 "Shorten achievements before saving." = "Shorten achievements before saving.";
 "Shorten the keywords or location and try again." = "Shorten the keywords or location and try again.";
 "Shorten the keywords or location to open LinkedIn search." = "Shorten the keywords or location to open LinkedIn search.";

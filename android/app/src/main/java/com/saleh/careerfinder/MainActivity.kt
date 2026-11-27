@@ -604,6 +604,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 SavedComparisonToggle(state, comparison, job, false) { model.state.value }
                 OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                     .semantics { contentDescription = l10n.format("Open employer page for {0} at {1}", listOf((job.title).toString(), (job.company).toString()))}) { Text(l10n("Open employer page")) }
+                JobShareAction(job.title, job.company, job.sourceName, job.url)
                 ApplicationRecordSummary(state.recordFor(job), { model.openApplicationRecord(job, state.privateScope) }, !state.busy,
                     "Application record for ${job.title} at ${job.company}")
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Sync this opportunity")) }
@@ -623,6 +624,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 ApplicationRecordSummary(record, { model.openApplicationRecord(record.job, state.privateScope) }, !state.busy,
                     "Application record for ${record.job.title} at ${record.job.company}")
                 OutlinedButton(onClick = { openLink(context, record.job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Open employer page")) }
+                JobShareAction(record.job.title, record.job.company, record.job.sourceName, record.job.url)
                 TextButton(onClick = { model.restoreRecordedOpportunity(record.identity, state.privateScope) }, enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Save opportunity again")) }
             }

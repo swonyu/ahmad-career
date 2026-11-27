@@ -21,11 +21,16 @@ export function SavedComparison({ jobs, records, disabled, children }: {
   const t: typeof translate = (...args) => displayHistoricalText(translate(...args));
   const rows = useMemo(() => savedComparisonRows(jobs, records), [jobs, records]);
   const [selected, setSelected] = useState<string[]>([]);
-  const [pair, setPair] = useState<string[] | null>(null);
+  const [pair, setPair] = useState<string[] | "invalidated" | null>(null);
   const [closing, setClosing] = useState(false);
   const entry = useRef<HistoryEntry | null>(null);
   const chosen = availableComparisonSelection(selected, rows);
-  const compared = pair?.map(identity => rows.find(row => row.identity === identity));
+  const compared = Array.isArray(pair) ? pair.map(identity => rows.find(row => row.identity === identity)) : undefined;
+
+  // Keep a removed posting from regaining its selection when it reappears.
+  if (chosen.length !== selected.length) setSelected(chosen);
+  // Preserve the invalidation even if the original opening returns later.
+  if (compared?.some(row => !row)) setPair("invalidated");
 
   useEffect(() => {
     const onPop = () => {

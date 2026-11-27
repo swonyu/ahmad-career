@@ -497,3 +497,18 @@ test('actual history preserves uncertain, live-confirmed and synthetic evidence 
   }
 });
 
+
+test('job sharing rejects private host aliases and keeps public posting details exact', () => {
+  const urlSource = declarations(read('app/phone/model.ts'), ['checkedPublicURL', 'publicURL']);
+  const { publicURL } = execute(`${urlSource}\nexports.publicURL = publicURL;`, { URL });
+  const shareSource = declarations(read('app/phone/components.tsx'), ['jobShareText']);
+  const { jobShareText } = execute(`${shareSource}\nexports.jobShareText = jobShareText;`, { URL, publicURL });
+  const job = { title: 'مهندس برمجيات', company: 'Synthetic\r\nStudio', sourceName: 'Synthetic board', note: 'PRIVATE' };
+  const url = 'https://jobs.example.com/posting?jobId=123&utm_source=board';
+  assert.equal(jobShareText({ ...job, url: `${url}#candidate` }),
+    `مهندس برمجيات\nSynthetic Studio\nSynthetic board\n${url}`);
+  for (const privateURL of [
+    'https://jobs.internal./posting', 'https://private.local%2E/posting', 'https://jobs.example.com./posting',
+    'https://jobs.example.com/invitations/secret', 'https://jobs.example.com/posting?utm_token=secret',
+  ]) assert.throws(() => jobShareText({ ...job, url: privateURL }), `Expected share rejection for ${privateURL}`);
+});

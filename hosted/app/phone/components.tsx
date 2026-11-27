@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/LocaleProvider";
 import { formatDateTime, formatNumber } from "../i18n/core";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, Bookmark, Check, FileText, X } from "lucide-react";
-import { countryCodes, friendlyDate, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
+import { countryCodes, friendlyDate, publicURL, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
 import { ProfileReuse } from "./ProfileReuse";
 import { displayHistoricalText, hasHistoricalText } from "./historical-text";
 
@@ -61,6 +61,67 @@ export function JobCard({ job, saved, onSave, onDetails, busy = false, newToSear
     {job.summary && <p className="phone-job-summary" dir="auto">{displayHistoricalText(job.summary)}</p>}
     <div className="phone-job-footer">{job.sourceName && <span dir="auto">{displayHistoricalText(job.sourceName)}</span>}{onDetails && <button className="text-button" aria-label={t("Job details for {0}", [displayHistoricalText(job.title)])} onClick={onDetails}>{t("Job details")}</button>}<a href={job.url} aria-label={t("View job: {0}", [displayHistoricalText(job.title)])} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
   </article>;
+}
+
+/** A user-reviewed share payload contains only the posting's public fields. */
+export function jobShareText(job: Pick<Job, "title" | "company" | "sourceName" | "url">): string {
+  const line = (value: string | undefined) => displayHistoricalText(value ?? "").replace(/[\r\n\t]+/g, " ").trim();
+  const url = new URL(publicURL(job.url));
+  // Reject obvious private paths and unknown query fields rather than guessing
+  // whether removing them would change the posting destination.
+  const fail = () => { throw Error("Potentially private job link."); };
+  if (url.hostname.endsWith(".")) fail();
+  const privatePath = /^(?:invites?|invitations?|candidates?|applicants?|auth|session|reset|verify|magic-link|personal-invite|password[-_]reset)(?:[-_].*)?$/i;
+  const suspiciousValue = /[@%\\]|https?:|[\x00-\x20\x7f]/i;
+  for (const raw of url.pathname.split("/")) {
+    const segment = decodeURIComponent(raw);
+    if (privatePath.test(segment) || suspiciousValue.test(segment) || segment.includes("/")) fail();
+  }
+  const allowedKeys = new Set(["jobid", "ghjid", "job", "postingid", "requisitionid", "reqid", "positionid", "vacancyid", "jobreqid", "source", "leversource", "leverorigin"]);
+  const allowedAttributionKeys = new Set(["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id"]);
+  for (const [key, value] of url.searchParams) {
+    const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!(allowedKeys.has(normalized) || allowedAttributionKeys.has(key.toLowerCase()))) fail();
+    if (!/^[a-z0-9._~-]{1,150}$/i.test(value)) fail();
+  }
+  return [line(job.title), line(job.company), line(job.sourceName), url.href].filter(Boolean).join("\n");
+}
+
+export function JobShare({ job }: { job: Job }) {
+  const { t } = useI18n();
+  const [notice, setNotice] = useState("");
+  const inFlight = useRef(false);
+  const [sharing, setSharing] = useState(false);
+  let text = "";
+  try { text = jobShareText(job); } catch { /* Legacy or invalid links remain viewable but cannot be shared here. */ }
+  if (!text) return <p className="phone-note">{t("Sharing is disabled for this link. Use a public job posting link without private access details.")}</p>;
+  async function share() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setSharing(true);
+    setNotice("");
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ text });
+        return;
+      }
+      await navigator.clipboard.writeText(text);
+      setNotice("Job details copied.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setNotice("Sharing is unavailable. Select and copy the preview instead.");
+    } finally {
+      inFlight.current = false;
+      setSharing(false);
+    }
+  }
+  return <details className="phone-disclosure" onToggle={() => setNotice("")}>
+    <summary>{t("Share job with a friend")}</summary>
+    <p className="phone-note">{t("Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included.")}</p>
+    <textarea aria-label={t("Job share preview")} className="full" dir="auto" rows={4} readOnly value={text} />
+    <button type="button" className="button secondary full" disabled={sharing} onClick={() => void share()}>{t("Share or copy job details")}</button>
+    {notice && <p className="phone-note" role="status">{t(notice)}</p>}
+  </details>;
 }
 
 export function HistoricalTextNotice({ value }: { value: unknown }) {

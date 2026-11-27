@@ -31,6 +31,27 @@ struct MobileApplicationCheck {
             check(MobileApplicationPolicy.jobURL(value) == nil, "Unsafe job link rejected")
         }
         check(MobileApplicationPolicy.jobURL("https://jobs.example.com/opportunities/1") != nil, "Public HTTPS opportunity accepted")
+        func sharedJob(_ link: String, sourceName: String? = "Synthetic board") -> String? {
+            MobileApplicationPolicy.jobShareText(title: "مهندس برمجيات", company: "Synthetic\r\nStudio", sourceName: sourceName, link: link)
+        }
+        check(sharedJob("https://jobs.example.com/posting?jobId=123&utm_source=board#PRIVATE") ==
+            "مهندس برمجيات\nSynthetic Studio\nSynthetic board\nhttps://jobs.example.com/posting?jobId=123&utm_source=board",
+            "Share keeps the exact public fields, removes fragments and normalizes line breaks")
+        check(sharedJob("HTTPS://JOBS.example.com:443/?gh_jid=456&utm_campaign=engineers", sourceName: nil) ==
+            "مهندس برمجيات\nSynthetic Studio\nhttps://jobs.example.com/?gh_jid=456&utm_campaign=engineers",
+            "Share preserves public identifiers and omits an unknown board")
+        check(sharedJob("https://jobs.example.com/%D9%88%D8%B8%D9%8A%D9%81%D8%A9/123") != nil, "Arabic public posting paths can be shared")
+        for link in [
+            "https://jobs.example.com/invitations/secret", "https://jobs.example.com/%63andidates/secret",
+            "https://jobs.example.com/applicants/secret", "https://jobs.example.com/password-reset/secret",
+            "https://jobs.example.com/jobs/../invitations", "https://jobs.example.com/jobs/a%252Fb",
+            "https://jobs.example.com/posting?utm_token=secret", "https://jobs.example.com/posting?utm_email=person.example.com",
+            "https://jobs.example.com/posting?source=private%40example.com", "https://jobs.example.com/posting?redirect=https%3A%2F%2Fexample.com",
+            "https://jobs.example.com/posting?utm_source=board%0A", "https://jobs.example.com/posting?jobId",
+            "https://user:password@jobs.example.com/posting", "https://127.0.0.1/posting", "https://jobs.internal./posting",
+        ] {
+            check(sharedJob(link) == nil, "Private and ambiguous links do not produce a share payload")
+        }
         let linkedInVectors = [
             ("HTTPS://SA.LINKEDIN.COM:443/in/Jos%C3%A9-42/?trk=x#about", "https://www.linkedin.com/in/Jos%C3%A9-42"),
             ("https://linkedin.com/in/سلام", "https://www.linkedin.com/in/%D8%B3%D9%84%D8%A7%D9%85"),

@@ -332,6 +332,7 @@ private fun DiscoveryJobCard(job: DiscoveredJob, saved: Boolean, busy: Boolean, 
         }
         OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
             .semantics { contentDescription = l10n.format("Open {0} at {1} on the employer’s site", listOf((job.title).toString(), (job.company).toString()))}) { Text(l10n("Open employer posting")) }
+        JobShareAction(job.title, job.company, job.sourceName, job.url)
         if (saved) OutlinedButton(onClick = openSaved, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Saved · view in your shortlist")) }
         else Button(onClick = save, enabled = !busy, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
             .semantics { contentDescription = l10n.format("Save {0} at {1}", listOf((job.title).toString(), (job.company).toString()))}) { Text(l10n("Save opportunity")) }

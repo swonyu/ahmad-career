@@ -86,6 +86,41 @@ private final class DiscoverySuite {
         }
         let first = evaluate(empty, historyPage([1, 2]))
         do {
+            let page = historyPage([2, 3])
+            let compared = evaluate(first.history, page)
+            let result = compared.result!
+            try check(DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A genuine new marker has matching selected and compared board evidence")
+            var noComparison = result; noComparison.comparedSourceIds = []
+            try check(!DiscoveryHistoryPolicy.valid(noComparison, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A selected board alone cannot authorize a new marker without comparison evidence")
+            var missingObservation = compared.history
+            missingObservation.searches[0].boards[0].seenIds.removeAll { $0 == historyJob(3).id }
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: missingObservation),
+                "A new marker needs the retained observation in its board baseline")
+            var unready = compared.history; unready.searches[0].boards[0].ready = false
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: unready),
+                "An unready board cannot justify a new marker")
+            var noNewRoles = result; noNewRoles.newIds = []
+            try check(DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A completed comparison can legitimately contain zero new roles")
+            try check(!DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: unready),
+                "Zero new roles must not present a comparison for an unready board")
+            var missingBoard = compared.history; missingBoard.searches[0].boards = []
+            try check(!DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: missingBoard),
+                "A missing board cannot provide comparison coverage, even with no new markers")
+            var foreign = compared.history
+            foreign.searches[0].boards.append(.init(sourceId: "lever:global:other-history", seenIds: [], ready: true))
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: foreign),
+                "Unrelated boards cannot be hidden behind an otherwise matching query key")
+            var reset = result; reset.baselineReset = true
+            try check(DiscoveryHistoryPolicy.valid(reset, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history)
+                && DiscoveryHistoryPolicy.restoredResult(reset)?.newIds.isEmpty == true
+                && DiscoveryHistoryPolicy.restoredResult(reset)?.comparedSourceIds.isEmpty == true,
+                "Existing readable legacy resets remain readable but their markers never become visible")
+            scenarios += 1
+        }
+        do {
             let alias = DiscoveryQuery(sources: ["https://jobs.lever.co/synthetic-history/", "https://boards.greenhouse.io/synthetic-second"], keywords: "  DÉSİGNER ", location: " Montréal ")
             let canonical = DiscoveryQuery(sources: ["greenhouse:synthetic-second", historySource], keywords: "designer", location: "montreal")
             try check(DiscoveryHistoryPolicy.key(for: alias, sourceIDs: []) == DiscoveryHistoryPolicy.key(for: canonical, sourceIDs: []),
@@ -141,10 +176,10 @@ private final class DiscoverySuite {
             var full = first.history
             full.searches[0].boards[0].seenIds = (1...1_000).map { historyJob($0).id }
             let reset = evaluate(full, historyPage([1_001]))
-            try check(reset.history.searches[0].boards[0].seenIds == [historyJob(1_001).id] && reset.result?.baselineReset == true && reset.result?.newIds.isEmpty == true,
+            try check(reset.history.searches[0].boards[0].seenIds == [historyJob(1_001).id] && reset.result?.baselineReset == true && reset.result?.newIds.isEmpty == true && reset.result?.comparedSourceIds.isEmpty == true,
                       "Per-board overflow resets the whole baseline without trimming selected older IDs")
             let later = evaluate(reset.history, historyPage([1_001, 1_002]), previous: reset.result)
-            try check(later.result?.baselineReset == true && later.result?.newIds.isEmpty == true, "A reset stays silent for the entire More cycle")
+            try check(later.result?.baselineReset == true && later.result?.newIds.isEmpty == true && later.result?.comparedSourceIds.isEmpty == true, "A reset stays silent for the entire More cycle")
             var duplicated = first.history; duplicated.searches.append(duplicated.searches[0])
             try check(!DiscoveryHistoryPolicy.valid(duplicated) && evaluate(duplicated, historyPage([2, 3])).result?.baselineReset == true,
                       "Invalid imported history cannot become a selectively repaired baseline")
@@ -176,7 +211,7 @@ private final class DiscoverySuite {
                 sources: sources.map { historyStatus($0 == sources[0] ? 1 : 0, source: $0) }, nextCursor: nil, totalMatches: 1, limited: false, notice: "Synthetic history limit")
             let bounded = evaluate(global, changedPage)
             try check(bounded.history.searches.count == 1 && bounded.history.searches[0].key == key && bounded.result?.baselineReset == true
-                && bounded.result?.newIds.isEmpty == true && bounded.history.searches[0].boards.reduce(0, { $0 + $1.seenIds.count }) == 2_001,
+                && bounded.result?.newIds.isEmpty == true && bounded.result?.comparedSourceIds.isEmpty == true && bounded.history.searches[0].boards.reduce(0, { $0 + $1.seenIds.count }) == 2_001,
                       "The 4000-ID limit covers all queries and evicts an entire older query without trimming the current board")
             scenarios += 1
         }
@@ -187,6 +222,59 @@ private final class DiscoverySuite {
             model.showNewOnly = true; service.handle = { _, _ in self.historyPage([4], matched: 3) }; await model.search(more: true)
             try check(model.searchNewResult?.newIds == [historyJob(3).id, historyJob(4).id] && model.showNewOnly && model.visibleJobs.count == 2 && model.jobs.count == 3,
                       "The actual native More path retains frozen earlier markers and the local New-only choice")
+            scenarios += 1
+        }
+        do {
+            // Establish a mature baseline, then load the same search with the
+            // entire board history at capacity. More adds one genuinely new ID.
+            let service = DiscoveryStub(historyPage([1, 2]))
+            let (seed, file) = store(service)
+            seed.query = query; await seed.search()
+            let backup = try seed.exportSnapshot()
+            var full = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var history = full["searchHistory"] as! [String: Any]
+            var searches = history["searches"] as! [[String: Any]]
+            var boards = searches[0]["boards"] as! [[String: Any]]
+            boards[0]["seenIds"] = (1...1_000).map { historyJob($0).id }
+            searches[0]["boards"] = boards; history["searches"] = searches; full["searchHistory"] = history
+            let fullBytes = try JSONSerialization.data(withJSONObject: full)
+            try seed.importSnapshot(fullBytes)
+            service.handle = { _, _ in self.historyPage([1, 2], matched: 3, cursor: "more") }; await seed.search()
+            try check(seed.hasSearchComparison && seed.searchNewResult?.baselineReset == false, "A mature baseline permits the local comparison before the cap")
+            seed.showNewOnly = true
+            service.handle = { _, _ in self.historyPage([1_001], matched: 3) }; await seed.search(more: true)
+            try check(seed.searchNewResult?.baselineReset == true && seed.searchNewResult?.comparedSourceIds.isEmpty == true
+                && seed.newJobIDs.isEmpty && !seed.hasSearchComparison && !seed.showNewOnly && seed.visibleJobs.count == 3,
+                "A board-cap reset during More clears badges, comparison controls and New-only filtering")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.searchNewResult?.baselineReset == true && !reopened.hasSearchComparison && reopened.visibleJobs.count == 3,
+                "Restart preserves the reset notice without suppressing any of the accumulated jobs")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2]))
+            let (seed, file) = store(service)
+            seed.query = query; await seed.search()
+            service.handle = { _, _ in self.historyPage([2, 3]) }; await seed.search()
+            let backup = try seed.exportSnapshot()
+            var legacy = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var result = legacy["newResult"] as! [String: Any]
+            result["baselineReset"] = true; result["coverageLimited"] = false; legacy["newResult"] = result
+            let legacyBytes = try JSONSerialization.data(withJSONObject: legacy)
+            try CareerDiscoveryStore.validateBackup(legacyBytes)
+            try legacyBytes.write(to: file, options: .atomic)
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(!reopened.savedSearchRestoreBlocked && reopened.searchNewResult?.baselineReset == true
+                && reopened.searchNewResult?.coverageLimited == true && reopened.searchNewResult?.comparedSourceIds.isEmpty == true
+                && reopened.newJobIDs.isEmpty && !reopened.hasSearchComparison && !reopened.showNewOnly
+                && reopened.visibleJobs.map(\.id) == [historyJob(2).id, historyJob(3).id],
+                "Legacy reset snapshots are accepted but never display obsolete counts or badges")
+            let retainedBytes = try Data(contentsOf: file)
+            try check(retainedBytes == legacyBytes, "Reading legacy reset metadata does not rewrite original stored bytes")
+            let imported = store(service).0
+            try imported.importSnapshot(legacyBytes)
+            try check(imported.searchNewResult == reopened.searchNewResult && imported.visibleJobs == reopened.visibleJobs,
+                "Legacy import and restart agree on safe reset presentation")
             scenarios += 1
         }
         do {
@@ -216,6 +304,19 @@ private final class DiscoverySuite {
             var rejected = false
             do { try CareerDiscoveryStore.validateBackup(JSONSerialization.data(withJSONObject: malformed)) } catch { rejected = true }
             try check(rejected, "Imported new markers must be a subset of retained successful jobs")
+            var unsupported = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var unsupportedResult = unsupported["newResult"] as! [String: Any]
+            unsupportedResult["comparedSourceIds"] = []; unsupported["newResult"] = unsupportedResult
+            let unsupportedBytes = try JSONSerialization.data(withJSONObject: unsupported)
+            var unsupportedRejected = false
+            do { try CareerDiscoveryStore.validateBackup(unsupportedBytes) } catch { unsupportedRejected = true }
+            try check(unsupportedRejected, "Backup validation rejects a retained job marker without comparison evidence")
+            let beforeInvalidImport = try JSONSerialization.jsonObject(with: imported.exportSnapshot()) as! NSDictionary
+            var importRejected = false
+            do { try imported.importSnapshot(unsupportedBytes) } catch { importRejected = true }
+            let afterInvalidImport = try JSONSerialization.jsonObject(with: imported.exportSnapshot()) as! NSDictionary
+            try check(importRejected && beforeInvalidImport == afterInvalidImport,
+                "Rejected comparison evidence cannot overwrite a previously valid imported workspace")
             model.attach(to: PhoneRecordScope(origin: "https://synthetic-history.example", workspaceID: "synthetic-b"))
             try check(model.searchHistory.searches.isEmpty && model.searchNewResult == nil && !model.showNewOnly, "A different account scope cannot inherit another scope's baseline or filter")
             service.handle = { _, _ in self.historyPage([2, 3]) }; await model.search()

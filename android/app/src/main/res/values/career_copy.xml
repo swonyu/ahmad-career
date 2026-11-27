@@ -636,6 +636,7 @@
     <string name="c_0566beae4451" formatted="false">"Job links and applications"</string>
     <string name="c_f3143bf58872" formatted="false">"Job preferences"</string>
     <string name="c_9e89263cb9bb" formatted="false">"Job results could not be verified. Earlier results are still available."</string>
+    <string name="c_978c6332a5ad" formatted="false">"Job share preview"</string>
     <string name="c_d9833dd3a833" formatted="false">"Job title or keyword"</string>
     <string name="c_2f17a0f8d518" formatted="false">"Jobs"</string>
     <string name="c_33186308849d" formatted="false">"Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below."</string>
@@ -1107,6 +1108,7 @@
     <string name="c_7f8c9a0f95ad" formatted="false">"Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted."</string>
     <string name="c_a67aca1bebfd" formatted="false">"Review the employer\'s current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission."</string>
     <string name="c_1e177e6c4a02" formatted="false">"Review the exact details below. Only eligible applications in this review will be sent."</string>
+    <string name="c_136d510eb21d" formatted="false">"Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included."</string>
     <string name="c_7a077794034d" formatted="false">"Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed."</string>
     <string name="c_149550ebda46" formatted="false">"Review the original details before approving any remaining application. Nothing was resumed automatically."</string>
     <string name="c_3e753c71a69d" formatted="false">"Review the recorded outcome before preparing another application."</string>
@@ -1261,8 +1263,11 @@
     <string name="c_06923b7479a6" formatted="false">"Set up or recover workspace access"</string>
     <string name="c_74a883a037bc" formatted="false">"Settings"</string>
     <string name="c_91b3952c23cf" formatted="false">"Share job link"</string>
+    <string name="c_96a1545a5065" formatted="false">"Share job with a friend"</string>
     <string name="c_b84a859f2b2f" formatted="false">"Share reviewed notes"</string>
     <string name="c_9ec9845cd0d7" formatted="false">"Sharing and beta feedback"</string>
+    <string name="c_6a1b9c8e452f" formatted="false">"Sharing is disabled for this link. Use a public job posting link without private access details."</string>
+    <string name="c_a9f40e8101d9" formatted="false">"Sharing is unavailable. Select and copy the preview instead."</string>
     <string name="c_fd436004505f" formatted="false">"Shorten achievements before saving."</string>
     <string name="c_70f24e9065de" formatted="false">"Shorten the keywords or location and try again."</string>
     <string name="c_f0041eec99c5" formatted="false">"Shorten the keywords or location to open LinkedIn search."</string>

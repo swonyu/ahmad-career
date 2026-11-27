@@ -104,11 +104,20 @@ object DiscoveryHistoryPolicy {
             if (ids.size > MAX_BOARDS || ids.distinct().size != ids.size || ids.any { it !in sources }) return false
         }
         if (result.baselineReset && result.newIds.isNotEmpty()) return false
+        // A zero-new comparison still claims a completed prior baseline.
+        // Older reset metadata can carry suppressed compared IDs; it has no claim.
+        if (!result.baselineReset && result.comparedSourceIds.any { source ->
+                search.boards.none { it.sourceId == source && it.ready } }) return false
         return result.newIds.all { id ->
             result.comparedSourceIds.any { source -> belongs(id, source) &&
                 search.boards.any { it.sourceId == source && it.ready && id in it.seenIds } }
         }
     }
+
+    /** Normalize only after the complete snapshot has passed its existing validation.
+     * Legacy resets may have retained comparison metadata but never valid new IDs. */
+    fun restoredResult(result: DiscoveryNewResult): DiscoveryNewResult =
+        if (result.baselineReset) result.copy(newIds = emptyList(), comparedSourceIds = emptyList(), coverageLimited = true) else result
 
     /** page.jobs is the accumulated bounded result; previous belongs only to More in this cycle. */
     fun evaluate(input: DiscoverySearchHistory, filters: DiscoveryFilters, page: DiscoveryPage, now: Long,
@@ -184,7 +193,8 @@ object DiscoveryHistoryPolicy {
                 ?: error("Search history bounds could not be maintained.")
             searches.remove(oldest); baselineReset = true
         }
-        if (baselineReset) { newIds.clear(); coverageLimited = true }
+        // Suppress the whole comparison for the rest of this search cycle.
+        if (baselineReset) { newIds.clear(); compared.clear(); coverageLimited = true }
         val history = DiscoverySearchHistory(searches = searches.sortedWith(compareByDescending<DiscoveryHistorySearch> { it.lastUsedAt }.thenBy { it.key }))
         return DiscoveryHistoryEvaluation(history, DiscoveryNewResult(key, newIds.sorted(), compared.sorted(), baselined.sorted(),
             sources.filter { source -> boards.none { it.sourceId == source && it.ready } }, coverageLimited, baselineReset), sources)

@@ -636,6 +636,7 @@
     <string name="c_0566beae4451" formatted="false">"روابط الوظائف وطلبات التوظيف"</string>
     <string name="c_f3143bf58872" formatted="false">"تفضيلات الوظائف"</string>
     <string name="c_9e89263cb9bb" formatted="false">"تعذّر التحقق من نتائج الوظائف. النتائج السابقة ما تزال متاحة."</string>
+    <string name="c_978c6332a5ad" formatted="false">"معاينة مشاركة الوظيفة"</string>
     <string name="c_d9833dd3a833" formatted="false">"المسمى الوظيفي أو كلمة مفتاحية"</string>
     <string name="c_2f17a0f8d518" formatted="false">"الوظائف"</string>
     <string name="c_33186308849d" formatted="false">"الوظائف المحفوظة من «البحث» وروابطك جاهزة في مساحة عمل التقديم. تبقى سجلات التخطيط السابقة متاحة أدناه."</string>
@@ -1107,6 +1108,7 @@
     <string name="c_7f8c9a0f95ad" formatted="false">"راجع الإضافات قبل الاستعادة. تُحفظ السجلات والملف وقائمة التحقق الحالية كما هي. لا يُنسخ شيء إلى حساب ولا يُرفَع أو يُقدَّم."</string>
     <string name="c_a67aca1bebfd" formatted="false">"راجع متطلبات جهة العمل الحالية. يُتحقق من إمكانية التقديم التلقائي في مساحة عمل التقديم؛ فتح هذا الرابط أو مشاركته لا يُحتسب إرسال طلب."</string>
     <string name="c_1e177e6c4a02" formatted="false">"راجع التفاصيل الدقيقة أدناه. ستُرسل فقط الطلبات المؤهلة ضمن هذه المراجعة."</string>
+    <string name="c_136d510eb21d" formatted="false">"راجع تفاصيل الوظيفة والرابط أدناه قبل المشاركة. شارك روابط إعلانات الوظائف العامة فقط، وليس الدعوات الشخصية. لا يتضمن النص سجل تقديمك أو سيرتك الذاتية."</string>
     <string name="c_7a077794034d" formatted="false">"راجع تفاصيل الطلب الأصلية، ثم وافق مجددًا. لا يمكن استئناف الطلبات ذات النتائج غير المؤكدة."</string>
     <string name="c_149550ebda46" formatted="false">"راجع التفاصيل الأصلية قبل الموافقة على أي طلب متبقٍ. لم يُستأنف شيء تلقائيًا."</string>
     <string name="c_3e753c71a69d" formatted="false">"راجع النتيجة المسجّلة قبل إعداد طلب آخر."</string>
@@ -1261,8 +1263,11 @@
     <string name="c_06923b7479a6" formatted="false">"إعداد الوصول إلى مساحة العمل أو استرجاعه"</string>
     <string name="c_74a883a037bc" formatted="false">"الإعدادات"</string>
     <string name="c_91b3952c23cf" formatted="false">"مشاركة رابط الوظيفة"</string>
+    <string name="c_96a1545a5065" formatted="false">"مشاركة الوظيفة مع صديق"</string>
     <string name="c_b84a859f2b2f" formatted="false">"مشاركة الملاحظات التي راجعتها"</string>
     <string name="c_9ec9845cd0d7" formatted="false">"المشاركة وملاحظات النسخة التجريبية"</string>
+    <string name="c_6a1b9c8e452f" formatted="false">"المشاركة غير متاحة لهذا الرابط. استخدم رابط إعلان وظيفة عام لا يحتوي على بيانات دخول خاصة."</string>
+    <string name="c_a9f40e8101d9" formatted="false">"المشاركة غير متاحة. حدّد نص المعاينة وانسخه بدلًا من ذلك."</string>
     <string name="c_fd436004505f" formatted="false">"اختصر الإنجازات قبل الحفظ."</string>
     <string name="c_70f24e9065de" formatted="false">"اختصر الكلمات المفتاحية أو الموقع ثم حاول مجددًا."</string>
     <string name="c_f0041eec99c5" formatted="false">"اختصر الكلمات المفتاحية أو الموقع لفتح بحث LinkedIn."</string>

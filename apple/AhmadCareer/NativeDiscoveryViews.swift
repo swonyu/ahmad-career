@@ -428,7 +428,7 @@ private struct NativeDiscoveryJobDetail: View {
                 if let saveMessage { Text(l10n(saveMessage)).font(.footnote).foregroundStyle(.secondary) }
                 if let url = MobileApplicationPolicy.jobURL(job.url) {
                     Link(destination: url) { Label(l10n("Open employer posting"), systemImage: "arrow.up.right.square") }
-                    ShareLink(item: url) { Label(l10n("Share job link"), systemImage: "square.and.arrow.up") }
+                    NativeJobShare(title: job.title, company: job.company, sourceName: job.sourceName, link: job.url)
                 }
             } footer: {
                 Text(l10n("Saving copies this public link and role details into your application workspace. It does not send your profile or submit an application. Confirm qualifications, pay, work authorization and location with the employer."))
@@ -446,6 +446,30 @@ private struct NativeDiscoveryJobDetail: View {
                     .font(.footnote).foregroundStyle(.secondary)
             }
         }.listStyle(.insetGrouped).navigationTitle(l10n("Opportunity")).navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct NativeJobShare: View {
+    @NativeLocalization private var l10n
+    let title: String
+    let company: String
+    let sourceName: String?
+    let link: String
+
+    var body: some View {
+        if let text = MobileApplicationPolicy.jobShareText(title: title, company: company, sourceName: sourceName, link: link) {
+            DisclosureGroup(l10n("Share job with a friend")) {
+                Text(text)
+                    .font(.subheadline).textSelection(.enabled)
+                    .accessibilityIdentifier("jobShare.preview")
+                ShareLink(item: text) { Label(l10n("Share job link"), systemImage: "square.and.arrow.up") }
+                    .accessibilityIdentifier("jobShare.send")
+            }
+            .accessibilityIdentifier("jobShare.disclosure")
+        } else {
+            Text(l10n("Sharing is disabled for this link. Use a public job posting link without private access details."))
+                .font(.footnote).foregroundStyle(.secondary)
+        }
     }
 }
 #endif

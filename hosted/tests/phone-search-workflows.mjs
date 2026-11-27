@@ -810,3 +810,31 @@ for (const language of ['en', 'ar']) test(`actual new-only controls/count and li
   assert(zeroOnly.html.includes(zeroOnly.t('No openings are new in the results compared.')));
   assert.equal([...zeroOnly.html.matchAll(/data-synthetic-job=/g)].length, 0);
 });
+
+test('an all-board outage keeps earlier jobs and the latest draft without reviving old pagination', async t => {
+  for (const mode of ['new', 'more']) await t.test(mode, async () => {
+    const previousPage = page({ jobs: [job(7), job(8)], nextCursor: 'earlier-cursor' });
+    const h = harness({ initialPage: previousPage });
+    const previousSaved = h.readSaved();
+    const pending = h.search(mode);
+    const request = await h.admitted();
+    h.edit(laterDraft());
+    request.resolve(page({ status: 'unavailable', jobs: [], sourceStatus: 'unavailable' }));
+    await pending;
+
+    assert.equal(h.context.searchPage, previousPage, 'Earlier results remain visible with their original sources and date');
+    assert.equal(h.context.restored, true, 'Earlier openings are labeled as previous results');
+    assert.equal(h.context.notice?.text, 'Current openings could not be checked.');
+    assert.deepEqual(h.readSaved(), { ...previousSaved, filters: laterDraft() }, 'The outage saves the draft without erasing earlier results or private records');
+    await h.search('more');
+    assert.equal(h.calls.length, 1, 'The old cursor cannot issue a request after the outage');
+
+    const refreshed = h.search('new');
+    const retry = await h.admitted(1);
+    assert.equal(new URL(retry.path, 'https://synthetic.local').searchParams.has('cursor'), false);
+    retry.resolve(page({ jobs: [job(9)] }));
+    await refreshed;
+    assert.equal(h.context.restored, false);
+    assert.deepEqual(plain(h.context.searchPage.jobs), [job(9)]);
+  });
+});
