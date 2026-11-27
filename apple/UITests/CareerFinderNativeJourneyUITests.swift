@@ -428,9 +428,22 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let tips = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TipView"))
         let tipClose = tips.buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "xmark.circle.fill", "Close"))
         let compactAddress = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "TabBarItemTitle", "Address"))
-        try wait("Safari exposes its observed first-use tip or compact address", app: safari) {
-            tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true)
+        let startPages = safari.collectionViews.matching(NSPredicate(format: "identifier == %@", "StartPageCollectionView"))
+        let onboardingCards = startPages.cells.matching(NSPredicate(format: "identifier == %@",
+            "onboardingItemIdentifierContent-CustomizeStartPage"))
+        let onboardingClose = onboardingCards.buttons.matching(NSPredicate(format: "label == %@", "close"))
+        try wait("Safari exposes its observed first-use control or compact address", app: safari) {
+            startPages.count == 1 && onboardingCards.count == 1 && onboardingClose.count == 1
+                && whole(onboardingClose.element, app: safari, chrome: true)
+                || tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true)
                 || tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true)
+        }
+        try require(startPages.count <= 1 && onboardingCards.count <= 1,
+            "Only the exact unique Safari Start Page onboarding card may be dismissed", app: safari)
+        if onboardingCards.count == 1 {
+            try require(startPages.count == 1 && onboardingClose.count == 1,
+                "The exact Safari onboarding card has one close control", app: safari)
+            try chromeTap(onboardingClose.element, app: safari)
         }
         try require(tips.count <= 1, "Only the observed unique Safari tip may be dismissed", app: safari)
         if tips.count == 1 { try chromeTap(tipClose.element, app: safari) }
