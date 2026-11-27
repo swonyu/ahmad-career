@@ -49,5 +49,6 @@ done
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
   "$task_root/AhmadCareer/CareerFeed.swift" "$task_root/AhmadCareer/NativeCareerStore.swift" \
   "$task_root/AhmadCareer/CareerDiscovery.swift" "$task_root/AhmadCareer/CareerAppEnvironment.swift" \
+  "$task_root"/AhmadCareer/Acceptance*.swift \
   "$task_root/Checks/SyntheticPDF.swift" "$task_root/Checks/AcceptanceFixtureCheck.swift" -o "$check_dir/acceptance-fixture-check"
 "$check_dir/acceptance-fixture-check"
