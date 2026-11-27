@@ -181,7 +181,7 @@ class NavigationPhoneAcceptanceTest {
         openRecord(job)
         val privateNote = "Private interview note for this phone only"
         val privateCv = "Private-CV.pdf"
-        compose.runOnIdle { model.editApplicationRecordDraft { it.copy(note = privateNote, manualResumeName = privateCv) } }
+        compose.runOnIdle { model.editApplicationRecordDraft({ it.copy(note = privateNote, manualResumeName = privateCv) }) }
         save()
         compose.waitUntil(5_000) { model.state.value.applicationRecordEditor == null }
         assertEquals(privateNote, model.state.value.recordFor(job)!!.current.record.note)
