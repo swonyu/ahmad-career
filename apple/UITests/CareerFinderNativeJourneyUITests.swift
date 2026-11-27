@@ -74,6 +74,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     }
     override func record(_ name: String, app: XCUIApplication, anchor: XCUIElement? = nil) {
         let prefix = "native-journey-\(language)-\(name)"
+        if name.hasPrefix("failure-") { attachGlobalScreen(prefix + "-global-screen") }
         let png = XCTAttachment(screenshot: app.screenshot()); png.name = prefix; png.lifetime = .keepAlways; add(png)
         let ax = XCTAttachment(string: app.debugDescription); ax.name = prefix + "-original-AX"; ax.lifetime = .keepAlways; add(ax)
         var value: [String: Any] = ["schemaVersion": 1, "testID": fixtureID, "language": language,
@@ -89,6 +90,15 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let data = try! JSONSerialization.data(withJSONObject: value, options: [.prettyPrinted, .sortedKeys])
         let geometry = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
         geometry.name = prefix + "-geometry"; geometry.lifetime = .keepAlways; add(geometry)
+    }
+    private func attachGlobalScreen(_ name: String) {
+        let image = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        image.name = name; image.lifetime = .keepAlways; add(image)
+    }
+    private func attachPickerHierarchy(_ name: String, app: XCUIApplication) {
+        attachGlobalScreen(name + "-global-screen")
+        let hierarchy = XCTAttachment(string: app.debugDescription)
+        hierarchy.name = name + "-AX"; hierarchy.lifetime = .keepAlways; add(hierarchy)
     }
     private func exactButton(_ label: String, app: XCUIApplication) -> XCUIElement {
         app.buttons.matching(NSPredicate(format: "label == %@", label)).element
@@ -288,12 +298,48 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     private func choosePDFButton(_ app: XCUIApplication) -> XCUIElement {
         exactButton(currentFilename ?? localized("Choose your PDF CV", "اختيار سيرتك الذاتية بصيغة PDF"), app: app)
     }
+    private func probeArabicFilesBrowseAfterCancelTimeout(_ app: XCUIApplication) {
+        guard language == "ar" else { return }
+        let root = app.otherElements.matching(NSPredicate(format: "identifier == %@",
+            "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: الحديثة"))
+        let tabs = app.tabBars.matching(NSPredicate(format: "identifier == %@", "DOC.browsingModeTabBar"))
+        let browse = tabs.buttons.matching(NSPredicate(format: "label == %@", "تصفح"))
+        let deadline = ProcessInfo.processInfo.systemUptime + 5
+        var ready = false
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            let matched = root.count == 1 && tabs.count == 1 && browse.count == 1
+                && whole(browse.element, app: app, chrome: true)
+            let finished = ProcessInfo.processInfo.systemUptime
+            if matched && finished <= deadline { ready = true; break }
+            if finished >= deadline { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, deadline - finished)))
+        }
+        attachPickerHierarchy("native-journey-ar-files-recent-probe", app: app)
+        guard ready, whole(browse.element, app: app, chrome: true) else { return }
+        browse.element.tap()
+        attachPickerHierarchy("native-journey-ar-files-browse-probe", app: app)
+    }
     private func cancelPicker(_ app: XCUIApplication) throws {
         try openProfile(app)
         try tap(choosePDFButton(app), app: app)
         modalNavigationTitle = nil
         let cancel = app.navigationBars.matching(NSPredicate(format: "identifier == %@", "FullDocumentManagerViewControllerNavigationBar")).buttons.matching(NSPredicate(format: "label == %@", localized("Cancel", "إلغاء"))).element
-        try chromeTap(cancel, app: app)
+        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
+        var cancelReady = false
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            let matched = whole(cancel, app: app, chrome: true)
+            let finished = ProcessInfo.processInfo.systemUptime
+            if matched && finished <= deadline { cancelReady = true; break }
+            if finished >= deadline { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, deadline - finished)))
+        }
+        if !cancelReady {
+            probeArabicFilesBrowseAfterCancelTimeout(app)
+            try require(false, "The exact OS picker Cancel is wholly visible and hittable (no accepted observation inside five seconds)", app: app)
+        }
+        try require(whole(cancel, app: app, chrome: true),
+            "The exact OS picker Cancel remains visible and hittable before its single touch", app: app)
+        cancel.tap()
         modalNavigationTitle = localized("Application profile", "ملف التقديم")
         try wait("Picker cancellation returns without selecting a PDF", app: app) { choosePDFButton(app).exists }
         try capture("picker-cancelled", anchor: choosePDFButton(app), app: app)
