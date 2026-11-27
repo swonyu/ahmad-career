@@ -1,7 +1,7 @@
 // Pure protocol/owned-temporary-file tests. No Worker, listener, auth or native runtime.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp, mkdir, writeFile, readFile, chmod, symlink, lstat, rm, utimes, realpath} from 'node:fs/promises';
+import {mkdtemp, mkdir, writeFile, readFile, chmod, symlink, lstat, rm, utimes, realpath, rename} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {performance} from 'node:perf_hooks';
@@ -195,7 +195,6 @@ test('owned file IPC completes all16 with each fixed control once and retains or
   const source=path.join(root,'pinned-source.mjs');await writeFile(source,'// pinned pure fixture\n',{mode:0o600});
   for(const [name,value] of [['applications/phone-draft.json',encode(w.phone)],['native-journey-seed-receipt.json',encode(w.seedReceipt)],
     ['native-journey-bootstrap.private.json',bootstrap]])await writeFile(path.join(appRoot,name),value,{mode:0o600});
-  await writeFile(path.join(control,'001-request.json'),encode(request(1)),{mode:0o600});
   const bound=async p=>{const s=await lstat(p);return {path:p,dev:s.dev,ino:s.ino,uid:s.uid};};
   let closeCalls=0,boardCalls=0;
   const controller=await createFileCheckpointController({...actualBinding,
@@ -204,7 +203,16 @@ test('owned file IPC completes all16 with each fixed control once and retains or
     bridge:{privateConfiguration:{port:binding.bridgePort},caFingerprint256:binding.caFingerprint256,evidence:async()=>copied(current.proof),
       close:async()=>{closeCalls++;return {closed:true,ownSocketCount:0};}},runnerContainer:await bound(runner),appContainer:await bound(app),
     evidenceParent:evidence,expectedSourceFiles:{[source]:sha256(await readFile(source))},stopAt:performance.now()+10000});
-  assert.equal(await controller.poll(),true);assert.equal(controller.status().nextSequence,2);
+  // The actual XCTest writes a private pending file with sorted JSON keys and moves it
+  // into this runner Documents directory before waiting five seconds for the reply.
+  const pending=path.join(control,'.pending-001-'+id(3).toUpperCase()+'.json');
+  await writeFile(pending,JSON.stringify(request(1),Object.keys(request(1)).sort()),{mode:0o600,flag:'wx'});
+  await rename(pending,path.join(control,'001-request.json'));
+  const requestedAt=performance.now();
+  assert.equal(await controller.poll(),true);assert.ok(performance.now()-requestedAt<5000);
+  assert.equal(controller.status().controlDirectorySeen,true);
+  assert.equal(controller.status().requestsObserved,1);
+  assert.equal(controller.status().nextSequence,2);
   const response=JSON.parse(await readFile(path.join(control,'001-response.json'),'utf8'));
   assert.deepEqual(response.facts,{zeroDispatch:true,sourceAndOwnerBound:true,profileRevision:0,resumeName:null,resumeSHA256:null,jobCount:0,attemptCount:0});
   assert.equal((await lstat(path.join(control,'001-response.json'))).mode&0o777,0o600);

@@ -38,6 +38,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     private var documentURLs: [String: URL] = [:]
     private var followUpDay = ""
     private var controlDirectory: URL!
+    private var runnerContainerID = ""
     private let sourceID = "lever:global:synthetic-native-journey"
     private let primaryID = "20000000-0000-4000-8000-000000000001"
     private let secondaryID = "20000000-0000-4000-8000-000000000002"
@@ -78,6 +79,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         var value: [String: Any] = ["schemaVersion": 1, "testID": fixtureID, "language": language,
             "appFrame": String(describing: app.frame), "contentViewport": String(describing: viewport(app)),
             "keyboardCount": app.keyboards.count, "checkpointSequence": sequence,
+            "runnerContainerID": runnerContainerID,
             "scope": "Actual synthetic UI/OS/hosted journey. No application approval or dispatch; provider, VoiceOver and release acceptance excluded."]
         if let anchor {
             value["anchor"] = ["identifier": anchor.identifier, "type": String(describing: anchor.elementType),
@@ -127,7 +129,9 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         guard documentURLs["CV-A.pdf"]?.deletingLastPathComponent() == documentURLs["CV-B.pdf"]?.deletingLastPathComponent() else {
             throw ObservationFailure.failed
         }
-        controlDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        runnerContainerID = UUID(uuidString: documents.deletingLastPathComponent().lastPathComponent)?.uuidString ?? "unavailable"
+        controlDirectory = documents
             .appendingPathComponent("NativeJourneyControl", isDirectory: true).appendingPathComponent(fixtureID, isDirectory: true)
         try FileManager.default.createDirectory(at: controlDirectory, withIntermediateDirectories: true,
             attributes: [.posixPermissions: 0o700])

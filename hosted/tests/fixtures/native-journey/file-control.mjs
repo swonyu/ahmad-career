@@ -144,6 +144,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     bridgePort:bridge.privateConfiguration.port,caFingerprint256:bridge.caFingerprint256});
   const acceptedFiles = new Map(), pending = new Set(), checkpoints = [];
   let controlIdentity, appIdentity, polling = false, stopped = false, controlAttempted = false, transportCloseReceipt;
+  let requestsObserved = 0, lastFailureCode = null;
   let failureContext = null, failureRetention = 'not_attempted';
   function remember(role, bytes) {
     if (!failureContext) return;
@@ -300,7 +301,8 @@ export async function createFileCheckpointController({harness, bridge, testID, w
   return {
     get complete(){return state.complete;},
     status(){return {schemaVersion:1,testID,completed:state.complete,stopped,nextSequence:state.nextSequence,
-      checkpointCount:checkpoints.length,unsettledHarnessOperations:pending.size,failureRetention};},
+      checkpointCount:checkpoints.length,unsettledHarnessOperations:pending.size,failureRetention,
+      controlDirectorySeen:!!controlIdentity,requestsObserved,lastFailureCode};},
     async poll() {
       if (polling) fail('checkpoint_concurrent_poll'); polling = true;
       failureContext = null;
@@ -312,6 +314,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
         const prefix = String(state.nextSequence).padStart(3,'0'), requestName = prefix + '-request.json';
         if (!await exists(path.join(controlPath,requestName))) return false;
         const requestFile = await stableRead(path.join(controlPath,requestName),CONTROL_LIMITS.requestBytes,{privateMode:true});
+        requestsObserved++;
         failureContext = {prefix,sequence:state.nextSequence,checkpoint:CHECKPOINTS[state.nextSequence-1],
           deadline:null,observation:0,originals:new Map(),controlAttempted:false,responsePublished:false};
         remember('request',requestFile.bytes);
@@ -365,6 +368,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
         fail('checkpoint_observation_limit');
       } catch (error) {
         stopped = true;
+        lastFailureCode = FAILURE_CODES.has(error?.code) ? error.code : 'checkpoint_controller_rejected';
         await retainFailure(error,mono());
         if (error instanceof CheckpointError) throw error;
         fail('checkpoint_controller_rejected');

@@ -200,7 +200,11 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
       controller.stop();
       try { if (activePoll) await activePoll.catch(() => {}); await controller.settle(5000); }
       catch { clean = false; }
-      result.checkpoints = controller.status().checkpointCount;
+      const status = controller.status();
+      result.checkpoints = status.checkpointCount;
+      if (!completed) result.diagnostic = {controlDirectorySeen:status.controlDirectorySeen,
+        requestsObserved:status.requestsObserved, controllerFailureCode:status.lastFailureCode,
+        failureRetention:status.failureRetention};
     }
     if (bridge) {
       try {
@@ -238,7 +242,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === ownFile) {
     }
   };
   serveIPhone(process.argv.slice(2), {signal:abort.signal, preserveSignals}).then(result => {
-    // Only fixed counts and failure codes reach stdout. Private bootstrap and
+    // Only fixed counts, booleans and failure codes reach stdout. Private bootstrap and
     // transport capability never enter argv, environment, logs or ready.json.
     console.log(JSON.stringify(result));
     if (!result.ok) process.exitCode = 1;

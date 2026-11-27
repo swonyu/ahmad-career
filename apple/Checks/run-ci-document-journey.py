@@ -140,6 +140,31 @@ def run(language):
                 except subprocess.TimeoutExpired:
                     fixture.kill()
                     fixture.wait()
+            receipt = temp / "career-document-journey.json"
+            if not receipt.exists():
+                try:
+                    host = read_json(private / "result.json")
+                except (OSError, ValueError):
+                    host = {}
+                if not isinstance(host, dict):
+                    host = {}
+                failure = host.get("failure") if isinstance(host.get("failure"), dict) else {}
+                diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
+                def safe_code(value):
+                    return value if isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,79}", value) else None
+                receipt.write_text(json.dumps({
+                    "ok": False, "commit": selection["checkoutSHA"], "language": language,
+                    "testID": test_id, "expectedRunnerContainerID": Path(containers[1]).name,
+                    "host": {
+                        "failureStage": safe_code(failure.get("stage")),
+                        "failureCode": safe_code(failure.get("code")),
+                        "checkpoints": host.get("checkpoints") if type(host.get("checkpoints")) is int else None,
+                        "controlDirectorySeen": diagnostic.get("controlDirectorySeen") is True,
+                        "requestsObserved": diagnostic.get("requestsObserved") if type(diagnostic.get("requestsObserved")) is int else None,
+                        "controllerFailureCode": safe_code(diagnostic.get("controllerFailureCode")),
+                        "failureRetention": safe_code(diagnostic.get("failureRetention")),
+                    },
+                }, indent=2) + "\n")
 
 
 if __name__ == "__main__":
