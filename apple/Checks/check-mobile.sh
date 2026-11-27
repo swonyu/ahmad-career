@@ -16,6 +16,11 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
   "$task_root/Checks/MobileLifecycleCheck.swift" -o "$check_dir/lifecycle-check"
 "$check_dir/lifecycle-check" "$task_root/../android/app/src/androidTest/assets/phone-workspace-v1.json"
+# Saved receipt history must survive restart without becoming live dispatch authority.
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
+  "$task_root/Checks/OfflineApplicationHistoryCheck.swift" -o "$check_dir/offline-history-check"
+"$check_dir/offline-history-check" "$check_dir/offline-history-fixtures" "$check_dir/offline-history-report.json"
 # The preservation/import/export suite runs on the same source without an app target.
 bash "$task_root/Checks/check-native-recovery.sh"
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \

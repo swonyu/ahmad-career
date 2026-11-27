@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { productionRead } from './phone-read-test-helpers.mjs';
 import test, { after } from 'node:test';
 import { readFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -170,7 +171,7 @@ function extract(name) {
   assert.fail(`Actual production declaration ${name} must exist`);
 }
 function install(name, context) {
-  Object.assign(context, { retainRecordJobContext: model.retainRecordJobContext, jobFromRecord: comparison.jobFromRecord });
+  Object.assign(context, { ...productionRead, retainRecordJobContext: model.retainRecordJobContext, jobFromRecord: comparison.jobFromRecord });
   const js = ts.transpileModule('globalThis.' + name + ' = ' + extract(name), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
   vm.runInNewContext(js, context); return context[name];
 }
@@ -693,7 +694,7 @@ function filenameEditorHarness(initialRecord, language = 'en') {
   const props = { record: initialRecord, busy: false,
     onDraftChange: value => drafts.push(value), onSave: (value, clearApplied) => saves.push({ value, clearApplied }),
     onCancel: () => { cancelled++; }, onDirtyChange: value => dirty.push(value) };
-  const context = { exports: {}, require: createRequire(import.meta.url), stages: model.stages, stageNames: model.stageNames,
+  const context = { ...productionRead, exports: {}, require: createRequire(import.meta.url), stages: model.stages, stageNames: model.stageNames,
     friendlyDate: model.friendlyDate, formatNumber: i18n.formatNumber, useI18n: () => ({ t: t(language), language }),
     useState: initial => {
       const index = stateIndex++; if (values.length <= index) values.push(initial);

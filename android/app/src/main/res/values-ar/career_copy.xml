@@ -187,6 +187,7 @@
     <string name="c_75a0187c1f67" formatted="false">"اسأل عن نطاق الأجر المعتمد، وعملته، ودورية دفعه."</string>
     <string name="c_888ae6d498e7" formatted="false">"اطلب رمز اتصال يُستخدم مرة واحدة من مشغّل خدمتك المخصصة."</string>
     <string name="c_d8754cb0c1f2" formatted="false">"معرّف المحاولة"</string>
+    <string name="c_9b58caa7e5ed" formatted="false">"تفاصيل محاولة التقديم"</string>
     <string name="c_cc8b822d4e24" formatted="false">"التقديم التلقائي غير مفعّل"</string>
     <string name="c_8d25a280d16f" formatted="false">"التقديم التلقائي متوقف مؤقتًا على هذا الهاتف لأن سجل تقديم يحتاج إلى مراجعة. أوقف العمل النشط وحدّث إيصالات الإرسال. لا يوقف هذا الخدمة أو هاتفًا آخر."</string>
     <string name="c_94eed269b3a4" formatted="false">"التقديم التلقائي · الوظائف: {0}"</string>
@@ -467,6 +468,7 @@
     <string name="c_11a6767d5674" formatted="false">"تم"</string>
     <string name="c_0049612de69f" formatted="false">"انتهيت من الكتابة"</string>
     <string name="c_ebf12ef47cf5" formatted="false">"مسودة"</string>
+    <string name="c_419ccdb50a81" formatted="false">"تفاصيل المسودة"</string>
     <string name="c_2eb540071aac" formatted="false">"أثناء اختبار النسخة التجريبية، افتح هذا التطبيق في TestFlight واختر «Send Beta Feedback» للتواصل مع المطوّر. اذكر الشاشة والخطوات التي سببت المشكلة. راجع لقطات الشاشة وبيانات التشخيص قبل الإرسال."</string>
     <string name="c_cefcc538ae8b" formatted="false">"التقييم السابق: "</string>
     <string name="c_0dbfcc21ff0d" formatted="false">"التقييم السابق: {0}"</string>
@@ -1177,6 +1179,7 @@
     <string name="c_2ed4c00f3c7e" formatted="false">"فرصة محفوظة لدى جهة عمل. لا يثبت البحث الأخير أنها متاحة حاليًا. تحقّق مجددًا من الصفحة الرسمية قبل التقديم."</string>
     <string name="c_6845d24f9053" formatted="false">"محفوظة لمراجعة التقديم"</string>
     <string name="c_b8e147563157" formatted="false">"محفوظة للرجوع إليها"</string>
+    <string name="c_bec1274885a4" formatted="false">"سجل محفوظ بتاريخ {0}. اتصل وحدّث للتحقق من أحدث حالة."</string>
     <string name="c_877f83719c96" formatted="false">"محفوظ في مساحة عمل التقديم"</string>
     <string name="c_18eff33b2140" formatted="false">"تتجاوز تفاصيل الوظائف المحفوظة في هذه النسخة الاحتياطية الحد المشترك البالغ 500 حرف."</string>
     <string name="c_d17ee414245c" formatted="false">"الوظائف المحفوظة"</string>
@@ -1390,6 +1393,7 @@
     <string name="c_d5d06613a2ed" formatted="false">"تم حفظ الملف الشخصي السابق. تعديلاتك الأحدث ما تزال مسودة."</string>
     <string name="c_5a8f0838e3b8" formatted="false">"تعذرت قراءة ملف البحث السابق، وقد احتُفظ به ولم تستبدله النسخة الاحتياطية."</string>
     <string name="c_8ffacb178f65" formatted="false">"دليل جهات العمل غير مكتمل. لم تتغير اللوحات المحفوظة."</string>
+    <string name="c_291efa1bcc2f" formatted="false">"لم تعد جهة العمل تعرض هذه الوظيفة. لم يُرسل أي طلب تقديم."</string>
     <string name="c_3df87cde8712" formatted="false">"لم تتضمن استجابة جهة العمل إعلانات سعودية صالحة. النتائج السابقة محفوظة."</string>
     <string name="c_c723c73426e5" formatted="false">"أعادت جهة العمل استجابة غير قابلة للقراءة."</string>
     <string name="c_8ace4c2a07d7" formatted="false">"الأساسيات"</string>
@@ -1404,6 +1408,7 @@
     <string name="c_af611cfeaa91" formatted="false">"سيُستخدم أحدث ملف PDF محفوظ: {0}"</string>
     <string name="c_77f5a975f4d7" formatted="false">"تعذر تحميل أحدث نسخة من مساحة العمل. بقيت مسودتك محفوظة."</string>
     <string name="c_a0c13205e3c4" formatted="false">"حُفظ الرابط على هذا الهاتف. "</string>
+    <string name="c_c44df3a4f074" formatted="false">"حُفظ الرابط على هذا الهاتف. لم تعد جهة العمل تعرض هذه الوظيفة. لم يُرسل أي طلب تقديم."</string>
     <string name="c_bda14fc3b812" formatted="false">"حُفظ الرابط على هذا الهاتف. {0}"</string>
     <string name="c_20bb10044a6c" formatted="false">"تعذّرت إزالة السجل المحلي. حاول مجددًا قبل مغادرة مساحة العمل هذه."</string>
     <string name="c_e7715235e60f" formatted="false">"تتجاوز القائمة المختصرة المدمجة 200 رابط. لم يُستبدل شيء."</string>

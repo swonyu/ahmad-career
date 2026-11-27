@@ -89,6 +89,20 @@ struct MobileApplicationCheck {
         check(!MobileApplicationPolicy.isVerified(malformed), "Dispatch never verifies")
         malformed = good; malformed.removeValue(forKey: "evidenceMode")
         check(!MobileApplicationPolicy.isVerified(malformed), "Unknown evidence mode fails closed")
+        var testReceipt = good; testReceipt["evidenceMode"] = .string("test")
+        var legacyReceipt = good; legacyReceipt.removeValue(forKey: "applicationId")
+        var preparedReceipt = good; preparedReceipt["state"] = .string("ready")
+        let displayCases: [([String: ApplicationValue], String, String)] = [
+            (good, "confirmed", "Confirmed"), (testReceipt, "confirmed", "Test receipt"),
+            (legacyReceipt, "uncertain", "Needs verification"), (malformed, "uncertain", "Needs verification"),
+            (preparedReceipt, "ready", "Prepared draft")
+        ]
+        for (receipt, expectedState, expectedLabel) in displayCases {
+            check(MobileApplicationPolicy.displayState(receipt) == expectedState
+                && MobileApplicationPolicy.stateTitle(MobileApplicationPolicy.displayState(receipt),
+                    test: receipt["evidenceMode"]?.string == "test") == expectedLabel,
+                "Receipt display state preserves prepared, uncertain, live and test distinctions")
+        }
         check(MobileApplicationPolicy.stateTitle("confirmed", test: true) == "Test receipt", "Test receipts stay labeled")
         check(MobileApplicationPolicy.stateTitle("uncertain") == "Needs verification", "Uncertainty is visible")
         check(MobileApplicationPolicy.stateTitle("ready") == "Prepared draft", "A prepared draft never claims submission")

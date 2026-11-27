@@ -53,7 +53,7 @@ function install(context, name, value = declaration(name)) {
   vm.runInContext(compiled.get(key), context); return context[name];
 }
 const bundle = await build({
-  stdin: { contents: 'export * from "./app/phone/vault.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export * from "./app/i18n/core.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
+  stdin: { contents: 'export * from "./app/phone/vault.ts"; export { workspaceFromResponse, acknowledgeWorkspacePublication } from "./app/phone/api.ts"; export { PhoneReadError } from "./app/phone/read-transport.ts"; export { APIError } from "./app/components/api.ts"; export * from "./app/phone/historical-text.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export * from "./app/i18n/core.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
   bundle: true, write: false, platform: "node", format: "esm", target: "node24", logLevel: "silent",
 });
 const production = await import("data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].text + "\n//# sourceURL=phone-recovery-production.mjs").toString("base64"));
@@ -116,7 +116,7 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
   const context = {
     ...production, crypto: webcrypto, DOMException, Error,
     account: { id: "synthetic-a" }, epoch: { current: 1 }, identityUnverified: { current: false },
-    busyRef: { current: false }, recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
+    busyRef: { current: false }, readIssueRef: { current: null }, recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     snapshotRef: { current: saved }, workspaceRef: { current: { workspaceId: uuid(1), activePlanIds: [] } },
     locked: false, checkingIdentity: false, storageProblem: "", profile: plain(saved.profile), formChanged: false,
     editorDraft: null, dialog: null, dialogDirty: false, closedJobDrafts: { current: new Set() }, quarantine: { current: null }, pdfCheck: { current: null }, discardReturn: { current: null }, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
@@ -128,11 +128,11 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
     navigate: tab => context.navigation.push(tab),
     window: { location: { reload() { context.reloads++; } } },
   };
-  for (const [setter, field] of Object.entries({ setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot", setWorkspace: "workspace", setHasQuarantinedEdits: "hasQuarantinedEdits", setRecoveryStatus: "recoveryStatus", setSelected: "selected", setOlderDrafts: "olderDrafts", setSearchPage: "searchPage", setSearchedFilters: "searchedFilters", setSearchNewResult: "searchNewResult", setShowNewOnly: "showNewOnly", setEmployerAnswers: "employerAnswers", setCheckingIdentity: "checkingIdentity", setLocked: "locked" })) {
+  for (const [setter, field] of Object.entries({ setReadIssue: "readIssue", setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot", setWorkspace: "workspace", setHasQuarantinedEdits: "hasQuarantinedEdits", setRecoveryStatus: "recoveryStatus", setSelected: "selected", setOlderDrafts: "olderDrafts", setSearchPage: "searchPage", setSearchedFilters: "searchedFilters", setSearchNewResult: "searchNewResult", setShowNewOnly: "showNewOnly", setEmployerAnswers: "employerAnswers", setCheckingIdentity: "checkingIdentity", setLocked: "locked" })) {
     context[setter] = value => { context[field] = typeof value === "function" ? value(context[field]) : value; };
   }
   vm.createContext(context);
-  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "putWorkspace", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "retireRecordRecovery", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "openAddJob", "editAddedJob", "saveJob", "saveAddedJob", "discardDialogEdits", "rememberDiscardOpener", "requestDialogClose", "editRecord", "exportUnfinished", "lock", "recoverLocked"]) install(context, name);
+  for (const name of ["rememberReadIssue", "same", "message", "local", "assertCurrent", "putSnapshot", "putWorkspace", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "retireRecordRecovery", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "openAddJob", "editAddedJob", "saveJob", "saveAddedJob", "discardDialogEdits", "rememberDiscardOpener", "requestDialogClose", "editRecord", "exportUnfinished", "lock", "recoverLocked"]) install(context, name);
   install(context, "openClear", buttonClick("Clear this phone’s saved data"));
   install(context, "openReset", buttonClick("Reset this phone’s data"));
   install(context, "clear", action("Clearing phone data"));
@@ -745,9 +745,9 @@ function recordExportFocusHarness({ failDownload = false } = {}) {
   const draft = { ...saved.records[0], stage: "interview", note: "Unfinished note متابعة", followUpDate: "2026-11-30" };
   const initialDraft = JSON.stringify(draft), downloads = [], running = [];
   const forbidMutation = () => { throw new Error("Record export must preserve its editor, draft, recovery identity and saved data"); };
-  class APIError extends Error {}
+  const { APIError } = production;
   const context = vm.createContext({
-    Error, DOMException, APIError, crypto: webcrypto, z: production.z,
+    ...production, Error, DOMException, APIError, crypto: webcrypto, z: production.z,
     document: h.document, dialog: recordDialog, editorDraft: draft, dialogDirty: true,
     profile: saved.profile, formChanged: false, profileRecoveryId: { current: null },
     recordRecoveryId: { current: editorId }, snapshotRef: { current: saved },

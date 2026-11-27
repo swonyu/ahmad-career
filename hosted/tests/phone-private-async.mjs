@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { productionRead } from './phone-read-test-helpers.mjs';
 import test,{after} from 'node:test';
 import {readFile,mkdtemp,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -41,11 +42,11 @@ function extract(name){let value;function visit(node){if(ts.isVariableDeclaratio
 function install(name,context){const js=ts.transpileModule('globalThis.'+name+' = '+extract(name),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None}}).outputText;vm.runInNewContext(js,context);return context[name];}
 const defer=()=>{let resolve;return{promise:new Promise(done=>resolve=done),resolve:value=>resolve(value)}};
 function recoveryHarness(stage='none') {
-  const scope='account:synthetic-a:00000000-0000-4000-8000-000000000001',workspace={accountId:'synthetic-a',workspaceId:'00000000-0000-4000-8000-000000000001'};
+  const scope='account:synthetic-a:00000000-0000-4000-8000-000000000001',workspace={ok:true,accountId:'synthetic-a',accountEmail:'synthetic@example.com',confirmedEmail:'synthetic@example.com',emailUpdateRequired:false,deleting:false,workspaceId:'00000000-0000-4000-8000-000000000001',mode:'local',profile:productionRead.blankProfile(),jobs:[],attempts:[],capabilities:{liveEnabled:false,mode:'local',coverage:'Synthetic only'},recoverablePlans:[],activePlanIds:[]};
   const saved={snapshot:{scope,privateMarker:'SYNTHETIC A SNAPSHOT'},profile:{firstName:'SYNTHETIC A PRIVATE DRAFT'},formChanged:true,dialog:null,editorDraft:null};
   const pending=defer(),entered=defer(),downloads=[],restored=[],calls=[];
   const wait=(at,value)=>{calls.push(at);if(stage===at){entered.resolve();return pending.promise.then(()=>value);}return Promise.resolve(value);};
-  const context={account:{id:'synthetic-a'},quarantine:{current:saved},epoch:{current:1},identityUnverified:{current:false},snapshotRef:{current:null},document:{visibilityState:'visible'},workspaceSchema:{parse:value=>value},run:(_label,action)=>action(context.epoch.current),phoneAPI:()=>wait('account',workspace),loadPhoneSnapshot:scopeValue=>{assert.equal(scopeValue,scope);return wait('vault',saved.snapshot);},phoneSafety:{load:()=>wait('safety',{holds:[],recovery:[]})},download:value=>downloads.push(value),putSnapshot:value=>restored.push(value),putWorkspace:()=>{},setProfile:()=>{},setFormChanged:()=>{},setEditorDraft:()=>{},setDialog:()=>{},setDialogDirty:()=>{},setSafetyState:()=>{},setSafetyError:()=>{},setStorageProblem:()=>{},setStorageCode:()=>{},setCheckingIdentity:()=>{},setLocked:()=>{},setHasQuarantinedEdits:()=>{},setRecoveryStatus:()=>{},setNotice:()=>{}};
+  const context={...productionRead,account:{id:'synthetic-a'},quarantine:{current:saved},epoch:{current:1},identityUnverified:{current:false},snapshotRef:{current:null},document:{visibilityState:'visible'},run:(_label,action)=>action(context.epoch.current),phoneAPI:()=>wait('account',workspace),loadPhoneSnapshot:scopeValue=>{assert.equal(scopeValue,scope);return wait('vault',saved.snapshot);},phoneSafety:{load:()=>wait('safety',{holds:[],recovery:[]})},download:value=>downloads.push(value),putSnapshot:value=>restored.push(value),putWorkspace:()=>{},setProfile:()=>{},setFormChanged:()=>{},setEditorDraft:()=>{},setDialog:()=>{},setDialogDirty:()=>{},setSafetyState:()=>{},setSafetyError:()=>{},setStorageProblem:()=>{},setStorageCode:()=>{},setCheckingIdentity:()=>{},setLocked:()=>{},setHasQuarantinedEdits:()=>{},setRecoveryStatus:()=>{},setNotice:()=>{}};
   install('assertCurrent',context);const recover=install('recoverLocked',context);
   return{context,saved,pending,entered,downloads,restored,calls,recover,assertPreserved(){assert.equal(context.quarantine.current,saved);assert.equal(downloads.length,0);assert.equal(restored.length,0);assert.equal(saved.profile.firstName,'SYNTHETIC A PRIVATE DRAFT');}};
 }

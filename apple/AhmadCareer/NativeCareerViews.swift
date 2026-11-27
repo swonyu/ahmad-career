@@ -423,6 +423,7 @@ private struct NativeSavedComparisonSelection: Identifiable {
 /// A sheet leaves the actual Saved list, filter, search text and scroll position mounted underneath.
 private struct NativeSavedComparisonSheet: View {
     @NativeLocalization private var l10n
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var model: NativeApplicationsStore
     let keys: [PhoneSavedComparisonKey]
@@ -430,7 +431,11 @@ private struct NativeSavedComparisonSheet: View {
         NavigationStack {
             NativeList {
                 if let items = model.savedComparisonItems(keys) {
-                    ForEach(items, id: \.key.rowID) { item in NativeSavedComparisonCard(item: item) }
+                    if dynamicTypeSize.isAccessibilitySize {
+                        ForEach(items, id: \.key.rowID) { item in NativeSavedComparisonCard(item: item) }
+                    } else {
+                        NativeSavedComparisonColumns(items: items)
+                    }
                     Section { Text(l10n("Stages and follow-up dates are your own records.")).font(.footnote).foregroundStyle(.secondary) }
                 } else {
                     Section { Text(l10n("A selected opening is no longer in Saved. Choose the two openings again."))
@@ -441,6 +446,99 @@ private struct NativeSavedComparisonSheet: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) {
                     Button(l10n("Back to Saved")) { dismiss() }.accessibilityIdentifier("saved.comparison.close")
                 } }
+        }
+    }
+}
+
+/// At standard text sizes, shared rows keep both openings visible together.
+/// Accessibility text keeps the existing full-width cards and natural reading order.
+private struct NativeSavedComparisonColumns: View {
+    @NativeLocalization private var l10n
+    let items: [PhoneSavedComparisonItem]
+
+    private func location(_ item: PhoneSavedComparisonItem) -> String {
+        item.job.location.isEmpty ? l10n("Location not specified") : spokenListingLocation(item.job.location, l10n)
+    }
+    private func identifier(_ item: PhoneSavedComparisonItem, _ suffix: String) -> String {
+        "saved.comparison." + item.key.rowID + "." + suffix
+    }
+    private func factRow(_ label: String, _ suffix: String,
+                         value: @escaping (PhoneSavedComparisonItem) -> String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(l10n(label)).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true)
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(items, id: \.key.rowID) { item in
+                    Text(value(item)).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(Text(l10n(label) + ", " + location(item)))
+                        .accessibilityValue(Text(value(item)))
+                        .accessibilityIdentifier(identifier(item, suffix))
+                }
+            }
+        }.padding(.vertical, 3)
+    }
+    var body: some View {
+        Section {
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(items, id: \.key.rowID) { item in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(location(item)).font(.subheadline.weight(.semibold)).foregroundStyle(NativeDesign.accent)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityLabel(Text(l10n("Location")))
+                            .accessibilityValue(Text(location(item)))
+                            .accessibilityIdentifier(identifier(item, "location"))
+                        Text(item.job.title.isEmpty ? l10n("Opportunity") : item.job.title).font(.headline)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier(identifier(item, "title"))
+                        Text(item.job.company.isEmpty ? l10n("Not recorded") : item.job.company)
+                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier(identifier(item, "company"))
+                        if item.recordOnly {
+                            Text(l10n("Application record · bookmark removed")).font(.caption2).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(10)
+                    .background(NativeDesign.accentSurface, in: RoundedRectangle(cornerRadius: 12))
+                }
+            }.padding(.vertical, 3)
+            factRow("Source", "source") { item in
+                item.job.sourceName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+                    ? item.job.sourceName! : l10n("Not recorded")
+            }
+            factRow("Last checked", "checkedAt") { item in
+                item.job.checkedAt.flatMap(ApplicationReviewPolicy.date).map { l10n.date($0, includeTime: true) }
+                    ?? l10n("Not recorded")
+            }
+            factRow("Stage", "stage") { item in item.stage.map { l10n($0.title) } ?? l10n("Not recorded") }
+            factRow("Follow-up date", "followUp") { item in
+                item.conflictingRecords ? l10n("Not recorded")
+                    : item.followUpOn.map(l10n.civilDate) ?? l10n("No follow-up scheduled")
+            }
+            if items.contains(where: \.conflictingRecords) {
+                HStack(alignment: .top, spacing: 14) {
+                    ForEach(items, id: \.key.rowID) { item in
+                        Text(item.conflictingRecords ? l10n("Record versions need review.") : "")
+                            .font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(items, id: \.key.rowID) { item in
+                    if let url = MobileApplicationPolicy.jobURL(item.job.url) {
+                        Link(destination: url) {
+                            Label(l10n("Open employer posting"), systemImage: "arrow.up.right.square")
+                                .font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityLabel(l10n.format("Open job: {0} in {1}", [item.job.title, item.job.location.isEmpty ? l10n("Location not specified") : item.job.location]))
+                        .accessibilityIdentifier(identifier(item, "employer"))
+                    }
+                }
+            }
         }
     }
 }

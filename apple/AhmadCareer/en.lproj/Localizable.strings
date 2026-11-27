@@ -185,6 +185,7 @@
 "Ask for the budgeted pay range, its currency and payment frequency." = "Ask for the budgeted pay range, its currency and payment frequency.";
 "Ask your custom service operator for a one-time connection code." = "Ask your custom service operator for a one-time connection code.";
 "Attempt ID" = "Attempt ID";
+"Attempt details" = "Attempt details";
 "Auto Apply is not activated" = "Auto Apply is not activated";
 "Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone." = "Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone.";
 "Auto Apply · jobs: {0}" = "Auto Apply · jobs: {0}";
@@ -465,6 +466,7 @@
 "Done" = "Done";
 "Done typing" = "Done typing";
 "Draft" = "Draft";
+"Draft details" = "Draft details";
 "During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending." = "During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending.";
 "Earlier assessment: " = "Earlier assessment: ";
 "Earlier assessment: {0}" = "Earlier assessment: {0}";
@@ -1175,6 +1177,7 @@
 "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying." = "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.";
 "Saved for application review" = "Saved for application review";
 "Saved for later" = "Saved for later";
+"Saved history from {0}. Connect and refresh to check the latest status." = "Saved history from {0}. Connect and refresh to check the latest status.";
 "Saved in your application workspace" = "Saved in your application workspace";
 "Saved job details in this backup exceed the common 500-character limit." = "Saved job details in this backup exceed the common 500-character limit.";
 "Saved jobs" = "Saved jobs";
@@ -1388,6 +1391,7 @@
 "The earlier profile was saved. Your newer edits are still a draft." = "The earlier profile was saved. Your newer edits are still a draft.";
 "The earlier search file is unreadable and was preserved. It was not replaced by the backup." = "The earlier search file is unreadable and was preserved. It was not replaced by the backup.";
 "The employer directory was incomplete. Your saved boards are unchanged." = "The employer directory was incomplete. Your saved boards are unchanged.";
+"The employer no longer lists this posting. No application was sent." = "The employer no longer lists this posting. No application was sent.";
 "The employer response contained no valid Saudi listings. Previous results are preserved." = "The employer response contained no valid Saudi listings. Previous results are preserved.";
 "The employer returned an unreadable response." = "The employer returned an unreadable response.";
 "The essentials" = "The essentials";
@@ -1402,6 +1406,7 @@
 "The latest saved PDF will be used: {0}" = "The latest saved PDF will be used: {0}";
 "The latest workspace could not be loaded. Your draft is preserved." = "The latest workspace could not be loaded. Your draft is preserved.";
 "The link is saved on this phone. " = "The link is saved on this phone. ";
+"The link is saved on this phone. The employer no longer lists this posting. No application was sent." = "The link is saved on this phone. The employer no longer lists this posting. No application was sent.";
 "The link is saved on this phone. {0}" = "The link is saved on this phone. {0}";
 "The local record could not be removed. Try again before leaving this workspace." = "The local record could not be removed. Try again before leaving this workspace.";
 "The merged shortlist exceeds 200 links. Nothing was replaced." = "The merged shortlist exceeds 200 links. Nothing was replaced.";

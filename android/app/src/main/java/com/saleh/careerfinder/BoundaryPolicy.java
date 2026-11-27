@@ -19,6 +19,9 @@ import java.util.Locale;
 public final class BoundaryPolicy {
     public static final int MAX_PDF_BYTES = 5 * 1024 * 1024;
     public static final int MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+    // Private workspace responses include bounded review payloads and receipts.
+    // Keep the smaller public-discovery limit separate. Never trust a header as a cap.
+    public static final int MAX_APPLICATION_RESPONSE_BYTES = 12 * 1024 * 1024;
     public static final int MAX_PRIVATE_BYTES = 9 * 1024 * 1024;
     private BoundaryPolicy() { }
 

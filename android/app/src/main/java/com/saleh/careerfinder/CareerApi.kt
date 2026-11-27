@@ -83,6 +83,7 @@ class CareerApi(private val connection: Connection) {
             socket.setRequestProperty("Cache-Control", "no-store")
             if (token != null) socket.setRequestProperty("Authorization", "Bearer $token")
             try {
+                NativeHttpTransport.configure(socket)
                 if (body != null) {
                     val encoded = body.toString().toByteArray(Charsets.UTF_8)
                     require(encoded.size <= 8 * 1024 * 1024) { "The application data is too large." }
@@ -96,7 +97,7 @@ class CareerApi(private val connection: Connection) {
                 val contentType = socket.contentType?.substringBefore(';')?.trim()?.lowercase()
                 if (contentType != "application/json") throw ApiFailure(status, "invalid_response", "The service response could not be verified. Check receipts before trying an application again.")
                 val stream = if (status in 200..299) socket.inputStream else socket.errorStream
-                val raw = stream?.use { BoundaryPolicy.readBounded(it, BoundaryPolicy.MAX_RESPONSE_BYTES) }
+                val raw = stream?.use { BoundaryPolicy.readBounded(it, BoundaryPolicy.MAX_APPLICATION_RESPONSE_BYTES) }
                     ?: throw ApiFailure(status, "empty_response", "The service returned an empty response. Check receipts before retrying.")
                 val response = try { JSONObject(String(raw, Charsets.UTF_8)) }
                     catch (_: Exception) { throw ApiFailure(status, "invalid_response", "The service response could not be verified. Check receipts before retrying.") }

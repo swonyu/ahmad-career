@@ -607,6 +607,115 @@ struct ApplicationProfileReadiness {
 
 /// The draft's base revision is deliberately independent of the latest server revision.
 /// Old files without a revision migrate to an unknown base, which requires an explicit conflict choice.
+/// A bounded last-known display projection, never a review, approval, queue or
+/// credential. Raw service errors, request payloads and undisplayed fields are omitted.
+struct PhoneApplicationHistoryEntry: Codable, Equatable {
+    let value: [String: ApplicationValue]
+    private static let stringLimits: [String: Int] = [
+        "id": 200, "attemptId": 200, "state": 40, "provider": 40, "evidenceMode": 8, "mode": 8,
+        "title": 500, "company": 500, "applicationId": 500, "resumeName": 180,
+        "resumeSHA256": 64, "payloadSHA256": 64, "requirementsRevision": 200,
+        "createdAt": 40, "dispatchedAt": 40, "confirmedAt": 40
+    ]
+    private static let allowed = Set(stringLimits.keys).union(["profileRevision"])
+    private static func text(_ value: String, maximum: Int, multiline: Bool = false) -> Bool {
+        value.utf16.count <= maximum && !value.unicodeScalars.contains {
+            $0.value == 0x7f || ($0.value < 0x20 && !(multiline && [0x09, 0x0a, 0x0d].contains($0.value)))
+        }
+    }
+    static func valid(_ value: [String: ApplicationValue]) -> Bool {
+        guard Set(value.keys).isSubset(of: allowed),
+              let id = value["id"]?.string, !id.isEmpty,
+              let state = value["state"]?.string, !state.isEmpty else { return false }
+        for (key, field) in value {
+            if key == "profileRevision" {
+                guard let revision = field.integer, revision >= 0 else { return false }
+            } else {
+                guard let maximum = stringLimits[key], let string = field.string,
+                      text(string, maximum: maximum, multiline: key == "title" || key == "company") else { return false }
+            }
+        }
+        if let attemptID = value["attemptId"]?.string, attemptID != id { return false }
+        for key in ["mode", "evidenceMode"] {
+            if let mode = value[key]?.string, !["test", "live"].contains(mode) { return false }
+        }
+        if let mode = value["mode"]?.string, let evidence = value["evidenceMode"]?.string, mode != evidence { return false }
+        if let name = value["resumeName"]?.string, ApplicationCVDetails(attempt: value).resumeName != name { return false }
+        for key in ["resumeSHA256", "payloadSHA256"] {
+            if let hash = value[key]?.string, hash.range(of: "^[a-fA-F0-9]{64}$", options: .regularExpression) == nil { return false }
+        }
+        for key in ["createdAt", "dispatchedAt", "confirmedAt"] {
+            if let date = value[key]?.string, ApplicationReviewPolicy.date(date) == nil { return false }
+        }
+        if let applicationID = value["applicationId"]?.string,
+           applicationID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
+        return true
+    }
+    init?(projecting source: [String: ApplicationValue]) {
+        var fields: [String: ApplicationValue] = [:]
+        let emptyLegacyFields: Set<String> = ["resumeName", "resumeSHA256", "payloadSHA256", "createdAt", "dispatchedAt", "confirmedAt", "applicationId"]
+        for key in Self.allowed {
+            if let value = source[key], value != .null {
+                // Legacy service blanks mean unknown display metadata, never today's CV.
+                // The stored-cache decoder remains strict and does not normalize bad bytes.
+                if value.string == "", emptyLegacyFields.contains(key) { continue }
+                fields[key] = value
+            }
+        }
+        if fields["id"] == nil { fields["id"] = fields["attemptId"] }
+        for key in ["title", "company"] where fields[key] == nil {
+            if let value = source["job"]?.object[key], value != .null { fields[key] = value }
+        }
+        guard Self.valid(fields) else { return nil }
+        value = fields
+    }
+    init(from decoder: Decoder) throws {
+        let fields = try decoder.singleValueContainer().decode([String: ApplicationValue].self)
+        guard Self.valid(fields) else { throw CocoaError(.coderInvalidValue) }
+        value = fields
+    }
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer(); try container.encode(value)
+    }
+}
+
+struct PhoneApplicationHistoryCache: Codable, Equatable {
+    static let maximumRows = 500 // Same bound as the authenticated hosted workspace.
+    static let maximumBytes = 1_024 * 1_024
+    let schemaVersion: Int
+    let scope: PhoneRecordScope
+    let credentialAccount: String
+    let savedAt: String
+    let entries: [PhoneApplicationHistoryEntry]
+    var valid: Bool {
+        guard schemaVersion == 1, scope.valid, !scope.isLocal,
+              scope.origin.utf16.count <= 2_048, scope.workspaceID.utf16.count <= 200,
+              !credentialAccount.isEmpty, credentialAccount.utf16.count <= 512,
+              !credentialAccount.unicodeScalars.contains(where: { $0.value < 0x20 || $0.value == 0x7f }),
+              savedAt.utf16.count <= 40, ApplicationReviewPolicy.date(savedAt) != nil,
+              entries.count <= Self.maximumRows, entries.allSatisfy({ PhoneApplicationHistoryEntry.valid($0.value) }),
+              Set(entries.compactMap { $0.value["id"]?.string }).count == entries.count,
+              let data = try? JSONEncoder().encode(self), data.count <= Self.maximumBytes else { return false }
+        return true
+    }
+    init?(scope: PhoneRecordScope, credentialAccount: String, attempts: [[String: ApplicationValue]], savedAt: String) {
+        guard attempts.count <= Self.maximumRows else { return nil }
+        let projected = attempts.compactMap(PhoneApplicationHistoryEntry.init(projecting:))
+        guard projected.count == attempts.count else { return nil }
+        schemaVersion = 1; self.scope = scope; self.credentialAccount = credentialAccount
+        self.savedAt = savedAt; entries = projected
+        guard valid else { return nil }
+    }
+    func matches(_ state: PhoneApplicationState) -> Bool {
+        state.connectionEnabled && !state.recordScope.isLocal && scope == state.recordScope
+            && state.credentialAccount == credentialAccount
+    }
+    func sameProjection(as other: Self) -> Bool {
+        schemaVersion == other.schemaVersion && scope == other.scope
+            && credentialAccount == other.credentialAccount && entries == other.entries
+    }
+}
+
 struct PhoneApplicationState: Codable, Equatable {
     var profile = PhoneApplicationProfile()
     var profileNeedsSync = false
@@ -629,6 +738,8 @@ struct PhoneApplicationState: Codable, Equatable {
     /// Unfinished opportunities that differ from the current draft. Filtered by workspace scope.
     var recoveredOpportunityDrafts: [PhoneRecoveredOpportunity] = []
     var submissionHolds: [PhoneSubmissionHold] = []
+    /// Display-only history is excluded from portable backups and workspace draft transfer.
+    var savedApplicationHistory: PhoneApplicationHistoryCache?
 
     init() {}
     private enum CodingKeys: String, CodingKey {
@@ -636,6 +747,7 @@ struct PhoneApplicationState: Codable, Equatable {
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
         case applicationRecordSchema, applicationRecords
         case workspaceDraftSchema, workspaceDrafts, recordDrafts, recordDraftAlternatives, recoveredOpportunityDrafts, submissionHolds
+        case savedApplicationHistory
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -656,6 +768,9 @@ struct PhoneApplicationState: Codable, Equatable {
         recordDraftAlternatives = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDraftAlternatives) ?? []
         recoveredOpportunityDrafts = try c.decodeIfPresent([PhoneRecoveredOpportunity].self, forKey: .recoveredOpportunityDrafts) ?? []
         submissionHolds = try c.decodeIfPresent([PhoneSubmissionHold].self, forKey: .submissionHolds) ?? []
+        // A damaged or mismatched derived cache must not block a valid private draft.
+        if let cache = try? c.decode(PhoneApplicationHistoryCache.self, forKey: .savedApplicationHistory),
+           cache.valid, cache.matches(self) { savedApplicationHistory = cache }
         guard jobs.allSatisfy(PhoneSavedJobMetadata.valid),
               workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
               recordDrafts.count + recordDraftAlternatives.count <= 200,
@@ -691,6 +806,7 @@ struct PhoneApplicationState: Codable, Equatable {
             latestServerProfile: latestServerProfile, jobs: jobs, opportunityDraft: opportunityDraft)
     }
     mutating func loadDraft(_ draft: PhoneWorkspaceDraft) {
+        savedApplicationHistory = nil
         profile = draft.profile; profileNeedsSync = draft.profileNeedsSync; profileRevision = draft.profileRevision
         latestServerRevision = draft.latestServerRevision; latestServerProfile = draft.latestServerProfile
         jobs = draft.jobs; opportunityDraft = draft.opportunityDraft
@@ -716,6 +832,7 @@ struct PhoneApplicationState: Codable, Equatable {
     }
     mutating func connect(address: String, workspace: String, account: String, server: ApplicationServerProfile) {
         let same = workspaceID == workspace && MobileApplicationPolicy.serviceURL(serviceAddress)?.absoluteString == address
+        if !same || credentialAccount != account || !connectionEnabled { savedApplicationHistory = nil }
         if !same {
             let previous = activeDraft, target = PhoneRecordScope(origin: address, workspaceID: workspace)
             let restored = workspaceDrafts.first { $0.scope == target }

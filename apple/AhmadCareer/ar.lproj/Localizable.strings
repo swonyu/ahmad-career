@@ -185,6 +185,7 @@
 "Ask for the budgeted pay range, its currency and payment frequency." = "اسأل عن نطاق الأجر المعتمد، وعملته، ودورية دفعه.";
 "Ask your custom service operator for a one-time connection code." = "اطلب رمز اتصال يُستخدم مرة واحدة من مشغّل خدمتك المخصصة.";
 "Attempt ID" = "معرّف المحاولة";
+"Attempt details" = "تفاصيل محاولة التقديم";
 "Auto Apply is not activated" = "التقديم التلقائي غير مفعّل";
 "Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone." = "التقديم التلقائي متوقف مؤقتًا على هذا الهاتف لأن سجل تقديم يحتاج إلى مراجعة. أوقف العمل النشط وحدّث إيصالات الإرسال. لا يوقف هذا الخدمة أو هاتفًا آخر.";
 "Auto Apply · jobs: {0}" = "التقديم التلقائي · الوظائف: {0}";
@@ -465,6 +466,7 @@
 "Done" = "تم";
 "Done typing" = "انتهيت من الكتابة";
 "Draft" = "مسودة";
+"Draft details" = "تفاصيل المسودة";
 "During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending." = "أثناء اختبار النسخة التجريبية، افتح هذا التطبيق في TestFlight واختر «Send Beta Feedback» للتواصل مع المطوّر. اذكر الشاشة والخطوات التي سببت المشكلة. راجع لقطات الشاشة وبيانات التشخيص قبل الإرسال.";
 "Earlier assessment: " = "التقييم السابق: ";
 "Earlier assessment: {0}" = "التقييم السابق: {0}";
@@ -1175,6 +1177,7 @@
 "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying." = "فرصة محفوظة لدى جهة عمل. لا يثبت البحث الأخير أنها متاحة حاليًا. تحقّق مجددًا من الصفحة الرسمية قبل التقديم.";
 "Saved for application review" = "محفوظة لمراجعة التقديم";
 "Saved for later" = "محفوظة للرجوع إليها";
+"Saved history from {0}. Connect and refresh to check the latest status." = "سجل محفوظ بتاريخ {0}. اتصل وحدّث للتحقق من أحدث حالة.";
 "Saved in your application workspace" = "محفوظ في مساحة عمل التقديم";
 "Saved job details in this backup exceed the common 500-character limit." = "تتجاوز تفاصيل الوظائف المحفوظة في هذه النسخة الاحتياطية الحد المشترك البالغ 500 حرف.";
 "Saved jobs" = "الوظائف المحفوظة";
@@ -1388,6 +1391,7 @@
 "The earlier profile was saved. Your newer edits are still a draft." = "تم حفظ الملف الشخصي السابق. تعديلاتك الأحدث ما تزال مسودة.";
 "The earlier search file is unreadable and was preserved. It was not replaced by the backup." = "تعذرت قراءة ملف البحث السابق، وقد احتُفظ به ولم تستبدله النسخة الاحتياطية.";
 "The employer directory was incomplete. Your saved boards are unchanged." = "دليل جهات العمل غير مكتمل. لم تتغير اللوحات المحفوظة.";
+"The employer no longer lists this posting. No application was sent." = "لم تعد جهة العمل تعرض هذه الوظيفة. لم يُرسل أي طلب تقديم.";
 "The employer response contained no valid Saudi listings. Previous results are preserved." = "لم تتضمن استجابة جهة العمل إعلانات سعودية صالحة. النتائج السابقة محفوظة.";
 "The employer returned an unreadable response." = "أعادت جهة العمل استجابة غير قابلة للقراءة.";
 "The essentials" = "الأساسيات";
@@ -1402,6 +1406,7 @@
 "The latest saved PDF will be used: {0}" = "سيُستخدم أحدث ملف PDF محفوظ: {0}";
 "The latest workspace could not be loaded. Your draft is preserved." = "تعذر تحميل أحدث نسخة من مساحة العمل. بقيت مسودتك محفوظة.";
 "The link is saved on this phone. " = "حُفظ الرابط على هذا الهاتف. ";
+"The link is saved on this phone. The employer no longer lists this posting. No application was sent." = "حُفظ الرابط على هذا الهاتف. لم تعد جهة العمل تعرض هذه الوظيفة. لم يُرسل أي طلب تقديم.";
 "The link is saved on this phone. {0}" = "حُفظ الرابط على هذا الهاتف. {0}";
 "The local record could not be removed. Try again before leaving this workspace." = "تعذّرت إزالة السجل المحلي. حاول مجددًا قبل مغادرة مساحة العمل هذه.";
 "The merged shortlist exceeds 200 links. Nothing was replaced." = "تتجاوز القائمة المختصرة المدمجة 200 رابط. لم يُستبدل شيء.";

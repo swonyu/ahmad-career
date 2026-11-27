@@ -352,6 +352,13 @@ private final class DiscoveryNoRedirect: NSObject, URLSessionTaskDelegate {
 @MainActor
 final class CareerDiscoveryClient: CareerDiscoveryServing {
     private let session: URLSession
+    #if DEBUG
+    private var nativeJourneyTransport: NativeJourneyTransport?
+    convenience init(nativeJourneyTransport: NativeJourneyTransport) {
+        self.init()
+        self.nativeJourneyTransport = nativeJourneyTransport
+    }
+    #endif
     init() {
         let config = URLSessionConfiguration.ephemeral
         config.httpCookieStorage = nil; config.httpShouldSetCookies = false; config.urlCredentialStorage = nil
@@ -361,6 +368,9 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
     }
     deinit { session.invalidateAndCancel() }
     private func fetch<T: Decodable>(_ request: URLRequest, as type: T.Type) async throws -> T {
+        #if DEBUG
+        let request = try nativeJourneyTransport?.map(request, discovery: true) ?? request
+        #endif
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, data.count <= 4 * 1_024 * 1_024 else {
             throw DiscoveryFailure(message: "The discovery service returned an unreadable response. Try again later.")

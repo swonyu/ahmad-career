@@ -25,7 +25,10 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(code, context);
   return context.exports;
 }
-const model = execute(read('app/phone/model.ts'));
+const { APIError } = execute(read('app/components/api.ts'));
+const historicalHelpers = execute(read('app/phone/historical-text.ts'));
+const readTransport = execute(read('app/phone/read-transport.ts'), {}, name => name === '../components/api' ? { APIError } : name === './historical-text' ? historicalHelpers : require(name));
+const model = execute(read('app/phone/model.ts'), {}, name => name === './historical-text' ? historicalHelpers : name === './read-transport' ? readTransport : require(name));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
 const i18n = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const source = process.env.CAREER_SEARCH_CAP_SOURCE

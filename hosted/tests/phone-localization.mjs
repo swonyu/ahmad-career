@@ -11,16 +11,18 @@ const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
+let historicalHelpers = {};
 
 function execute(source, scope = {}, loader = require) {
   const result = ts.transpileModule(source, { compilerOptions: {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022,
     jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true,
   } });
-  const context = { exports: {}, require: loader, Intl, ...scope };
+  const context = { exports: {}, require: loader, Intl, ...historicalHelpers, ...scope };
   vm.runInNewContext(result.outputText, context);
   return context.exports;
 }
+historicalHelpers = execute(read("app/phone/historical-text.ts"));
 const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const translator = language => (key, values) => translate(key, language, values);
@@ -49,7 +51,7 @@ function actualApplicationDetails(language) {
 }
 
 test('real review rendering localizes every state and preserves user and employer content', () => {
-  const source = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
+  const source = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'HistoricalTextNotice', 'ReviewDetails']);
   const ReviewDetails = execute(`${source}\nexports.ReviewDetails = ReviewDetails;`, {
     useI18n: () => ({ language: 'ar', t: translator('ar') }), formatNumber,
   }).ReviewDetails;
@@ -199,7 +201,7 @@ function actualComparisonChoice(language) {
   const component = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'SavedComparison');
   const choices = component.body.statements.flatMap(node => ts.isVariableStatement(node) ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(tree) === 'choice');
   assert.equal(choices.length, 1);
-  const identity = execute(declarations(read('app/phone/model.ts'), ['publicURL', 'jobIdentity']) + '\nexports.jobIdentity = jobIdentity;', { URL }).jobIdentity;
+  const identity = execute(declarations(read('app/phone/model.ts'), ['checkedPublicURL', 'publicURL', 'historicalPublicURL', 'jobIdentity']) + '\nexports.jobIdentity = jobIdentity;', { URL }).jobIdentity;
   return execute('exports.choice = ' + choices[0].initializer.getText(tree), {
     t: translator(language), jobIdentity: identity, chosen: [], disabled: false, closing: false,
     setSelected: () => { throw Error('Presentation rendering must not change selection'); },
@@ -233,7 +235,7 @@ test('actual Saved, Apply, details and recovery values retain separate bidi boun
     ['Apply choice', phoneFragment(node => hasClass(node, 'phone-check phone-job-choice')), [mixedJob.title, mixedJob.company]],
     ['Employer-answer legend', phoneFragment((node, text) => tagName(node) === 'legend' && text.includes('job.company') && text.includes('job.title')), [mixedJob.title, mixedJob.company]],
     ['Submission receipt', phoneFragment((node, text) => tagName(node) === 'article' && text.includes('phone-receipt') && text.includes('receipt.title')), [mixedJob.title, mixedJob.company]],
-    ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'dialog.job.location')), [mixedJob.location]],
+    ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'displayHistoricalText(dialog.job.location)')), [mixedJob.location]],
     ['Unfinished recovery label', phoneFragment((node, text) => tagName(node) === 'button' && text.includes('draft.record?.job.title')), [mixedJob.title, mixedJob.company]],
     ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company, mixedJob.location]],
     ['Private-record deletion', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.record.title') && text.includes('dialog.record.company')), [mixedJob.title, mixedJob.company]],
@@ -246,7 +248,7 @@ test('actual Saved, Apply, details and recovery values retain separate bidi boun
 
 test('actual profile comparison and application review isolate names and CV filenames without changing them', () => {
   const versions = phoneFragment(node => hasClass(node, 'phone-version-grid'));
-  const reviewSource = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
+  const reviewSource = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'HistoricalTextNotice', 'ReviewDetails']);
   for (const language of ['en', 'ar']) {
     const element = renderPhoneFragment(versions, language);
     assert.equal(assertIsolatedRawValue(element, 'أحمد (Alex) Example-17', `${language} profile comparison name`), 2);
@@ -494,3 +496,4 @@ test('actual history preserves uncertain, live-confirmed and synthetic evidence 
     assert(allText(element).includes(t('Export receipts')));
   }
 });
+

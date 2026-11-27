@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { ArrowUpRight, Bookmark, Check, FileText, X } from "lucide-react";
 import { countryCodes, friendlyDate, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
 import { ProfileReuse } from "./ProfileReuse";
+import { displayHistoricalText, hasHistoricalText } from "./historical-text";
 
 /** Recover only lost focus, after removed controls and dialogs finish unmounting. */
 export const recoverPhoneFocus = (shell: Element | null, invoker: Element | null = null, closingDialog: HTMLDialogElement | null = null) => {
@@ -55,11 +56,25 @@ export function JobCard({ job, saved, onSave, onDetails, busy = false, newToSear
   const { t, language } = useI18n();
   return <article className="phone-job-card">
     {newToSearch && <span className="phone-new-opening">{t("New to this search")}</span>}
-    <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(job.company.trim())[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{job.company}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{job.title}</button> : job.title}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [job.title]) : t("Save {0}", [job.title])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
-    {job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
-    {job.summary && <p className="phone-job-summary" dir="auto">{job.summary}</p>}
-    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{job.sourceName}</span>}{onDetails && <button className="text-button" aria-label={t("Job details for {0}", [job.title])} onClick={onDetails}>{t("Job details")}</button>}<a href={job.url} aria-label={t("View job: {0}", [job.title])} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
+    <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(displayHistoricalText(job.company.trim()))[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{displayHistoricalText(job.company)}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{displayHistoricalText(job.title)}</button> : displayHistoricalText(job.title)}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [displayHistoricalText(job.title)]) : t("Save {0}", [displayHistoricalText(job.title)])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
+    {job.location && <p className="phone-job-location"><bdi>{displayHistoricalText(job.location)}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
+    {job.summary && <p className="phone-job-summary" dir="auto">{displayHistoricalText(job.summary)}</p>}
+    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{displayHistoricalText(job.sourceName)}</span>}{onDetails && <button className="text-button" aria-label={t("Job details for {0}", [displayHistoricalText(job.title)])} onClick={onDetails}>{t("Job details")}</button>}<a href={job.url} aria-label={t("View job: {0}", [displayHistoricalText(job.title)])} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
   </article>;
+}
+
+export function HistoricalTextNotice({ value }: { value: unknown }) {
+  const { t } = useI18n();
+  if (!hasHistoricalText(value)) return null;
+  return <div role="note"><h3>{t("Historical text needs attention")}</h3><p>{t("Some saved characters are shown as \\uXXXX escapes. The original text is preserved. Repair affected details before sending new information.")}</p></div>;
+}
+
+function HistoricalProfileFields({ profile }: { profile: Profile }) {
+  const { t } = useI18n();
+  const values: [string, string][] = [["First or single name", profile.firstName], ["Last name", profile.lastName], ["Email", profile.email], ["Phone", profile.phone], ["City", profile.city], ["Professional headline", profile.headline], ["Skills", profile.skills.join(", ")], ["Target roles", profile.targetRoles.join("\n")], ["CV", profile.resume?.name ?? ""]];
+  const affected = values.filter(([, value]) => hasHistoricalText(value));
+  if (!affected.length) return null;
+  return <div className="phone-inline-note"><HistoricalTextNotice value={profile} /><dl>{affected.map(([label, value]) => <div key={label}><dt>{t(label)}</dt><dd className="preserve-lines" dir="auto">{displayHistoricalText(value)}</dd></div>)}</dl></div>;
 }
 
 export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnline, accountEmail, hasWorkspace, busy, changed }: {
@@ -83,17 +98,18 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
   const [targetCountry, setTargetCountry] = useState("");
   const validLinkedIn = useMemo(() => { try { return profile.linkedin ? linkedInURL(profile.linkedin) : ""; } catch { return ""; } }, [profile.linkedin]);
   return <div className="phone-profile-form">
+    <HistoricalProfileFields profile={profile} />
     <section className="phone-card"><div className="section-label"><span>01</span><h2>{t("Contact details and CV")}</h2></div><Readiness profile={profile} />
       {!essentialsReady && <p className="phone-note">{t("Start with a name, email, and CV. You can save an unfinished draft on this phone.")}</p>}
       <div className="phone-profile-cv">
-      <div className="phone-cv"><FileText aria-hidden="true" size={28} /><div><strong dir="auto">{profile.resume?.name || t("Choose your PDF CV")}</strong><span>{profile.resume ? t("{0} KB · PDF", [formatNumber(profile.resume.size / 1024, language, { maximumFractionDigits: 0 })]) : t("PDF only · up to 5 MiB")}</span></div></div>
+      <div className="phone-cv"><FileText aria-hidden="true" size={28} /><div><strong dir="auto">{displayHistoricalText(profile.resume?.name) || t("Choose your PDF CV")}</strong><span>{profile.resume ? t("{0} KB · PDF", [formatNumber(profile.resume.size / 1024, language, { maximumFractionDigits: 0 })]) : t("PDF only · up to 5 MiB")}</span></div></div>
       <input ref={fileInput} type="file" accept="application/pdf,.pdf" className="visually-hidden" tabIndex={-1} aria-label={t("Choose PDF CV")} onChange={e => { const file = e.target.files?.[0]; if (file) void onPDF(file); e.currentTarget.value = ""; }} />
       <div className="phone-actions"><button className="button secondary" disabled={busy} onClick={() => fileInput.current?.click()}>{profile.resume ? t("Change PDF") : t("Choose PDF")}</button>{profile.resume && <button className="text-button danger-text" disabled={busy} onClick={() => onChange({ resume: null })}>{t("Remove from profile")}</button>}</div>
       <div className="phone-profile-quick-save">
         {changed && <p className="phone-note">{t("You have unsaved changes in this form.")}</p>}
         <button type="button" className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save draft on this phone")}</button>
         <p className="phone-note">{t(" Saving on this phone does not upload your CV.")}</p>
-        {hasWorkspace && <button type="button" className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}
+        {hasWorkspace && <button type="button" className="button primary full" disabled={busy || hasHistoricalText(profile)} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}
       </div>
       </div>
       <div className="phone-contact-fields">
@@ -123,7 +139,7 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
       <label>{t("Skills ")}<span className="optional">{t("up to 30, separated by commas")}</span><input dir="auto" maxLength={3000} value={profile.skills.join(",")} onChange={e => onChange({ skills: e.target.value.split(/[,،]/) })} /></label>
       <label>{t("Experience level")}<select value={profile.experienceLevel} onChange={e => onChange({ experienceLevel: e.target.value as Profile["experienceLevel"] })}><option value="any">{t("Any level")}</option><option value="entry">{t("Entry level")}</option><option value="mid">{t("Mid level")}</option><option value="senior">{t("Senior level")}</option></select></label>
     </details>
-    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("You can save an unfinished draft on this phone.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}</div>
+    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("You can save an unfinished draft on this phone.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy || hasHistoricalText(profile)} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}</div>
   </div>;
 }
 
@@ -150,7 +166,7 @@ export function RecordEditor({ record, initialDraft, onDraftChange, onSave, onCa
     <div className="phone-field-pair"><label>{t("Applied date ")}<span className="optional">{t("optional")}</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.appliedDate} onChange={e => edit({ appliedDate: e.target.value })} /></label><label>{t("Follow-up date ")}<span className="optional">{t("optional")}</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.followUpDate} onChange={e => edit({ followUpDate: e.target.value })} /></label></div>
     <label>{t("CV filename ")}<span className="optional">{t("optional")}</span><input dir="auto" maxLength={180} value={draft.manualResumeName ?? ""} onChange={e => edit({ manualResumeName: e.target.value })} placeholder="CV-A.pdf" /><span className="phone-note">{t("A filename you record yourself. No PDF is attached.")}</span></label>
     <label>{t("Private notes")}<textarea dir="auto" maxLength={5000} rows={5} value={draft.note} placeholder={t("People to contact, interview details, or your next step")} onChange={e => edit({ note: e.target.value })} /></label>
-    {changed && <details className="phone-disclosure"><summary>{t("Compare with the saved record")}</summary><RecordSummary record={record} /><p className="preserve-lines" dir="auto">{record.note || t("No saved private note.")}</p></details>}
+    {changed && <details className="phone-disclosure"><summary>{t("Compare with the saved record")}</summary><RecordSummary record={record} /><p className="preserve-lines" dir="auto">{displayHistoricalText(record.note) || t("No saved private note.")}</p></details>}
     {confirmClear && <div className="phone-warning" role="alert"><h3>{t("Mark as not applied?")}</h3><p>{t("This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.")}</p><button type="button" className="button secondary full" onClick={event => keepAppliedRecord(event.currentTarget)}>{t("Keep application record")}</button></div>}
     <div className="phone-dialog-actions"><button type="button" className="button secondary" disabled={busy} onClick={onCancel}>{t("Cancel")}</button><button type="submit" className="button primary" disabled={busy}>{confirmClear ? t("Mark not applied") : t("Save record")}</button></div>
   </form>;
@@ -173,7 +189,7 @@ export function ApplicationDetails({ resumeName, profileRevision, manual = false
     <summary>{t("Application details")}</summary>
     <dl className="phone-review-data">
       <dt>{t(manual ? "Filename you recorded" : "Reviewed CV")}</dt>
-      <dd><bdi>{resumeName?.trim() || t("CV not recorded")}</bdi></dd>
+      <dd><bdi>{displayHistoricalText(resumeName?.trim()) || t("CV not recorded")}</bdi></dd>
       {!manual && profileRevision != null && <><dt>{t("Profile version")}</dt><dd><bdi>{formatNumber(profileRevision, language)}</bdi></dd></>}
     </dl>
     {manual && <p className="phone-note">{t("Self-entered information. This is not a submission receipt.")}</p>}
@@ -182,7 +198,7 @@ export function ApplicationDetails({ resumeName, profileRevision, manual = false
 
 export function ReviewDetails({ plan }: { plan: Plan }) {
   const { t, language } = useI18n();
-  return <div className="phone-review-items">{plan.items.map(item => <article className="phone-card" key={item.jobId}><p className="phone-kicker">{t(reviewStateLabels[item.state])}</p><h3 dir="auto">{item.title}</h3><p className="phone-company" dir="auto">{item.company}</p>{item.job.location && <p className="phone-job-location"><bdi>{item.job.location}</bdi></p>}{item.reason && <p className="phone-inline-note">{t(item.reason)}</p>}<dl className="phone-review-data"><dt>{t("Employer job page")}</dt><dd><a dir="ltr" href={item.job.url} target="_blank" rel="noopener noreferrer">{item.job.url}</a></dd><dt>{t("Name")}</dt><dd dir="auto">{item.payloadSummary.name || t("Not provided")}</dd><dt>{t("Email")}</dt><dd dir="auto">{item.payloadSummary.email || t("Not provided")}</dd>{item.payloadSummary.phone && <><dt>{t("Phone")}</dt><dd dir="auto">{item.payloadSummary.phone}</dd></>}{item.payloadSummary.website && <><dt>{t("Portfolio")}</dt><dd dir="auto">{item.payloadSummary.website}</dd></>}{item.payloadSummary.linkedin && <><dt>{t("LinkedIn profile")}</dt><dd dir="auto">{item.payloadSummary.linkedin}</dd></>}<dt>{t("CV")}</dt><dd dir="auto">{item.resume?.name || t("CV not recorded")}</dd><dt>{t("Profile version")}</dt><dd><bdi>{formatNumber(plan.profileRevision, language)}</bdi></dd><dt>{t("Additional information")}</dt><dd className="preserve-lines" dir="auto">{item.payloadSummary.comments || t("None")}</dd>{item.payloadSummary.consentStore !== undefined && <><dt>{t("Employer data-processing consent")}</dt><dd dir="auto">{item.payloadSummary.consentStore ? t("Yes") : t("No")}</dd></>}{item.payloadSummary.consentMarketing !== undefined && <><dt>{t("Future contact permission")}</dt><dd dir="auto">{item.payloadSummary.consentMarketing ? t("Yes") : t("No")}</dd></>}</dl>{item.privacyPolicyUrl && <a href={item.privacyPolicyUrl} target="_blank" rel="noopener noreferrer">{t("Employer privacy policy")}</a>}</article>)}</div>;
+  return <div className="phone-review-items"><HistoricalTextNotice value={plan} />{plan.items.map(item => <article className="phone-card" key={item.jobId}><p className="phone-kicker">{t(reviewStateLabels[item.state])}</p><h3 dir="auto">{displayHistoricalText(item.title)}</h3><p className="phone-company" dir="auto">{displayHistoricalText(item.company)}</p>{item.job.location && <p className="phone-job-location"><bdi>{displayHistoricalText(item.job.location)}</bdi></p>}{item.reason && <p className="phone-inline-note">{displayHistoricalText(t(item.reason))}</p>}<dl className="phone-review-data"><dt>{t("Employer job page")}</dt><dd><a dir="ltr" href={item.job.url} target="_blank" rel="noopener noreferrer">{displayHistoricalText(item.job.url)}</a></dd><dt>{t("Name")}</dt><dd dir="auto">{displayHistoricalText(item.payloadSummary.name) || t("Not provided")}</dd><dt>{t("Email")}</dt><dd dir="auto">{displayHistoricalText(item.payloadSummary.email) || t("Not provided")}</dd>{item.payloadSummary.phone && <><dt>{t("Phone")}</dt><dd dir="auto">{displayHistoricalText(item.payloadSummary.phone)}</dd></>}{item.payloadSummary.website && <><dt>{t("Portfolio")}</dt><dd dir="auto">{displayHistoricalText(item.payloadSummary.website)}</dd></>}{item.payloadSummary.linkedin && <><dt>{t("LinkedIn profile")}</dt><dd dir="auto">{displayHistoricalText(item.payloadSummary.linkedin)}</dd></>}<dt>{t("CV")}</dt><dd dir="auto">{displayHistoricalText(item.resume?.name) || t("CV not recorded")}</dd><dt>{t("Profile version")}</dt><dd><bdi>{formatNumber(plan.profileRevision, language)}</bdi></dd><dt>{t("Additional information")}</dt><dd className="preserve-lines" dir="auto">{displayHistoricalText(item.payloadSummary.comments) || t("None")}</dd>{item.payloadSummary.consentStore !== undefined && <><dt>{t("Employer data-processing consent")}</dt><dd dir="auto">{item.payloadSummary.consentStore ? t("Yes") : t("No")}</dd></>}{item.payloadSummary.consentMarketing !== undefined && <><dt>{t("Future contact permission")}</dt><dd dir="auto">{item.payloadSummary.consentMarketing ? t("Yes") : t("No")}</dd></>}</dl>{item.privacyPolicyUrl && <a href={item.privacyPolicyUrl} target="_blank" rel="noopener noreferrer">{t("Employer privacy policy")}</a>}</article>)}</div>;
 }
 
 export function RecordSummary({ record }: { record?: ApplicationRecord }) {

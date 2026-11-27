@@ -5,6 +5,7 @@ import { useI18n } from "../i18n/LocaleProvider";
 import { formatDateTime, formatNumber } from "../i18n/core";
 import { friendlyDate, jobIdentity, stageNames, type ApplicationRecord, type Job } from "./model";
 import { Modal } from "./components";
+import { displayHistoricalText } from "./historical-text";
 import { availableComparisonSelection, savedComparisonRows, toggleComparisonSelection, type SavedComparisonRow } from "./saved-comparison";
 
 const historyKey = "careerFinderSavedComparison";
@@ -16,7 +17,8 @@ export function SavedComparison({ jobs, records, disabled, children }: {
   jobs: readonly Job[]; records: readonly ApplicationRecord[]; disabled: boolean;
   children: (controls: Controls) => ReactNode;
 }) {
-  const { t, language } = useI18n();
+  const { t: translate, language } = useI18n();
+  const t: typeof translate = (...args) => displayHistoricalText(translate(...args));
   const rows = useMemo(() => savedComparisonRows(jobs, records), [jobs, records]);
   const [selected, setSelected] = useState<string[]>([]);
   const [pair, setPair] = useState<string[] | null>(null);
@@ -56,7 +58,7 @@ export function SavedComparison({ jobs, records, disabled, children }: {
     if (owned && window.history.state?.[historyKey] === owned.token) { setClosing(true); window.history.back(); }
     else { entry.current = null; setClosing(false); }
   };
-  const identify = (row: SavedComparisonRow) => `${row.job.title} · ${row.job.location || t("Location not specified")}`;
+  const identify = (row: SavedComparisonRow) => displayHistoricalText(`${row.job.title} · ${displayHistoricalText(row.job.location) || t("Location not specified")}`);
   const fields = [
     { label: "Source", value: (row: SavedComparisonRow) => row.job.sourceName || t("Not recorded") },
     { label: "Last checked", value: (row: SavedComparisonRow) => row.job.checkedAt ? formatDateTime(row.job.checkedAt, language) : t("Not recorded") },
@@ -74,14 +76,15 @@ export function SavedComparison({ jobs, records, disabled, children }: {
   return <>{children({ toolbar, choice })}{pair && <Modal title={t("Compare two openings")} onClose={close}>
     {compared?.length === 2 && compared.every((row): row is SavedComparisonRow => Boolean(row)) ? <div className="phone-comparison">
       <div className="phone-comparison-head">{compared.map(row => <section key={row.identity}>
-        <span className="phone-comparison-location"><bdi>{row.job.location || t("Location not specified")}</bdi></span>
-        <h3 dir="auto">{row.job.title}</h3><p className="phone-company"><bdi>{row.job.company || t("Not recorded")}</bdi></p>
+        <span className="phone-comparison-location"><bdi>{displayHistoricalText(row.job.location) || t("Location not specified")}</bdi></span>
+        <h3 dir="auto">{displayHistoricalText(row.job.title)}</h3><p className="phone-company"><bdi>{displayHistoricalText(row.job.company) || t("Not recorded")}</bdi></p>
         {!row.bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}
       </section>)}</div>
-      <dl className="phone-comparison-fields">{fields.map(field => <div key={field.label}><dt>{t(field.label)}</dt>{compared.map(row => <dd key={row.identity}><span className="visually-hidden">{identify(row)}: </span><bdi>{field.value(row)}</bdi></dd>)}</div>)}</dl>
+      <dl className="phone-comparison-fields">{fields.map(field => <div key={field.label}><dt>{t(field.label)}</dt>{compared.map(row => <dd key={row.identity}><span className="visually-hidden">{identify(row)}: </span><bdi>{displayHistoricalText(field.value(row))}</bdi></dd>)}</div>)}</dl>
       <div className="phone-comparison-links">{compared.map(row => <a key={row.identity} className="text-button" href={row.job.url} target="_blank" rel="noopener noreferrer" aria-label={t("Open job: {0} in {1}", [row.job.title, row.job.location || t("Location not specified")])}>{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a>)}</div>
       <p className="phone-note">{t("Stages and follow-up dates are your own records.")}</p>
     </div> : <p className="phone-note" role="status">{t("A selected opening is no longer in Saved. Choose the two openings again.")}</p>}
     <div className="phone-dialog-actions"><button type="button" className="button primary" onClick={close}>{t("Back to Saved")}</button></div>
   </Modal>}</>;
 }
+

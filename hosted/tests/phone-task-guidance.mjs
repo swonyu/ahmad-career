@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { productionRead } from './phone-read-test-helpers.mjs';
 import test from 'node:test';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -20,7 +21,7 @@ const icon = ()=>null;
 function fixture(language='en',overrides={}){
   let completeNotice;
   const noticePromise=new Promise(resolve=>{completeNotice=resolve;});
-  const ctx={React,t:translate(language),language,useI18n:()=>({language,t:translate(language)}),formatNumber:value=>new Intl.NumberFormat(language).format(value),ListChecks:icon,FileText:icon,ArrowRight:icon,Copy:icon,profile:{firstName:'Maya',lastName:'Faris',email:'maya@example.invalid',phone:'',linkedin:'',website:'',resume:null},account:null,workspace:null,jobs:[],records:[],checkingIdentity:false,locked:false,tab:'apply',noticePromise,setSavedQuery:value=>ctx.query=value,setSavedFilter:value=>ctx.view=value,setSavedStage:value=>ctx.stage=value,navigate:value=>ctx.destination=value,SignInOptions:()=>React.createElement('div',null,'Optional sign-in'),useState:initial=>[initial,value=>{ctx.notice=value;completeNotice(value);}],...overrides};
+  const ctx={...productionRead,React,t:translate(language),language,useI18n:()=>({language,t:translate(language)}),formatNumber:value=>new Intl.NumberFormat(language).format(value),ListChecks:icon,FileText:icon,ArrowRight:icon,Copy:icon,profile:{firstName:'Maya',lastName:'Faris',email:'maya@example.invalid',phone:'',linkedin:'',website:'',resume:null},account:null,workspace:null,jobs:[],records:[],checkingIdentity:false,locked:false,tab:'apply',noticePromise,setSavedQuery:value=>ctx.query=value,setSavedFilter:value=>ctx.view=value,setSavedStage:value=>ctx.stage=value,navigate:value=>ctx.destination=value,SignInOptions:()=>React.createElement('div',null,'Optional sign-in'),useState:initial=>[initial,value=>{ctx.notice=value;completeNotice(value);}],...overrides};
   compile(declaration('app/phone/ApplicationGuide.tsx','ApplicationGuide')+';globalThis.ApplicationGuide=ApplicationGuide;',ctx);
   return ctx;
 }

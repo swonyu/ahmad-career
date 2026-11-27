@@ -21,6 +21,10 @@ enum CareerAppEnvironment {
     static func makeApplicationsStore() -> NativeApplicationsStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile" {
+                do { return try AcceptanceNativeJourney(root: root).makeApplicationsStore() }
+                catch { preconditionFailure("The isolated blank-profile journey could not be opened.") }
+            }
             if ProcessInfo.processInfo.environment["CAREER_UI_SAVED_COMPARISON"] == "two-openings" {
                 let folder = root.appendingPathComponent("applications", isDirectory: true)
                 let service = AcceptanceSavedComparison(root: root)
@@ -86,6 +90,10 @@ enum CareerAppEnvironment {
     static func makeDiscoveryStore() -> CareerDiscoveryStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile" {
+                do { return try AcceptanceNativeJourney(root: root).makeDiscoveryStore() }
+                catch { preconditionFailure("The isolated blank-profile discovery transport could not be opened.") }
+            }
             if let raw = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_SEQUENCE"],
                let sequence = AcceptanceDiscoveryHistory.Sequence(rawValue: raw) {
                 return CareerDiscoveryStore(file: root.appendingPathComponent("discovery.json"),

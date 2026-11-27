@@ -104,10 +104,8 @@ struct NativeApplicationsScreen: View {
         }
         return model.selected.isEmpty ? "Select opportunities to apply" : "Review applications: \(model.selected.count)"
     }
-    private var confirmed: Int {
-        model.attempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
-    }
-    private var uncertain: Int { model.attempts.filter { $0["state"]?.string == "uncertain" }.count }
+    private var confirmed: Int { model.displayConfirmedApplicationCount }
+    private var uncertain: Int { model.displayUncertainApplicationCount }
     private var appliedURLs: Set<String> {
         // Existing self-entered statuses remain separate from provider receipts.
         Set(career.workspace.snapshots.values.filter { job in
@@ -122,6 +120,7 @@ struct NativeApplicationsScreen: View {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "info.circle")
                         Text(l10n(message)).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("applications.message")
                         Spacer(minLength: 0)
                         Button { model.message = nil } label: { Image(systemName: "xmark").padding(8) }
                             .accessibilityLabel(l10n("Dismiss message"))
@@ -137,6 +136,11 @@ struct NativeApplicationsScreen: View {
                 if dynamicTypeSize.isAccessibilitySize {
                     VStack(spacing: 10) { metrics }
                 } else { HStack(spacing: 10) { metrics } }
+                if let savedAt = model.applicationHistorySavedAt, let date = ApplicationReviewPolicy.date(savedAt) {
+                    Text(l10n.format("Saved history from {0}. Connect and refresh to check the latest status.", [l10n.date(date, includeTime: true)]))
+                        .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("applications.savedHistoryNotice")
+                }
                 if !model.activePlanIDs.isEmpty {
                     HStack(spacing: 12) {
                         ProgressView()
@@ -315,6 +319,16 @@ struct NativeApplicationsScreen: View {
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityElement(children: .combine)
     }
+    private func opportunityAccessibilityLabel(for job: [String: ApplicationValue]) -> String {
+        let title: String = job["title"]?.string ?? l10n("Opportunity")
+        let company: String = job["company"]?.string ?? ""
+        let location: String = job["location"]?.string ?? ""
+        let titleAndCompany: String = l10n.format("{0} at {1}", [title, company])
+        let locationLabel: String = l10n("Location")
+        let spokenLocation: String = location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? l10n("Location not specified") : location
+        return titleAndCompany + ", " + locationLabel + ": \u{2068}" + spokenLocation + "\u{2069}"
+    }
     private var opportunities: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -331,6 +345,8 @@ struct NativeApplicationsScreen: View {
             }
             ForEach(model.jobs.compactMap { NativeApplicationRow($0) }) { row in
                 let job = row.value, id = row.id
+                let companyForInitial: String = job["company"]?.string ?? "?"
+                let companyInitial: String = String(companyForInitial.prefix(1)).uppercased()
                 VStack(alignment: .leading, spacing: 12) {
                     Button {
                         if model.selected.contains(id) { model.selected.remove(id) }
@@ -338,7 +354,7 @@ struct NativeApplicationsScreen: View {
                         else { model.message = "Review up to 20 opportunities in one batch." }
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
-                            Text(String((job["company"]?.string ?? "?").prefix(1)).uppercased())
+                            Text(companyInitial)
                                 .font(.title3.weight(.semibold)).foregroundStyle(ApplyDesign.accent)
                                 .frame(width: 42, height: 42).background(ApplyDesign.accentSurface, in: RoundedRectangle(cornerRadius: 12))
                                 .accessibilityHidden(true)
@@ -354,7 +370,8 @@ struct NativeApplicationsScreen: View {
                                 .frame(minWidth: 30, minHeight: 44)
                         }
                     }.buttonStyle(.plain).disabled(model.busy)
-                        .accessibilityLabel(l10n.format("{0} at {1}", [String(describing: job["title"]?.string ?? l10n("Opportunity")), String(describing: job["company"]?.string ?? "")]))
+                        .accessibilityLabel(opportunityAccessibilityLabel(for: job))
+                        .accessibilityIdentifier("applications.select." + id)
                         .accessibilityValue(l10n(model.selected.contains(id) ? "Selected" : "Not selected"))
                         .accessibilityHint(l10n("Select for application review"))
                     VStack(alignment: .leading, spacing: 8) {
@@ -390,18 +407,18 @@ struct NativeApplicationsScreen: View {
             HStack {
                 Text(l10n("Application receipts")).font(.headline)
                 Spacer()
-                if !model.attempts.isEmpty {
+                if model.canExportApplicationReceipts {
                     Button { Task { exported = await model.exportReceipts(); exportSheet = exported != nil } } label: {
                         Image(systemName: "square.and.arrow.up").frame(minWidth: 44, minHeight: 44)
                     }.accessibilityLabel(l10n("Export application receipts"))
                 }
             }
-            if model.attempts.isEmpty {
+            if model.displayAttempts.isEmpty {
                 empty(icon: "checkmark.seal", title: "No receipts yet",
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
-            ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
-                NativeApplicationReceipt(attempt: row.value, onStop: { planID, attemptID in
+            ForEach(model.displayAttempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
+                NativeApplicationReceipt(attempt: row.value, onStop: model.showingSavedApplicationHistory ? nil : { planID, attemptID in
                     Task { await model.stopAndCheckReceipt(planID: planID, attemptID: attemptID) }
                 })
             }
@@ -876,7 +893,7 @@ struct NativeOpportunityEditor: View {
                     Picker(l10n("Country or region"), selection: $draft.country) {
                         Text(l10n("Not specified")).tag("")
                         ForEach(Locale.Region.isoRegions.map(\.identifier).sorted {
-                            (Locale.current.localizedString(forRegionCode: $0) ?? $0) < (Locale.current.localizedString(forRegionCode: $1) ?? $1)
+                            (l10n.locale.localizedString(forRegionCode: $0) ?? $0) < (l10n.locale.localizedString(forRegionCode: $1) ?? $1)
                         }, id: \.self) { code in
                             Text(l10n(l10n.locale.localizedString(forRegionCode: code) ?? code)).tag(code)
                         }
@@ -1451,10 +1468,7 @@ private struct NativeApplicationReceipt: View {
     private var test: Bool { attempt["evidenceMode"]?.string == "test" }
     private var verified: Bool { MobileApplicationPolicy.isVerified(attempt) }
     private var contextID: String { "attempt." + (attempt["id"]?.string ?? attempt["attemptId"]?.string ?? "") }
-    private var state: String {
-        let state = attempt["state"]?.string ?? ""
-        return state == "confirmed" && !verified ? "uncertain" : state
-    }
+    private var state: String { MobileApplicationPolicy.displayState(attempt) }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
@@ -1484,7 +1498,7 @@ private struct NativeApplicationReceipt: View {
             }
             let cvDetails = ApplicationCVDetails(attempt: attempt)
             NativeApplicationDetails(resumeName: cvDetails.resumeName, profileRevision: cvDetails.profileRevision, contextID: contextID)
-            DisclosureGroup(l10n("Receipt details")) {
+            DisclosureGroup(l10n(verified ? "Receipt details" : state == "ready" ? "Draft details" : "Attempt details")) {
                 VStack(alignment: .leading, spacing: 10) {
                     if let id = attempt["applicationId"]?.string, verified {
                         LabeledContent(l10n("Provider application ID"), value: id).textSelection(.enabled)

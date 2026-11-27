@@ -23,9 +23,11 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(code, context);
   return context.exports;
 }
-const model = execute(read("app/phone/model.ts"));
-const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { APIError } = execute(read("app/components/api.ts"));
+const historicalHelpers = execute(read("app/phone/historical-text.ts"));
+const readTransport = execute(read("app/phone/read-transport.ts"), {}, name => name === "../components/api" ? { APIError } : name === "./historical-text" ? historicalHelpers : require(name));
+const model = execute(read("app/phone/model.ts"), {}, name => name === "./historical-text" ? historicalHelpers : name === "./read-transport" ? readTransport : require(name));
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { PhoneVaultError } = execute(read("app/phone/vault.ts"), {}, name => name === "./model" ? model : require(name));
 const source = process.env.CAREER_ACTIONS_SOURCE ? fs.readFileSync(process.env.CAREER_ACTIONS_SOURCE, "utf8") : read("app/phone/PhoneApp.tsx");
 const tree = ts.createSourceFile("PhoneApp.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
@@ -83,7 +85,7 @@ function recordHarness({ applied = false } = {}) {
   if (applied) saved.records[0] = model.updateRecord(saved.records[0], { ...saved.records[0], stage: "applied" });
   const writes = [], network = [], discarded = [], writeHook = { current: null };
   const context = {
-    ...model, z: require("zod").z, APIError, PhoneVaultError, Error, DOMException, URL, URLSearchParams, TextEncoder, TextDecoder, require, exports: {},
+    ...model, ...historicalHelpers, PhoneReadError: readTransport.PhoneReadError, z: require("zod").z, APIError, PhoneVaultError, Error, DOMException, URL, URLSearchParams, TextEncoder, TextDecoder, require, exports: {},
     account: { id: "synthetic-action-owner" }, epoch: { current: 4 }, identityUnverified: { current: false },
     identityCheckPending: { current: false }, identityCheckRef: { current() {} }, busyRef: { current: false },
     busy: "", locked: false, checkingIdentity: false, storageProblem: "", formChanged: false,

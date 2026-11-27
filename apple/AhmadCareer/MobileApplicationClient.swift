@@ -139,6 +139,11 @@ enum MobileApplicationPolicy {
             && ["live", "test"].contains(value["evidenceMode"]?.string ?? "")
             && !(value["applicationId"]?.string?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
     }
+    /// Presentation only: a receipt without verifiable provider evidence needs checking.
+    static func displayState(_ value: [String: ApplicationValue]) -> String {
+        let state = value["state"]?.string ?? ""
+        return state == "confirmed" && !isVerified(value) ? "uncertain" : state
+    }
     static func jobIdentity(_ text: String) -> String {
         guard var parts = URLComponents(string: text), let host = parts.host?.lowercased() else { return text }
         parts.scheme = parts.scheme?.lowercased(); parts.host = host; parts.fragment = nil
@@ -267,6 +272,7 @@ enum MobileApplicationResponse {
         }
         let detail: String
         switch code {
+        case "posting_closed" where statusCode == 409: detail = "The employer no longer lists this posting. No application was sent."
         case "uncertain": detail = "This application needs verification. It will not be sent again automatically."
         case "account_deleting": detail = "This hosted workspace is being deleted. New submissions are stopped. Open account management for its current status; your phone draft is kept."
         default: detail = message
@@ -298,11 +304,69 @@ private final class ApplicationNoRedirect: NSObject, URLSessionTaskDelegate, @un
     }
 }
 
+#if DEBUG
+/// A private, explicit acceptance transport. Production policy creates the request
+/// first; only its transport origin and capability header may change here.
+struct NativeJourneyTransport {
+    private let origin: URL
+    private let capability: String
+
+    init(origin: URL, capability: String) throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard ProcessInfo.processInfo.arguments.contains("-career-ui-acceptance"),
+              environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile",
+              environment["CAREER_UI_TEST_ID"].flatMap(UUID.init(uuidString:)) != nil,
+              let parts = URLComponents(url: origin, resolvingAgainstBaseURL: false),
+              parts.scheme == "https", parts.host == "127.0.0.1", let port = parts.port,
+              (1...65_535).contains(port), parts.user == nil, parts.password == nil,
+              parts.query == nil, parts.fragment == nil, parts.path.isEmpty || parts.path == "/",
+              capability.range(of: "^[a-f0-9]{64}$", options: .regularExpression) != nil else {
+            throw MobileApplicationError(message: "The isolated native journey transport is unavailable.")
+        }
+        self.origin = origin
+        self.capability = capability
+    }
+
+    func map(_ original: URLRequest, discovery: Bool) throws -> URLRequest {
+        let allowed = discovery
+            ? ["GET /api/discovery/sources", "GET /api/discovery/search"]
+            : ["GET /api/apply/status", "GET /api/apply/workspace", "GET /api/apply/receipts",
+               "PUT /api/apply/profile", "POST /api/apply/jobs", "POST /api/apply/prepare"]
+        guard let url = original.url,
+              let service = URLComponents(string: MobileApplicationPolicy.hostedServiceOrigin),
+              var parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              parts.scheme == service.scheme, parts.host == service.host, parts.port == service.port,
+              parts.user == nil, parts.password == nil, parts.fragment == nil,
+              allowed.contains((original.httpMethod ?? "GET") + " " + parts.path),
+              parts.path == "/api/discovery/search" || parts.query == nil,
+              original.value(forHTTPHeaderField: "x-native-journey-bridge") == nil,
+              original.value(forHTTPHeaderField: "Cookie") == nil else {
+            throw MobileApplicationError(message: "This action is unavailable in the isolated native journey.")
+        }
+        parts.scheme = origin.scheme; parts.host = origin.host; parts.port = origin.port
+        guard let target = parts.url else {
+            throw MobileApplicationError(message: "The isolated native journey address is unavailable.")
+        }
+        var request = original
+        request.url = target
+        request.setValue(capability, forHTTPHeaderField: "x-native-journey-bridge")
+        return request
+    }
+}
+#endif
+
 @MainActor
 final class MobileApplicationClient: MobileApplicationServing {
     let origin: URL
     var token: String?
     private let session: URLSession
+    #if DEBUG
+    private var nativeJourneyTransport: NativeJourneyTransport?
+    convenience init(nativeJourneyTransport: NativeJourneyTransport, token: String) throws {
+        try self.init(origin: URL(string: MobileApplicationPolicy.hostedServiceOrigin)!, token: token)
+        self.nativeJourneyTransport = nativeJourneyTransport
+    }
+    #endif
     init(origin: URL, token: String? = nil) throws {
         guard let accepted = MobileApplicationPolicy.serviceURL(origin.absoluteString) else {
             throw MobileApplicationError(message: "The application service must use a secure HTTPS address.")
@@ -332,6 +396,9 @@ final class MobileApplicationClient: MobileApplicationServing {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try JSONEncoder().encode(body)
         }
+        #if DEBUG
+        if let nativeJourneyTransport { request = try nativeJourneyTransport.map(request, discovery: false) }
+        #endif
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else {
             throw MobileApplicationError(message: "The service returned an unreadable response. Your submission status has not been changed.")

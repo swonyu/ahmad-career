@@ -21,11 +21,13 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(code, context);
   return context.exports;
 }
-const model = execute(read('app/phone/model.ts'));
+const { APIError } = execute(read('app/components/api.ts'));
+const historicalHelpers = execute(read('app/phone/historical-text.ts'));
+const readTransport = execute(read('app/phone/read-transport.ts'), {}, name => name === '../components/api' ? { APIError } : name === './historical-text' ? historicalHelpers : require(name));
+const model = execute(read('app/phone/model.ts'), {}, name => name === './historical-text' ? historicalHelpers : name === './read-transport' ? readTransport : require(name));
 const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../server/discovery-source-identity.mjs' ? sourceIdentity : require(name));
 const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
 const savedComparison = execute(read('app/phone/saved-comparison.ts'), {}, name => name === './model' ? model : require(name));
-const { APIError } = execute(read('app/components/api.ts'));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
 const i18n = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const source = read('app/phone/PhoneApp.tsx');
@@ -87,7 +89,7 @@ function harness({ initialPage, initialHistory, initialNewResult = null, restore
   const calls = [], writes = [], writeAttempts = [], writeHook = { current: null };
   let stored = JSON.stringify(snapshot);
   const context = {
-    Error, URL, URLSearchParams, Intl, DOMException, AbortController, APIError, z: require('zod').z,
+    ...historicalHelpers, PhoneReadError: readTransport.PhoneReadError, Error, URL, URLSearchParams, Intl, DOMException, AbortController, APIError, z: require('zod').z,
     filters: plain(initialFilters), searchedFilters, searchPage: displayedPage,
     restored, busy: '', busyRef: { current: false }, notice: null, epoch: { current: 3 },
     identityUnverified: { current: false }, identityCheckPending: { current: false }, identityCheckRef: { current() {} },

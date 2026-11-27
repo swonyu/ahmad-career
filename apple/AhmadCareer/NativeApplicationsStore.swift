@@ -50,6 +50,7 @@ final class NativeApplicationsStore: ObservableObject {
     @Published private var state = PhoneApplicationState()
     @Published private(set) var jobs: [[String: ApplicationValue]] = []
     @Published private(set) var attempts: [[String: ApplicationValue]] = []
+    @Published private var hasFreshApplicationHistory = false
     @Published private(set) var plan: [String: ApplicationValue]?
     @Published private(set) var activePlanIDs: [String] = []
     @Published private(set) var recoverablePlans: [[String: ApplicationValue]] = []
@@ -79,6 +80,24 @@ final class NativeApplicationsStore: ObservableObject {
     private let clientFactory: ClientFactory
     private let monotonicTime: () -> TimeInterval
 
+    /// Cached rows are only a presentation source. Operational arrays above stay empty after restart.
+    private var boundHistory: PhoneApplicationHistoryCache? {
+        guard let history = state.savedApplicationHistory, history.matches(state) else { return nil }
+        return history
+    }
+    var displayAttempts: [[String: ApplicationValue]] {
+        hasFreshApplicationHistory ? attempts : boundHistory?.entries.map(\.value) ?? []
+    }
+    var showingSavedApplicationHistory: Bool { !hasFreshApplicationHistory && boundHistory != nil }
+    var canExportApplicationReceipts: Bool { hasFreshApplicationHistory && !attempts.isEmpty }
+    var applicationHistorySavedAt: String? { showingSavedApplicationHistory ? boundHistory?.savedAt : nil }
+    /// These counts describe the same display projection as Activity, never dispatch authority.
+    var displayConfirmedApplicationCount: Int {
+        displayAttempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
+    }
+    var displayUncertainApplicationCount: Int {
+        displayAttempts.filter { MobileApplicationPolicy.displayState($0) == "uncertain" }.count
+    }
     var profile: PhoneApplicationProfile { state.profile }
     var opportunityDraft: PhoneOpportunityDraft { state.opportunityDraft }
     var profileNeedsSync: Bool { state.profileNeedsSync }
@@ -461,7 +480,8 @@ final class NativeApplicationsStore: ObservableObject {
               next.recordDrafts.count + next.recordDraftAlternatives.count <= 200,
               next.recordDrafts.allSatisfy(\.valid), next.recordDraftAlternatives.allSatisfy(\.valid),
               next.recoveredOpportunityDrafts.count <= 200, next.recoveredOpportunityDrafts.allSatisfy(\.valid),
-              next.submissionHolds.count <= 500, next.submissionHolds.allSatisfy(\.valid) else {
+              next.submissionHolds.count <= 500, next.submissionHolds.allSatisfy(\.valid),
+              next.savedApplicationHistory.map({ $0.valid && $0.matches(next) }) ?? true else {
             throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
         }
         // Encoder key order is not stable. An unchanged workspace must not rewrite the phone file.
@@ -498,6 +518,7 @@ final class NativeApplicationsStore: ObservableObject {
     }
     private func clearRemoteViews() {
         remoteJobs = []; jobs = state.jobs; attempts = []; plan = nil
+        hasFreshApplicationHistory = false
         activePlanIDs = []; recoverablePlans = []; selected = []; answers = [:]; mode = "local"
         requiresClientContinuation = false
         liveSubmissionEnabled = nil
@@ -525,7 +546,7 @@ final class NativeApplicationsStore: ObservableObject {
     private func detachLocally() -> (any MobileApplicationServing)? {
         let retired = client
         client = nil; connected = false; rotateConnection()
-        var next = state; next.connectionEnabled = false
+        var next = state; next.connectionEnabled = false; next.savedApplicationHistory = nil
         var issues: [String] = []
         do { try credentials.remove(account: state.tokenAccount); next.credentialAccount = nil }
         catch { issues.append(error.localizedDescription) }
@@ -620,8 +641,17 @@ final class NativeApplicationsStore: ObservableObject {
             guard server.revision >= (state.latestServerRevision ?? 0) else {
                 throw MobileApplicationError(message: "The service returned an older profile. Your current draft and review are preserved.")
             }
-            var next = state; next.receive(server); try persist(next)
-            remoteJobs = snapshot.jobs; attempts = snapshot.attempts
+            var next = state; next.receive(server)
+            var history = next.credentialAccount.flatMap { account in
+                PhoneApplicationHistoryCache(scope: next.recordScope, credentialAccount: account,
+                    attempts: snapshot.attempts, savedAt: ISO8601DateFormatter().string(from: Date()))
+            }
+            // Keep the actual saved-snapshot time while unchanged reads avoid needless disk writes.
+            if let existing = next.savedApplicationHistory, let candidate = history,
+               existing.sameProjection(as: candidate) { history = existing }
+            next.savedApplicationHistory = history // A successful empty snapshot replaces old history too.
+            try persist(next)
+            remoteJobs = snapshot.jobs; attempts = snapshot.attempts; hasFreshApplicationHistory = true
             activePlanIDs = snapshot.activePlanIDs; recoverablePlans = snapshot.recoverablePlans; mode = snapshot.mode
             requiresClientContinuation = snapshot.requiresClientContinuation
             liveSubmissionEnabled = snapshot.liveSubmissionEnabled
@@ -636,7 +666,10 @@ final class NativeApplicationsStore: ObservableObject {
             }
             return true
         } catch {
-            if content == contentGeneration { acceptError(error, generation: generation) }
+            if content == contentGeneration && generation == sessionGeneration {
+                hasFreshApplicationHistory = false
+                acceptError(error, generation: generation)
+            }
             return false
         }
     }
@@ -860,6 +893,7 @@ final class NativeApplicationsStore: ObservableObject {
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         let previousPlan = plan
+        var replacementStopAcknowledged = false
         let chosen = jobs.filter { selected.contains($0["id"]?.string ?? "") }
         let chosenAnswers = answers, chosenSelection = selected, chosenProfile = profile, chosenRevision = revision
         let chosenAppliedIdentities = localAppliedIdentities
@@ -879,8 +913,11 @@ final class NativeApplicationsStore: ObservableObject {
                 guard retainStopHolds([previousID], clearReview: false) else { return }
                 _ = try await client.request("stop", method: "POST", body: ["planId": .string(previousID), "onlyIfUnapproved": .bool(true)])
                 guard generation == sessionGeneration else { return }
+                replacementStopAcknowledged = true
             }
-            plan = nil
+            // Keep the disabled, held review mounted until its exact replacement is ready.
+            // A transient nil would dismiss the review sheet during the network request.
+            if !replacingUnapprovedReview { plan = nil }
             var ids: [String] = []; var manualIDs: [String] = []
             var mappedAnswers: [String: ApplicationValue] = [:]
             let manualIdentities = Set(manualAppliedURLs.map(MobileApplicationPolicy.jobIdentity)).union(chosenAppliedIdentities)
@@ -930,6 +967,10 @@ final class NativeApplicationsStore: ObservableObject {
             plan = prepared; selected = Set(ids)
             finishOperation(operation); await refresh()
         } catch {
+            // Once Stop was acknowledged, the old review is no longer current.
+            // Return to Apply with the error and retained choices for an explicit retry.
+            // A delayed failure from a retired session cannot clear another owner's review.
+            if replacementStopAcknowledged, generation == sessionGeneration { plan = nil }
             acceptError(error, generation: generation)
             finishOperation(operation)
             if (error as? MobileApplicationError)?.statusCode == 409 { await refresh() }
@@ -1371,7 +1412,7 @@ final class NativeApplicationsStore: ObservableObject {
             next.recordDraftAlternatives.removeAll { $0.scope == context.scope }
             next.recoveredOpportunityDrafts.removeAll { $0.scope == context.scope }
             next.workspaceDrafts.removeAll { $0.scope == context.scope }
-            next.connectionEnabled = false
+            next.connectionEnabled = false; next.savedApplicationHistory = nil
             let account = state.tokenAccount, retired = client
             try persist(next)
             client = nil; connected = false; rotateConnection(); clearRemoteViews()

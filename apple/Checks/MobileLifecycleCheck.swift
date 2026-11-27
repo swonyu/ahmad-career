@@ -226,7 +226,127 @@ private final class LifecycleSuite {
         scenarios += 1
     }
 
+    /// Exercise the real store while requests are suspended; no UI, credentials or network.
+    func replacementReviewTransitions() async throws {
+        let job: [String: ApplicationValue] = ["id": .string("job-1"), "url": .string("https://jobs.example/one"),
+            "title": .string("Service Designer"), "company": .string("Synthetic Harbor"), "location": .string("Riyadh")]
+        let choices: [String: ApplicationValue] = ["comments": .string("Fictional updated message"),
+            "consentStore": .bool(true), "consentMarketing": .bool(false)]
+        func detailedReview(_ id: String, revision: Int = 3) -> [String: ApplicationValue] {
+            var value = review(id, revision: revision)
+            var item = value["items"]!.array[0].object
+            item["job"] = .object(job)
+            item["payloadSummary"] = .object(choices)
+            item["resume"] = .object(["name": .string("CV-A.pdf")])
+            value["items"] = .array([.object(item)])
+            return value
+        }
+
+        for failReplacement in [false, true] {
+            let service = TestService(), gate = DelayedResponse()
+            let original = review("before-replacement"), replacement = detailedReview("after-replacement")
+            var plans = [original]
+            service.handle = { call in
+                if call.route == "stop" { plans = []; return ["ok": .bool(true)] }
+                if call.route == "prepare" { return try await gate.wait() }
+                return self.workspace(3, jobs: [job], plans: plans)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh()
+            try check(store.resumeReview(original), "The synthetic unapproved review opens before editing")
+            store.answers["job-1"] = choices
+            let preparing = Task { await store.prepare(replacingUnapprovedReview: true) }
+            try await waitUntil { gate.started }
+            try check(store.busy && store.plan == original && store.heldPlanIDs.contains("before-replacement"),
+                      "During replacement the original review stays mounted, disabled and held from submission")
+            try check(service.calls.first(where: { $0.route == "prepare" })?.body?["answers"]?.object["job-1"] == .object(choices),
+                      "Replacement prepares exactly the edited message and explicit consent choices")
+            if failReplacement { gate.fail(URLError(.notConnectedToInternet)) }
+            else { plans = [replacement]; gate.finish(["ok": .bool(true), "plan": .object(replacement)]) }
+            await preparing.value
+            if failReplacement {
+                try check(!store.busy && store.plan == nil && store.message?.isEmpty == false
+                          && store.selected == ["job-1"] && store.answers["job-1"] == choices,
+                          "A failed replacement after acknowledged Stop returns to Apply with its error and retry choices")
+                service.handle = { call in
+                    if call.route == "prepare" { plans = [replacement]; return ["ok": .bool(true), "plan": .object(replacement)] }
+                    return self.workspace(3, jobs: [job], plans: plans)
+                }
+                await store.prepare()
+            }
+            try check(!store.busy && store.plan == replacement
+                      && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-A.pdf"
+                      && store.plan!["items"]!.array[0].object["payloadSummary"] == .object(choices),
+                      "Success or explicit retry exposes the exact new job, reviewed filename and answer snapshot")
+            try check(!service.calls.contains(where: { $0.route == "submit" || $0.route == "advance" }),
+                      "Replacing or retrying a review never approves or dispatches it")
+            scenarios += 1
+        }
+
+        // A failed Stop is still held locally and can be retried; original 409 approval-race checks remain unchanged.
+        do {
+            let service = TestService(), original = review("stop-not-acknowledged")
+            let replacement = detailedReview("stop-retried")
+            var stopFails = true, plans = [original]
+            service.handle = { call in
+                if call.route == "stop" {
+                    if stopFails { throw URLError(.notConnectedToInternet) }
+                    plans = []; return ["ok": .bool(true)]
+                }
+                if call.route == "prepare" { plans = [replacement]; return ["ok": .bool(true), "plan": .object(replacement)] }
+                return self.workspace(3, jobs: [job], plans: plans)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh(); try check(store.resumeReview(original), "Failed-Stop fixture opens its original review")
+            store.answers["job-1"] = choices
+            await store.prepare(replacingUnapprovedReview: true)
+            try check(store.plan == original && !store.busy && store.heldPlanIDs.contains("stop-not-acknowledged")
+                      && !service.calls.contains(where: { $0.route == "prepare" }),
+                      "An unacknowledged Stop preserves a visible held review and does not prepare another plan")
+            stopFails = false
+            await store.prepare(replacingUnapprovedReview: true)
+            try check(store.plan == replacement && !service.calls.contains(where: { $0.route == "submit" }),
+                      "Retrying the explicit Stop safely replaces the held unapproved review")
+            scenarios += 1
+        }
+
+        // Only the new catch branch is under test here: a late failed old-owner replacement cannot clear a new review.
+        do {
+            let service = TestService(), second = TestService("https://second.example"), gate = DelayedResponse()
+            let original = review("old-owner-review"), newer = detailedReview("new-owner-review", revision: 0)
+            service.handle = { call in
+                if call.route == "prepare" { return try await gate.wait() }
+                if call.route == "stop" || call.route == "session/revoke" { return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [job], plans: [original])
+            }
+            second.handle = { call in
+                if call.route == "session" {
+                    return ["ok": .bool(true), "sessionToken": .string("synthetic-new-token"), "workspaceId": .string("workspace-b"),
+                            "profile": .object(self.server(0))]
+                }
+                return self.workspace(0, jobs: [job], plans: [newer], workspace: "workspace-b")
+            }
+            let (store, _, _) = try fixture(initial(), service: service, factory: { origin, token in
+                let selected = origin == second.origin ? second : service; selected.token = token; return selected
+            })
+            await store.refresh(); try check(store.resumeReview(original), "Old-owner replacement fixture opens its review")
+            store.answers["job-1"] = choices
+            let preparing = Task { await store.prepare(replacingUnapprovedReview: true) }
+            try await waitUntil { gate.started }
+            await store.disconnect()
+            let connected = await store.connect(address: second.origin.absoluteString, code: "SYNTHETIC")
+            try check(connected && store.resumeReview(newer), "Another workspace opens its own current review")
+            gate.fail(URLError(.notConnectedToInternet)); await preparing.value
+            try check(store.connected && store.workspaceScope.workspaceID == "workspace-b" && store.plan == newer,
+                      "Late failed replacement cannot clear a newer workspace's review")
+            try check(!(service.calls + second.calls).contains(where: { $0.route == "submit" || $0.route == "advance" }),
+                      "Neither owner gains approval from a replacement or connection transition")
+            scenarios += 1
+        }
+    }
+
     func run() async throws {
+        try await replacementReviewTransitions()
         try await savedComparisonLifecycle()
         // Both keyboard commas describe the same lists in sharing, shortcuts and portable backups.
         do {

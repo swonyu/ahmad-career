@@ -159,7 +159,7 @@ object PublicDiscoveryService : DiscoveryService {
         val values = clean.sources.map { "source" to it } + listOf("q" to clean.query, "location" to clean.location,
             "remote" to if (clean.remoteOnly) "remote" else "any") + listOfNotNull(cursor?.let { "cursor" to it })
         val query = values.joinToString("&") { (key, value) -> key + "=" + URLEncoder.encode(value, "UTF-8") }
-        return ServicePages.DEFAULT_ORIGIN + "/api/discovery/search?" + query
+        return NativeHttpTransport.discoveryOrigin + "/api/discovery/search?" + query
     }
 
     private fun canonicalHttpsBoard(raw: String): DiscoveryBoardIdentity? {
@@ -269,7 +269,7 @@ object PublicDiscoveryService : DiscoveryService {
         return DiscoveryBoardIdentity(id, provider, region, token, "https://$host/$token")
     }
 
-    override suspend fun sources() = DiscoveryCodec.catalog(get(ServicePages.DEFAULT_ORIGIN + "/api/discovery/sources"))
+    override suspend fun sources() = DiscoveryCodec.catalog(get(NativeHttpTransport.discoveryOrigin + "/api/discovery/sources"))
     override suspend fun search(filters: DiscoveryFilters, cursor: String?) = DiscoveryCodec.page(get(searchURL(filters, cursor)))
 
     private suspend fun get(address: String): JSONObject = withContext(Dispatchers.IO) {
@@ -299,6 +299,7 @@ object PublicDiscoveryService : DiscoveryService {
             if (cause != null) socket.disconnect()
         }
         try {
+            NativeHttpTransport.configure(socket)
             val status = socket.responseCode
             val retry = socket.getHeaderField("Retry-After")?.toIntOrNull()?.coerceIn(0, 86_400)
             if (status in 300..399) throw DiscoveryFailure(status, "redirect", "The search service redirected its response. Try again later.")

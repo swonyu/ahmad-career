@@ -187,6 +187,7 @@
     <string name="c_75a0187c1f67" formatted="false">"Ask for the budgeted pay range, its currency and payment frequency."</string>
     <string name="c_888ae6d498e7" formatted="false">"Ask your custom service operator for a one-time connection code."</string>
     <string name="c_d8754cb0c1f2" formatted="false">"Attempt ID"</string>
+    <string name="c_9b58caa7e5ed" formatted="false">"Attempt details"</string>
     <string name="c_cc8b822d4e24" formatted="false">"Auto Apply is not activated"</string>
     <string name="c_8d25a280d16f" formatted="false">"Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone."</string>
     <string name="c_94eed269b3a4" formatted="false">"Auto Apply · jobs: {0}"</string>
@@ -467,6 +468,7 @@
     <string name="c_11a6767d5674" formatted="false">"Done"</string>
     <string name="c_0049612de69f" formatted="false">"Done typing"</string>
     <string name="c_ebf12ef47cf5" formatted="false">"Draft"</string>
+    <string name="c_419ccdb50a81" formatted="false">"Draft details"</string>
     <string name="c_2eb540071aac" formatted="false">"During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending."</string>
     <string name="c_cefcc538ae8b" formatted="false">"Earlier assessment: "</string>
     <string name="c_0dbfcc21ff0d" formatted="false">"Earlier assessment: {0}"</string>
@@ -1177,6 +1179,7 @@
     <string name="c_2ed4c00f3c7e" formatted="false">"Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying."</string>
     <string name="c_6845d24f9053" formatted="false">"Saved for application review"</string>
     <string name="c_b8e147563157" formatted="false">"Saved for later"</string>
+    <string name="c_bec1274885a4" formatted="false">"Saved history from {0}. Connect and refresh to check the latest status."</string>
     <string name="c_877f83719c96" formatted="false">"Saved in your application workspace"</string>
     <string name="c_18eff33b2140" formatted="false">"Saved job details in this backup exceed the common 500-character limit."</string>
     <string name="c_d17ee414245c" formatted="false">"Saved jobs"</string>
@@ -1390,6 +1393,7 @@
     <string name="c_d5d06613a2ed" formatted="false">"The earlier profile was saved. Your newer edits are still a draft."</string>
     <string name="c_5a8f0838e3b8" formatted="false">"The earlier search file is unreadable and was preserved. It was not replaced by the backup."</string>
     <string name="c_8ffacb178f65" formatted="false">"The employer directory was incomplete. Your saved boards are unchanged."</string>
+    <string name="c_291efa1bcc2f" formatted="false">"The employer no longer lists this posting. No application was sent."</string>
     <string name="c_3df87cde8712" formatted="false">"The employer response contained no valid Saudi listings. Previous results are preserved."</string>
     <string name="c_c723c73426e5" formatted="false">"The employer returned an unreadable response."</string>
     <string name="c_8ace4c2a07d7" formatted="false">"The essentials"</string>
@@ -1404,6 +1408,7 @@
     <string name="c_af611cfeaa91" formatted="false">"The latest saved PDF will be used: {0}"</string>
     <string name="c_77f5a975f4d7" formatted="false">"The latest workspace could not be loaded. Your draft is preserved."</string>
     <string name="c_a0c13205e3c4" formatted="false">"The link is saved on this phone. "</string>
+    <string name="c_c44df3a4f074" formatted="false">"The link is saved on this phone. The employer no longer lists this posting. No application was sent."</string>
     <string name="c_bda14fc3b812" formatted="false">"The link is saved on this phone. {0}"</string>
     <string name="c_20bb10044a6c" formatted="false">"The local record could not be removed. Try again before leaving this workspace."</string>
     <string name="c_e7715235e60f" formatted="false">"The merged shortlist exceeds 200 links. Nothing was replaced."</string>

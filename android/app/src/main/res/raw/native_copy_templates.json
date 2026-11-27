@@ -240,6 +240,14 @@
     "arguments": 3
   },
   {
+    "key": "Saved history from {0}. Connect and refresh to check the latest status.",
+    "parts": [
+      "Saved history from ",
+      ". Connect and refresh to check the latest status."
+    ],
+    "arguments": 1
+  },
+  {
     "key": "The search service asked for a short wait. Try again after {0}",
     "parts": [
       "The search service asked for a short wait. Try again after ",
