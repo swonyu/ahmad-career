@@ -301,20 +301,37 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     private func closeProfile(_ app: XCUIApplication, save: Bool) throws {
         let title = modalNavigationTitle!
         try nav(save ? localized("Save", "حفظ") : localized("Cancel", "إلغاء"), app: app)
+        let observationStart = ProcessInfo.processInfo.systemUptime
+        var pollCount = 0
         try wait("The profile editor closes through its actual action", app: app) {
-            guard let snapshot = try? app.snapshot() else { return false }
+            pollCount += 1
+            let pollStart = ProcessInfo.processInfo.systemUptime
+            guard let snapshot = try? app.snapshot() else {
+                if pollCount <= 16 {
+                    let elapsedMs = min(300_000, Int((ProcessInfo.processInfo.systemUptime - observationStart) * 1000))
+                    print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshot=false")
+                }
+                return false
+            }
             var pending: [any XCUIElementSnapshot] = [snapshot]
-            var profileButtons = 0, editorBars = 0, firstNameFields = 0
+            var profileButtons = 0, eligibleProfileButtons = 0, editorBars = 0, firstNameFields = 0
             while let element = pending.popLast() {
                 if element.elementType == .button && element.identifier == "applications.profile" {
                     profileButtons += 1
-                    guard finite(element.frame), snapshot.frame.contains(element.frame) else { return false }
+                    if finite(element.frame) && snapshot.frame.contains(element.frame) { eligibleProfileButtons += 1 }
                 }
                 if element.elementType == .navigationBar && element.identifier == title { editorBars += 1 }
                 if element.elementType == .textField && element.identifier == "application.firstName" { firstNameFields += 1 }
                 pending.append(contentsOf: element.children)
             }
-            return profileButtons == 1 && editorBars == 0 && firstNameFields == 0
+            let accepted = profileButtons == 1 && eligibleProfileButtons == 1 && editorBars == 0 && firstNameFields == 0
+            if pollCount <= 16 {
+                let now = ProcessInfo.processInfo.systemUptime
+                let elapsedMs = min(300_000, Int((now - observationStart) * 1000))
+                let snapshotMs = min(300_000, Int((now - pollStart) * 1000))
+                print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshotMs=\(snapshotMs) appFrameFinite=\(finite(snapshot.frame)) profileCount=\(min(9, profileButtons)) eligibleProfileCount=\(min(9, eligibleProfileButtons)) editorBarCount=\(min(9, editorBars)) fieldCount=\(min(9, firstNameFields)) accepted=\(accepted)")
+            }
+            return accepted
         }
         modalNavigationTitle = nil
     }
