@@ -198,7 +198,8 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
         const oldest = [...activeSearches].reduce((value, record) => Math.min(value, record.startedAt), Infinity);
         return {search:{...search, inFlight:activeSearches.size,
           oldestInFlightMs:Number.isFinite(oldest) ? Math.min(300000, Math.round(performance.now() - oldest)) : null},
-          profileWrites:{...profileWrites}, apiRequests:stats.apiRequests, tlsErrors:stats.tlsErrors,
+          profileWrites:{...profileWrites}, apiRequests:stats.apiRequests,
+          documentRequests:{...stats.documentRequests}, tlsErrors:stats.tlsErrors,
           lastTlsErrorAtUTC:lastTlsErrorAtMs === null ? null : new Date(lastTlsErrorAtMs).toISOString(),
           lastTlsErrorAgeMs:lastTlsErrorAtMs === null ? null : Math.min(1800000, Math.max(0, Date.now() - lastTlsErrorAtMs))};
       },

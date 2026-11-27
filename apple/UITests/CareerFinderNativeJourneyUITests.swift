@@ -238,50 +238,32 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
         let label = localized("delete", "حذف")
         let keyboard = app.keyboards.firstMatch
-        let keyQuery = language == "ar" ? keyboard.keys : app.keyboards.keys
-        let keys = keyQuery.matching(NSPredicate(
+        let keys = keyboard.keys.matching(NSPredicate(
             format: "identifier == %@ AND label == %@", "delete", label))
         while ProcessInfo.processInfo.systemUptime < deadline {
-            if language == "ar" {
-                // Use one fresh snapshot of the same keyboard as the live
-                // query. A second key snapshot can exhaust the strict gate.
-                let observed = try? keyboard.snapshot()
-                let keyboardSnapshotEnd = ProcessInfo.processInfo.systemUptime
-                guard keyboardSnapshotEnd < deadline else { break }
-                var frames: [CGRect] = []
-                if let observed, observed.elementType == .keyboard {
-                    var pending: [any XCUIElementSnapshot] = [observed]
-                    while let element = pending.popLast() {
-                        if element.elementType == .key && element.identifier == "delete" && element.label == label {
-                            frames.append(element.frame)
-                        }
-                        pending.append(contentsOf: element.children.reversed())
+            // One snapshot and one live query use the same OS keyboard. A
+            // separate key snapshot can exhaust the strict five-second gate.
+            let observed = try? keyboard.snapshot()
+            let keyboardSnapshotEnd = ProcessInfo.processInfo.systemUptime
+            guard keyboardSnapshotEnd < deadline else { break }
+            var frames: [CGRect] = []
+            if let observed, observed.elementType == .keyboard {
+                var pending: [any XCUIElementSnapshot] = [observed]
+                while let element = pending.popLast() {
+                    if element.elementType == .key && element.identifier == "delete" && element.label == label {
+                        frames.append(element.frame)
                     }
+                    pending.append(contentsOf: element.children.reversed())
                 }
-                print("Native journey Arabic keyboard identities: exact=\(frames.count); snapshot=\(keyboardSnapshotEnd - start)")
-                let positions = frames.count == 1 ? [0] : frames.count == 2 ? [1, 0] : []
-                for index in positions where finite(frames[index]) && frames[index].intersects(bounds) {
-                    guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-                    let hit = keys.element(boundBy: index).isHittable
-                    let finished = ProcessInfo.processInfo.systemUptime
-                    print("Native journey real-key observation: index=\(index); snapshot=\(keyboardSnapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
-                    if hit && finished <= deadline { return }
-                }
-            } else {
-                for index in [0, 1] {
-                    guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-                    let key = keys.element(boundBy: index)
-                    let snapshot = try? key.snapshot()
-                    let snapshotEnd = ProcessInfo.processInfo.systemUptime
-                    guard snapshotEnd < deadline else { break }
-                    if finite(bounds), let snapshot, snapshot.elementType == .key,
-                       snapshot.identifier == "delete", snapshot.label == label,
-                       finite(snapshot.frame), snapshot.frame.intersects(bounds) {
-                        let hit = key.isHittable, finished = ProcessInfo.processInfo.systemUptime
-                        print("Native journey real-key observation: index=\(index); snapshot=\(snapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
-                        if hit && finished <= deadline { return }
-                    }
-                }
+            }
+            print("Native journey keyboard identities: exact=\(frames.count); snapshot=\(keyboardSnapshotEnd - start)")
+            let positions = frames.count == 1 ? [0] : frames.count == 2 ? [1, 0] : []
+            for index in positions where finite(frames[index]) && frames[index].intersects(bounds) {
+                guard ProcessInfo.processInfo.systemUptime < deadline else { break }
+                let hit = keys.element(boundBy: index).isHittable
+                let finished = ProcessInfo.processInfo.systemUptime
+                print("Native journey real-key observation: index=\(index); snapshot=\(keyboardSnapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
+                if hit && finished <= deadline { return }
             }
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
@@ -319,8 +301,37 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     private func closeProfile(_ app: XCUIApplication, save: Bool) throws {
         let title = modalNavigationTitle!
         try nav(save ? localized("Save", "حفظ") : localized("Cancel", "إلغاء"), app: app)
+        let observationStart = ProcessInfo.processInfo.systemUptime
+        var pollCount = 0
         try wait("The profile editor closes through its actual action", app: app) {
-            modalIsClosed(title, app: app) && !item("application.firstName", app: app).exists
+            pollCount += 1
+            let pollStart = ProcessInfo.processInfo.systemUptime
+            guard let snapshot = try? app.snapshot() else {
+                if pollCount <= 16 {
+                    let elapsedMs = min(300_000, Int((ProcessInfo.processInfo.systemUptime - observationStart) * 1000))
+                    print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshot=false")
+                }
+                return false
+            }
+            var pending: [any XCUIElementSnapshot] = [snapshot]
+            var profileButtons = 0, eligibleProfileButtons = 0, editorBars = 0, firstNameFields = 0
+            while let element = pending.popLast() {
+                if element.elementType == .button && element.identifier == "applications.profile" {
+                    profileButtons += 1
+                    if finite(element.frame) && snapshot.frame.contains(element.frame) { eligibleProfileButtons += 1 }
+                }
+                if element.elementType == .navigationBar && element.identifier == title { editorBars += 1 }
+                if element.elementType == .textField && element.identifier == "application.firstName" { firstNameFields += 1 }
+                pending.append(contentsOf: element.children)
+            }
+            let accepted = profileButtons == 1 && eligibleProfileButtons == 1 && editorBars == 0 && firstNameFields == 0
+            if pollCount <= 16 {
+                let now = ProcessInfo.processInfo.systemUptime
+                let elapsedMs = min(300_000, Int((now - observationStart) * 1000))
+                let snapshotMs = min(300_000, Int((now - pollStart) * 1000))
+                print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshotMs=\(snapshotMs) appFrameFinite=\(finite(snapshot.frame)) profileCount=\(min(9, profileButtons)) eligibleProfileCount=\(min(9, eligibleProfileButtons)) editorBarCount=\(min(9, editorBars)) fieldCount=\(min(9, firstNameFields)) accepted=\(accepted)")
+            }
+            return accepted
         }
         modalNavigationTitle = nil
     }
@@ -432,21 +443,45 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let onboardingCards = startPages.cells.matching(NSPredicate(format: "identifier == %@",
             "onboardingItemIdentifierContent-CustomizeStartPage"))
         let onboardingClose = onboardingCards.buttons.matching(NSPredicate(format: "label == %@", "close"))
+        enum FirstUse { case onboarding, tip, address }
+        var firstUse: FirstUse?
+        func touchIfStillLive(_ controls: XCUIElementQuery) -> Bool {
+            let deadline = ProcessInfo.processInfo.systemUptime + 5
+            guard controls.count == 1 && ProcessInfo.processInfo.systemUptime <= deadline else { return false }
+            let control = controls.element
+            guard whole(control, app: safari, chrome: true),
+                  ProcessInfo.processInfo.systemUptime <= deadline else { return false }
+            control.tap()
+            return true
+        }
         try wait("Safari exposes its observed first-use control or compact address", app: safari) {
-            startPages.count == 1 && onboardingCards.count == 1 && onboardingClose.count == 1
-                && whole(onboardingClose.element, app: safari, chrome: true)
-                || tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true)
-                || tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true)
+            if startPages.count == 1 && onboardingCards.count == 1 && onboardingClose.count == 1
+                && whole(onboardingClose.element, app: safari, chrome: true) {
+                firstUse = .onboarding; return true
+            }
+            if tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true) {
+                firstUse = .tip; return true
+            }
+            if tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true) {
+                firstUse = .address; return true
+            }
+            return false
         }
-        try require(startPages.count <= 1 && onboardingCards.count <= 1,
-            "Only the exact unique Safari Start Page onboarding card may be dismissed", app: safari)
-        if onboardingCards.count == 1 {
-            try require(startPages.count == 1 && onboardingClose.count == 1,
-                "The exact Safari onboarding card has one close control", app: safari)
-            try chromeTap(onboardingClose.element, app: safari)
+        if firstUse == .onboarding {
+            // Safari can replace this card with its separate TipView while an
+            // AX query is in flight. A disappeared card receives no touch.
+            _ = touchIfStillLive(onboardingClose)
+            try wait("Safari exposes its observed tip or compact address after onboarding", app: safari) {
+                if tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true) {
+                    firstUse = .tip; return true
+                }
+                if tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true) {
+                    firstUse = .address; return true
+                }
+                return false
+            }
         }
-        try require(tips.count <= 1, "Only the observed unique Safari tip may be dismissed", app: safari)
-        if tips.count == 1 { try chromeTap(tipClose.element, app: safari) }
+        if firstUse == .tip { _ = touchIfStillLive(tipClose) }
         try chromeTap(compactAddress.element, app: safari)
         let address = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "URL", "Address"))
         let requestedURL = documentURLs[name]!.absoluteString
@@ -457,7 +492,17 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try require(address.count == 1 && address.element.value as? String == requestedURL,
             "The full PDF URL is unchanged before closing its address editor", app: safari)
         try chromeTap(identifiedButton("CancelBarItemButton", app: safari), app: safari)
-        try chromeTap(identifiedButton("MoreMenuButton", app: safari), app: safari)
+        let moreButtons = safari.buttons.matching(NSPredicate(format: "identifier == %@", "MoreMenuButton"))
+        try wait("The unique Safari More control is wholly visible and hittable", app: safari) {
+            moreButtons.count == 1 && whole(moreButtons.element, app: safari, chrome: true)
+        }
+        let more = moreButtons.element
+        let safariFrame = safari.frame, moreFrame = more.frame
+        try require(moreButtons.count == 1 && finite(safariFrame) && finite(moreFrame)
+            && safariFrame.contains(moreFrame) && more.isHittable,
+            "The exact Safari More button has one fresh, wholly visible physical frame before its single touch", app: safari)
+        safari.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: moreFrame.midX - safariFrame.minX, dy: moreFrame.midY - safariFrame.minY)).tap()
         let share = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TabBarMoreMenu"))
             .buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "ShareButton", "Share"))
         try chromeTap(share.element, app: safari)
