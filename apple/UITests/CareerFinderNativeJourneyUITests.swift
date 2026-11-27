@@ -432,21 +432,45 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let onboardingCards = startPages.cells.matching(NSPredicate(format: "identifier == %@",
             "onboardingItemIdentifierContent-CustomizeStartPage"))
         let onboardingClose = onboardingCards.buttons.matching(NSPredicate(format: "label == %@", "close"))
+        enum FirstUse { case onboarding, tip, address }
+        var firstUse: FirstUse?
+        func touchIfStillLive(_ controls: XCUIElementQuery) -> Bool {
+            let deadline = ProcessInfo.processInfo.systemUptime + 5
+            guard controls.count == 1 && ProcessInfo.processInfo.systemUptime <= deadline else { return false }
+            let control = controls.element
+            guard whole(control, app: safari, chrome: true),
+                  ProcessInfo.processInfo.systemUptime <= deadline else { return false }
+            control.tap()
+            return true
+        }
         try wait("Safari exposes its observed first-use control or compact address", app: safari) {
-            startPages.count == 1 && onboardingCards.count == 1 && onboardingClose.count == 1
-                && whole(onboardingClose.element, app: safari, chrome: true)
-                || tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true)
-                || tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true)
+            if startPages.count == 1 && onboardingCards.count == 1 && onboardingClose.count == 1
+                && whole(onboardingClose.element, app: safari, chrome: true) {
+                firstUse = .onboarding; return true
+            }
+            if tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true) {
+                firstUse = .tip; return true
+            }
+            if tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true) {
+                firstUse = .address; return true
+            }
+            return false
         }
-        try require(startPages.count <= 1 && onboardingCards.count <= 1,
-            "Only the exact unique Safari Start Page onboarding card may be dismissed", app: safari)
-        if onboardingCards.count == 1 {
-            try require(startPages.count == 1 && onboardingClose.count == 1,
-                "The exact Safari onboarding card has one close control", app: safari)
-            try chromeTap(onboardingClose.element, app: safari)
+        if firstUse == .onboarding {
+            // Safari can replace this card with its separate TipView while an
+            // AX query is in flight. A disappeared card receives no touch.
+            _ = touchIfStillLive(onboardingClose)
+            try wait("Safari exposes its observed tip or compact address after onboarding", app: safari) {
+                if tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true) {
+                    firstUse = .tip; return true
+                }
+                if tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true) {
+                    firstUse = .address; return true
+                }
+                return false
+            }
         }
-        try require(tips.count <= 1, "Only the observed unique Safari tip may be dismissed", app: safari)
-        if tips.count == 1 { try chromeTap(tipClose.element, app: safari) }
+        if firstUse == .tip { _ = touchIfStillLive(tipClose) }
         try chromeTap(compactAddress.element, app: safari)
         let address = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "URL", "Address"))
         let requestedURL = documentURLs[name]!.absoluteString
