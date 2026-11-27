@@ -329,10 +329,23 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
 
         // Observe the system's Copy action without choosing it or any destination.
         let sheet = app.otherElements["ActivityListView"]
-        let copy = sheet.cells.matching(NSPredicate(format: "label == %@", "Copy")).element
-        try wait("The system share sheet offers Copy", app: app) { sheet.exists && copy.isHittable }
+        let copy = sheet.cells.matching(NSPredicate(format: "identifier == %@ AND label == %@", "actionGroupCell", "Copy")).element
+        try wait("The system share sheet offers Copy", app: app) { copy.isHittable }
         record("system-share-sheet", app: app)
-        try chromeTap(sheet.buttons["Close"], app: app)
+        let close = sheet.buttons["Close"]
+        if close.exists {
+            try chromeTap(close, app: app)
+        } else {
+            let dismissRegion = app.otherElements["PopoverDismissRegion"]
+            let region = dismissRegion.frame, sheetFrame = sheet.frame
+            try require(finite(region) && finite(sheetFrame) && dismissRegion.isHittable,
+                        "The system share popup exposes its outside dismiss region", app: app)
+            let outside = CGPoint(x: region.midX, y: (region.minY + sheetFrame.minY) / 2)
+            try require(region.contains(outside) && app.frame.contains(outside) && !sheetFrame.contains(outside),
+                        "The cancellation touch stays outside the share sheet", app: app)
+            dismissRegion.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
+                dx: outside.x - region.minX, dy: outside.y - region.minY)).tap()
+        }
         try wait("Cancelling returns to the same public preview", app: app) {
             !sheet.exists && bars("Saved opportunity", app: app).count == 1 && preview.exists
         }

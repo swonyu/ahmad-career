@@ -409,7 +409,9 @@ private struct NativeSavedScreen: View {
                 Button { adding = true } label: { Label(l10n("Add opportunity"), systemImage: "plus") }.accessibilityIdentifier("saved.addOpportunity")
             } }
             .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
-            .sheet(item: $comparisonSheet) { NativeSavedComparisonSheet(model: applications, keys: $0.keys) }
+            .sheet(item: $comparisonSheet) { selection in
+                NativeSavedComparisonSheet(model: applications, keys: selection.keys) { comparisonSheet = nil }
+            }
             .onChange(of: applications.savedComparisonOwner) { _ in comparisonSelection = []; comparisonSheet = nil }
             .onChange(of: applications.workspaceScope) { _ in query = ""; filter = .all }
     }
@@ -424,9 +426,9 @@ private struct NativeSavedComparisonSelection: Identifiable {
 private struct NativeSavedComparisonSheet: View {
     @NativeLocalization private var l10n
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @Environment(\.dismiss) private var dismiss
     @ObservedObject var model: NativeApplicationsStore
     let keys: [PhoneSavedComparisonKey]
+    let close: () -> Void
     var body: some View {
         NavigationStack {
             NativeList {
@@ -444,7 +446,7 @@ private struct NativeSavedComparisonSheet: View {
             }.nativeList().navigationTitle(l10n("Compare two openings")).navigationBarTitleDisplayMode(.inline)
                 .accessibilityIdentifier("saved.comparison.content")
                 .toolbar { ToolbarItem(placement: .cancellationAction) {
-                    Button(l10n("Back to Saved")) { dismiss() }.accessibilityIdentifier("saved.comparison.close")
+                    Button(l10n("Back to Saved"), action: close).accessibilityIdentifier("saved.comparison.close")
                 } }
         }
     }
