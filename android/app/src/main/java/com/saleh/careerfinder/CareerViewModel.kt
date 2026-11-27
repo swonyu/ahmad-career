@@ -23,6 +23,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
 
+internal fun cvChangeAcknowledged(requested: ProfileDraft, saved: ProfileDraft): Boolean {
+    if (requested.removeResume) return saved.resume == null
+    val selected = requested.resume?.takeIf { it.dataBase64 != null } ?: return true
+    val expectedName = selected.name.trim(::jsWhitespace)
+    return saved.resume?.let { it.name == expectedName && it.size == selected.size && it.sha256 == selected.sha256 } == true
+}
+
 class CareerViewModel internal constructor(application: Application, private val vault: PrivateStore,
     private val service: CareerService,
     discoveryService: DiscoveryService = PublicDiscoveryService,
@@ -366,6 +373,9 @@ class CareerViewModel internal constructor(application: Application, private val
             }
             val saved = ProfileDraft.fromServer(response.getJSONObject("profile"))
             serviceData(saved.revision == captured.revision + 1)
+            require(cvChangeAcknowledged(captured, saved)) {
+                "The service did not confirm the CV change. Refresh the online profile and review your draft."
+            }
             profileSaveGeneration++
             mutable.update {
                 if (it.profile == captured) it.copy(profile = saved, serverProfile = saved, profileDirty = false, plan = null,

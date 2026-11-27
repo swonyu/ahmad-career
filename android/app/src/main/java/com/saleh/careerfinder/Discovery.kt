@@ -606,7 +606,8 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     }
     fun cancelSearch() {
         generation++; searchJob?.cancel()
-        mutable.update { it.copy(loading = false, loadingMore = false, submittedSearchFailed = false, error = "Search stopped. Any earlier results are kept.") }
+        mutable.update { it.copy(loading = false, loadingMore = false, submittedSearchFailed = it.loading && !it.loadingMore,
+            error = "Search stopped. Any earlier results are kept.") }
     }
     fun search(more: Boolean = false, submitted: DiscoveryFilters? = null, ignoreDraft: Boolean = false) {
         val current = state.value
@@ -626,6 +627,8 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         val request = ++generation
         searchJob?.cancel()
         mutable.update { it.copy(loading = true, loadingMore = more, error = null, submittedSearchFailed = false,
+            nextCursor = if (more) it.nextCursor else null,
+            cursorInvalid = it.cursorInvalid || (!more && it.nextCursor != null),
             lastAttemptedFilters = if (more) it.lastAttemptedFilters else filters) }
         searchJob = scope.launch {
             try {
@@ -690,7 +693,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
             } catch (cancel: CancellationException) { throw cancel }
             catch (error: Exception) {
                 if (request != generation) return@launch
-                val changed = error is DiscoveryFailure && error.code == "discovery_changed"
+                val changed = error is DiscoveryFailure && (error.status == 409 || error.code == "discovery_changed")
                 mutable.update { it.copy(error = when {
                     changed -> "These employer boards changed since the last page. Start a new search; your earlier results are still shown."
                     error is DiscoveryFailure || error is IllegalArgumentException -> error.message

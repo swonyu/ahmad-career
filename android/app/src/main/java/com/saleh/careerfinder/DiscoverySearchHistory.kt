@@ -12,6 +12,10 @@ data class DiscoveryNewResult(val key: String, val newIds: List<String>, val com
     val baselinedSourceIds: List<String>, val pendingSourceIds: List<String>, val coverageLimited: Boolean, val baselineReset: Boolean)
 data class DiscoveryHistoryEvaluation(val history: DiscoverySearchHistory, val result: DiscoveryNewResult?, val sourceIds: List<String>)
 
+/** JavaScript String.trim whitespace shared by the hosted search and profile contracts. */
+internal fun jsWhitespace(char: Char): Boolean = char.code in 9..13 || char.code in 0x2000..0x200a ||
+    char.code in setOf(0x20, 0xa0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff)
+
 /** Local first-observation evidence. Employer posting dates and closure are separate facts. */
 object DiscoveryHistoryPolicy {
     const val MAX_QUERIES = 8
@@ -32,8 +36,6 @@ object DiscoveryHistoryPolicy {
     fun sourceIds(filters: DiscoveryFilters, defaults: List<String>): List<String>? =
         canonical(if (filters.sources.isEmpty()) defaults else filters.sources)
 
-    private fun jsWhitespace(char: Char): Boolean = char.code in 9..13 || char.code in 0x2000..0x200a ||
-        char.code in setOf(0x20, 0xa0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff)
     private fun fold(value: String) = marks.replace(
         Normalizer.normalize(value.trim(::jsWhitespace), Normalizer.Form.NFKD), "").lowercase(Locale.ROOT)
 
