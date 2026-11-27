@@ -10,6 +10,8 @@ final class AcceptanceApplicationHistory: MobileApplicationServing {
     var token: String?
     private let root: URL
     private let recordedAt = "2026-11-21T18:00:00Z"
+    // Historical attempts keep their fixed dates; this separate unsent review must remain current on every CI run.
+    private let reviewExpiresAt = ISO8601DateFormatter().string(from: Date().addingTimeInterval(24 * 60 * 60))
     private let pdfHash = String(repeating: "a", count: 64)
     private let manualRecordID = "CFA00000-0000-4000-8000-000000000001"
 
@@ -37,7 +39,7 @@ final class AcceptanceApplicationHistory: MobileApplicationServing {
     private var plan: [String: ApplicationValue] {
         ["id": .string("cv-review-b"), "digest": .string("synthetic-cv-review-b-digest"),
          "profileRevision": .number(8), "createdAt": .string(recordedAt),
-         "expiresAt": .string("2026-11-23T00:00:00Z"), "stopped": .bool(false), "approvedAt": .null,
+         "expiresAt": .string(reviewExpiresAt), "stopped": .bool(false), "approvedAt": .null,
          "items": .array([.object(["jobId": .string("review-b"), "state": .string("ready"),
              "job": .object(reviewJob), "resume": .object(resume("CV-B.pdf")),
              "payloadSummary": .object(["name": .string("Synthetic Applicant"),

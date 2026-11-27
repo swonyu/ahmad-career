@@ -177,9 +177,16 @@ class SearchHistoryUITestCase: XCTestCase {
         let nativeSwitches = toggle.descendants(matching: .switch)
         try require(nativeSwitches.count == 1, "The identified filter has exactly one native switch control", app: app)
         let nativeSwitch = nativeSwitches.element
-        if (toggle.value as? String) != (on ? "1" : "0") {
+        let currentValue = toggle.value as? String
+        try require(currentValue == "0" || currentValue == "1", "The native filter exposes an actual on/off state", app: app)
+        if currentValue != (on ? "1" : "0") {
             try require(whole(toggle, app: app), "The identified filter remains wholly visible and currently hittable", app: app)
-            try tap(nativeSwitch, app: app, forward: false)
+            try reveal(nativeSwitch, app: app, forward: false)
+            try require(whole(nativeSwitch, app: app), "The native switch thumb is wholly visible and currently hittable", app: app)
+            // On the retained Arabic runner the track-center tap hit the 28-point
+            // switch but left it off. Touch its visible thumb side in RTL/LTR.
+            let thumbX: CGFloat = (currentValue == "1") == (language == "ar") ? 0.15 : 0.85
+            nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: thumbX, dy: 0.5)).tap()
         }
         try wait("The local New-only filter has the requested state", app: app) {
             (toggle.value as? String) == (on ? "1" : "0") && (nativeSwitch.value as? String) == (on ? "1" : "0")

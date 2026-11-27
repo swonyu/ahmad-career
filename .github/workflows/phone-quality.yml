@@ -31,6 +31,7 @@ on:
           - full
           - android
           - iphone-connection
+          - iphone-regressions
           - iphone-ui
           - iphone-documents-en
           - iphone-documents-ar
@@ -261,10 +262,10 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
     runs-on: macos-26
-    # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
+    # The expanded sequential suite needs about 80 minutes on the observed simulator.
     timeout-minutes: 115
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
@@ -393,6 +394,7 @@ jobs:
         timeout-minutes: 100
         run: |
           set -o pipefail
+          cases=()
           selection=()
           case "$CAREER_UI_ACCEPTANCE_SCOPE" in
             full) ;;
@@ -400,11 +402,22 @@ jobs:
               echo 'PARTIAL CI scope: all default iPhone UI tests.'
               ;;
             iphone-connection)
-              selection=(-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup)
+              cases=(CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup)
               echo 'PARTIAL regression: this one journey cannot establish the full release gate.'
+              ;;
+            iphone-regressions)
+              cases=(CareerFinderApplicationHistoryUITests/testEnglishApplicationHistoryAcceptance
+                CareerFinderApplicationHistoryUITests/testArabicApplicationHistoryAcceptance
+                CareerFinderSearchHistoryUITests/testArabicSearchHistoryAcceptance
+                CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply
+                CareerFinderUITests/testSavedSearchFindsArabicNotesAndKeepsOriginalText)
               ;;
             *) echo 'Unsupported acceptance scope'; exit 1 ;;
           esac
+          if (( ${#cases[@]} )); then
+            printf '%s\n' "${cases[@]}" > "$RUNNER_TEMP/career-expected-ui-cases"
+            for chosen in "${cases[@]}"; do selection+=("-only-testing:CareerFinderUITests/$chosen"); done
+          fi
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
             -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE,arch=$CAREER_UI_ARCH" \
             -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
@@ -412,16 +425,16 @@ jobs:
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
             ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             "${selection[@]}" test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
-      - name: Verify the partial regression actually ran once
-        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' }}
+      - name: Verify every selected regression ran once
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' }}
         shell: python
         run: |
           import os, pathlib, re
           log = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-ui.log').read_text()
-          observed = re.findall(r"Test Case '-\[CareerFinderUITests\.CareerFinderUITests (test\w+)\]' (passed|failed) \(", log)
-          expected = [('testProfileReadinessAndSimpleConnectionSetup', 'passed')]
-          assert observed == expected, observed
-          print('PARTIAL: one connection journey passed. The full five-job gate remains required.')
+          observed = re.findall(r"Test Case '-\[CareerFinderUITests\.(\w+) (test\w+)\]' (passed|failed) \(", log)
+          expected = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-expected-ui-cases').read_text().splitlines()
+          assert sorted((f'{cls}/{method}', status) for cls, method, status in observed) == sorted((case, 'passed') for case in expected), observed
+          print(f'{len(expected)} selected iPhone regression cases passed.')
       - name: Retain bounded DEBUG browser lifecycle diagnostics
         if: ${{ always() && env.CAREER_UI_DEVICE != '' }}
         shell: bash
@@ -444,7 +457,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') && env.CAREER_UI_ACCEPTANCE_SCOPE || 'iphone-ui-acceptance' }}-${{ github.run_id }}
+          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' && 'PARTIAL-iphone-history-keyboard' || startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') && env.CAREER_UI_ACCEPTANCE_SCOPE || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-selection.json
             ${{ runner.temp }}/career-iphone-input-configuration.json

@@ -1291,9 +1291,13 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Open application workspace"].waitForExistence(timeout: 5))
         app.buttons["Open application workspace"].tap()
         XCTAssertTrue(app.tabBars.buttons["Apply"].isSelected)
-        let select = app.buttons["Interface designer at Synthetic employer"]
+        let selectors = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "applications.select.local-"))
+        XCTAssertEqual(selectors.count, 1, "The discovered role must have one selectable row in the application workspace")
+        guard selectors.count == 1 else { return }
+        let select = selectors.element
         reveal(select, in: app)
-        XCTAssertTrue(select.exists, "The discovered role must be in the actual application workspace")
+        XCTAssertTrue(select.label.hasPrefix("Interface designer at Synthetic employer, Location: "),
+                      "The discovered role, employer and location must be announced in the actual application workspace")
         capture("07-discovery-to-application-workspace", app: app)
     }
 
