@@ -183,18 +183,13 @@ class SearchHistoryUITestCase: XCTestCase {
             try require(whole(toggle, app: app), "The identified filter remains wholly visible and currently hittable", app: app)
             try reveal(nativeSwitch, app: app, forward: false)
             try require(whole(nativeSwitch, app: app), "The native switch thumb is wholly visible and currently hittable", app: app)
-            if language == "ar" {
-                // A center tap on the narrow Arabic switch did not change its state.
-                let thumbX: CGFloat = currentValue == "0" ? 0.85 : 0.15
-                nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: thumbX, dy: 0.5)).tap()
-            } else {
-                // The visible English switch stayed off after a thumb-edge tap.
-                // Slide between the centers of its two thumb positions.
-                let fromX: CGFloat = currentValue == "0" ? 0.3 : 0.7
-                let from = nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: fromX, dy: 0.5))
-                let to = nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: 1 - fromX, dy: 0.5))
-                from.press(forDuration: 0.05, thenDragTo: to)
-            }
+            // A touch at the edge left the visible switch off in both locales.
+            // Slide between the thumb centers, mirrored in the Arabic layout.
+            let thumbOnLeft = (currentValue == "1") == (language == "ar")
+            let fromX: CGFloat = thumbOnLeft ? 0.3 : 0.7
+            let from = nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: fromX, dy: 0.5))
+            let to = nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: 1 - fromX, dy: 0.5))
+            from.press(forDuration: 0.05, thenDragTo: to)
         }
         try wait("The local New-only filter has the requested state", app: app) {
             (toggle.value as? String) == (on ? "1" : "0") && (nativeSwitch.value as? String) == (on ? "1" : "0")
