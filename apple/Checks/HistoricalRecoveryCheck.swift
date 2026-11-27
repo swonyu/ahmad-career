@@ -236,6 +236,21 @@ private final class RecoveryProtocol: URLProtocol {
         try check(envelope["format"]?.string == "career-finder-raw-recovery" && Data(base64Encoded: envelope["documentBase64"]!.string!) == bytes, "self-contained raw export retains exact complete document")
         try check(Set(envelope.keys) == ["format", "version", "exportedAt", "source", "documentBase64"], "export has no token or cursor")
         try failing("ordinary portable import rejects evidence export") { _ = try NativeApplicationsStore.readWorkspaceBackup(at: exported) }
+        try check(PhoneRecoveryStorage.isTemporaryExport(exported), "raw share copy is held in the app's temporary directory")
+        try check((try FileManager.default.attributesOfItem(atPath: exported.path)[.posixPermissions] as? NSNumber)?.intValue == 0o600, "raw share copy is private")
+        let secondExport = try PhoneRecoveryStorage.export(reference, in: directory)
+        let firstLease = PhoneRecoveryExportLease(file: exported)
+        var abandonedLease: PhoneRecoveryExportLease? = PhoneRecoveryExportLease(file: secondExport)
+        firstLease.cleanup() // A completed or cancelled share removes only its own copy.
+        try check(!FileManager.default.fileExists(atPath: exported.path)
+            && FileManager.default.fileExists(atPath: secondExport.path)
+            && (try reference.document(in: directory)).sha256 == doc.sha256,
+            "closing one share removes its copy while another share and retained original remain")
+        try check(abandonedLease?.file == secondExport, "unpresented export owns its own temporary copy")
+        abandonedLease = nil // No presentation: releasing the owner must remove the copy.
+        try check(!FileManager.default.fileExists(atPath: secondExport.path)
+            && (try reference.document(in: directory)).sha256 == doc.sha256,
+            "abandoned share copy is removed without deleting retained evidence")
         var wrong = value; var wrongProfile = p; wrongProfile["firstName"] = .string("é\\uD800"); wrong["profile"] = .object(wrongProfile)
         try failing("canonically equivalent NFC display is not exact source spelling") { _ = try document(documentBytes(wrong, legacy: [legacyFirst, legacyName, legacyID])) }
         try failing("duplicate sidecar path rejected") { _ = try document(documentBytes(value, legacy: [legacyFirst, legacyFirst, legacyName, legacyID])) }
@@ -529,6 +544,7 @@ private final class RecoveryProtocol: URLProtocol {
         try check(!(await store.saveProfile(store.profile, context: store.editContext)) && service.calls.count == calls, "unchanged escaped profile never reaches PUT")
         try check(store.exportWorkspace(context: store.workspaceActionContext) == nil, "portable v1 cannot silently export projected profile")
         let raw = await store.exportHistoricalRecovery(); try check(raw != nil, "separate complete recovery export available")
+        defer { if let raw { PhoneRecoveryStorage.removeTemporaryExport(raw) } }
         let restarted = NativeApplicationsStore(folder: directory, credentials: tokens, clientFactory: { _, token in service.token = token; return service })
         try check(restarted.profileNeedsHistoricalRepair && restarted.profile.firstName == malformed.display, "restart preserves raw provenance and write gate")
         var repaired = restarted.repairedHistoricalProfileDraft(restarted.profile)

@@ -76,7 +76,7 @@ struct NativeSavedLinkRemoval: View {
 private struct NativeHistoricalRecovery: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
-    @State private var file: URL?
+    @State private var exportLease: PhoneRecoveryExportLease?
     @State private var sharing = false
     @State private var exporting = false
     @State private var exportTask: Task<Void, Never>?
@@ -85,7 +85,12 @@ private struct NativeHistoricalRecovery: View {
         exporting = true
         exportTask = Task {
             let result = await model.exportHistoricalRecovery(reference)
-            if !Task.isCancelled { file = result; sharing = result != nil }
+            if Task.isCancelled {
+                if let result { PhoneRecoveryStorage.removeTemporaryExport(result) }
+            } else if let result {
+                exportLease = PhoneRecoveryExportLease(file: result)
+                sharing = true
+            }
             exporting = false; exportTask = nil
         }
     }
@@ -121,7 +126,13 @@ private struct NativeHistoricalRecovery: View {
                         .accessibilityIdentifier("applications.historicalRecovery.refresh")
                 }
             }
-            .sheet(isPresented: $sharing) { if let file { NativeApplicationShare(items: [file]) } }
+            .sheet(isPresented: $sharing, onDismiss: {
+                exportLease?.cleanup(); exportLease = nil
+            }) {
+                if let exportLease {
+                    NativeApplicationShare(items: [exportLease.file], onCompletion: { exportLease.cleanup() })
+                }
+            }
             .onDisappear { exportTask?.cancel() }
         }
     }
@@ -139,6 +150,7 @@ struct NativeApplicationsScreen: View {
     @State private var reviewSheet = false
     @State private var activity = false
     @State private var exported: URL?
+    @State private var recoveryExportLease: PhoneRecoveryExportLease?
     @State private var exportSheet = false
     @State private var removing: PhoneLocalRemovalContext?
     @State private var announcedMessage: String?
@@ -301,8 +313,12 @@ struct NativeApplicationsScreen: View {
         .sheet(isPresented: $addSheet) { NativeOpportunityEditor(model: model) }
         .sheet(isPresented: $reviewSheet) { NativeApplicationReview(model: model, manualAppliedURLs: appliedURLs) }
         .sheet(item: $removing) { NativeSavedLinkRemoval(model: model, context: $0) }
-        .sheet(isPresented: $exportSheet) {
-            if let exported { NativeApplicationShare(items: [exported]) }
+        .sheet(isPresented: $exportSheet, onDismiss: {
+            recoveryExportLease?.cleanup(); recoveryExportLease = nil
+        }) {
+            if let exported, let recoveryExportLease {
+                NativeApplicationShare(items: [exported], onCompletion: { recoveryExportLease.cleanup() })
+            } else if let exported { NativeApplicationShare(items: [exported]) }
         }
         .refreshable { await model.refresh() }
         .onAppear { speakVisibleMessage(model.message) }
@@ -463,7 +479,13 @@ struct NativeApplicationsScreen: View {
                 Text(l10n("Application receipts")).font(.headline)
                 Spacer()
                 if model.canExportApplicationReceipts {
-                    Button { Task { exported = await model.exportReceipts(); exportSheet = exported != nil } } label: {
+                    Button { Task {
+                        let result = await model.exportReceipts()
+                        if let result, PhoneRecoveryStorage.isTemporaryExport(result) {
+                            recoveryExportLease = PhoneRecoveryExportLease(file: result)
+                        } else { recoveryExportLease = nil }
+                        exported = result; exportSheet = result != nil
+                    } } label: {
                         Image(systemName: "square.and.arrow.up").frame(minWidth: 44, minHeight: 44)
                     }.accessibilityLabel(l10n("Export application receipts"))
                 }
@@ -1840,7 +1862,12 @@ struct NativePhoneDataScreen: View {
 
 private struct NativeApplicationShare: UIViewControllerRepresentable {
     let items: [Any]
-    func makeUIViewController(context: Context) -> UIActivityViewController { UIActivityViewController(activityItems: items, applicationActivities: nil) }
+    var onCompletion: (() -> Void)? = nil
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in onCompletion?() }
+        return controller
+    }
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 #endif

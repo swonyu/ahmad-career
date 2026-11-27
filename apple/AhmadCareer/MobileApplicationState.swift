@@ -782,6 +782,18 @@ struct PhoneRecoveryReference: Codable, Equatable {
 }
 
 enum PhoneRecoveryStorage {
+    private static let exportPrefix = "Career-Finder-Raw-Recovery-"
+    static func isTemporaryExport(_ file: URL) -> Bool {
+        let name = file.lastPathComponent
+        guard file.deletingLastPathComponent().standardizedFileURL == FileManager.default.temporaryDirectory.standardizedFileURL,
+              name.hasPrefix(exportPrefix), name.hasSuffix(".json") else { return false }
+        let identifier = String(name.dropFirst(exportPrefix.count).dropLast(".json".count))
+        return UUID(uuidString: identifier) != nil
+    }
+    static func removeTemporaryExport(_ file: URL) {
+        guard isTemporaryExport(file) else { return }
+        try? FileManager.default.removeItem(at: file)
+    }
     static func attributes() -> [FileAttributeKey: Any] {
         #if os(iOS)
         return [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication, .posixPermissions: 0o600]
@@ -853,7 +865,8 @@ enum PhoneRecoveryStorage {
         let source = folder.appendingPathComponent(reference.documentFileName)
         try verify(reference, file: source)
         if reference.totalBytes <= ApplicationReadWire.assemblyBytes { _ = try reference.document(in: folder) }
-        let output = folder.appendingPathComponent("Career-Finder-Raw-Recovery-" + UUID().uuidString + ".json")
+        // A share copy is disposable. The verified original stays in the protected recovery folder.
+        let output = FileManager.default.temporaryDirectory.appendingPathComponent(exportPrefix + UUID().uuidString + ".json")
         let temporary = output.appendingPathExtension("partial")
         defer { try? FileManager.default.removeItem(at: temporary) }
         guard FileManager.default.createFile(atPath: temporary.path, contents: nil, attributes: attributes()) else { throw CocoaError(.fileWriteUnknown) }
@@ -880,6 +893,14 @@ enum PhoneRecoveryStorage {
         try FileManager.default.moveItem(at: temporary, to: output)
         return output
     }
+}
+
+/// Owns one disposable share copy. A never-presented share is removed when its owner goes away.
+final class PhoneRecoveryExportLease {
+    let file: URL
+    init(file: URL) { self.file = file }
+    func cleanup() { PhoneRecoveryStorage.removeTemporaryExport(file) }
+    deinit { cleanup() }
 }
 
 /// Preflight intent is durable before a scoped mutation can leave the phone. It contains no body or credential.
