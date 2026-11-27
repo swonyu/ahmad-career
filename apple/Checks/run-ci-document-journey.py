@@ -8,6 +8,7 @@ from pathlib import Path
 import plistlib
 import re
 import socket
+import stat
 import subprocess
 import time
 import uuid
@@ -25,6 +26,36 @@ closeSecondary closedResult outage outageResult networkDisconnected networkFailu
 
 def read_json(path):
     return json.loads(path.read_bytes())
+
+
+def publish_private(path, value):
+    payload = (json.dumps(value, sort_keys=True) + "\n").encode()
+    temporary = path.with_name(".pending-" + path.name + "-" + uuid.uuid4().hex)
+    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    try:
+        with os.fdopen(descriptor, "wb") as output:
+            output.write(payload)
+            output.flush()
+            os.fsync(output.fileno())
+        os.link(temporary, path, follow_symlinks=False)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def runtime_runner_container(parent, test_id):
+    matches = []
+    for candidate in parent.iterdir():
+        if not re.fullmatch(r"[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}", candidate.name):
+            continue
+        control = candidate / "Documents" / "NativeJourneyControl" / test_id
+        try:
+            info = control.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISDIR(info.st_mode) and not control.is_symlink() and candidate.resolve(strict=True) == candidate:
+            matches.append(candidate)
+    assert len(matches) <= 1, "More than one runtime Runner owns this exact test ID"
+    return matches[0] if matches else None
 
 
 def verify_attachments(output, control, device, language, test_id, method):
@@ -82,16 +113,18 @@ def run(language):
     simctl = ["xcrun", "simctl"]
     with log_path.open("wb") as log:
         subprocess.run([*build, "build-for-testing"], stdout=log, stderr=subprocess.STDOUT, check=True, timeout=600)
-        containers = []
+        containers, bundle_ids = [], []
         for bundle in ["Career Finder.app", "CareerFinderUITests-Runner.app"]:
             product = derived / "Build/Products/Debug-iphonesimulator" / bundle
             bundle_id = plistlib.loads((product / "Info.plist").read_bytes())["CFBundleIdentifier"]
+            bundle_ids.append(bundle_id)
             subprocess.run([*simctl, "install", device, product], check=True)
             container = subprocess.check_output([*simctl, "get_app_container", device, bundle_id, "data"], text=True)
             containers.append(str(Path(container.strip()).resolve(strict=True)))
         private = temp / "career-document-private"
         private.mkdir(mode=0o700)
         test_id = str(uuid.uuid4()).upper()
+        runtime_runner_id = runtime_app_id = None
         with socket.socket() as sock:
             sock.bind(("127.0.0.1", 0))
             port = str(sock.getsockname()[1])
@@ -117,8 +150,48 @@ def run(language):
                 env[f"TEST_RUNNER_CAREER_NATIVE_JOURNEY_PDF_{letter}_{language.upper()}"] = url
             method = "testBlankProfileJourney" + {"en": "English", "ar": "Arabic"}[language]
             result = temp / "CareerFinderUI.xcresult"
-            subprocess.run([*build, "-resultBundlePath", result, "-only-testing:CareerFinderUITests/CareerFinderNativeJourneyUITests/" + method,
-                            "test-without-building"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=1800)
+            test_command = [*build, "-resultBundlePath", result,
+                            "-only-testing:CareerFinderUITests/CareerFinderNativeJourneyUITests/" + method,
+                            "test-without-building"]
+            test = subprocess.Popen(test_command, env=env, stdout=log, stderr=subprocess.STDOUT)
+            controller_ready = False
+            try:
+                deadline = time.monotonic() + 1800
+                runner_parent = Path(containers[1]).parent
+                while test.poll() is None:
+                    if runtime_runner_id is None:
+                        runtime_runner = runtime_runner_container(runner_parent, test_id)
+                        if runtime_runner is not None:
+                            runtime_app = Path(subprocess.check_output(
+                                [*simctl, "get_app_container", device, bundle_ids[0], "data"], text=True).strip()).resolve(strict=True)
+                            runtime_runner_id, runtime_app_id = runtime_runner.name, runtime_app.name
+                            publish_private(private / "runner-container-handoff.json", {
+                                "schemaVersion": 1, "testID": test_id,
+                                "appContainer": str(runtime_app), "runnerContainer": str(runtime_runner),
+                            })
+                    if runtime_runner_id is not None and not controller_ready:
+                        marker = private / "controller-ready.json"
+                        if marker.is_file():
+                            bound = read_json(marker)
+                            assert bound == {"schemaVersion": 1, "testID": test_id,
+                                             "runnerContainerID": runtime_runner_id}
+                            controller_ready = True
+                    if fixture.poll() not in (None, 0):
+                        raise RuntimeError("The owned fixture rejected the runtime Runner handoff")
+                    if time.monotonic() >= deadline:
+                        raise subprocess.TimeoutExpired(test_command, 1800)
+                    time.sleep(0.2)
+                if test.returncode != 0:
+                    raise subprocess.CalledProcessError(test.returncode, test_command)
+                assert runtime_runner_id is not None and controller_ready
+            finally:
+                if test.poll() is None:
+                    test.terminate()
+                    try:
+                        test.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        test.kill()
+                        test.wait()
             assert fixture.wait(timeout=30) == 0
             proof = read_json(private / "result.json")
             assert proof["ok"] is True and proof["testID"] == test_id and proof["zeroDispatch"] is True
@@ -129,7 +202,8 @@ def run(language):
             subprocess.run(["xcrun", "xcresulttool", "export", "attachments", "--path", result, "--output-path", exported], check=True)
             verify_attachments(exported, private / ("control-" + test_id), device, language, test_id, method)
             receipt = {"commit": selection["checkoutSHA"], "testID": test_id, "method": method, "language": language,
-                       "device": device, "checkpoints": len(CHECKPOINTS), "screenshots": len(CAPTURES), "zeroDispatch": True}
+                       "device": device, "checkpoints": len(CHECKPOINTS), "screenshots": len(CAPTURES), "zeroDispatch": True,
+                       "runtimeRunnerContainerID": runtime_runner_id}
             (temp / "career-document-journey.json").write_text(json.dumps(receipt, indent=2) + "\n")
             print(f"{method} passed with {len(CHECKPOINTS)} verified checkpoints and {len(CAPTURES)} screenshots.")
         finally:
@@ -155,6 +229,7 @@ def run(language):
                 receipt.write_text(json.dumps({
                     "ok": False, "commit": selection["checkoutSHA"], "language": language,
                     "testID": test_id, "expectedRunnerContainerID": Path(containers[1]).name,
+                    "runtimeRunnerContainerID": runtime_runner_id, "runtimeAppContainerID": runtime_app_id,
                     "host": {
                         "failureStage": safe_code(failure.get("stage")),
                         "failureCode": safe_code(failure.get("code")),

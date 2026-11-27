@@ -12,7 +12,7 @@ import {captureNativeJourneySourceInputs, bundleNativeJourney, createNativeJourn
 import {startNativeJourneyBridge} from './bridge.mjs';
 import {createFileCheckpointController, readCheckpointFile} from './file-control.mjs';
 import {assertBlankWorkspace, assertZeroDispatch} from './contract.mjs';
-import {CHECKPOINTS, UUID} from './control-state.mjs';
+import {CHECKPOINTS, UUID, decodeBoundedJSON} from './control-state.mjs';
 
 const ownFile = fileURLToPath(import.meta.url);
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -156,17 +156,38 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
     const bootstrapSHA256 = await atomicPrivate(bootstrapPath, bootstrap);
     if ((await readCheckpointFile(bootstrapPath, 65536, {privateMode:true})).sha256 !== bootstrapSHA256) fail('iphone_bootstrap_changed');
     if (signal?.aborted) fail('iphone_cancelled');
-    stage = 'checkpoint_controller';
     const stopAt = performance.now() + 1_500_000;
-    controller = await createFileCheckpointController({harness, bridge, testID:config.testID,
-      workspaceID:connection.workspaceId, logicalOrigin:connection.origin,
-      workerSHA256:bundle.sha256, bootstrapSHA256, followUpDay:config.followUpDay,
-      appContainer:bound.app, runnerContainer:bound.runner, evidenceParent:config.workDir,
-      expectedSourceFiles:pins, stopAt});
     const documents = Object.fromEntries(Object.entries(bridge.privateConfiguration.documents)
       .map(([name, relative]) => [name, bridge.privateConfiguration.iosOrigin + relative]));
     if (Object.keys(documents).sort().join(',') !== 'CV-A.pdf,CV-B.pdf') fail('iphone_document_urls_invalid');
     await atomicPrivate(path.join(config.workDir, 'ready.json'), json({caPath:bridge.caPath, documents}));
+    // Xcode may reinstall the UI-test Runner when test-without-building starts,
+    // giving it a new data container. The supervisor observes the Runner's own
+    // exact test-ID control directory and hands back that runtime container.
+    stage = 'runner_handoff';
+    const handoffPath = path.join(config.workDir, 'runner-container-handoff.json');
+    while (true) {
+      if (signal?.aborted) fail('iphone_cancelled');
+      if (performance.now() >= stopAt) fail('iphone_deadline');
+      try { await lstat(handoffPath); break; }
+      catch (error) { if (error.code !== 'ENOENT') throw error; }
+      await delay(25);
+    }
+    const handoff = decodeBoundedJSON((await readCheckpointFile(handoffPath, 4096, {privateMode:true})).bytes, 4096);
+    if (!handoff || Object.keys(handoff).sort().join(',') !== 'appContainer,runnerContainer,schemaVersion,testID' ||
+        handoff.schemaVersion !== 1 || handoff.testID !== config.testID ||
+        handoff.appContainer !== bound.app.path || typeof handoff.runnerContainer !== 'string' ||
+        handoff.runnerContainer.length > 4096 || !path.isAbsolute(handoff.runnerContainer) ||
+        path.resolve(handoff.runnerContainer) !== handoff.runnerContainer || scope(handoff.runnerContainer)) fail('iphone_runner_handoff_invalid');
+    const runtime = await containers(handoff.appContainer, handoff.runnerContainer);
+    stage = 'checkpoint_controller';
+    controller = await createFileCheckpointController({harness, bridge, testID:config.testID,
+      workspaceID:connection.workspaceId, logicalOrigin:connection.origin,
+      workerSHA256:bundle.sha256, bootstrapSHA256, followUpDay:config.followUpDay,
+      appContainer:runtime.app, runnerContainer:runtime.runner, evidenceParent:config.workDir,
+      expectedSourceFiles:pins, stopAt});
+    await atomicPrivate(path.join(config.workDir, 'controller-ready.json'), json({schemaVersion:1,
+      testID:config.testID, runnerContainerID:path.basename(runtime.runner.path)}));
     stage = 'checkpoints';
     while (!controller.complete) {
       if (signal?.aborted) fail('iphone_cancelled');
