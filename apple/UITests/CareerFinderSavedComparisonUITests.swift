@@ -72,9 +72,13 @@ class SavedComparisonUITestCase: XCTestCase {
         let prefix = "saved-comparison-\(language)-\(phase)-\(name)"
         let png = XCTAttachment(screenshot: app.screenshot()); png.name = prefix; png.lifetime = .keepAlways; add(png)
         let ax = XCTAttachment(string: app.debugDescription); ax.name = prefix + "-original-AX"; ax.lifetime = .keepAlways; add(ax)
-        let ids = ["saved.filter", "saved.comparison.count", "saved.comparison.open", "saved.comparison.clear", "saved.comparison.close"]
-            + [a, b, c].map { "saved.comparison.select." + $0 }
-            + [a, b].flatMap { id in ["title", "location", "source", "checkedAt", "stage", "followUp", "employer"].map { "saved.comparison." + id + "." + $0 } }
+        var ids = ["saved.filter", "saved.comparison.count", "saved.comparison.open", "saved.comparison.clear", "saved.comparison.close"]
+        for id in [a, b, c] { ids.append("saved.comparison.select." + id) }
+        for id in [a, b] {
+            for field in ["title", "location", "source", "checkedAt", "stage", "followUp", "employer"] {
+                ids.append("saved.comparison." + id + "." + field)
+            }
+        }
         var elements: [[String: String]] = []
         for id in ids {
             let query = app.descendants(matching: .any).matching(NSPredicate(format: "identifier == %@", id))

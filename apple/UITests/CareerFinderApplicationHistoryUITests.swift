@@ -77,8 +77,12 @@ class ApplicationHistoryUITestCase: XCTestCase {
         let ax = XCTAttachment(string: app.debugDescription); ax.name = prefix + "-original-AX"; ax.lifetime = .keepAlways; add(ax)
         let contexts = ["attempt.prepared", "attempt.test", "attempt.uncertain", "attempt.confirmed", "attempt.legacy",
                         "review.cv-review-b.review-b", "record." + recordID]
-        let identifiers = contexts.flatMap { ["application.details." + $0, "application.details." + $0 + ".resume", "application.details." + $0 + ".revision"] }
-            + ["record.manualResumeName", "record.stageSummary", "record.edit"]
+        var identifiers: [String] = []
+        for context in contexts {
+            let base = "application.details." + context
+            identifiers += [base, base + ".resume", base + ".revision"]
+        }
+        identifiers += ["record.manualResumeName", "record.stageSummary", "record.edit"]
         var elements: [[String: String]] = []
         for id in identifiers {
             let query = app.descendants(matching: .any).matching(NSPredicate(format: "identifier == %@", id))
