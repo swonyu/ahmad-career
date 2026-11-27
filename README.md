@@ -70,7 +70,7 @@ Removing a bookmark keeps its application record. Closing an application keeps i
 
 Searching and local preparation do not require an account. New users supply their own details. Signing in does not automatically upload an existing draft.
 
-The last verified live baseline supports **ChatGPT sign-in**, including its **Continue with Google** option. The candidate also implements direct Google and LinkedIn sign-in; it offers a direct method only when the backend reports it configured and supported. Google setup is saved in private revision 1, but activation and real consent remain unverified. LinkedIn direct login requires a provider-reported verified email; if none is available, the UI explains the available ChatGPT/Google sign-in plus basic-link alternative without inventing an applicant address. Use the same identity on another phone to recover the same workspace. To add a method to an existing workspace, sign in to that workspace first and connect it from Account or Settings. Matching email addresses never merge accounts. Native apps use a short-lived, single-use connection code; the browser app uses its verified account directly without a pairing code.
+The Connect page shows the sign-in methods available for that deployment. Direct Google and LinkedIn sign-in require provider configuration. LinkedIn sign-in also requires a provider-reported verified email. Use the same identity on another phone to recover the same workspace. To add a sign-in method, open the existing workspace first and connect it from Account or Settings. Matching email addresses never merge accounts. Native apps use a short-lived, single-use connection code. The browser app uses its verified account directly.
 
 **Save on this phone** preserves a local draft. **Save profile online** uploads the chosen profile and PDF to the private workspace. Online saves check profile revisions so another phone's changes are not silently overwritten. A comparison screen shows both versions before a deliberate choice.
 
@@ -82,7 +82,7 @@ Account controls provide cloud export, retained PDF downloads, phone disconnecti
 
 | Capability | Actual scope |
 | --- | --- |
-| Google sign-in | Available through the existing ChatGPT flow. Direct OAuth code is present; the Google client/branding and private configuration revision 1 are saved, but no matching deployment or real callback is yet recorded. Provider tokens are not retained, and Career Finder does not receive the Google password. |
+| Google sign-in | The account recovery check verified that signing out and signing in with Google reopened its own workspace. The Connect page reports which Google options are currently available. Provider tokens are discarded after verification. [Account recovery receipt](https://github.com/swonyu/ahmad-career/pull/4) |
 | LinkedIn profile | Save and open an optional personal profile URL. The app removes tracking information and displays the exact link in an application review. |
 | LinkedIn job search | Explicitly open LinkedIn with your entered keywords and location. LinkedIn handles its own login and application. |
 | LinkedIn account connection/sign-in | v7 has basic-link code. The candidate adds direct OIDC login with `openid profile email`, accepting a fresh provider-reported verified email or failing safely with `email_required`. Explicit basic linking requests only `openid profile` and collects no new email. Provider registration/product activation and real consent remain open. Neither flow imports a CV, submits LinkedIn applications or verifies legal identity. |
