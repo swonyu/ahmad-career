@@ -774,8 +774,13 @@ export default function PhoneApp({ account }: { account: Account }) {
     } finally { await finishBatch(batch, current); }
   });
   const stopPlan = (review: Plan) => run("Stopping unsent applications", async generation => {
-    const current = online(), scope = snapshotRef.current?.scope; if (!scope) throw Error("Open this workspace before stopping its review."); await holdStop(scope, review.id); const result = await phoneAPI("/api/phone/stop", { method: "POST", body: { expectedWorkspaceId: current.workspaceId, planId: review.id, onlyIfUnapproved: !review.approvedAt } });
-    await confirmStopped(result, scope, review.id); await acceptPlanResult(result, current, generation, review.id); setNotice({ text: "Unsent applications stopped. Any request already in flight will still have its outcome recorded." });
+    const current = online(), scope = snapshotRef.current?.scope;
+    if (!scope) throw Error("Open this workspace before stopping its review.");
+    await holdStop(scope, review.id);
+    const result = await phoneAPI("/api/phone/stop", { method: "POST", body: { expectedWorkspaceId: current.workspaceId, planId: review.id, onlyIfUnapproved: false } });
+    await confirmStopped(result, scope, review.id);
+    await acceptPlanResult(result, current, generation, review.id);
+    setNotice({ text: "Unsent applications stopped. Any request already in flight will still have its outcome recorded." });
   });
   const stopAndCheckReceipt = (planId: string) => run("Stopping and checking pending work", async generation => {
     const current = online();
