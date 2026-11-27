@@ -328,14 +328,13 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
         try tap(app.buttons["Share job link"], app: app)
 
         // Observe the system's Copy action without choosing it or any destination.
-        let copy = app.descendants(matching: .any).matching(NSPredicate(format:
-            "identifier == %@ OR label == %@", "com.apple.UIKit.activity.CopyToPasteboard", "Copy")).firstMatch
-        try wait("The system share sheet offers Copy", app: app) { copy.exists && copy.isHittable }
+        let sheet = app.otherElements["ActivityListView"]
+        let copy = sheet.cells.matching(NSPredicate(format: "label == %@", "Copy")).element
+        try wait("The system share sheet offers Copy", app: app) { sheet.exists && copy.isHittable }
         record("system-share-sheet", app: app)
-        let close = app.buttons.matching(NSPredicate(format: "label IN %@", ["Close", "Cancel", "Dismiss"])).element
-        try chromeTap(close, app: app)
+        try chromeTap(sheet.buttons["Close"], app: app)
         try wait("Cancelling returns to the same public preview", app: app) {
-            !copy.exists && bars("Saved opportunity", app: app).count == 1 && preview.exists
+            !sheet.exists && bars("Saved opportunity", app: app).count == 1 && preview.exists
         }
     }
 }
