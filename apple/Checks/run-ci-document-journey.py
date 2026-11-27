@@ -29,7 +29,7 @@ def read_json(path):
 
 
 def publish_private(path, value):
-    payload = (json.dumps(value, sort_keys=True) + "\n").encode()
+    payload = value if isinstance(value, bytes) else (json.dumps(value, sort_keys=True) + "\n").encode()
     temporary = path.with_name(".pending-" + path.name + "-" + uuid.uuid4().hex)
     descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     try:
@@ -40,6 +40,40 @@ def publish_private(path, value):
         os.link(temporary, path, follow_symlinks=False)
     finally:
         temporary.unlink(missing_ok=True)
+
+
+def read_private(path):
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        before = os.fstat(descriptor)
+        assert stat.S_ISREG(before.st_mode) and before.st_uid == os.getuid() and before.st_nlink == 1
+        assert stat.S_IMODE(before.st_mode) == 0o600 and 0 < before.st_size <= 65536
+        data = os.read(descriptor, before.st_size + 1)
+        after = os.fstat(descriptor)
+        assert len(data) == before.st_size and (before.st_dev, before.st_ino, before.st_mtime_ns) == (
+            after.st_dev, after.st_ino, after.st_mtime_ns)
+        return data
+    finally:
+        os.close(descriptor)
+
+
+def migrate_bootstrap(original_app, runtime_app, test_id, bootstrap):
+    assert runtime_app.parent == original_app.parent and re.fullmatch(
+        r"[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}", runtime_app.name)
+    for directory in (runtime_app, runtime_app / "Library", runtime_app / "Library" / "Application Support",
+                      runtime_app / "Library" / "Application Support" / "CareerFinderUIAcceptance",
+                      runtime_app / "Library" / "Application Support" / "CareerFinderUIAcceptance" / test_id):
+        if directory != runtime_app:
+            directory.mkdir(mode=0o700, exist_ok=True)
+        info = directory.lstat()
+        assert stat.S_ISDIR(info.st_mode) and not directory.is_symlink() and info.st_uid == os.getuid()
+        assert stat.S_IMODE(info.st_mode) & 0o022 == 0 and directory.resolve(strict=True) == directory
+    destination = directory / "native-journey-bootstrap.private.json"
+    copied = not destination.exists()
+    if copied:
+        publish_private(destination, bootstrap)
+    assert hashlib.sha256(read_private(destination)).digest() == hashlib.sha256(bootstrap).digest()
+    return copied
 
 
 def runtime_runner_container(parent, test_id):
@@ -124,7 +158,7 @@ def run(language):
         private = temp / "career-document-private"
         private.mkdir(mode=0o700)
         test_id = str(uuid.uuid4()).upper()
-        runtime_runner_id = runtime_app_id = None
+        runtime_runner_id = runtime_app_id = bootstrap_copied_at = seed_seen_at = None
         with socket.socket() as sock:
             sock.bind(("127.0.0.1", 0))
             port = str(sock.getsockname()[1])
@@ -148,6 +182,10 @@ def run(language):
                 url = ready["documents"][f"CV-{letter}.pdf"]
                 assert re.fullmatch(rf"https://127\.0\.0\.1:{port}/__native-journey-documents/[a-f0-9]{{48}}/CV-{letter}\.pdf", url)
                 env[f"TEST_RUNNER_CAREER_NATIVE_JOURNEY_PDF_{letter}_{language.upper()}"] = url
+            original_app = Path(containers[0])
+            bootstrap = read_private(original_app / "Library" / "Application Support" / "CareerFinderUIAcceptance"
+                                     / test_id / "native-journey-bootstrap.private.json")
+            bootstrap_hash = hashlib.sha256(bootstrap).hexdigest()
             method = "testBlankProfileJourney" + {"en": "English", "ar": "Arabic"}[language]
             result = temp / "CareerFinderUI.xcresult"
             test_command = [*build, "-resultBundlePath", result,
@@ -158,18 +196,37 @@ def run(language):
             try:
                 deadline = time.monotonic() + 1800
                 runner_parent = Path(containers[1]).parent
+                runtime_runner = None
+                handoff_sent = False
                 while test.poll() is None:
-                    if runtime_runner_id is None:
+                    if runtime_runner is None:
                         runtime_runner = runtime_runner_container(runner_parent, test_id)
                         if runtime_runner is not None:
+                            runtime_runner_id = runtime_runner.name
+                    if runtime_runner is not None and not handoff_sent:
+                        try:
                             runtime_app = Path(subprocess.check_output(
-                                [*simctl, "get_app_container", device, bundle_ids[0], "data"], text=True).strip()).resolve(strict=True)
-                            runtime_runner_id, runtime_app_id = runtime_runner.name, runtime_app.name
-                            publish_private(private / "runner-container-handoff.json", {
-                                "schemaVersion": 1, "testID": test_id,
-                                "appContainer": str(runtime_app), "runnerContainer": str(runtime_runner),
-                            })
-                    if runtime_runner_id is not None and not controller_ready:
+                                [*simctl, "get_app_container", device, bundle_ids[0], "data"],
+                                text=True, stderr=subprocess.DEVNULL).strip()).resolve(strict=True)
+                            runtime_app_id = runtime_app.name
+                            if migrate_bootstrap(original_app, runtime_app, test_id, bootstrap):
+                                bootstrap_copied_at = datetime.datetime.now(datetime.timezone.utc).isoformat(
+                                    timespec="milliseconds")
+                            seed = runtime_app / "Library" / "Application Support" / "CareerFinderUIAcceptance" \
+                                / test_id / "native-journey-seed-receipt.json"
+                            if seed.is_file() and stat.S_IMODE(seed.lstat().st_mode) == 0o600:
+                                receipt = json.loads(read_private(seed))
+                                assert receipt["testID"] == test_id and receipt["bootstrapSHA256"] == bootstrap_hash
+                                seed_seen_at = datetime.datetime.now(datetime.timezone.utc).isoformat(
+                                    timespec="milliseconds")
+                                publish_private(private / "runner-container-handoff.json", {
+                                    "schemaVersion": 1, "testID": test_id,
+                                    "appContainer": str(runtime_app), "runnerContainer": str(runtime_runner),
+                                })
+                                handoff_sent = True
+                        except (FileNotFoundError, subprocess.CalledProcessError):
+                            pass  # Xcode may replace the app container while installing the target.
+                    if handoff_sent and not controller_ready:
                         marker = private / "controller-ready.json"
                         if marker.is_file():
                             bound = read_json(marker)
@@ -183,7 +240,7 @@ def run(language):
                     time.sleep(0.2)
                 if test.returncode != 0:
                     raise subprocess.CalledProcessError(test.returncode, test_command)
-                assert runtime_runner_id is not None and controller_ready
+                assert handoff_sent and controller_ready
             finally:
                 if test.poll() is None:
                     test.terminate()
@@ -203,7 +260,8 @@ def run(language):
             verify_attachments(exported, private / ("control-" + test_id), device, language, test_id, method)
             receipt = {"commit": selection["checkoutSHA"], "testID": test_id, "method": method, "language": language,
                        "device": device, "checkpoints": len(CHECKPOINTS), "screenshots": len(CAPTURES), "zeroDispatch": True,
-                       "runtimeRunnerContainerID": runtime_runner_id}
+                       "runtimeRunnerContainerID": runtime_runner_id, "runtimeAppContainerID": runtime_app_id,
+                       "bootstrapCopiedAtUTC": bootstrap_copied_at, "seedReceiptObservedAtUTC": seed_seen_at}
             (temp / "career-document-journey.json").write_text(json.dumps(receipt, indent=2) + "\n")
             print(f"{method} passed with {len(CHECKPOINTS)} verified checkpoints and {len(CAPTURES)} screenshots.")
         finally:
@@ -229,7 +287,9 @@ def run(language):
                 receipt.write_text(json.dumps({
                     "ok": False, "commit": selection["checkoutSHA"], "language": language,
                     "testID": test_id, "expectedRunnerContainerID": Path(containers[1]).name,
+                    "initialAppContainerID": Path(containers[0]).name,
                     "runtimeRunnerContainerID": runtime_runner_id, "runtimeAppContainerID": runtime_app_id,
+                    "bootstrapCopiedAtUTC": bootstrap_copied_at, "seedReceiptObservedAtUTC": seed_seen_at,
                     "host": {
                         "failureStage": safe_code(failure.get("stage")),
                         "failureCode": safe_code(failure.get("code")),

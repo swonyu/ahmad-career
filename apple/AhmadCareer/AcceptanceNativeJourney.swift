@@ -65,7 +65,14 @@ struct AcceptanceNativeJourney {
               environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile",
               let raw = environment["CAREER_UI_TEST_ID"], let id = UUID(uuidString: raw),
               root.lastPathComponent == id.uuidString else { throw Self.rejected() }
-        let bytes = try Self.readPrivate(root.appendingPathComponent("native-journey-bootstrap.private.json"), maximum: 65_536)
+        let bootstrap = root.appendingPathComponent("native-journey-bootstrap.private.json")
+        let deadline = ProcessInfo.processInfo.systemUptime + 10
+        // Xcode may replace the simulator app container as this test app launches.
+        while !FileManager.default.fileExists(atPath: bootstrap.path),
+              ProcessInfo.processInfo.systemUptime < deadline {
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        let bytes = try Self.readPrivate(bootstrap, maximum: 65_536)
         let configuration = try JSONDecoder().decode(Bootstrap.self, from: bytes)
         let connection = configuration.connection
         guard configuration.schemaVersion == 1, configuration.testID == id.uuidString,
