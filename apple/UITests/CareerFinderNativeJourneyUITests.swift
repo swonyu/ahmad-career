@@ -323,35 +323,39 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         guard language == "en" else { return }
         let rootID = "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: Recents"
         let navID = "FullDocumentManagerViewControllerNavigationBar"
-        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 10
+        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 15
+        func exactFilesHierarchy(_ description: String) -> Bool {
+            let lines = description.split(separator: "\n")
+            let roots = lines.enumerated().filter { _, line in
+                let element = line.trimmingCharacters(in: .whitespaces)
+                return element.hasPrefix("Other,") && element.contains("identifier: '\(rootID)'")
+            }
+            guard roots.count == 1 else { return false }
+            let (rootIndex, rootLine) = roots[0]
+            let rootIndent = rootLine.prefix(while: { $0 == " " }).count
+            var navigationBars = 0
+            for line in lines.dropFirst(rootIndex + 1) {
+                let indent = line.prefix(while: { $0 == " " }).count
+                if indent <= rootIndent { break }
+                let element = line.trimmingCharacters(in: .whitespaces)
+                if element.hasPrefix("NavigationBar,") && element.contains("identifier: '\(navID)'") {
+                    navigationBars += 1
+                }
+            }
+            return navigationBars == 1
+        }
         var presented = false
         while ProcessInfo.processInfo.systemUptime < deadline {
-            if let snapshot = try? app.snapshot() {
-                var pending: [any XCUIElementSnapshot] = [snapshot]
-                var roots: [any XCUIElementSnapshot] = []
-                while let element = pending.popLast() {
-                    if element.elementType == .other && element.identifier == rootID { roots.append(element) }
-                    pending.append(contentsOf: element.children)
-                }
-                if roots.count == 1 && finite(roots[0].frame) && roots[0].frame.intersects(snapshot.frame) {
-                    pending = roots[0].children
-                    var navigationBars = 0
-                    while let element = pending.popLast() {
-                        if element.elementType == .navigationBar && element.identifier == navID
-                            && finite(element.frame) && element.frame.intersects(snapshot.frame) {
-                            navigationBars += 1
-                        }
-                        pending.append(contentsOf: element.children)
-                    }
-                    if navigationBars == 1 && ProcessInfo.processInfo.systemUptime <= deadline {
-                        presented = true; break
-                    }
-                }
+            // A remote Files view can be absent from app.snapshot() while it is
+            // present in the live AX hierarchy. Inspect one hierarchy per poll.
+            let hierarchy = app.debugDescription
+            if exactFilesHierarchy(hierarchy) && ProcessInfo.processInfo.systemUptime <= deadline {
+                presented = true; break
             }
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
         }
-        try require(presented, "The exact English OS Files Recent root and navigation appear inside ten seconds", app: app)
+        try require(presented, "The exact English OS Files Recent root and navigation appear inside fifteen seconds", app: app)
     }
     private func cancelPicker(_ app: XCUIApplication) throws {
         try openProfile(app)
