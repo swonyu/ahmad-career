@@ -242,11 +242,29 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         while ProcessInfo.processInfo.systemUptime < deadline {
             let bounds = app.frame
             guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-            // Arabic AX has exposed one or two exact delete-key nodes. Avoid
-            // enumerating the whole live keyboard, which can exceed this gate.
-            // Probe each observed position with a fresh exact snapshot and hit
-            // test; a nonhittable duplicate cannot satisfy the requirement.
-            for index in 0..<2 {
+            var positions = [0, 1]
+            if language == "ar" {
+                // A keyboard-only snapshot identifies one or two exact real
+                // keys without enumerating the live query. A lone key keeps
+                // index zero; with two Arabic representations the second has
+                // repeatedly been the currently hittable one.
+                let keyboard = try? app.keyboards.firstMatch.snapshot()
+                let keyboardSnapshotEnd = ProcessInfo.processInfo.systemUptime
+                guard keyboardSnapshotEnd < deadline else { break }
+                var exactKeys = 0
+                if let keyboard, keyboard.elementType == .keyboard {
+                    var pending = keyboard.children
+                    while let element = pending.popLast() {
+                        if element.elementType == .key && element.identifier == "delete" && element.label == label {
+                            exactKeys += 1
+                        }
+                        pending.append(contentsOf: element.children)
+                    }
+                }
+                print("Native journey Arabic keyboard identities: exact=\(exactKeys); snapshot=\(keyboardSnapshotEnd - start)")
+                positions = exactKeys == 1 ? [0] : exactKeys == 2 ? [1, 0] : []
+            }
+            for index in positions {
                 guard ProcessInfo.processInfo.systemUptime < deadline else { break }
                 let key = keys.element(boundBy: index)
                 let snapshot = try? key.snapshot()
