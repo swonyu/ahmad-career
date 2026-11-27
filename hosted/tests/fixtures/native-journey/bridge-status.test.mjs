@@ -52,8 +52,17 @@ test('failure diagnostics expose bounded search, profile-write and TLS timing', 
     assert.ok(diagnostic.search.lastDurationMs >= 20);
     assert.deepEqual(diagnostic.profileWrites, {admitted:0, completed:0, inFlight:0,
       lastAdmittedAtUTC:null, lastCompletedAtUTC:null, lastDurationMs:null, lastStatusClass:null});
+    assert.deepEqual(diagnostic.documentRequests, {'CV-A.pdf':0, 'CV-B.pdf':0});
     assert.equal(diagnostic.lastTlsErrorAtUTC, null);
     assert.equal(diagnostic.lastTlsErrorAgeMs, null);
+    const documentResponse = new Promise((resolve, reject) => {
+      https.get(`https://127.0.0.1:${port}${bridge.privateConfiguration.documents['CV-A.pdf']}`,
+        {ca}, result => {
+          result.resume(); result.on('end', () => resolve(result.statusCode));
+        }).on('error', reject);
+    });
+    assert.equal(await documentResponse, 200);
+    assert.deepEqual(bridge.status().documentRequests, {'CV-A.pdf':1, 'CV-B.pdf':0});
     const profileResponse = new Promise((resolve, reject) => {
       const request = https.request(`https://127.0.0.1:${port}/api/apply/profile`,
         {method:'PUT', ca, headers:{authorization:'Bearer synthetic',

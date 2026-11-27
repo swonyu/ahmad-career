@@ -250,6 +250,7 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
         result.diagnostic.search = status.search;
         result.diagnostic.profileWrites = status.profileWrites;
         result.diagnostic.loopbackApiRequests = status.apiRequests;
+        result.diagnostic.documentRequests = status.documentRequests;
         result.diagnostic.tlsErrors = status.tlsErrors;
         result.diagnostic.lastTlsErrorAtUTC = status.lastTlsErrorAtUTC;
         result.diagnostic.lastTlsErrorAgeMs = status.lastTlsErrorAgeMs;
