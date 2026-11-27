@@ -98,6 +98,13 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       }
       const responseHeaders = {'Content-Type': result.headers.get('content-type') ?? 'application/json',
         'Content-Length': reply.length, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer'};
+      // Preserve the actual read protocol and recovery-integrity metadata.
+      // Never synthesize a version or forward unrelated service headers.
+      for (const name of ['X-Career-Read-Version', 'X-Career-Read-SHA256', 'X-Career-Read-Bytes',
+        'X-Career-Read-Workspace-Id', 'X-Career-Read-Account-SHA256']) {
+        const value = result.headers.get(name);
+        if (value !== null) responseHeaders[name] = value;
+      }
       const retryAfter = result.headers.get('retry-after');
       if (retryAfter !== null) responseHeaders['Retry-After'] = retryAfter;
       response.writeHead(result.status, responseHeaders); response.end(reply);

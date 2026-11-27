@@ -37,8 +37,8 @@ object SavedJobMetadata {
     }
 
     fun samePosting(first: Opportunity, second: Opportunity): Boolean = runCatching {
-        BoundaryPolicy.opportunityURL(first.url)
-        BoundaryPolicy.opportunityURL(second.url)
+        BoundaryPolicy.historicalOpportunityURL(first.url)
+        BoundaryPolicy.historicalOpportunityURL(second.url)
         BoundaryPolicy.jobIdentity(first.url) == BoundaryPolicy.jobIdentity(second.url)
     }.getOrDefault(false)
 
@@ -69,7 +69,7 @@ object SavedComparisonPolicy {
     fun key(state: CareerUiState, job: Opportunity, recordOnly: Boolean = false): SavedComparisonKey? {
         if (!state.loaded || state.storageBlocked) return null
         val identity = runCatching {
-            BoundaryPolicy.opportunityURL(job.url)
+            BoundaryPolicy.historicalOpportunityURL(job.url)
             BoundaryPolicy.jobIdentity(job.url)
         }.getOrNull() ?: return null
         val rowId = if (recordOnly) "record-" + identity else job.id

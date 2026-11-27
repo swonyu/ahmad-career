@@ -12,6 +12,11 @@ internal object ApplicationCvEvidence {
     fun validRecordedName(value: String): Boolean = validManualName(value) && value.isNotEmpty() &&
         value == value.trim() && !value.startsWith(".") && value.endsWith(".pdf", ignoreCase = true)
 
+    /** Historical names are display evidence; new manual names retain strict Unicode validation. */
+    fun validHistoricalRecordedName(value: String): Boolean = value.length <= 180 && value.isNotEmpty() &&
+        value.none { it.code < 32 || it.code == 127 || it in "/\\:" } &&
+        value == value.trim() && !value.startsWith(".") && value.endsWith(".pdf", ignoreCase = true)
+
     fun manualName(value: JSONObject): String? {
         if (!value.has("manualResumeName") || value.isNull("manualResumeName")) return null
         val name = value.opt("manualResumeName")
@@ -28,7 +33,7 @@ internal object ApplicationCvEvidence {
     fun recordedName(value: JSONObject): String? {
         if (!value.has("resumeName") || value.isNull("resumeName")) return null
         val name = value.opt("resumeName")
-        serviceData(name is String && validRecordedName(name))
+        serviceData(name is String && validHistoricalRecordedName(name))
         return name as String
     }
 

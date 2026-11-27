@@ -69,7 +69,7 @@ public final class ProfileContract {
         String error = textError(value, "Website", 2048);
         if (error != null) return error;
         try {
-            URI uri = new URI(BoundaryPolicy.opportunityURL(value.trim()));
+            URI uri = new URI(BoundaryPolicy.serviceOpportunityURL(value.trim()));
             String host = uri.getHost().toLowerCase(Locale.ROOT);
             if ((uri.getPort() != -1 && uri.getPort() != 443) || !host.contains(".") || host.contains(":") ||
                 host.matches("[0-9.]+") || host.matches("(?:.*\\.)?(localhost|local|internal|test|invalid)"))

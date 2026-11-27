@@ -255,7 +255,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try openProfile(app)
         try tap(choosePDFButton(app), app: app)
         modalNavigationTitle = nil
-        let cancel = app.navigationBars.buttons.matching(NSPredicate(format: "label == %@", localized("Cancel", "إلغاء"))).element
+        let cancel = app.navigationBars.matching(NSPredicate(format: "identifier == %@", "FullDocumentManagerViewControllerNavigationBar")).buttons.matching(NSPredicate(format: "label == %@", localized("Cancel", "إلغاء"))).element
         try chromeTap(cancel, app: app)
         modalNavigationTitle = localized("Application profile", "ملف التقديم")
         try wait("Picker cancellation returns without selecting a PDF", app: app) { choosePDFButton(app).exists }
@@ -271,31 +271,72 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         // locales. No app token or bridge capability accompanies a PDF request.
         safari.launchArguments = ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         safari.open(documentURLs[name]!)
-        let download = safari.alerts.buttons.matching(NSPredicate(format: "label == %@", "Download"))
-        let share = safari.buttons.matching(NSPredicate(format: "label == %@", "Share"))
-        let preview = safari.navigationBars.matching(NSPredicate(format: "identifier == %@ OR identifier == %@", name, String(name.dropLast(4))))
-        try wait("Safari offers the exact download or named PDF preview", app: safari) {
-            download.count == 1 || preview.count == 1 && share.count == 1
+        // The observed compact Safari layout renders this PDF inline. Its
+        // unfocused address shows only the host, so verify the full current URL
+        // through the actual address editor before opening its Share menu.
+        let tips = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TipView"))
+        let tipClose = tips.buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "xmark.circle.fill", "Close"))
+        let compactAddress = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "TabBarItemTitle", "Address"))
+        try wait("Safari exposes its observed first-use tip or compact address", app: safari) {
+            tips.count == 1 && tipClose.count == 1 && whole(tipClose.element, app: safari, chrome: true)
+                || tips.count == 0 && compactAddress.count == 1 && whole(compactAddress.element, app: safari, chrome: true)
         }
-        if download.count == 1 {
-            try chromeTap(download.element, app: safari)
-            try chromeTap(exactButton("Downloads", app: safari), app: safari)
-            try chromeTap(systemText(name, app: safari), app: safari)
+        try require(tips.count <= 1, "Only the observed unique Safari tip may be dismissed", app: safari)
+        if tips.count == 1 { try chromeTap(tipClose.element, app: safari) }
+        try chromeTap(compactAddress.element, app: safari)
+        let address = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "URL", "Address"))
+        let requestedURL = documentURLs[name]!.absoluteString
+        try wait("Safari's current full address exactly identifies the requested PDF", app: safari) {
+            address.count == 1 && address.element.value as? String == requestedURL
+                && whole(address.element, app: safari, chrome: true)
         }
-        try wait("Share belongs to the actual named PDF preview", app: safari) {
-            preview.count == 1 && share.count == 1
-        }
+        try require(address.count == 1 && address.element.value as? String == requestedURL,
+            "The full PDF URL is unchanged before closing its address editor", app: safari)
+        try chromeTap(identifiedButton("CancelBarItemButton", app: safari), app: safari)
+        try chromeTap(identifiedButton("MoreMenuButton", app: safari), app: safari)
+        let share = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TabBarMoreMenu"))
+            .buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "ShareButton", "Share"))
         try chromeTap(share.element, app: safari)
-        try chromeTap(exactButton("Save to Files", app: safari), app: safari)
-        try chromeTap(systemText("On My iPhone", app: safari), app: safari)
-        try wait("Save to Files names the real local destination", app: safari) {
-            safari.navigationBars.matching(NSPredicate(format: "identifier == %@", "On My iPhone")).count == 1
+        let shareSheets = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "ActivityListView"))
+        let shareName = shareSheets.otherElements.matching(NSPredicate(format: "identifier == %@ AND label == %@",
+            "LP.CaptionBar.TopCaption", String(name.dropLast(4))))
+        let shareMetadata = shareSheets.otherElements.matching(NSPredicate(format: "identifier == %@ AND label == %@",
+            "LP.CaptionBar.BottomCaption", "PDF Document · 609 bytes"))
+        func exactSharedPDF() -> Bool {
+            shareSheets.count == 1 && shareName.count == 1 && shareMetadata.count == 1
+                && whole(shareName.element, app: safari, chrome: true) && whole(shareMetadata.element, app: safari, chrome: true)
         }
-        let destination = safari.navigationBars.matching(NSPredicate(format: "identifier == %@", "On My iPhone")).element
-        try require(whole(destination, app: safari, chrome: true),
-            "The real Save to Files destination is whole and currently reachable", app: safari)
+        try wait("The actual Share sheet names this PDF and its 609-byte size", app: safari) { exactSharedPDF() }
+        let viewMore = shareSheets.cells.matching(NSPredicate(format: "identifier == %@ AND label == %@", "actionGroupCell", "View More"))
+        try chromeTap(viewMore.element, app: safari)
+        let saveToFiles = shareSheets.cells.matching(NSPredicate(format: "identifier == %@ AND label == %@", "actionGroupCell", "Save to Files"))
+        try wait("The exact named PDF exposes its observed Save to Files action", app: safari) {
+            exactSharedPDF() && saveToFiles.count == 1 && whole(saveToFiles.element, app: safari, chrome: true)
+        }
+        try require(exactSharedPDF() && saveToFiles.count == 1 && whole(saveToFiles.element, app: safari, chrome: true),
+            "The same PDF and unique Save to Files action remain valid before their single touch", app: safari)
+        saveToFiles.element.tap()
+        let localDestinations = safari.otherElements.matching(NSPredicate(format: "identifier == %@",
+            "DOC.browsingRoot Source: com.apple.FileProvider.LocalStorage, Title: Downloads"))
+        let destinationBars = localDestinations.navigationBars.matching(NSPredicate(format: "identifier == %@",
+            "FullDocumentManagerViewControllerNavigationBar"))
+        let filenames = safari.textFields.matching(NSPredicate(format: "identifier == %@", "DOCPicker.filenameTextField"))
+        let saveButtons = destinationBars.buttons.matching(NSPredicate(format: "label == %@", "Save"))
+        func exactLocalPDF() -> Bool {
+            localDestinations.count == 1 && destinationBars.count == 1 && filenames.count == 1 && saveButtons.count == 1
+                && (filenames.element.value as? String) == String(name.dropLast(4))
+                && whole(destinationBars.element, app: safari, chrome: true)
+                && whole(filenames.element, app: safari, chrome: true) && whole(saveButtons.element, app: safari, chrome: true)
+        }
+        try wait("Save to Files names the real local destination and this exact PDF", app: safari) { exactLocalPDF() }
+        let destination = destinationBars.element
+        try require(exactLocalPDF(),
+            "The real local destination, exact filename and unique Save control are whole and currently reachable", app: safari)
         record("safari-save-to-files-" + name, app: safari, anchor: destination)
-        try chromeTap(safari.navigationBars.buttons.matching(NSPredicate(format: "label == %@", "Save")).element, app: safari)
+        try wait("The same local PDF and Save control remain ready", app: safari) { exactLocalPDF() }
+        try require(exactLocalPDF(),
+            "The same local destination, exact filename and unique Save control remain valid before their single touch", app: safari)
+        saveButtons.element.tap()
         try wait("The OS Save to Files sheet closes", app: safari) {
             safari.navigationBars.buttons.matching(NSPredicate(format: "label == %@", "Save")).count == 0
         }
@@ -307,11 +348,23 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try openProfile(app); try tap(choosePDFButton(app), app: app)
         modalNavigationTitle = nil
         let stem = String(name.dropLast(4))
-        let document = app.staticTexts.matching(NSPredicate(format: "label == %@ OR label == %@", name, stem)).element
-        try wait("The actual OS picker exposes the uniquely named PDF", app: app) { document.exists }
-        try require(whole(document, app: app, chrome: true), "The exact system document row is wholly visible and hittable", app: app)
-        record("os-picker-" + name, app: app, anchor: document)
-        document.tap()
+        let pickerRoots = app.otherElements.matching(NSPredicate(format: "identifier == %@",
+            "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: Recents"))
+        let fileViews = pickerRoots.collectionViews.matching(NSPredicate(format: "identifier == %@", "File View"))
+        let documents = fileViews.cells.matching(NSPredicate(format: "identifier == %@", stem + ", pdf"))
+        let filenames = documents.staticTexts.matching(NSPredicate(format: "label == %@ OR label == %@", name, stem))
+        func exactDocument() -> Bool {
+            guard pickerRoots.count == 1, fileViews.count == 1, documents.count == 1, filenames.count == 1 else { return false }
+            return documents.element.isEnabled
+                && whole(documents.element, app: app, chrome: true)
+                && whole(filenames.element, app: app, chrome: true)
+        }
+        try wait("The actual OS picker exposes the uniquely named PDF", app: app) { exactDocument() }
+        try require(exactDocument(), "The exact system document cell and filename are wholly visible and hittable", app: app)
+        record("os-picker-" + name, app: app, anchor: documents.element)
+        try require(exactDocument(),
+            "The same unique system PDF cell and filename remain valid before their single touch", app: app)
+        documents.element.tap()
         modalNavigationTitle = localized("Application profile", "ملف التقديم")
         currentFilename = name
         try wait("The normal fileImporter and PDF validator accept the selected filename", app: app) {

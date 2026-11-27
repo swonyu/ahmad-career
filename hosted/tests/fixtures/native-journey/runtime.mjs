@@ -146,7 +146,20 @@ const nativeJourneyWorker = {
       requests.push({method: request.method, path: route.pathname, status: response.status,
         nativeTokenPresent: headers.has('authorization'), observedAt: new Date().toISOString()});
       if (response.ok && ['/api/apply/status', '/api/apply/workspace'].includes(route.pathname)) {
-        try { assertTestCapabilities(await response.clone().json(), route.pathname.endsWith('/workspace')); }
+        try {
+          const workspace = route.pathname.endsWith('/workspace');
+          let capabilityResponse = response.clone();
+          if (workspace && response.headers.get('X-Career-Read-Version') === '2') {
+            // Intentional read-only legacy capability probe using the same
+            // actual handler, original native bearer and workspace request.
+            // The original v2 response below is returned untouched to the app.
+            const probeHeaders = new Headers(adapted.headers);
+            probeHeaders.delete('X-Career-Read-Version');
+            capabilityResponse = await applications(new Request(adapted, {headers: probeHeaders}), bindings, ctx);
+            if (!capabilityResponse?.ok || capabilityResponse.headers.has('X-Career-Read-Version')) fail('fixture_capability_changed', 503);
+          }
+          assertTestCapabilities(await capabilityResponse.json(), workspace);
+        }
         catch (error) { counters.capabilityChanges++; throw error; }
       }
       return response;

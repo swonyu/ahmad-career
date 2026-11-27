@@ -1,7 +1,7 @@
 // Private, fixed native-journey checkpoint protocol. No I/O or runtime on import.
 import {createHash} from 'node:crypto';
 import {assertZeroDispatch} from './contract.mjs';
-import {SOURCE_ID, PDF, postingId, postingURL} from './data.mjs';
+import {BOARD, SOURCE_ID, PDF, postingId, postingURL, postings} from './data.mjs';
 
 export const CHECKPOINTS = Object.freeze(['blank', 'contactSaved', 'jobSaved', 'pickerCancelled',
   'profileA', 'preparedA', 'profileB', 'followUpSaved', 'closeSecondary', 'closedResult',
@@ -19,6 +19,11 @@ const object = value => value !== null && typeof value === 'object' && !Array.is
 const integer = (value, maximum = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(value) && value >= 0 && value <= maximum;
 const exactKeys = (value, keys) => object(value) && Object.keys(value).sort().join(',') === [...keys].sort().join(',');
 export const discoveryFilename = (logicalOrigin, workspaceID) => 'discovery-' + sha256(logicalOrigin + '\0' + workspaceID) + '.json';
+// Matches PhoneOperationJournal's current scoped file, not the phone-draft representation.
+export const operationJournalFilename = (logicalOrigin, workspaceID) => 'pending-operations-' + sha256(logicalOrigin + '\0' + workspaceID) + '.json';
+// These five checkpoints require a successful mutation and its complete workspace refresh.
+// A rejected closed-job import or a later offline read must not be treated as a successful refresh.
+export const needsReconciledJournal = sequence => [2, 3, 5, 6, 7].includes(sequence);
 export function canonical(value) {
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
   if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
@@ -134,13 +139,13 @@ export function createCheckpointState({testID, workspaceID, logicalOrigin, worke
       logicalOrigin !== 'https://career-finder-service.jazzy-drake-8323.chatgpt.site' ||
       !integer(bridgePort,65535) || bridgePort < 1024 || typeof caFingerprint256 !== 'string' ||
       !/^(?:[A-Fa-f0-9]{2}:){31}[A-Fa-f0-9]{2}$/.test(caFingerprint256)) fail('checkpoint_binding_invalid');
-  let next = 1, previous, prepared, initialSeedHash, initialJobID, guestArchiveHash, restartPhoneHash,
+  let next = 1, previous, prepared, initialSeedHash, initialJobID, initialPrimaryBackupHash, guestArchiveHash, restartPhoneHash,
     restartDiscoveryHash, offlineEvidenceHash;
   const phoneContact = p => canonical(Object.fromEntries(Object.entries(p).filter(([key]) => !key.startsWith('resume'))));
   let contactProjection;
   function inspect(request, witness, {afterControl = true} = {}) {
     if (request.sequence !== next || request.testID !== testID || request.checkpoint !== CHECKPOINTS[next - 1]) fail('checkpoint_sequence_changed');
-    const {proof, phone, discovery, seedReceipt, seedReceiptSHA256, sourceBound, transportClosed} = witness;
+    const {proof, phone, discovery, operationJournal, seedReceipt, seedReceiptSHA256, sourceBound, transportClosed} = witness;
     if (sourceBound !== true || !object(proof) || proof.workerSHA256 !== workerSHA256 || proof.hostOutboundCheckObserved !== true ||
         proof.ok !== true || proof.schemaVersion !== 1 || !Array.isArray(proof.workspaces) || proof.workspaces.length !== 1 ||
         proof.workspaces[0].id !== workspaceID) fail('checkpoint_source_or_owner');
@@ -191,6 +196,22 @@ export function createCheckpointState({testID, workspaceID, logicalOrigin, worke
       } else fail('checkpoint_unexpected_native_call');
     }
     let ready = counts.workspace >= 1;
+    if (needsReconciledJournal(next)) {
+      if (operationJournal == null) ready = false;
+      else {
+        if (!exactKeys(operationJournal,['version','origin','workspaceId','entries','intents']) ||
+            operationJournal.version !== 1 || operationJournal.origin !== logicalOrigin ||
+            operationJournal.workspaceId !== workspaceID || !Array.isArray(operationJournal.entries) ||
+            !Array.isArray(operationJournal.intents)) fail('checkpoint_operation_journal_shape');
+        if (operationJournal.entries.length || operationJournal.intents.length) ready = false;
+      }
+      // A 200 response alone cannot prove that the app validated and persisted it.
+      // The real client writes an intent before sending and clears this journal
+      // only after a complete scoped workspace snapshot is accepted and saved.
+      const mutation = proof.nativeCalls.findLastIndex(call => call.method === 'POST' || call.method === 'PUT');
+      if (mutation < 0 || !proof.nativeCalls.slice(mutation + 1).some(call =>
+          call.method === 'GET' && call.path === '/api/apply/workspace' && call.status === 200)) ready = false;
+    }
     if (next >= 5 && bridge.documentRequests['CV-A.pdf'] < 1 || next >= 7 && bridge.documentRequests['CV-B.pdf'] < 1) ready = false;
     for (const [actual, target] of [[counts.profile,putCount],[counts.jobs,jobPosts],[counts.prepare,prepareCount],
       [counts.search,searchCount],[server.revision,putCount],[proof.jobs.length,serverJobs],
@@ -207,9 +228,24 @@ export function createCheckpointState({testID, workspaceID, logicalOrigin, worke
     if (initialJobID && jobID !== initialJobID) fail('checkpoint_primary_job_changed');
     const urls = phone.jobs.map(j => j.url);
     if (new Set(urls).size !== urls.length || urls.some(url => ![postingURL(1),postingURL(2)].includes(url))) fail('checkpoint_local_job_identity');
+    let primaryBackupHash;
     if (phone.jobs.length === localJobs && localJobs) {
       const primary = phone.jobs.find(j => j.url === postingURL(1));
-      if (!primary || primary.id !== jobID || primary.localOnly === true) ready = false;
+      // NativeApplicationsStore.rememberImported keeps a local-ID backup on disk.
+      // The canonical server row remains separately verified above; the app merges
+      // it with this backup for display without rewriting the persisted identity.
+      const original = postings[0], discovered = discovery?.jobs?.find(j => j.url === postingURL(1));
+      if (!exactKeys(primary,['id','localOnly','url','title','company','location','country','provider','workMode','sourceName','checkedAt']) ||
+          typeof primary.id !== 'string' || !primary.id.startsWith('local-') || !UUID.test(primary.id.slice(6)) ||
+          primary.localOnly !== true || primary.title !== original.text || primary.company !== BOARD ||
+          primary.location !== original.categories.location || primary.country !== original.country ||
+          primary.provider !== 'lever' || primary.workMode !== original.workplaceType || primary.sourceName !== BOARD ||
+          typeof primary.checkedAt !== 'string' || !Number.isFinite(Date.parse(primary.checkedAt)) ||
+          !initialPrimaryBackupHash && primary.checkedAt !== discovered?.checkedAt) ready = false;
+      if (primary) {
+        primaryBackupHash = sha256(canonical(primary));
+        if (initialPrimaryBackupHash && primaryBackupHash !== initialPrimaryBackupHash) fail('checkpoint_primary_backup_changed');
+      }
       if (localJobs === 2 && phone.jobs.find(j => j.url === postingURL(2))?.localOnly !== true) fail('checkpoint_closed_bookmark_changed');
     }
     const cv = putCount < 2 ? null : putCount === 2 ? 'CV-A.pdf' : 'CV-B.pdf';
@@ -280,7 +316,7 @@ export function createCheckpointState({testID, workspaceID, logicalOrigin, worke
     if (next >= 15) facts.persistedRestartUnchanged = true;
     return {ready:true, facts, commit() {
       if (request.sequence !== next) fail('checkpoint_commit_repeated');
-      initialSeedHash ??= seedReceiptSHA256; initialJobID ??= jobID; guestArchiveHash ??= archiveHash;
+      initialSeedHash ??= seedReceiptSHA256; initialJobID ??= jobID; initialPrimaryBackupHash ??= primaryBackupHash; guestArchiveHash ??= archiveHash;
       if (next === 2) contactProjection = phoneContact(phone.profile);
       if (next === 6) prepared = {attempt:canonical(proof.attempts[0]),plan:canonical(proof.plans[0]),cache:canonical(phone.savedApplicationHistory)};
       if (next === 12) { restartPhoneHash = phoneHash; restartDiscoveryHash = discoveryHash; }

@@ -138,7 +138,7 @@ data class Opportunity(val id: String, val url: String, val title: String, val c
         fun fromServer(value: JSONObject): Opportunity {
             listOf("id", "url", "title", "company", "location", "country").forEach { serviceData(value.opt(it) is String) }
             serviceData(value.getString("id").isNotBlank())
-            BoundaryPolicy.opportunityURL(value.getString("url"))
+            BoundaryPolicy.historicalOpportunityURL(value.getString("url"))
             // The five-field workspace response does not establish discovery observations.
             return Opportunity(value.getString("id"), value.getString("url"), value.getString("title"), value.getString("company"),
                 value.getString("location"), value.getString("country"))
@@ -159,7 +159,7 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
             payload!!.serviceLinkedIn()
             listOf("consentStore", "consentMarketing").forEach { serviceData(!payload!!.has(it) || payload.opt(it) is Boolean) }
             val resume = Resume.fromJson(value.optJSONObject("resume"))
-            serviceData(resume == null || ApplicationCvEvidence.validRecordedName(resume.name))
+            serviceData(resume == null || ApplicationCvEvidence.validHistoricalRecordedName(resume.name))
             if (value.opt("state") == "ready") serviceData(resume != null && resume.size in 8..BoundaryPolicy.MAX_PDF_BYTES &&
                 resume.sha256.matches(Regex("[a-f0-9]{64}")) && value.optJSONObject("resume")?.opt("mime") == "application/pdf" &&
                 payload!!.getString("name").isNotBlank() && payload.getString("email").isNotBlank())
@@ -173,6 +173,10 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
 data class ReviewPlan(val id: String, val digest: String, val profileRevision: Int, val expiresAt: String, val items: List<ReviewItem>,
     val unapproved: Boolean = false) {
     fun expired(): Boolean = try { !Instant.parse(expiresAt).isAfter(Instant.now()) } catch (_: Exception) { true }
+    val hasHistoricalText: Boolean get() = items.any { item ->
+        listOf(item.reason, item.title, item.company, item.resume?.name.orEmpty()).any { !BoundaryPolicy.validUnicode(it) } ||
+            HistoricalText.malformedStrings(item.payload).isNotEmpty()
+    }
     companion object { fun fromJson(value: JSONObject): ReviewPlan {
         val items = value.requiredObjects("items").map(ReviewItem::fromJson)
         serviceData(items.all { it.jobId.isNotBlank() } && items.map(ReviewItem::jobId).distinct().size == items.size)
@@ -261,6 +265,11 @@ data class CareerUiState(
     val preservedWorkspaceCopies: List<String> = emptyList(),
     val preservedRecoveryWorkspaces: List<PreservedWorkspace> = emptyList(),
     val workspaceImport: WorkspaceImportPreview? = null,
+    val historicalRecovery: HistoricalRecoveryReference? = null,
+    val historicalRawStrings: Set<String> = emptySet(),
+    val readRecoveryRequest: ReadRecoveryRequest? = null,
+    val readReconciliationRequired: Boolean = false,
+    val pendingReadAcknowledgments: Int = 0,
     // Transient ownership token: not encoded in a workspace or portable backup.
     val comparisonSession: String = java.util.UUID.randomUUID().toString()
 ) {

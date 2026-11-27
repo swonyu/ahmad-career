@@ -156,3 +156,42 @@ The common synthetic fixture is `app/src/androidTest/assets/phone-workspace-v1.j
 `checks/run-policy-checks.sh` passes **122** executable JVM boundary checks without a device or network. `checks/strict-review-2026-11-17.json` records the baseline and exact policy-source hashes. New native tests are `WorkspaceSafetyRegressionTest` (11 cases) and `WorkspaceAccessibilityRegressionTest` (one large-text multiline-note case); additional checks extend `ContinuationRegressionTest`, `ApplicationRecordRegressionTest`, `NavigationPhoneAcceptanceTest` and `VaultAcceptanceTest`. The connected LinkedIn fixture now uses a contract-valid synthetic public portfolio URL while keeping all service requests injected.
 
 Compilation, lint, all new instrumentation, real document-picker/process-recreation behavior and physical-device accessibility remain gates until the coordinated CI/device results identify an exact new commit. No Gradle build, emulator, signing, publishing or external employer submission was performed by the Android source-editing worker.
+
+
+### Dedicated recovery proof under bounded heap pressure
+
+`CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace`
+is an additional environment-scoped regression for the observed 192 MiB app heap.
+It retains at most 96 MiB, requires the real read-memory guard to refuse the exact
+20,373,220-byte historical document before any follow-up page, and keeps that
+pressure alive while encrypted recovery is saved, reopened, verified and exported.
+The exported bytes, length and SHA-256 must match the complete synthetic asset;
+the earlier workspace and draft must retain identical plaintext and ciphertext.
+The captured refusal is also routed through an injected service to check the
+ViewModel recovery offer. This does not exercise real HTTPS recovery or the system
+document chooser.
+
+The ordinary CI runner records this exact method as separately scoped and excludes
+only this newly added method with AndroidJUnitRunner's `notClass Class#method`
+selector. Every original regression remains selected. Ordinary CI does not claim
+that the pressure proof passed. Generic direct runs report an explicit assumption
+unless `careerRecoveryPressure192MiB=true` is supplied; that assumption is not
+acceptance evidence. A dedicated run must select the method, pass the opt-in
+argument, verify `Runtime.maxMemory() == 201326592`, and obtain an actual pass:
+
+```sh
+adb -s <owned-serial> shell am instrument -w -r \
+  -e class com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace \
+  -e careerRecoveryPressure192MiB true \
+  com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+Use an already reviewed isolated emulator with that heap; this test does not call
+GC, increase the heap, or change the production memory guard. A larger generic
+heap must not be forced through the 96 MiB pressure budget. The separately reviewed
+31-method continuation run rejects every skip and requires this case to pass.
+Independent-process results remain distinct from the failed combined-class
+memory-continuity runs; the latter are retained in the validation evidence.
+
+The selector is supported by the pinned `androidx.test:runner:1.7.0`; see the
+[AndroidJUnitRunner API](https://developer.android.com/reference/androidx/test/runner/AndroidJUnitRunner).

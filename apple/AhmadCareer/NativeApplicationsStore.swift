@@ -74,6 +74,15 @@ final class NativeApplicationsStore: ObservableObject {
     private var operationTicket: UUID?
     private var continuationTicket: UUID?
     private var nextContinuationTime: TimeInterval = 0
+    @Published private(set) var recoveryIntegrityFailed = false
+    @Published private(set) var journalIntegrityFailed = false
+    @Published private(set) var pendingRecovery: ApplicationReadMetadata?
+    private var recoveryReferences: [PhoneRecoveryReference] = []
+    private var pendingRecoveryOrigin: String?
+    private var pendingRecoveryClient: (any MobileApplicationServing)?
+    private var recoveryProfileEntries: [ApplicationLegacyText] = []
+    private var recoveredDisplayAttempts: [[String: ApplicationValue]] = []
+    private var validatedAcknowledgements = Set<String>()
     private var remoteJobs: [[String: ApplicationValue]] = []
     private let folder: URL
     private let credentials: any ApplicationTokenStore
@@ -86,9 +95,10 @@ final class NativeApplicationsStore: ObservableObject {
         return history
     }
     var displayAttempts: [[String: ApplicationValue]] {
-        hasFreshApplicationHistory ? attempts : boundHistory?.entries.map(\.value) ?? []
+        guard !recoveryIntegrityFailed else { return hasFreshApplicationHistory ? attempts : [] }
+        return hasFreshApplicationHistory ? attempts : boundHistory?.entries.map(\.value) ?? recoveredDisplayAttempts
     }
-    var showingSavedApplicationHistory: Bool { !hasFreshApplicationHistory && boundHistory != nil }
+    var showingSavedApplicationHistory: Bool { !hasFreshApplicationHistory && (boundHistory != nil || !recoveredDisplayAttempts.isEmpty) }
     var canExportApplicationReceipts: Bool { hasFreshApplicationHistory && !attempts.isEmpty }
     var applicationHistorySavedAt: String? { showingSavedApplicationHistory ? boundHistory?.savedAt : nil }
     /// These counts describe the same display projection as Activity, never dispatch authority.
@@ -434,6 +444,198 @@ final class NativeApplicationsStore: ObservableObject {
     }
 
     /// Dependency injection exercises this same store on macOS without an app build, Keychain access, or live networking.
+    private static let historicalWriteMessage = "Some older text could not be read correctly. The original is kept in a recovery file. Review and repair the affected details before saving or preparing a new application."
+    private static let pendingWriteMessage = "An earlier change still needs checking. Refresh this workspace before making another change. Stop remains available."
+    private var operationJournal: PhoneOperationJournal? {
+        guard !state.recordScope.isLocal else { return nil }
+        return PhoneOperationJournal(folder: folder, origin: state.recordScope.origin, workspace: state.recordScope.workspaceID)
+    }
+    var reconciliationRequired: Bool {
+        if journalIntegrityFailed { return true }
+        do { return try operationJournal?.pendingIDs().contains { !validatedAcknowledgements.contains($0) } ?? false }
+        catch { return true }
+    }
+    var hasHistoricalRecovery: Bool { !recoveryReferences.isEmpty || pendingRecovery != nil || recoveryIntegrityFailed }
+    var historicalRecoveryNotice: String? {
+        if recoveryIntegrityFailed { return "The historical recovery file could not be verified. Your existing data is kept. Reconnect and refresh before changing these details." }
+        if pendingRecovery != nil { return "Download the complete recovery file to keep these older records. Your saved phone data is unchanged. The file is an archive and cannot be imported or used to apply." }
+        if !recoveryReferences.isEmpty { return "Some older text is shown as character codes because it could not be read correctly. The original is kept in a recovery file. Repair the affected details before applying." }
+        if reconciliationRequired { return Self.pendingWriteMessage }
+        return nil
+    }
+    private func configure(_ service: any MobileApplicationServing, workspace: String) {
+        service.expectedWorkspaceID = workspace
+        let journal = PhoneOperationJournal(folder: folder, origin: service.origin.absoluteString, workspace: workspace)
+        service.mutationIntentObserver = { [journal] intent in try journal.begin(intent) }
+        service.mutationFinishedObserver = { id in PhoneOperationJournal.inFlightIDs.remove(id) }
+        service.acknowledgementObserver = { [weak self, journal] receipt in
+            // Do not gate durable acknowledgment on the current UI generation or active account.
+            do { try journal.append(receipt) }
+            catch {
+                if self?.state.recordScope.origin == journal.origin && self?.state.workspaceID == journal.workspace { self?.journalIntegrityFailed = true }
+                throw error
+            }
+        }
+    }
+    private func requireReconciledWrite() throws {
+        if reconciliationRequired { throw MobileApplicationError(message: Self.pendingWriteMessage) }
+        if recoveryIntegrityFailed { throw MobileApplicationError(message: Self.historicalWriteMessage) }
+    }
+    private func acceptMutationView(_ result: ApplicationServiceResult) throws {
+        guard result.document != nil || result.intent != nil else { return } // Existing injectable check service path.
+        let routes = ["profile": "profile", "jobs": "job", "prepare": "plan", "submit": "plan-state", "advance": "plan-state", "stop": "plan-state"]
+        let kind = result.document?.kind ?? routes[result.intent?.route ?? ""] ?? ""
+        switch kind {
+        case "profile":
+            let profile = try ApplicationServerProfile(result["profile"]?.object ?? [:])
+            if let revision = result.operation?.revision, revision != profile.revision { throw ApplicationReadWire.invalid() }
+        case "job":
+            let job = result["job"]?.object ?? [:]
+            guard let id = job["id"]?.string, let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil,
+                  job["title"]?.string != nil, job["company"]?.string != nil,
+                  result.operation?.jobId == nil || result.operation?.jobId == id else { throw ApplicationReadWire.invalid() }
+        case "plan", "plan-state":
+            let plan = result["plan"]?.object ?? [:]
+            guard ApplicationReviewSummary(plan) != nil, let id = plan["id"]?.string, let digest = plan["digest"]?.string,
+                  result.operation?.planId == nil || result.operation?.planId == id,
+                  result.operation?.digest == nil || result.operation?.digest == digest else { throw ApplicationReadWire.invalid() }
+            if kind == "plan-state" {
+                guard case .array(let attempts)? = result["attempts"], attempts.allSatisfy({ value in
+                    if case .object(let row) = value { return row["state"]?.string != nil && (row["id"]?.string != nil || row["attemptId"]?.string != nil) }; return false
+                }), case .array(let active)? = result["activePlanIds"], active.allSatisfy({ $0.string != nil }) else { throw ApplicationReadWire.invalid() }
+            }
+        default: throw ApplicationReadWire.invalid()
+        }
+        var next = state
+        try retainRecovery(result, into: &next, origin: state.recordScope.origin)
+        try persist(next)
+    }
+    private func validated(_ result: ApplicationServiceResult) {
+        if let id = result.mutationID { validatedAcknowledgements.insert(id) }
+    }
+    /// Copies evidence first; only the caller's later atomic state publication makes its projection current.
+    private func retainRecovery(_ result: ApplicationServiceResult, into next: inout PhoneApplicationState, origin: String) throws {
+        guard let document = result.document, document.needsRecovery, let metadata = document.metadata else { return }
+        let reference = PhoneRecoveryReference(origin: origin, metadata: metadata)
+        guard reference.matches(next.recordScope), document.mode == "view" else { throw ApplicationReadWire.invalid() }
+        try PhoneRecoveryStorage.retain(reference, file: document.file, in: folder)
+        if !next.historicalRecovery.contains(where: { $0.documentFileName == reference.documentFileName }) { next.historicalRecovery.append(reference) }
+    }
+    private func reloadHistoricalEvidence() {
+        recoveryIntegrityFailed = false; recoveryProfileEntries = []; recoveryReferences = []; recoveredDisplayAttempts = []
+        guard !state.recordScope.isLocal else { return }
+        do {
+            let catalog = try PhoneRecoveryStorage.catalog(in: folder).filter { $0.matches(state.recordScope) }
+            let referenced = state.historicalRecovery.filter { $0.matches(state.recordScope) }
+            recoveryReferences = (catalog + referenced.filter { candidate in !catalog.contains { $0.documentFileName == candidate.documentFileName } }).sorted { $0.asOf > $1.asOf }
+            var seen = Set<String>()
+            for reference in state.historicalRecovery where reference.matches(state.recordScope) {
+                let document = try reference.document(in: folder)
+                for entry in document.profileEntries {
+                    let key = String(data: try JSONEncoder().encode(entry.path), encoding: .utf8)! + ":" + entry.utf16leBase64
+                    if seen.insert(key).inserted { recoveryProfileEntries.append(entry) }
+                }
+                guard recoveryProfileEntries.count <= 4_096 else { throw ApplicationReadWire.invalid() }
+                if state.connectionEnabled, state.historicalWorkspaceProjectionSHA256 == reference.sha256, reference.kind == "workspace" {
+                    recoveredDisplayAttempts = try ApplicationWorkspaceSnapshot(document.annotatedValue(), workspaceID: state.workspaceID).attempts
+                }
+            }
+        } catch { recoveryIntegrityFailed = true; recoveredDisplayAttempts = [] }
+    }
+    private func containsHistoricalProfileText(_ draft: PhoneApplicationProfile) -> Bool {
+        if recoveryIntegrityFailed { return true }
+        let scalar: [String: String] = ["firstName": draft.firstName, "lastName": draft.lastName, "email": draft.email,
+            "phone": draft.phone, "city": draft.city, "headline": draft.headline, "skills": draft.skills, "targetRoles": draft.targetRoles]
+        for entry in recoveryProfileEntries {
+            guard entry.path.count >= 2, let name = entry.path[1].key else { continue }
+            if name == "resume" {
+                if !draft.resumeChanged && !draft.resumeRemoved && draft.resumeName == entry.display { return true }
+                continue
+            }
+            guard let current = scalar[name] else { continue }
+            // Escapes from known malformed source units are not new input just because another field was edited.
+            let units = entry.originalUnits
+            var index = 0
+            while index < units.count {
+                let unit = units[index]
+                if (0xd800...0xdbff).contains(unit), index + 1 < units.count, (0xdc00...0xdfff).contains(units[index + 1]) { index += 2; continue }
+                if (0xd800...0xdfff).contains(unit), current.contains(String(format: "\\u%04X", unit)) { return true }
+                index += 1
+            }
+        }
+        return false
+    }
+    /// Explicit editor action only. It replaces known original invalid units; no PUT is performed here.
+    func repairedHistoricalProfileDraft(_ draft: PhoneApplicationProfile) -> PhoneApplicationProfile {
+        var next = draft
+        for entry in recoveryProfileEntries {
+            guard entry.path.count >= 2, let name = entry.path[1].key else { continue }
+            func repair(_ text: String) -> String {
+                if ["skills", "targetRoles"].contains(name) { return text.replacingOccurrences(of: entry.display, with: entry.repaired) }
+                return text == entry.display ? entry.repaired : text
+            }
+            switch name {
+            case "firstName": next.firstName = repair(next.firstName)
+            case "lastName": next.lastName = repair(next.lastName)
+            case "email": next.email = repair(next.email)
+            case "phone": next.phone = repair(next.phone)
+            case "city": next.city = repair(next.city)
+            case "headline": next.headline = repair(next.headline)
+            case "skills": next.skills = repair(next.skills)
+            case "targetRoles": next.targetRoles = repair(next.targetRoles)
+            default: break // A historical résumé requires a newly selected PDF or explicit removal.
+            }
+        }
+        return next
+    }
+    var profileNeedsHistoricalRepair: Bool { containsHistoricalProfileText(profile) }
+    var reviewNeedsHistoricalRepair: Bool { plan?["_careerHistoricalText"]?.bool == true }
+    var recoveryExportChoices: [PhoneRecoveryReference] { recoveryReferences }
+    private func rejectHistoricalJob(_ job: [String: ApplicationValue]) throws {
+        if job["_careerHistoricalText"]?.bool == true { throw MobileApplicationError(message: Self.historicalWriteMessage) }
+    }
+    private func acceptRecoveryFailure(_ failure: ApplicationRecoveryRequiredError, origin: String? = nil) {
+        pendingRecovery = failure.metadata; pendingRecoveryOrigin = origin ?? state.recordScope.origin
+        if let document = failure.document {
+            do {
+                let reference = PhoneRecoveryReference(origin: pendingRecoveryOrigin ?? state.recordScope.origin, metadata: failure.metadata)
+                try PhoneRecoveryStorage.retain(reference, file: document.file, in: folder)
+                reloadHistoricalEvidence()
+            } catch { recoveryIntegrityFailed = true }
+        }
+    }
+    /// Separate complete evidence export. It never imports a profile, creates an approval or resumes a mutation.
+    func exportHistoricalRecovery(_ selected: PhoneRecoveryReference? = nil) async -> URL? {
+        guard !busy else { return nil }
+        let generation = sessionGeneration, scope = state.recordScope
+        do {
+            try Task.checkCancellation()
+            if selected == nil, let metadata = pendingRecovery {
+                let reference = PhoneRecoveryReference(origin: pendingRecoveryOrigin ?? scope.origin, metadata: metadata)
+                if !FileManager.default.fileExists(atPath: folder.appendingPathComponent(reference.documentFileName).path) {
+                    guard let client = pendingRecoveryClient ?? client else { throw MobileApplicationError(message: "Reconnect to download this complete recovery file.") }
+                    let temporary = folder.appendingPathComponent("recovery-download-" + UUID().uuidString)
+                    defer { try? FileManager.default.removeItem(at: temporary) }
+                    try await client.downloadRecovery(metadata, to: temporary)
+                    try Task.checkCancellation()
+                    guard generation == sessionGeneration, scope == state.recordScope else { return nil }
+                    try PhoneRecoveryStorage.retain(reference, file: temporary, in: folder)
+                }
+                reloadHistoricalEvidence()
+                return try PhoneRecoveryStorage.export(reference, in: folder)
+            }
+            guard let reference = selected ?? recoveryReferences.first(where: { $0.kind == "workspace" }) ?? recoveryReferences.first,
+                  recoveryReferences.contains(reference) else { throw MobileApplicationError(message: "There is no verified historical recovery file to export.") }
+            try Task.checkCancellation()
+            return try PhoneRecoveryStorage.export(reference, in: folder)
+        } catch {
+            if error is CancellationError || (error as? URLError)?.code == .cancelled {
+                if generation == sessionGeneration { message = "Recovery download cancelled. Your saved information is unchanged." }
+            } else { acceptError(error, generation: generation) }
+            return nil
+        }
+    }
+
     init(folder: URL? = nil, credentials: (any ApplicationTokenStore)? = nil, clientFactory: ClientFactory? = nil,
          monotonicTime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
         self.folder = folder ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -460,6 +662,7 @@ final class NativeApplicationsStore: ObservableObject {
             message = (error as? MobileApplicationError)?.message
                 ?? "Your saved application draft could not be read. It has been preserved and will not be overwritten."
         }
+        reloadHistoricalEvidence()
         restoreConnection()
     }
     private func restoreConnection() {
@@ -467,7 +670,8 @@ final class NativeApplicationsStore: ObservableObject {
               let origin = MobileApplicationPolicy.serviceURL(state.serviceAddress) else { return }
         do {
             if let token = try credentials.load(account: state.tokenAccount) {
-                client = try clientFactory(origin, token); connected = true
+                let restored = try clientFactory(origin, token); configure(restored, workspace: state.workspaceID)
+                client = restored; connected = true
             }
         } catch { message = error.localizedDescription }
     }
@@ -481,11 +685,13 @@ final class NativeApplicationsStore: ObservableObject {
               next.recordDrafts.allSatisfy(\.valid), next.recordDraftAlternatives.allSatisfy(\.valid),
               next.recoveredOpportunityDrafts.count <= 200, next.recoveredOpportunityDrafts.allSatisfy(\.valid),
               next.submissionHolds.count <= 500, next.submissionHolds.allSatisfy(\.valid),
-              next.savedApplicationHistory.map({ $0.valid && $0.matches(next) }) ?? true else {
+              next.savedApplicationHistory.map({ $0.valid && $0.matches(next) }) ?? true,
+              next.historicalRecovery.count <= 10_000, next.historicalRecovery.allSatisfy(\.valid),
+              Set(next.historicalRecovery.map(\.documentFileName)).count == next.historicalRecovery.count else {
             throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
         }
         // Encoder key order is not stable. An unchanged workspace must not rewrite the phone file.
-        if next == state { return }
+        if next == state { reloadHistoricalEvidence(); return }
         let data = try JSONEncoder().encode(next)
         guard data.count <= 64 * 1_024 * 1_024 else {
             throw MobileApplicationError(message: "This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another.")
@@ -501,7 +707,10 @@ final class NativeApplicationsStore: ObservableObject {
             || next.recoveredOpportunityDrafts != state.recoveredOpportunityDrafts
             || next.workspaceDrafts != state.workspaceDrafts
             || next.submissionHolds != state.submissionHolds { workspaceMutation = UUID() }
+        let reload = next.historicalRecovery != state.historicalRecovery || next.recordScope != state.recordScope
+            || next.historicalWorkspaceProjectionSHA256 != state.historicalWorkspaceProjectionSHA256
         state = next
+        if reload { reloadHistoricalEvidence() }
     }
     private func beginOperation() -> UUID? {
         guard !busy else { return nil }
@@ -518,7 +727,7 @@ final class NativeApplicationsStore: ObservableObject {
     }
     private func clearRemoteViews() {
         remoteJobs = []; jobs = state.jobs; attempts = []; plan = nil
-        hasFreshApplicationHistory = false
+        hasFreshApplicationHistory = false; recoveredDisplayAttempts = []
         activePlanIDs = []; recoverablePlans = []; selected = []; answers = [:]; mode = "local"
         requiresClientContinuation = false
         liveSubmissionEnabled = nil
@@ -528,9 +737,19 @@ final class NativeApplicationsStore: ObservableObject {
         sessionGeneration = UUID(); contentGeneration = UUID(); refreshTicket = nil
         operationTicket = nil; busy = false
         continuationTicket = nil; advancingApprovedApplication = false; nextContinuationTime = 0
+        validatedAcknowledgements = []; pendingRecovery = nil; pendingRecoveryOrigin = nil; journalIntegrityFailed = false
+        pendingRecoveryClient?.invalidate(); pendingRecoveryClient = nil
     }
     private func acceptError(_ error: Error, generation: UUID) {
         guard generation == sessionGeneration else { return }
+        if let changed = error as? ApplicationReadAfterMutationError {
+            validatedAcknowledgements.remove(changed.acknowledgement.journalID)
+            if let recovery = changed.cause as? ApplicationRecoveryRequiredError { acceptRecoveryFailure(recovery) }
+            message = changed.localizedDescription; return
+        }
+        if let recovery = error as? ApplicationRecoveryRequiredError {
+            acceptRecoveryFailure(recovery); message = recovery.localizedDescription; return
+        }
         if (error as? MobileApplicationError)?.statusCode == 401 {
             let retired = detachLocally()
             retired?.invalidate()
@@ -546,7 +765,7 @@ final class NativeApplicationsStore: ObservableObject {
     private func detachLocally() -> (any MobileApplicationServing)? {
         let retired = client
         client = nil; connected = false; rotateConnection()
-        var next = state; next.connectionEnabled = false; next.savedApplicationHistory = nil
+        var next = state; next.connectionEnabled = false; next.savedApplicationHistory = nil; next.historicalWorkspaceProjectionSHA256 = nil
         var issues: [String] = []
         do { try credentials.remove(account: state.tokenAccount); next.credentialAccount = nil }
         catch { issues.append(error.localizedDescription) }
@@ -570,18 +789,20 @@ final class NativeApplicationsStore: ObservableObject {
         var savedAccount: String?
         do {
             let created = try clientFactory(origin, nil); candidate = created
-            let response = try await created.request("session", method: "POST",
+            let response = try await created.response("session", method: "POST",
                 body: ["pairingCode": .string(code.trimmingCharacters(in: .whitespacesAndNewlines))])
             guard generation == sessionGeneration else { created.invalidate(); return false }
             guard let token = response["sessionToken"]?.string, !token.isEmpty,
                   let workspace = response["workspaceId"]?.string, !workspace.isEmpty else {
                 throw MobileApplicationError(message: "The service did not confirm this workspace. Request a new invitation.")
             }
-            created.token = token
+            created.token = token; configure(created, workspace: workspace)
+            var initialWorkspace: ApplicationServiceResult?
             let profileObject: [String: ApplicationValue]
             if response["profile"]?.object["revision"] != nil { profileObject = response["profile"]?.object ?? [:] }
             else {
-                let workspaceResponse = try await created.request("workspace")
+                let workspaceResponse = try await created.response("workspace"); initialWorkspace = workspaceResponse
+                _ = try ApplicationWorkspaceSnapshot(workspaceResponse.value, workspaceID: workspace)
                 guard workspaceResponse["workspaceId"]?.string == nil || workspaceResponse["workspaceId"]?.string == workspace else {
                     throw MobileApplicationError(message: "The service returned a different workspace. The connection was not saved.")
                 }
@@ -593,9 +814,10 @@ final class NativeApplicationsStore: ObservableObject {
             try credentials.save(token, account: account); savedAccount = account
             var next = state
             next.connect(address: origin.absoluteString, workspace: workspace, account: account, server: server)
+            if let initialWorkspace { try retainRecovery(initialWorkspace, into: &next, origin: origin.absoluteString) }
             let oldClient = client; let oldAccount = state.tokenAccount
             try persist(next)
-            client = created; connected = true; rotateConnection(); clearRemoteViews()
+            client = created; connected = true; rotateConnection(); clearRemoteViews(); reloadHistoricalEvidence()
             if oldAccount != account { try? credentials.remove(account: oldAccount) }
             if let oldClient { retireRemotely(oldClient, reportWhenDisconnected: false) }
             message = profileNeedsSync ? "Connected. Your phone draft is kept; review and save it before applying."
@@ -604,6 +826,12 @@ final class NativeApplicationsStore: ObservableObject {
             return true
         } catch {
             if let savedAccount { try? credentials.remove(account: savedAccount) }
+            if let recovery = error as? ApplicationRecoveryRequiredError, let candidate, generation == sessionGeneration {
+                pendingRecoveryClient?.invalidate(); pendingRecoveryClient = candidate
+                acceptRecoveryFailure(recovery, origin: origin.absoluteString)
+                message = recovery.localizedDescription
+                return false
+            }
             if let candidate, candidate.token != nil { retireRemotely(candidate, reportWhenDisconnected: false) }
             else { candidate?.invalidate() }
             if generation == sessionGeneration { message = error.localizedDescription }
@@ -614,7 +842,7 @@ final class NativeApplicationsStore: ObservableObject {
         let generation = sessionGeneration
         Task {
             defer { retired.invalidate() }
-            do { _ = try await retired.request("session/revoke", method: "POST", body: [:]) }
+            do { _ = try await retired.response("session/revoke", method: "POST", body: [:]) }
             catch {
                 if reportWhenDisconnected && generation == sessionGeneration && !connected {
                     message = "Disconnected on this phone. The service could not confirm remote revocation; existing applications and the old session remain governed by that service."
@@ -634,14 +862,20 @@ final class NativeApplicationsStore: ObservableObject {
         let generation = sessionGeneration, content = contentGeneration
         defer { if refreshTicket == ticket { refreshTicket = nil } }
         do {
-            let value = try await client.request("workspace")
+            let capturedIDs = try operationJournal?.captureReconciliableIDs() ?? []
+            let value = try await client.response("workspace")
             guard generation == sessionGeneration, content == contentGeneration else { return false }
-            let snapshot = try ApplicationWorkspaceSnapshot(value, workspaceID: state.workspaceID)
+            let snapshot = try ApplicationWorkspaceSnapshot(value.value, workspaceID: state.workspaceID)
             let server = snapshot.profile
             guard server.revision >= (state.latestServerRevision ?? 0) else {
                 throw MobileApplicationError(message: "The service returned an older profile. Your current draft and review are preserved.")
             }
             var next = state; next.receive(server)
+            // A complete fresh view retires its prior active projection; archived raw files remain in the catalog.
+            // A dirty draft keeps its own prior evidence until the user repairs or replaces that draft.
+            if !next.profileNeedsSync { let activeScope = next.recordScope; next.historicalRecovery.removeAll { $0.matches(activeScope) } }
+            try retainRecovery(value, into: &next, origin: client.origin.absoluteString)
+            next.historicalWorkspaceProjectionSHA256 = value.document?.needsRecovery == true ? value.document?.sha256 : nil
             var history = next.credentialAccount.flatMap { account in
                 PhoneApplicationHistoryCache(scope: next.recordScope, credentialAccount: account,
                     attempts: snapshot.attempts, savedAt: ISO8601DateFormatter().string(from: Date()))
@@ -651,6 +885,15 @@ final class NativeApplicationsStore: ObservableObject {
                existing.sameProjection(as: candidate) { history = existing }
             next.savedApplicationHistory = history // A successful empty snapshot replaces old history too.
             try persist(next)
+            if let metadata = value.document?.metadata {
+                try operationJournal?.clear(capturedIDs: capturedIDs, account: metadata.accountId)
+                validatedAcknowledgements.subtract(capturedIDs); journalIntegrityFailed = false
+            } else {
+                // A complete v1 workspace can reconcile only scoped opaque intents, never v2 account-bound ACKs.
+                try operationJournal?.clearLegacyIntents(capturedIDs: capturedIDs)
+                validatedAcknowledgements.subtract(capturedIDs)
+            }
+            pendingRecovery = nil
             remoteJobs = snapshot.jobs; attempts = snapshot.attempts; hasFreshApplicationHistory = true
             activePlanIDs = snapshot.activePlanIDs; recoverablePlans = snapshot.recoverablePlans; mode = snapshot.mode
             requiresClientContinuation = snapshot.requiresClientContinuation
@@ -677,10 +920,11 @@ final class NativeApplicationsStore: ObservableObject {
     /// This endpoint cannot approve a review, and its response never creates a local receipt.
     func pollApprovedApplications() async {
         guard !Task.isCancelled, continuationTicket == nil, await refresh() else { return }
-        guard !Task.isCancelled, !busy, requiresClientContinuation,
+        guard !Task.isCancelled, !busy, !reconciliationRequired, !recoveryIntegrityFailed, requiresClientContinuation,
               monotonicTime() >= nextContinuationTime, !activePlanIDs.isEmpty,
               let client else { return }
-        guard let id = activePlanIDs.first(where: { !state.holdsSubmission($0) && !continuationConflictsWithPrivateRecords($0) }) else {
+        guard let id = activePlanIDs.first(where: { id in !state.holdsSubmission(id) && !continuationConflictsWithPrivateRecords(id)
+            && recoverablePlans.first(where: { $0["id"]?.string == id })?["_careerHistoricalText"]?.bool != true }) else {
             message = hasSubmissionHold ? "Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review."
                 : "A queued application conflicts with a job you marked applied, or its target could not be checked. Review your phone record and stop unsent applications in Apply before continuing."
             return
@@ -696,7 +940,9 @@ final class NativeApplicationsStore: ObservableObject {
         }
         defer { finish() }
         do {
-            _ = try await client.request("advance", method: "POST", body: ["planId": .string(id)])
+            let result = try await client.response("advance", method: "POST", body: ["planId": .string(id)])
+            guard generation == sessionGeneration else { return }
+            try acceptMutationView(result); validated(result)
         } catch {
             if content == contentGeneration && !Task.isCancelled { acceptError(error, generation: generation) }
         }
@@ -751,7 +997,15 @@ final class NativeApplicationsStore: ObservableObject {
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
+            try requireReconciledWrite()
+            guard !containsHistoricalProfileText(draft) else { throw MobileApplicationError(message: Self.historicalWriteMessage) }
             var draft = draft
+            if !draft.website.isEmpty {
+                guard let link = MobileApplicationPolicy.newProfileWebsiteURL(draft.website) else {
+                    throw MobileApplicationError(message: "Use a shorter public HTTPS portfolio link. Your edits are kept in this editor.")
+                }
+                draft.website = link.absoluteString
+            }
             if !draft.linkedin.isEmpty {
                 guard let link = MobileApplicationPolicy.linkedInProfileURL(draft.linkedin) else {
                     throw MobileApplicationError(message: "Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name. Your edits are kept in this editor.")
@@ -771,7 +1025,7 @@ final class NativeApplicationsStore: ObservableObject {
             guard let expected = context.revision, !hasConflict(for: context) else {
                 throw MobileApplicationError(message: "Your phone draft is kept. Compare the latest service profile and choose which version to keep.")
             }
-            let saved = try await client.request("profile", method: "PUT",
+            let saved = try await client.response("profile", method: "PUT",
                 body: ["expectedRevision": .number(Double(expected)), "profile": .object(draft.payload(includeLinkedIn: linkedInProfileSupported == true))])
             guard generation == sessionGeneration else { return false }
             let server = try ApplicationServerProfile(saved["profile"]?.object ?? [:])
@@ -782,12 +1036,15 @@ final class NativeApplicationsStore: ObservableObject {
                 throw MobileApplicationError(message: "The service did not confirm your LinkedIn profile change. Your phone draft is kept; refresh before applying.")
             }
             var acknowledged = state; acknowledged.acknowledge(server)
+            try retainRecovery(saved, into: &acknowledged, origin: client.origin.absoluteString)
             do { try persist(acknowledged) }
             catch {
                 message = "The service saved your profile, but this phone could not save the confirmation. Your draft is preserved; refresh before applying."
                 return false
             }
+            validated(saved)
             recoverablePlans = []; plan = nil
+            if saved.mutationID != nil { finishOperation(operation); _ = await refresh() }
             message = "Application details saved. Review each application before sending."
             return true
         } catch {
@@ -798,6 +1055,7 @@ final class NativeApplicationsStore: ObservableObject {
         }
     }
     private func rememberImported(_ imported: [String: ApplicationValue], localID: String) throws {
+        try rejectHistoricalJob(imported)
         guard let index = state.jobs.firstIndex(where: { $0["id"]?.string == localID }) else { return }
         guard let importedURL = imported["url"]?.string, MobileApplicationPolicy.jobURL(importedURL) != nil,
               MobileApplicationPolicy.jobIdentity(importedURL) == MobileApplicationPolicy.jobIdentity(state.jobs[index]["url"]?.string ?? "") else {
@@ -827,7 +1085,7 @@ final class NativeApplicationsStore: ObservableObject {
     }
     func addJob(url: String, title: String, company: String, location: String, country: String,
                 sourceName: String? = nil, checkedAt: String? = nil) async -> Bool {
-        guard let valid = MobileApplicationPolicy.jobURL(url), let operation = beginOperation() else {
+        guard let valid = MobileApplicationPolicy.newJobURL(url), let operation = beginOperation() else {
             message = "Use a complete public HTTPS job link."; return false
         }
         defer { finishOperation(operation) }
@@ -838,6 +1096,7 @@ final class NativeApplicationsStore: ObservableObject {
             fields[key] = .string(value.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         do {
+            try requireReconciledWrite()
             let identity = MobileApplicationPolicy.jobIdentity(valid.absoluteString)
             guard !jobs.contains(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == identity }) else {
                 throw MobileApplicationError(message: "This opportunity is already in your workspace.")
@@ -866,11 +1125,12 @@ final class NativeApplicationsStore: ObservableObject {
             try persist(next); mergeJobs()
             guard let client else { message = "Opportunity saved on this phone."; return true }
             do {
-                let response = try await client.request("jobs", method: "POST", body: fields)
+                let response = try await client.response("jobs", method: "POST", body: fields)
                 guard generation == sessionGeneration else { return true }
                 let imported = response["job"]?.object ?? [:]
                 guard imported["id"]?.string != nil else { throw MobileApplicationError(message: "The service did not confirm this opportunity.") }
-                try rememberImported(imported, localID: localID)
+                try acceptMutationView(response)
+                try rememberImported(imported, localID: localID); validated(response)
                 message = "Opportunity saved."
                 finishOperation(operation); await refresh()
             } catch {
@@ -903,6 +1163,9 @@ final class NativeApplicationsStore: ObservableObject {
                 && chosenAppliedIdentities == localAppliedIdentities
         }
         do {
+            try requireReconciledWrite()
+            guard !containsHistoricalProfileText(profile), previousPlan?["_careerHistoricalText"]?.bool != true,
+                  !chosen.contains(where: { $0["_careerHistoricalText"]?.bool == true }) else { throw MobileApplicationError(message: Self.historicalWriteMessage) }
             if replacingUnapprovedReview {
                 guard let previousPlan, previousPlan["approvedAt"]?.string == nil,
                       let previousID = previousPlan["id"]?.string,
@@ -911,8 +1174,9 @@ final class NativeApplicationsStore: ObservableObject {
                     throw MobileApplicationError(message: "This review has already started or changed. Stop it explicitly before creating a different review.")
                 }
                 guard retainStopHolds([previousID], clearReview: false) else { return }
-                _ = try await client.request("stop", method: "POST", body: ["planId": .string(previousID), "onlyIfUnapproved": .bool(true)])
+                let stopped = try await client.response("stop", method: "POST", body: ["planId": .string(previousID), "onlyIfUnapproved": .bool(true)])
                 guard generation == sessionGeneration else { return }
+                try acceptMutationView(stopped); validated(stopped)
                 replacementStopAcknowledged = true
             }
             // Keep the disabled, held review mounted until its exact replacement is ready.
@@ -925,12 +1189,16 @@ final class NativeApplicationsStore: ObservableObject {
                 var id = job["id"]?.string ?? ""
                 if job["localOnly"]?.bool == true {
                     try checkUnpairedRecordAdoption(MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? ""))
+                    guard let url = job["url"]?.string, MobileApplicationPolicy.newJobURL(url) != nil else {
+                        throw MobileApplicationError(message: "This historical job link is kept exactly as saved. Add a shorter public HTTPS link before creating a new service opportunity.")
+                    }
                     let fields = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
-                    let result = try await client.request("jobs", method: "POST", body: fields)
+                    let result = try await client.response("jobs", method: "POST", body: fields)
                     guard generation == sessionGeneration else { return }
                     let imported = result["job"]?.object ?? [:]
                     guard let savedID = imported["id"]?.string else { throw MobileApplicationError(message: "An opportunity could not be synchronized. No application was sent.") }
-                    try rememberImported(imported, localID: id); id = savedID
+                    try acceptMutationView(result)
+                    try rememberImported(imported, localID: id); validated(result); id = savedID
                 }
                 guard !id.isEmpty, !ids.contains(id) else { continue }
                 ids.append(id)
@@ -946,12 +1214,12 @@ final class NativeApplicationsStore: ObservableObject {
                 "manualAppliedJobIds": .array(manualIDs.map(ApplicationValue.string))
             ]
             if !chosenProfile.linkedin.isEmpty { body["reviewSchema"] = .number(3) }
-            let value = try await client.request("prepare", method: "POST", body: body)
+            let value = try await client.response("prepare", method: "POST", body: body)
             guard generation == sessionGeneration else { return }
             guard inputsAreCurrent() else {
                 if let obsoleteID = value["plan"]?.object["id"]?.string {
                     if retainStopHolds([obsoleteID]) {
-                        _ = try? await client.request("stop", method: "POST", body: ["planId": .string(obsoleteID), "onlyIfUnapproved": .bool(true)])
+                        _ = try? await client.response("stop", method: "POST", body: ["planId": .string(obsoleteID), "onlyIfUnapproved": .bool(true)])
                     }
                 }
                 guard generation == sessionGeneration else { return }
@@ -964,6 +1232,7 @@ final class NativeApplicationsStore: ObservableObject {
                   ApplicationReviewPolicy.linkedInMatchesProfile(prepared, link: chosenProfile.linkedin) else {
                 throw MobileApplicationError(message: "The application review could not be prepared with your current profile.")
             }
+            try acceptMutationView(value); validated(value)
             plan = prepared; selected = Set(ids)
             finishOperation(operation); await refresh()
         } catch {
@@ -982,6 +1251,8 @@ final class NativeApplicationsStore: ObservableObject {
             message = "Automatic submission is unavailable for this connection. Refresh availability or apply on the employer's website."
             return false
         }
+        guard !reconciliationRequired, !recoveryIntegrityFailed else { message = Self.pendingWriteMessage; return false }
+        guard plan?["_careerHistoricalText"]?.bool != true, !containsHistoricalProfileText(profile) else { message = Self.historicalWriteMessage; return false }
         guard !profileNeedsSync, !profileEditing else { message = "Save your current application details before approving a submission."; return false }
         if let plan, planContainsMarkedApplication(plan) {
             message = "You marked a job in this review as already applied. Prepare a new review before continuing."; return false
@@ -997,8 +1268,9 @@ final class NativeApplicationsStore: ObservableObject {
         do {
             var body: [String: ApplicationValue] = ["planId": .string(id), "digest": .string(digest), "approved": .bool(true)]
             if ApplicationReviewPolicy.includesLinkedIn(plan) { body["reviewSchema"] = .number(3) }
-            _ = try await client.request("submit", method: "POST", body: body)
+            let result = try await client.response("submit", method: "POST", body: body)
             guard generation == sessionGeneration else { return false }
+            try acceptMutationView(result); validated(result)
             self.plan = nil
             message = "Your approved applications are processing. Confirmed receipts will appear here."
         } catch {
@@ -1017,8 +1289,9 @@ final class NativeApplicationsStore: ObservableObject {
         let generation = sessionGeneration
         do {
             for id in ids {
-                _ = try await client.request("stop", method: "POST", body: ["planId": .string(id)])
+                let result = try await client.response("stop", method: "POST", body: ["planId": .string(id)])
                 guard generation == sessionGeneration else { return }
+                try acceptMutationView(result); validated(result)
             }
             message = "Unsent applications were stopped. Applications already sending will keep their actual result."
             finishOperation(operation); await refresh()
@@ -1039,6 +1312,9 @@ final class NativeApplicationsStore: ObservableObject {
             message = "This review is no longer current. Refresh your applications."; return false
         }
         plan = current
+        if current["_careerHistoricalText"]?.bool == true {
+            selected = []; answers = [:]; message = Self.historicalWriteMessage; return true
+        }
         for item in current["items"]?.array.map(\.object) ?? [] {
             guard let id = item["jobId"]?.string else { continue }
             answers[id] = (item["payloadSummary"]?.object ?? [:]).filter { ["comments", "consentStore", "consentMarketing"].contains($0.key) }
@@ -1051,8 +1327,9 @@ final class NativeApplicationsStore: ObservableObject {
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
-            _ = try await client.request("stop", method: "POST", body: ["planId": .string(id)])
+            let result = try await client.response("stop", method: "POST", body: ["planId": .string(id)])
             guard generation == sessionGeneration else { return }
+            try acceptMutationView(result); validated(result)
             if plan?["id"]?.string == id { plan = nil }
             message = "This review was stopped. Provider cooldowns still apply to rejected attempts."
             finishOperation(operation); await refresh()
@@ -1074,9 +1351,10 @@ final class NativeApplicationsStore: ObservableObject {
         guard let operation = beginOperation() else { return }
         defer { finishOperation(operation) }
         do {
-            _ = try await serving.request("stop", method: "POST", body: [
+            let result = try await serving.response("stop", method: "POST", body: [
                 "planId": .string(planID), "onlyIfUnapproved": .bool(false)])
             guard sessionGeneration == generation, (client as AnyObject?) === (serving as AnyObject), state.recordScope == scope else { return }
+            try acceptMutationView(result); validated(result)
             message = "Stop requested. Jobs already dispatched still need a confirmed outcome."
             finishOperation(operation)
             if sessionGeneration == generation && !busy { await refresh() }
@@ -1259,6 +1537,9 @@ final class NativeApplicationsStore: ObservableObject {
             return nil
         }
         do {
+            guard !containsHistoricalProfileText(state.profile), !state.jobs.contains(where: { $0["_careerHistoricalText"]?.bool == true }) else {
+                throw MobileApplicationError(message: "Some older text needs repair before it can be included in a usable backup. Keep a complete recovery archive, or repair the affected details first.")
+            }
             guard state.jobs.count <= 200 else {
                 throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.")
             }
@@ -1392,6 +1673,9 @@ final class NativeApplicationsStore: ObservableObject {
                 message = "Phone data imported. Review the profile before saving online. Saved links and record history were merged; no application was approved or sent."
                 return true
             }
+            guard !containsHistoricalProfileText(next.profile), !next.jobs.contains(where: { $0["_careerHistoricalText"]?.bool == true }) else {
+                throw MobileApplicationError(message: "This file contains older text that needs repair, but its original records are missing. Keep the complete recovery archive or repair the affected details before importing.")
+            }
             try persist(next); plan = nil; selected = []; answers = [:]; mergeJobs()
             contentGeneration = UUID(); refreshTicket = nil
             message = "Phone data imported. Review the profile before saving online. Saved links and record history were merged; no application was approved or sent."
@@ -1428,14 +1712,19 @@ final class NativeApplicationsStore: ObservableObject {
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
-            let value = try await client.request("receipts")
+            let value = try await client.response("receipts")
             guard generation == sessionGeneration else { return nil }
+            if let document = value.document, document.needsRecovery, let metadata = document.metadata {
+                let reference = PhoneRecoveryReference(origin: client.origin.absoluteString, metadata: metadata)
+                try PhoneRecoveryStorage.retain(reference, file: document.file, in: folder); reloadHistoricalEvidence()
+                return try PhoneRecoveryStorage.export(reference, in: folder)
+            }
             let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
             let output = folder.appendingPathComponent("Career-Finder-Application-Receipts.json")
             #if os(iOS)
-            try encoder.encode(value).write(to: output, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            try encoder.encode(value.value).write(to: output, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             #else
-            try encoder.encode(value).write(to: output, options: [.atomic])
+            try encoder.encode(value.value).write(to: output, options: [.atomic])
             #endif
             return output
         } catch { acceptError(error, generation: generation); return nil }

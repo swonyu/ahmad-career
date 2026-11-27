@@ -133,12 +133,12 @@ data class ApplicationRecordBundle(val job: Opportunity, val current: Applicatio
             val revision = value.getDouble("revision"); require(revision >= 1 && revision <= Int.MAX_VALUE && revision == revision.toInt().toDouble())
             val jobValue = value.getJSONObject("job")
             for (key in listOf("id", "url", "title", "company", "location", "country")) require(jobValue.opt(key) is String)
-            val job = Opportunity.fromJson(jobValue); BoundaryPolicy.opportunityURL(job.url)
+            val job = Opportunity.fromJson(jobValue); BoundaryPolicy.historicalOpportunityURL(job.url)
             require(BoundaryPolicy.jobIdentity(job.url) == value.getString("identity")) { "The saved record identity could not be verified. Its file is preserved." }
             val current = ApplicationRecordVersion.decode(value.getJSONObject("current"))
             val alternatives = value.requiredObjects("alternatives").map(ApplicationRecordVersion::decode)
             val history = value.requiredObjects("history").map(ApplicationRecordVersion::decode)
-            val urls = value.requiredStrings("relatedURLs"); urls.forEach { BoundaryPolicy.opportunityURL(it) }
+            val urls = value.requiredStrings("relatedURLs"); urls.forEach { BoundaryPolicy.historicalOpportunityURL(it) }
             require(job.url in urls)
             val versions = listOf(current) + alternatives + history
             require(versions.map { it.id }.distinct().size == versions.size)

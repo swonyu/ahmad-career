@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
-/** Standalone JVM regression over the actual production reader; no Android SDK or network. */
+/** JVM regression over the production Java policy reader; Kotlin transport wiring is checked separately by source inspection. */
 public final class ApplicationResponseBoundaryCheck {
     private static final int MIB = 1024 * 1024;
     private static final int FIXTURE_BYTES = 2_735_817;
@@ -72,7 +72,7 @@ public final class ApplicationResponseBoundaryCheck {
         }
         check(received.length == FIXTURE_BYTES, "Exact valid service fixture byte count");
         check(BoundaryPolicy.sha256(received).equals(FIXTURE_SHA), "Exact actual-handler synthetic fixture hash");
-        check(applicationLimit == 12 * MIB, "Application cap must be fixed at 12 MiB");
+        check(applicationLimit == 12 * MIB, "Legacy v1 application cap must remain fixed at 12 MiB");
         check(BoundaryPolicy.MAX_RESPONSE_BYTES == 2 * MIB, "Discovery cap must remain 2 MiB");
         check(BoundaryPolicy.MAX_PDF_BYTES == 5 * MIB, "PDF cap must remain 5 MiB");
         check(BoundaryPolicy.MAX_PRIVATE_BYTES == 9 * MIB, "Private file cap must remain 9 MiB");
@@ -84,7 +84,7 @@ public final class ApplicationResponseBoundaryCheck {
         refuses(BoundaryPolicy.MAX_RESPONSE_BYTES, (long)BoundaryPolicy.MAX_RESPONSE_BYTES + 1);
         String api = Files.readString(Path.of(args[1]));
         String discovery = Files.readString(Path.of(args[2]));
-        check(api.contains("BoundaryPolicy.readBounded(it, BoundaryPolicy.MAX_APPLICATION_RESPONSE_BYTES)"), "Application API must use its fixed cap");
+        check(api.contains("CareerReadTransport.MAX_FRAME_BYTES else BoundaryPolicy.MAX_APPLICATION_RESPONSE_BYTES"), "Application API must retain the legacy v1 cap alongside the negotiated v2 frame cap");
         check(!api.contains("BoundaryPolicy.readBounded(it, BoundaryPolicy.MAX_RESPONSE_BYTES)"), "Application API must stop using the discovery cap");
         check(discovery.contains("BoundaryPolicy.readBounded(it, BoundaryPolicy.MAX_RESPONSE_BYTES)"), "Discovery must retain its own cap");
         check(!discovery.contains("MAX_APPLICATION_RESPONSE_BYTES"), "Application cap must not expand public discovery");

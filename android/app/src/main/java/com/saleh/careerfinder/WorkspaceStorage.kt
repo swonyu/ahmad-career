@@ -8,11 +8,11 @@ import org.json.JSONObject
 internal object WorkspaceStorage {
     private const val INVALID = "The saved workspace could not be read completely. Its encrypted file is preserved."
     private fun requireType(ok: Boolean) = require(ok) { INVALID }
-    private fun JSONObject.strings(key: String): List<String> {
+    private fun JSONObject.strings(key: String, legacy: Set<String> = emptySet()): List<String> {
         if (!has(key)) return emptyList()
         requireType(opt(key) is JSONArray)
         return (0 until getJSONArray(key).length()).map { index ->
-            val item = getJSONArray(key).opt(index); requireType(item is String && BoundaryPolicy.validUnicode(item)); item as String
+            val item = getJSONArray(key).opt(index); requireType(item is String && (BoundaryPolicy.validUnicode(item) || item in legacy)); item as String
         }
     }
     private fun JSONObject.objects(key: String): List<JSONObject> {
@@ -22,8 +22,8 @@ internal object WorkspaceStorage {
             val item = getJSONArray(key).opt(index); requireType(item is JSONObject); item as JSONObject
         }
     }
-    private fun JSONObject.textFields(vararg fields: String) {
-        fields.forEach { requireType(!has(it) || opt(it) is String && BoundaryPolicy.validUnicode(getString(it))) }
+    private fun JSONObject.textFields(vararg fields: String, legacy: Set<String> = emptySet()) {
+        fields.forEach { requireType(!has(it) || opt(it) is String && (BoundaryPolicy.validUnicode(getString(it)) || getString(it) in legacy)) }
     }
     private fun JSONObject.booleanFields(vararg fields: String) {
         fields.forEach { requireType(!has(it) || opt(it) is Boolean) }
@@ -38,10 +38,11 @@ internal object WorkspaceStorage {
             value.toDouble() <= Int.MAX_VALUE && value.toDouble() == value.toLong().toDouble())
         return (value as Number).toLong()
     }
-    internal fun profile(value: JSONObject): ProfileDraft {
+    internal fun profile(value: JSONObject): ProfileDraft = profile(value, emptySet())
+    private fun profile(value: JSONObject, legacy: Set<String>): ProfileDraft {
         value.textFields("firstName", "lastName", "email", "phone", "city", "country", "headline", "experienceLevel", "website", "linkedin",
-            "draftSkills", "draftTargetRoles", "draftTargetCountries")
-        listOf("skills", "targetRoles", "targetCountries", "workModes").forEach { value.strings(it) }
+            "draftSkills", "draftTargetRoles", "draftTargetCountries", legacy = legacy)
+        listOf("skills", "targetRoles", "targetCountries", "workModes").forEach { value.strings(it, legacy) }
         value.booleanFields("removeResume")
         if (value.has("revision")) integer(value.opt("revision"))
         for (key in listOf("draftResume", "resume")) value.optionalObject(key, nullable = true)?.let { resume ->
@@ -49,7 +50,8 @@ internal object WorkspaceStorage {
             val size = integer(resume.opt("size"), 8)
             requireType(size <= BoundaryPolicy.MAX_PDF_BYTES && resume.getString("mime") == "application/pdf" &&
                 resume.getString("sha256").matches(Regex("[a-f0-9]{64}")) &&
-                BoundaryPolicy.pdfName(resume.getString("name")) == resume.getString("name"))
+                ApplicationCvEvidence.validHistoricalRecordedName(resume.getString("name")) &&
+                (BoundaryPolicy.validUnicode(resume.getString("name")) || resume.getString("name") in legacy))
             if (resume.has("dataBase64")) {
                 requireType(resume.opt("dataBase64") is String)
                 val encoded = resume.getString("dataBase64")
@@ -69,24 +71,33 @@ internal object WorkspaceStorage {
         value.booleanFields("localOnly")
         val job = Opportunity.fromJson(value)
         requireType(job.id.isNotBlank())
-        BoundaryPolicy.opportunityURL(job.url)
+        BoundaryPolicy.historicalOpportunityURL(job.url)
         return job
     }
-    private fun receipt(value: JSONObject): ApplicationReceipt {
+    private fun receipt(value: JSONObject, legacy: Set<String>): ApplicationReceipt {
         value.textFields("attemptId", "id", "title", "employer", "company", "state", "applicationId", "createdAt", "confirmedAt",
-            "evidenceMode", "mode", "resumeSHA256", "provider")
+            "evidenceMode", "mode", "resumeSHA256", "provider", legacy = legacy)
         requireType(value.opt("attemptId") is String || value.opt("id") is String)
         requireType(value.opt("state") is String && (value.opt("createdAt") is String || value.opt("confirmedAt") is String))
         if (value.has("planId") && !value.isNull("planId")) requireType(value.opt("planId") is String)
-        value.optionalObject("job", nullable = true)?.textFields("title", "company", "url")
+        value.optionalObject("job", nullable = true)?.textFields("title", "company", "url", legacy = legacy)
         if (value.has("error") && !value.isNull("error")) {
             requireType(value.opt("error") is String || value.opt("error") is JSONObject)
-            value.optJSONObject("error")?.textFields("message", "code")
+            value.optJSONObject("error")?.textFields("message", "code", legacy = legacy)
         }
         return ApplicationReceipt.fromJson(value).also { requireType(it.id.isNotBlank() && it.state.isNotBlank()) }
     }
-    fun decode(value: JSONObject?, connection: Connection?, expectedScope: String? = null): CareerUiState {
-        if (value == null) return CareerUiState(loaded = true, connection = connection)
+    fun decode(stored: JSONObject?, connection: Connection?, expectedScope: String? = null): CareerUiState {
+        if (stored == null) return CareerUiState(loaded = true, connection = connection)
+        requireType(!stored.has("historicalText") || stored.opt("historicalText") is JSONObject)
+        val evidence = stored.optJSONObject("historicalText")
+        if (evidence != null) requireType(evidence.opt("version") == 1 && evidence.keys().asSequence().toSet() == setOf("version", "reference", "entries"))
+        val reference = evidence?.getJSONObject("reference")?.let { HistoricalRecoveryReference.decode(it, connection) }
+        val projection = JSONObject(stored.toString()).apply { remove("historicalText") }
+        val restored = if (evidence != null) HistoricalText.restore(projection, evidence.getJSONArray("entries"), authorityPaths = false)
+            else projection to emptySet()
+        val value = restored.first
+        val historical = restored.second
         requireType(value.opt("schema") == 1)
         val known = setOf("schema", "profile", "profileDirty", "opportunityDraft", "applicationRecords", "recordDrafts", "recordDraftAlternatives", "jobs", "activePlans", "manualApplied",
             "selected", "obsoleteReviews", "continuationHolds", "serverProfile", "answers", "receipts", "importedReceipts", "recoveredOpportunityDrafts")
@@ -104,19 +115,20 @@ internal object WorkspaceStorage {
         val answers = value.optionalObject("answers")?.let { map -> map.keys().asSequence().associateWith { id ->
             requireType(map.opt(id) is JSONObject)
             val answer = map.getJSONObject(id)
-            answer.textFields("comments"); answer.booleanFields("consentStore", "consentMarketing")
+            answer.textFields("comments", legacy = historical); answer.booleanFields("consentStore", "consentMarketing")
             JobAnswers.fromJson(answer)
         } }.orEmpty()
         return CareerUiState(loaded = true, connection = connection,
-            profile = value.optionalObject("profile")?.let(::profile) ?: ProfileDraft(), profileDirty = value.optBoolean("profileDirty"),
-            serverProfile = value.optionalObject("serverProfile", nullable = true)?.let(::profile),
+            profile = value.optionalObject("profile")?.let { profile(it, historical) } ?: ProfileDraft(), profileDirty = value.optBoolean("profileDirty"),
+            serverProfile = value.optionalObject("serverProfile", nullable = true)?.let { profile(it, historical) },
             opportunityDraft = value.optionalObject("opportunityDraft")?.let(OpportunityDraft::fromJson) ?: OpportunityDraft(),
             recoveredOpportunityDrafts = value.objects("recoveredOpportunityDrafts").map(OpportunityDraft::fromJson),
             applicationRecords = records, recordDrafts = drafts.associateBy { it.identity }, recordDraftAlternatives = alternatives, jobs = jobs,
             manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, legacy), answers = answers,
-            receipts = value.objects("receipts").map(::receipt), importedReceipts = value.objects("importedReceipts").map { receipt(it).copy(evidenceMode = "imported") },
+            receipts = value.objects("receipts").map { receipt(it, historical) }, importedReceipts = value.objects("importedReceipts").map { receipt(it, historical).copy(evidenceMode = "imported") },
             activePlans = value.strings("activePlans"), selected = value.strings("selected").toSet(),
-            obsoleteReviews = value.strings("obsoleteReviews").toSet(), continuationHolds = value.strings("continuationHolds").toSet())
+            obsoleteReviews = value.strings("obsoleteReviews").toSet(), continuationHolds = value.strings("continuationHolds").toSet(),
+            historicalRecovery = reference, historicalRawStrings = historical)
     }
     fun receiptJson(receipt: ApplicationReceipt) = JSONObject().put("attemptId", receipt.id).put("title", receipt.title)
         .put("employer", receipt.company).put("state", receipt.state).put("applicationId", receipt.applicationId)
@@ -124,10 +136,20 @@ internal object WorkspaceStorage {
         .put("resumeSHA256", receipt.resumeSHA256).put("provider", receipt.provider)
         .apply {
             if (receipt.planId.isNotEmpty()) put("planId", receipt.planId)
-            receipt.resumeName?.let { serviceData(ApplicationCvEvidence.validRecordedName(it)); put("resumeName", it) }
+            receipt.resumeName?.let { serviceData(ApplicationCvEvidence.validHistoricalRecordedName(it)); put("resumeName", it) }
             receipt.profileRevision?.let { serviceData(it >= 0); put("profileRevision", it) }
         }
-    fun encode(snapshot: CareerUiState): JSONObject = JSONObject().put("schema", 1)
+    fun hasHistoricalValues(snapshot: CareerUiState): Boolean = HistoricalText.malformedStrings(rawEncode(snapshot)).isNotEmpty()
+    fun encode(snapshot: CareerUiState): JSONObject {
+        val value = rawEncode(snapshot)
+        val (projected, entries) = HistoricalText.project(value, snapshot.historicalRawStrings)
+        if (entries.length() > 0 || snapshot.historicalRecovery != null) {
+            val reference = requireNotNull(snapshot.historicalRecovery) { "The original historical text record is unavailable. Your earlier file is kept." }
+            projected.put("historicalText", JSONObject().put("version", 1).put("reference", reference.json()).put("entries", entries))
+        }
+        return projected
+    }
+    private fun rawEncode(snapshot: CareerUiState): JSONObject = JSONObject().put("schema", 1)
         .put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
         .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
         .put("recoveredOpportunityDrafts", JSONArray(snapshot.recoveredOpportunityDrafts.map(OpportunityDraft::privateJson)))
