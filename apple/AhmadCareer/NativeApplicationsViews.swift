@@ -3,6 +3,9 @@ import SwiftUI
 import UniformTypeIdentifiers
 import UIKit
 import SafariServices
+#if DEBUG
+import Combine
+#endif
 
 private enum ApplyDesign {
     static let actionFill = NativeDesign.actionFill
@@ -73,6 +76,71 @@ struct NativeSavedLinkRemoval: View {
     }
 }
 
+private struct NativeHistoricalRecovery: View {
+    @NativeLocalization private var l10n
+    @ObservedObject var model: NativeApplicationsStore
+    @State private var exportLease: PhoneRecoveryExportLease?
+    @State private var sharing = false
+    @State private var exporting = false
+    @State private var exportTask: Task<Void, Never>?
+    private func export(_ reference: PhoneRecoveryReference? = nil) {
+        guard exportTask == nil else { return }
+        exporting = true
+        exportTask = Task {
+            let result = await model.exportHistoricalRecovery(reference)
+            if Task.isCancelled {
+                if let result { PhoneRecoveryStorage.removeTemporaryExport(result) }
+            } else if let result {
+                exportLease = PhoneRecoveryExportLease(file: result)
+                sharing = true
+            }
+            exporting = false; exportTask = nil
+        }
+    }
+    private func title(_ reference: PhoneRecoveryReference) -> String {
+        let names = ["workspace": "Workspace", "profile": "Profile", "job": "Opportunity", "plan": "Review", "plan-state": "Review", "receipts": "Application receipts"]
+        return l10n(names[reference.kind] ?? "Workspace") + " · " + reference.asOf
+    }
+    var body: some View {
+        if let notice = model.historicalRecoveryNotice {
+            VStack(alignment: .leading, spacing: 12) {
+                Label(l10n("Historical data recovery"), systemImage: "doc.badge.clock").font(.headline)
+                Text(l10n(notice)).font(.footnote).fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("applications.historicalRecovery.notice")
+                if model.pendingRecovery != nil || model.recoveryExportChoices.count <= 1 {
+                    Button(l10n(exporting ? "Preparing recovery file…" : "Export complete recovery file")) { export() }
+                        .disabled(exporting || model.busy || !model.hasHistoricalRecovery)
+                        .accessibilityIdentifier("applications.historicalRecovery.export")
+                } else {
+                    Menu(l10n(exporting ? "Preparing recovery file…" : "Export complete recovery file")) {
+                        ForEach(model.recoveryExportChoices, id: \.documentFileName) { reference in
+                            Button(title(reference)) { export(reference) }
+                        }
+                    }.disabled(exporting || model.busy).accessibilityIdentifier("applications.historicalRecovery.export")
+                }
+                if exporting {
+                    Button(l10n("Cancel recovery download"), role: .cancel) { exportTask?.cancel() }
+                        .accessibilityIdentifier("applications.historicalRecovery.cancel")
+                }
+                Text(l10n("This file keeps a copy of the original records. It is an archive only: it cannot be imported as a profile or used to approve an application or prove it was sent."))
+                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                if model.reconciliationRequired {
+                    Button(l10n("Refresh workspace")) { Task { await model.refresh() } }.disabled(model.busy)
+                        .accessibilityIdentifier("applications.historicalRecovery.refresh")
+                }
+            }
+            .sheet(isPresented: $sharing, onDismiss: {
+                exportLease?.cleanup(); exportLease = nil
+            }) {
+                if let exportLease {
+                    NativeApplicationShare(items: [exportLease.file], onCompletion: { exportLease.cleanup() })
+                }
+            }
+            .onDisappear { exportTask?.cancel() }
+        }
+    }
+}
+
 struct NativeApplicationsScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var model: NativeApplicationsStore
@@ -85,6 +153,7 @@ struct NativeApplicationsScreen: View {
     @State private var reviewSheet = false
     @State private var activity = false
     @State private var exported: URL?
+    @State private var recoveryExportLease: PhoneRecoveryExportLease?
     @State private var exportSheet = false
     @State private var removing: PhoneLocalRemovalContext?
     @State private var announcedMessage: String?
@@ -104,10 +173,8 @@ struct NativeApplicationsScreen: View {
         }
         return model.selected.isEmpty ? "Select opportunities to apply" : "Review applications: \(model.selected.count)"
     }
-    private var confirmed: Int {
-        model.attempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
-    }
-    private var uncertain: Int { model.attempts.filter { $0["state"]?.string == "uncertain" }.count }
+    private var confirmed: Int { model.displayConfirmedApplicationCount }
+    private var uncertain: Int { model.displayUncertainApplicationCount }
     private var appliedURLs: Set<String> {
         // Existing self-entered statuses remain separate from provider receipts.
         Set(career.workspace.snapshots.values.filter { job in
@@ -118,10 +185,12 @@ struct NativeApplicationsScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 header
+                NativeHistoricalRecovery(model: model)
                 if let message = model.message {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "info.circle")
                         Text(l10n(message)).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("applications.message")
                         Spacer(minLength: 0)
                         Button { model.message = nil } label: { Image(systemName: "xmark").padding(8) }
                             .accessibilityLabel(l10n("Dismiss message"))
@@ -137,6 +206,11 @@ struct NativeApplicationsScreen: View {
                 if dynamicTypeSize.isAccessibilitySize {
                     VStack(spacing: 10) { metrics }
                 } else { HStack(spacing: 10) { metrics } }
+                if let savedAt = model.applicationHistorySavedAt, let date = ApplicationReviewPolicy.date(savedAt) {
+                    Text(l10n.format("Saved history from {0}. Connect and refresh to check the latest status.", [l10n.date(date, includeTime: true)]))
+                        .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("applications.savedHistoryNotice")
+                }
                 if !model.activePlanIDs.isEmpty {
                     HStack(spacing: 12) {
                         ProgressView()
@@ -242,8 +316,12 @@ struct NativeApplicationsScreen: View {
         .sheet(isPresented: $addSheet) { NativeOpportunityEditor(model: model) }
         .sheet(isPresented: $reviewSheet) { NativeApplicationReview(model: model, manualAppliedURLs: appliedURLs) }
         .sheet(item: $removing) { NativeSavedLinkRemoval(model: model, context: $0) }
-        .sheet(isPresented: $exportSheet) {
-            if let exported { NativeApplicationShare(items: [exported]) }
+        .sheet(isPresented: $exportSheet, onDismiss: {
+            recoveryExportLease?.cleanup(); recoveryExportLease = nil
+        }) {
+            if let exported, let recoveryExportLease {
+                NativeApplicationShare(items: [exported], onCompletion: { recoveryExportLease.cleanup() })
+            } else if let exported { NativeApplicationShare(items: [exported]) }
         }
         .refreshable { await model.refresh() }
         .onAppear { speakVisibleMessage(model.message) }
@@ -315,6 +393,16 @@ struct NativeApplicationsScreen: View {
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityElement(children: .combine)
     }
+    private func opportunityAccessibilityLabel(for job: [String: ApplicationValue]) -> String {
+        let title: String = job["title"]?.string ?? l10n("Opportunity")
+        let company: String = job["company"]?.string ?? ""
+        let location: String = job["location"]?.string ?? ""
+        let titleAndCompany: String = l10n.format("{0} at {1}", [title, company])
+        let locationLabel: String = l10n("Location")
+        let spokenLocation: String = location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? l10n("Location not specified") : location
+        return titleAndCompany + ", " + locationLabel + ": \u{2068}" + spokenLocation + "\u{2069}"
+    }
     private var opportunities: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -331,6 +419,8 @@ struct NativeApplicationsScreen: View {
             }
             ForEach(model.jobs.compactMap { NativeApplicationRow($0) }) { row in
                 let job = row.value, id = row.id
+                let companyForInitial: String = job["company"]?.string ?? "?"
+                let companyInitial: String = String(companyForInitial.prefix(1)).uppercased()
                 VStack(alignment: .leading, spacing: 12) {
                     Button {
                         if model.selected.contains(id) { model.selected.remove(id) }
@@ -338,7 +428,7 @@ struct NativeApplicationsScreen: View {
                         else { model.message = "Review up to 20 opportunities in one batch." }
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
-                            Text(String((job["company"]?.string ?? "?").prefix(1)).uppercased())
+                            Text(companyInitial)
                                 .font(.title3.weight(.semibold)).foregroundStyle(ApplyDesign.accent)
                                 .frame(width: 42, height: 42).background(ApplyDesign.accentSurface, in: RoundedRectangle(cornerRadius: 12))
                                 .accessibilityHidden(true)
@@ -354,7 +444,8 @@ struct NativeApplicationsScreen: View {
                                 .frame(minWidth: 30, minHeight: 44)
                         }
                     }.buttonStyle(.plain).disabled(model.busy)
-                        .accessibilityLabel(l10n.format("{0} at {1}", [String(describing: job["title"]?.string ?? l10n("Opportunity")), String(describing: job["company"]?.string ?? "")]))
+                        .accessibilityLabel(opportunityAccessibilityLabel(for: job))
+                        .accessibilityIdentifier("applications.select." + id)
                         .accessibilityValue(l10n(model.selected.contains(id) ? "Selected" : "Not selected"))
                         .accessibilityHint(l10n("Select for application review"))
                     VStack(alignment: .leading, spacing: 8) {
@@ -390,18 +481,24 @@ struct NativeApplicationsScreen: View {
             HStack {
                 Text(l10n("Application receipts")).font(.headline)
                 Spacer()
-                if !model.attempts.isEmpty {
-                    Button { Task { exported = await model.exportReceipts(); exportSheet = exported != nil } } label: {
+                if model.canExportApplicationReceipts {
+                    Button { Task {
+                        let result = await model.exportReceipts()
+                        if let result, PhoneRecoveryStorage.isTemporaryExport(result) {
+                            recoveryExportLease = PhoneRecoveryExportLease(file: result)
+                        } else { recoveryExportLease = nil }
+                        exported = result; exportSheet = result != nil
+                    } } label: {
                         Image(systemName: "square.and.arrow.up").frame(minWidth: 44, minHeight: 44)
                     }.accessibilityLabel(l10n("Export application receipts"))
                 }
             }
-            if model.attempts.isEmpty {
+            if model.displayAttempts.isEmpty {
                 empty(icon: "checkmark.seal", title: "No receipts yet",
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
-            ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
-                NativeApplicationReceipt(attempt: row.value, onStop: { planID, attemptID in
+            ForEach(model.displayAttempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
+                NativeApplicationReceipt(attempt: row.value, onStop: model.showingSavedApplicationHistory ? nil : { planID, attemptID in
                     Task { await model.stopAndCheckReceipt(planID: planID, attemptID: attemptID) }
                 })
             }
@@ -517,6 +614,18 @@ struct NativeApplicationProfileEditor: View {
                         .font(.subheadline).foregroundStyle(.primary)
                 }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently) } }
+                if model.hasHistoricalRecovery {
+                    Section {
+                        NativeHistoricalRecovery(model: model)
+                        if model.profileNeedsHistoricalRepair {
+                            Text(l10n("Repair replaces unreadable characters with � in this draft. Review every field before saving. Choose a new PDF or remove the current one if its filename is affected."))
+                                .font(.footnote).fixedSize(horizontal: false, vertical: true)
+                            Button(l10n("Repair displayed text in this draft")) {
+                                draft = model.repairedHistoricalProfileDraft(draft)
+                            }.disabled(occupied).accessibilityIdentifier("profile.repairHistoricalText")
+                        }
+                    }
+                }
                 if conflicts {
                     Section {
                         Text(l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
@@ -833,6 +942,61 @@ struct NativeApplicationProfileEditor: View {
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
 }
 
+#if DEBUG
+/// These subscriptions observe only while this editor is mounted. Native field
+/// identity is classified from its exact allowlisted identifier, never inferred
+/// from the binding or a text value. Separate observations are not atomic.
+@MainActor
+private struct NativeOpportunityFocusObservation: ViewModifier {
+    let focusedField: String?
+    let busy: Bool
+    let sceneActive: Bool
+
+    static func record(_ event: CareerAppEnvironment.OpportunityFocusEvent, binding: String?,
+                       busy: Bool, sceneActive: Bool, nativeField: UITextField? = nil) {
+        guard CareerAppEnvironment.isUIAcceptance else { return }
+        let current = CareerAppEnvironment.OpportunityFocusField(binding: binding)
+        let isNativeEvent = event == .textEditingBegan || event == .textEditingEnded
+        let observed = nativeField.map {
+            CareerAppEnvironment.OpportunityFocusField(nativeIdentifier: $0.accessibilityIdentifier)
+        } ?? (isNativeEvent ? .unknown : current)
+        CareerAppEnvironment.recordOpportunityFocus(event, field: observed, flags: [
+            .bindingNone: current == .none, .bindingURL: current == .url,
+            .bindingTitle: current == .title, .bindingCompany: current == .company,
+            .bindingLocation: current == .location, .bindingUnknown: current == .unknown,
+            .busy: busy, .sceneActive: sceneActive,
+            .hasNativeField: nativeField != nil,
+            .nativeIsFirstResponder: nativeField?.isFirstResponder ?? false,
+            .nativeHasWindow: nativeField?.window != nil,
+            .nativeEnabled: nativeField?.isEnabled ?? false,
+            .nativeUserInteractionEnabled: nativeField?.isUserInteractionEnabled ?? false,
+            .nativeIdentifierKnown: nativeField != nil && observed != .unknown
+        ])
+    }
+    private func observe(_ event: CareerAppEnvironment.OpportunityFocusEvent, nativeField: UITextField? = nil) {
+        Self.record(event, binding: focusedField, busy: busy, sceneActive: sceneActive, nativeField: nativeField)
+    }
+    func body(content: Content) -> some View {
+        content
+            .onAppear { observe(.editorAppeared) }
+            .onDisappear { observe(.editorDisappeared) }
+            .onChange(of: focusedField) { value in
+                Self.record(.focusBindingChanged, binding: value, busy: busy, sceneActive: sceneActive)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { notification in
+                observe(.textEditingBegan, nativeField: notification.object as? UITextField)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidEndEditingNotification)) { notification in
+                observe(.textEditingEnded, nativeField: notification.object as? UITextField)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in observe(.keyboardWillShow) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in observe(.keyboardDidShow) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in observe(.keyboardWillHide) }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in observe(.keyboardDidHide) }
+    }
+}
+#endif
+
 struct NativeOpportunityEditor: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
@@ -876,7 +1040,7 @@ struct NativeOpportunityEditor: View {
                     Picker(l10n("Country or region"), selection: $draft.country) {
                         Text(l10n("Not specified")).tag("")
                         ForEach(Locale.Region.isoRegions.map(\.identifier).sorted {
-                            (Locale.current.localizedString(forRegionCode: $0) ?? $0) < (Locale.current.localizedString(forRegionCode: $1) ?? $1)
+                            (l10n.locale.localizedString(forRegionCode: $0) ?? $0) < (l10n.locale.localizedString(forRegionCode: $1) ?? $1)
                         }, id: \.self) { code in
                             Text(l10n(l10n.locale.localizedString(forRegionCode: code) ?? code)).tag(code)
                         }
@@ -906,7 +1070,13 @@ struct NativeOpportunityEditor: View {
                         } }.disabled(model.busy || draft.url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             .accessibilityIdentifier("opportunity.save")
                     }
-                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) { focusedField = nil } }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) {
+                        #if DEBUG
+                        NativeOpportunityFocusObservation.record(.doneActionEntered, binding: focusedField,
+                            busy: model.busy, sceneActive: scenePhase == .active)
+                        #endif
+                        focusedField = nil
+                    } }
                 }
                 .confirmationDialog(l10n("Keep this opportunity draft?"), isPresented: $dismissalChoice, titleVisibility: .visible) {
                     Button(l10n("Save draft on this phone")) {
@@ -930,6 +1100,10 @@ struct NativeOpportunityEditor: View {
             .onChange(of: issue) { value in
                 if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
             }
+            #if DEBUG
+            .modifier(NativeOpportunityFocusObservation(focusedField: focusedField,
+                busy: model.busy, sceneActive: scenePhase == .active))
+            #endif
     }
 }
 
@@ -1141,7 +1315,12 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: Presenter, context: Context) {
-        controller.update(requestedURL: isPresented ? url : nil) { isPresented = false }
+        controller.update(requestedURL: isPresented ? url : nil) {
+            isPresented = false
+            #if DEBUG
+            CareerAppEnvironment.recordBrowserLifecycle(.bindingAssignedFalse, flags: [.bindingPresented: isPresented])
+            #endif
+        }
     }
 
     static func dismantleUIViewController(_ controller: Presenter, coordinator: ()) {
@@ -1159,11 +1338,17 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
         func update(requestedURL: URL?, onDismiss: @escaping () -> Void) {
             self.requestedURL = requestedURL
             self.onDismiss = onDismiss
+            #if DEBUG
+            traceBrowserLifecycle(.bindingUpdate)
+            #endif
             presentIfReady()
         }
 
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
+            #if DEBUG
+            traceBrowserLifecycle(.presenterDidAppear)
+            #endif
             presentIfReady()
         }
 
@@ -1172,6 +1357,9 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             // allowed only once that exact controller has left presentation.
             if let current = browser, current.presentingViewController == nil,
                !current.isBeingPresented, !current.isBeingDismissed {
+                #if DEBUG
+                traceBrowserLifecycle(.detachedBrowserObserved, controller: current)
+                #endif
                 reportDismissal(of: current)
                 browser = nil
             }
@@ -1185,11 +1373,22 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             browser = controller
             dismissalReported = false
             // Keep Safari's default modal presentation and transitioning delegate.
+            #if DEBUG
+            traceBrowserLifecycle(.presentRequested, controller: controller)
+            present(controller, animated: true) { [weak self, weak controller] in
+                guard let self, let controller else { return }
+                self.traceBrowserLifecycle(.presentCompleted, controller: controller)
+            }
+            #else
             present(controller, animated: true)
+            #endif
             controller.presentationController?.delegate = self
         }
 
         func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            #if DEBUG
+            traceBrowserLifecycle(.delegateDidFinish, controller: controller)
+            #endif
             reportDismissal(of: controller)
             // Safari dismisses itself after this callback. Do not begin a
             // competing dismiss transition when the binding becomes false.
@@ -1197,17 +1396,54 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
 
         func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
             guard let controller = presentationController.presentedViewController as? SFSafariViewController else { return }
+            #if DEBUG
+            traceBrowserLifecycle(.presentationDidDismiss, controller: controller)
+            #endif
             reportDismissal(of: controller)
         }
 
         private func reportDismissal(of controller: SFSafariViewController) {
+            #if DEBUG
+            traceBrowserLifecycle(.reportDismissalEntered, controller: controller)
+            #endif
             guard browser === controller, !dismissalReported else { return }
             dismissalReported = true
             requestedURL = nil
             onDismiss?()
+            #if DEBUG
+            traceBrowserLifecycle(.reportDismissalApplied, controller: controller)
+            #endif
         }
 
+        #if DEBUG
+        private func traceBrowserLifecycle(_ event: CareerAppEnvironment.BrowserLifecycleEvent,
+                                           controller: SFSafariViewController? = nil) {
+            guard CareerAppEnvironment.isUIAcceptance else { return }
+            let observed = controller ?? browser
+            CareerAppEnvironment.recordBrowserLifecycle(event, flags: [
+                .requestedPresentation: requestedURL != nil,
+                .hasTrackedBrowser: browser != nil,
+                .hasObservedController: observed != nil,
+                .matchesTrackedBrowser: observed != nil && browser === observed,
+                .dismissalReported: dismissalReported,
+                .dismantled: dismantled,
+                .hasDismissCallback: onDismiss != nil,
+                .presenterInWindow: viewIfLoaded?.window != nil,
+                .presenterIsBeingPresented: isBeingPresented,
+                .presenterIsBeingDismissed: isBeingDismissed,
+                .presentedControllerIsObserved: observed != nil && presentedViewController === observed,
+                .observedHasPresenter: observed?.presentingViewController != nil,
+                .observedIsBeingPresented: observed?.isBeingPresented ?? false,
+                .observedIsBeingDismissed: observed?.isBeingDismissed ?? false,
+                .observedViewInWindow: observed?.viewIfLoaded?.window != nil
+            ])
+        }
+        #endif
+
         func dismantle() {
+            #if DEBUG
+            traceBrowserLifecycle(.dismantleEntered)
+            #endif
             dismantled = true
             requestedURL = nil
             onDismiss = nil
@@ -1215,9 +1451,25 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             // dismiss a different controller or a parent connection sheet.
             if let current = browser, current.presentingViewController != nil,
                !current.isBeingDismissed {
+                #if DEBUG
+                traceBrowserLifecycle(.teardownDismissRequested, controller: current)
+                current.dismiss(animated: false) { [weak current] in
+                    CareerAppEnvironment.recordBrowserLifecycle(.teardownDismissCompleted, flags: [
+                        .hasObservedController: current != nil,
+                        .observedHasPresenter: current?.presentingViewController != nil,
+                        .observedIsBeingPresented: current?.isBeingPresented ?? false,
+                        .observedIsBeingDismissed: current?.isBeingDismissed ?? false,
+                        .observedViewInWindow: current?.viewIfLoaded?.window != nil
+                    ])
+                }
+                #else
                 current.dismiss(animated: false)
+                #endif
             }
             browser = nil
+            #if DEBUG
+            traceBrowserLifecycle(.dismantleFinished)
+            #endif
         }
     }
 }
@@ -1249,6 +1501,7 @@ private struct NativeApplicationReview: View {
                         Label(l10n("Test workspace — no real employer application"), systemImage: "testtube.2").foregroundStyle(.orange)
                     }
                 }
+                if model.reviewNeedsHistoricalRepair || model.reconciliationRequired { Section { NativeHistoricalRecovery(model: model) } }
                 ForEach(items.compactMap { NativeApplicationRow($0, idKey: "jobId") }) { row in
                     let item = row.value
                     let job = item["job"]?.object ?? [:]
@@ -1270,8 +1523,10 @@ private struct NativeApplicationReview: View {
                                     .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                             }.accessibilityElement(children: .combine)
                         }
-                        if let name = item["resume"]?.object["name"]?.string {
-                            Label(name, systemImage: "doc.text").font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        let cvDetails = ApplicationCVDetails(reviewItem: item, plan: model.plan ?? [:])
+                        NativeApplicationDetails(resumeName: cvDetails.resumeName, profileRevision: cvDetails.profileRevision,
+                            contextID: "review." + (model.plan?["id"]?.string ?? "") + "." + jobID)
+                        if cvDetails.resumeName != nil {
                             if let size = item["resume"]?.object["size"]?.integer {
                                 Text(l10n(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))).font(.caption).foregroundStyle(.secondary)
                             }
@@ -1346,7 +1601,8 @@ private struct NativeApplicationReview: View {
                         Label(l10n.format("Auto Apply · jobs: {0}", [String(describing: ready)]), systemImage: "paperplane.fill")
                             .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 10)
                     }.buttonStyle(.borderedProminent).tint(ApplyDesign.actionFill)
-                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync || !model.submissionAvailable)
+                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync || !model.submissionAvailable
+                            || model.reviewNeedsHistoricalRepair || model.profileNeedsHistoricalRepair || model.reconciliationRequired || model.recoveryIntegrityFailed)
                 }
                 if let id = model.plan?["id"]?.string {
                     Section {
@@ -1355,7 +1611,7 @@ private struct NativeApplicationReview: View {
                         }.disabled(model.busy)
                     }
                 }
-            }.disabled(model.busy).navigationTitle(l10n("Review applications")).navigationBarTitleDisplayMode(.inline)
+            }.accessibilityIdentifier("application.review.content").disabled(model.busy).navigationTitle(l10n("Review applications")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button(l10n("Back")) { if changed { discardChoices = true } else { dismiss() } }.disabled(model.busy)
@@ -1409,16 +1665,47 @@ private struct NativeApplicationReview: View {
     }
 }
 
+/// A filename is historical context, not proof that an employer received an application.
+struct NativeApplicationDetails: View {
+    @NativeLocalization private var l10n
+    let resumeName: String?
+    let profileRevision: Int?
+    let contextID: String
+    var manual = false
+    var body: some View {
+        DisclosureGroup {
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(l10n(manual ? "Filename you recorded" : "Reviewed CV")).foregroundStyle(.secondary)
+                    if let name = resumeName, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Text(verbatim: "\u{2068}" + name + "\u{2069}")
+                            .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                    } else { Text(l10n("CV not recorded")) }
+                }.accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("application.details." + contextID + ".resume")
+                if !manual, let revision = profileRevision {
+                    LabeledContent(l10n("Profile version"), value: revision.formatted(.number.locale(l10n.locale)))
+                        .accessibilityIdentifier("application.details." + contextID + ".revision")
+                }
+                if manual {
+                    Text(l10n("Self-entered information. This is not a submission receipt."))
+                        .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+            }.font(.caption).padding(.top, 6)
+        } label: {
+            Text(l10n("Application details")).accessibilityIdentifier("application.details." + contextID)
+        }.font(.subheadline)
+    }
+}
+
 private struct NativeApplicationReceipt: View {
     @NativeLocalization private var l10n
     let attempt: [String: ApplicationValue]
     var onStop: ((_ planID: String, _ attemptID: String) -> Void)? = nil
     private var test: Bool { attempt["evidenceMode"]?.string == "test" }
     private var verified: Bool { MobileApplicationPolicy.isVerified(attempt) }
-    private var state: String {
-        let state = attempt["state"]?.string ?? ""
-        return state == "confirmed" && !verified ? "uncertain" : state
-    }
+    private var contextID: String { "attempt." + (attempt["id"]?.string ?? attempt["attemptId"]?.string ?? "") }
+    private var state: String { MobileApplicationPolicy.displayState(attempt) }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
@@ -1433,6 +1720,7 @@ private struct NativeApplicationReceipt: View {
             Text(l10n(MobileApplicationPolicy.stateTitle(state, test: test))).font(.caption.weight(.semibold))
                 .padding(.horizontal, 10).padding(.vertical, 6)
                 .background(verified && !test ? ApplyDesign.accentSurface : Color.secondary.opacity(0.09), in: Capsule())
+                .accessibilityIdentifier("application.state." + contextID)
             if state == "uncertain" {
                 Text(l10n("The service could not establish whether the employer accepted this application. It will not be sent again automatically."))
                     .font(.caption).foregroundStyle(.secondary)
@@ -1445,7 +1733,9 @@ private struct NativeApplicationReceipt: View {
             if let message = attempt["error"]?.object["message"]?.string ?? attempt["reason"]?.string, !message.isEmpty {
                 Text(l10n(message)).font(.caption).foregroundStyle(.secondary)
             }
-            DisclosureGroup(l10n("Receipt details")) {
+            let cvDetails = ApplicationCVDetails(attempt: attempt)
+            NativeApplicationDetails(resumeName: cvDetails.resumeName, profileRevision: cvDetails.profileRevision, contextID: contextID)
+            DisclosureGroup(l10n(verified ? "Receipt details" : state == "ready" ? "Draft details" : "Attempt details")) {
                 VStack(alignment: .leading, spacing: 10) {
                     if let id = attempt["applicationId"]?.string, verified {
                         LabeledContent(l10n("Provider application ID"), value: id).textSelection(.enabled)
@@ -1495,6 +1785,7 @@ struct NativePhoneDataScreen: View {
             }
             if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true) } }
             if let notice = model.message { Section { Text(l10n(notice)).font(.footnote).fixedSize(horizontal: false, vertical: true) } }
+            if model.hasHistoricalRecovery || model.reconciliationRequired { Section { NativeHistoricalRecovery(model: model) } }
             Section(l10n("Export and recovery")) {
                 Button(l10n("Export this phone workspace")) {
                     do {
@@ -1639,7 +1930,12 @@ struct NativePhoneDataScreen: View {
 
 private struct NativeApplicationShare: UIViewControllerRepresentable {
     let items: [Any]
-    func makeUIViewController(context: Context) -> UIActivityViewController { UIActivityViewController(activityItems: items, applicationActivities: nil) }
+    var onCompletion: (() -> Void)? = nil
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in onCompletion?() }
+        return controller
+    }
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 #endif

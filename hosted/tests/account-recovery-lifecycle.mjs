@@ -46,7 +46,7 @@ const identityContext = { React };
 vm.createContext(identityContext);
 vm.runInContext(code("globalThis.SessionRecoveryAction = " + (innerComponent ?? publicComponent).getText(sessionTree).replace(/^export\s+default\s+/, "") + ";\nglobalThis.actionElement = accountId => " + (keyedAction ? "(" + keyedAction.getText(sessionTree) + ")" : "React.createElement(SessionRecoveryAction, { accountId })") + ";"), identityContext);
 const bundle = await build({
-  stdin: { contents: 'export { internalAuthRedirect, authStatusSchema, oauthReturn } from "./app/components/provider-auth.ts"; export { APIError } from "./app/components/api.ts";', sourcefile: "account-recovery-real-helpers.ts", resolveDir: process.cwd() },
+  stdin: { contents: 'export { internalAuthRedirect, authStatusSchema, oauthReturn } from "./app/components/provider-auth.ts"; export { APIError } from "./app/components/api.ts"; export { translate } from "./app/i18n/core.ts";', sourcefile: "account-recovery-real-helpers.ts", resolveDir: process.cwd() },
   bundle: true, write: false, platform: "node", format: "esm", target: "node24", logLevel: "silent",
 });
 const helpers = await import("data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].text + "\n//# sourceURL=account-recovery-real-helpers.mjs").toString("base64"));
@@ -161,17 +161,17 @@ test("actual recovery rejects an untrusted redirect without navigation or automa
 
 const flush = () => new Promise(resolve => setImmediate(resolve));
 function oauthHarness(result, provider = "google") {
-  const calls = [], feedback = [], history = [];
+  const calls = [], feedback = [], history = [], navigations = [];
   const context = {
     URL, AbortController, authStatusSchema: helpers.authStatusSchema, oauthReturn: helpers.oauthReturn,
-    window: { location: { href: origin + "/phone?oauth_provider=" + provider + "&oauth_result=" + result + "&error_description=SYNTHETIC_UNTRUSTED_TEXT" }, history: { state: null, replaceState: (_state, _title, value) => history.push(value) } },
+    window: { location: { get href() { return origin + "/phone?oauth_provider=" + provider + "&oauth_result=" + result + "&error_description=SYNTHETIC_UNTRUSTED_TEXT"; }, set href(value) { navigations.push(value); }, assign: value => navigations.push(value), replace: value => navigations.push(value) }, history: { state: null, replaceState: (_state, _title, value) => history.push(value) } },
     requestAPI(path, options) { const gate = deferred(); calls.push({ path, options, ...gate }); return gate.promise; },
     setFeedback(value) { feedback.push(structuredClone(value)); },
     setMessage(text) { feedback.push({ text, tone: "status" }); },
   };
   vm.createContext(context); vm.runInContext(oauthCode, context);
   const cleanup = context.start();
-  return { calls, feedback, history, cleanup };
+  return { calls, feedback, history, navigations, cleanup };
 }
 function authStatus({ connected = true, method = "google" } = {}) {
   return { ok: true, account: { id: "synthetic-account-a", email: "synthetic@example.com", displayName: "Synthetic", method }, providers: {
@@ -185,6 +185,25 @@ test("actual OAuth cancellation is polite and does not render untrusted provider
   assert.equal(h.calls.length, 0); assert.equal(h.feedback.length, 1); assert.equal(h.feedback[0].tone, "status");
   assert.match(h.feedback[0].text, /cancelled/); assert(!h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"));
   assert(!h.history[0].includes("oauth_provider")); assert(!h.history[0].includes("oauth_result")); h.cleanup();
+});
+
+
+test("already-linked feedback is a fixed localized advisory with no automatic authentication or account navigation", async t => {
+  for (const [provider, label] of [["google", "Google"], ["linkedin", "LinkedIn"]]) await t.test(provider, async () => {
+    const h = oauthHarness("already_linked", provider); await flush();
+    const expected = `This ${label} account is already connected to another Career Finder account. To open that account, choose Sign out on Account, then sign in with ${label}. Any saved data stays with its original account.`;
+    assert.deepEqual(h.feedback, [{ tone: "alert", text: expected }]);
+    assert.deepEqual(h.calls, []); assert.deepEqual(h.navigations, []);
+    assert.equal(helpers.translate(h.feedback[0].text, "en"), expected);
+    const arabic = helpers.translate(h.feedback[0].text, "ar"), isolated = "\u2068" + label + "\u2069";
+    assert.equal(arabic, `حساب ${isolated} هذا مرتبط بالفعل بحساب آخر في Career Finder. لفتح ذلك الحساب، اختر «تسجيل الخروج» من صفحة «الحساب»، ثم سجّل الدخول باستخدام ${isolated}. تبقى أي بيانات محفوظة في حسابها الأصلي.`);
+    assert(!arabic.includes("SYNTHETIC_UNTRUSTED_TEXT")); assert(!h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"));
+    assert.equal(h.history.length, 1);
+    const cleaned = new URL(h.history[0], origin);
+    assert.equal(cleaned.searchParams.has("oauth_provider"), false); assert.equal(cleaned.searchParams.has("oauth_result"), false);
+    assert.doesNotMatch(h.feedback[0].text, /is connected to your current|sign-in is confirmed|existing workspace/);
+    h.cleanup();
+  });
 });
 
 test("actual OAuth success language still requires service confirmation", async t => {

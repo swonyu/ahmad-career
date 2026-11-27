@@ -1,0 +1,387 @@
+{
+  "source": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "sourceBlobs": {
+    "hosted/app/phone/record-tools.ts": "5c6cefd0daf5cadb57ebad2b24160ae3e56578a8",
+    "hosted/app/phone/model.ts": "1dfce84b490e1c6b4eaffd546ff07089c3446b37",
+    "hosted/app/i18n/core.ts": "5381f87aa378a6836af83432d7e29e180ef449cb"
+  },
+  "node": "v24.22.3",
+  "recordCount": 18,
+  "columnCount": 9,
+  "records": [
+    {
+      "identity": "https://employer.example/careers/consumer-review",
+      "title": "مهندس, \"أول\"",
+      "company": "شركة الاختبار",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "line one\nline two, \"quoted\"\r\nنص خاص",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-0",
+      "title": "=1+1",
+      "company": "=1+1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "=1+1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-1",
+      "title": "+SUM(1,2)",
+      "company": "+SUM(1,2)",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "+SUM(1,2)",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-2",
+      "title": "-1+2",
+      "company": "-1+2",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "-1+2",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-3",
+      "title": "@SUM(A1:A2)",
+      "company": "@SUM(A1:A2)",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "@SUM(A1:A2)",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-4",
+      "title": "\t=1",
+      "company": "\t=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "\t=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-5",
+      "title": "\r=1",
+      "company": "\r=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "\r=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-6",
+      "title": "\n=1",
+      "company": "\n=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "\n=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-7",
+      "title": "  =1",
+      "company": "  =1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "  =1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-8",
+      "title": "﻿=1",
+      "company": "﻿=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "﻿=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-9",
+      "title": "⁦=1",
+      "company": "⁦=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "⁦=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-10",
+      "title": "'=1",
+      "company": "'=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "'=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-11",
+      "title": "\"=1",
+      "company": "\"=1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "\"=1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-12",
+      "title": "＝1+1",
+      "company": "＝1+1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "＝1+1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-13",
+      "title": "＋1",
+      "company": "＋1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "＋1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-14",
+      "title": "－1",
+      "company": "－1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "－1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-15",
+      "title": "＠SUM(1)",
+      "company": "＠SUM(1)",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "＠SUM(1)",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    },
+    {
+      "identity": "https://employer.example/careers/formula-16",
+      "title": "　＝1",
+      "company": "　＝1",
+      "location": "Riyadh",
+      "stage": "interview",
+      "appliedElsewhere": true,
+      "appliedDate": "2026-11-18",
+      "followUpDate": "2026-11-24",
+      "note": "　＝1",
+      "updatedAt": "2026-11-18T19:00:00.000Z",
+      "email": "SYNTHETIC_PROFILE_EMAIL",
+      "password": "SYNTHETIC_SECRET",
+      "resume": {
+        "dataBase64": "SYNTHETIC_CV"
+      },
+      "scope": "SYNTHETIC_OTHER_SCOPE",
+      "accessToken": "SYNTHETIC_TOKEN"
+    }
+  ],
+  "dangerous": [
+    "=1+1",
+    "+SUM(1,2)",
+    "-1+2",
+    "@SUM(A1:A2)",
+    "\t=1",
+    "\r=1",
+    "\n=1",
+    "  =1",
+    "﻿=1",
+    "⁦=1",
+    "'=1",
+    "\"=1",
+    "＝1+1",
+    "＋1",
+    "－1",
+    "＠SUM(1)",
+    "　＝1"
+  ],
+  "files": [
+    {
+      "filename": "career-finder-export-en.csv",
+      "sha256": "b3da155a3581f04013b4512f117816a177ec88bc6a4efde6ef36ec3002edbbc5",
+      "base64": "77u/IkpvYiB0aXRsZSIsIkVtcGxveWVyIiwiSm9iIGxpbmsiLCJTdGFnZSAoc2VsZi1lbnRlcmVkKSIsIk1hcmtlZCBhcHBsaWVkIChzZWxmLWVudGVyZWQpIiwiQXBwbGllZCBkYXRlIChzZWxmLWVudGVyZWQpIiwiRm9sbG93LXVwIGRhdGUgKHNlbGYtZW50ZXJlZCkiLCJQcml2YXRlIG5vdGUiLCJMYXN0IGVkaXRlZCAobm90IGFwcGxpY2F0aW9uIHRpbWUpIg0KItmF2YfZhtiv2LMsICIi2KPZiNmEIiIiLCLYtNix2YPYqSDYp9mE2KfYrtiq2KjYp9ixIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvY29uc3VtZXItcmV2aWV3IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJsaW5lIG9uZQpsaW5lIHR3bywgIiJxdW90ZWQiIg0K2YbYtSDYrtin2LUiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogPTErMSIsIlRleHQ6ID0xKzEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTAiLCJJbnRlcnZpZXciLCJZZXMiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6ID0xKzEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogK1NVTSgxLDIpIiwiVGV4dDogK1NVTSgxLDIpIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xIiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiArU1VNKDEsMikiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogLTErMiIsIlRleHQ6IC0xKzIiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTIiLCJJbnRlcnZpZXciLCJZZXMiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6IC0xKzIiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogQFNVTShBMTpBMikiLCJUZXh0OiBAU1VNKEExOkEyKSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtMyIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogQFNVTShBMTpBMikiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogCT0xIiwiVGV4dDogCT0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS00IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiAJPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogDT0xIiwiVGV4dDogDT0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS01IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiANPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogCj0xIiwiVGV4dDogCj0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS02IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiAKPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogICA9MSIsIlRleHQ6ICAgPTEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTciLCJJbnRlcnZpZXciLCJZZXMiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6ICAgPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog77u/PTEiLCJUZXh0OiDvu789MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtOCIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog77u/PTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog4oGmPTEiLCJUZXh0OiDigaY9MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtOSIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog4oGmPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDogJz0xIiwiVGV4dDogJz0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xMCIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogJz0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6ICIiPTEiLCJUZXh0OiAiIj0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xMSIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogIiI9MSIsIjIwMjYtMTEtMThUMTk6MDA6MDAuMDAwWiINCiJUZXh0OiDvvJ0xKzEiLCJUZXh0OiDvvJ0xKzEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTEyIiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiDvvJ0xKzEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog77yLMSIsIlRleHQ6IO+8izEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTEzIiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiDvvIsxIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IO+8jTEiLCJUZXh0OiDvvI0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xNCIsIkludGVydmlldyIsIlllcyIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog77yNMSIsIjIwMjYtMTEtMThUMTk6MDA6MDAuMDAwWiINCiJUZXh0OiDvvKBTVU0oMSkiLCJUZXh0OiDvvKBTVU0oMSkiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTE1IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiDvvKBTVU0oMSkiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog44CA77ydMSIsIlRleHQ6IOOAgO+8nTEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTE2IiwiSW50ZXJ2aWV3IiwiWWVzIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiDjgIDvvJ0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0K"
+    },
+    {
+      "filename": "career-finder-export-ar.csv",
+      "sha256": "6b380dd85ead824b5de6190347279a6a525b1ed87a88d6564cd205c4d046a873",
+      "base64": "77u/Itin2YTZhdiz2YXZiSDYp9mE2YjYuNmK2YHZiiIsItis2YfYqSDYp9mE2LnZhdmEIiwi2LHYp9io2Lcg2KfZhNmI2LjZitmB2KkiLCLYp9mE2YXYsdit2YTYqSAo2KPYr9iu2YTYqtmH2Kcg2KjZhtmB2LPZgykiLCLYudmE2KfZhdipINiq2YUg2KfZhNiq2YLYr9mK2YUgKNij2K/YrtmE2KrZh9inINio2YbZgdiz2YMpIiwi2KrYp9ix2YrYriDYp9mE2KrZgtiv2YrZhSAo2KPYr9iu2YTYqtmHINio2YbZgdiz2YMpIiwi2KrYp9ix2YrYriDYp9mE2YXYqtin2KjYudipICjYo9iv2K7ZhNiq2Ycg2KjZhtmB2LPZgykiLCLZhdmE2KfYrdi42Kkg2K7Yp9i12KkiLCLYotiu2LEg2KrYudiv2YrZhCAo2YjZhNmK2LMg2YjZgtiqINin2YTYqtmC2K/ZitmFKSINCiLZhdmH2YbYr9izLCAiItij2YjZhCIiIiwi2LTYsdmD2Kkg2KfZhNin2K7Yqtio2KfYsSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2NvbnN1bWVyLXJldmlldyIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwibGluZSBvbmUKbGluZSB0d28sICIicXVvdGVkIiINCtmG2LUg2K7Yp9i1IiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6ID0xKzEiLCJUZXh0OiA9MSsxIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0wIiwi2YXZgtin2KjZhNipIiwi2YbYudmFIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiA9MSsxIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6ICtTVU0oMSwyKSIsIlRleHQ6ICtTVU0oMSwyKSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtMSIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogK1NVTSgxLDIpIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IC0xKzIiLCJUZXh0OiAtMSsyIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0yIiwi2YXZgtin2KjZhNipIiwi2YbYudmFIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiAtMSsyIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IEBTVU0oQTE6QTIpIiwiVGV4dDogQFNVTShBMTpBMikiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTMiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6IEBTVU0oQTE6QTIpIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IAk9MSIsIlRleHQ6IAk9MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtNCIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogCT0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IA09MSIsIlRleHQ6IA09MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtNSIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogDT0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IAo9MSIsIlRleHQ6IAo9MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtNiIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDogCj0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6ICAgPTEiLCJUZXh0OiAgID0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS03Iiwi2YXZgtin2KjZhNipIiwi2YbYudmFIiwiMjAyNi0xMS0xOCIsIjIwMjYtMTEtMjQiLCJUZXh0OiAgID0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IO+7vz0xIiwiVGV4dDog77u/PTEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTgiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6IO+7vz0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IOKBpj0xIiwiVGV4dDog4oGmPTEiLCJodHRwczovL2VtcGxveWVyLmV4YW1wbGUvY2FyZWVycy9mb3JtdWxhLTkiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6IOKBpj0xIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6ICc9MSIsIlRleHQ6ICc9MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtMTAiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6ICc9MSIsIjIwMjYtMTEtMThUMTk6MDA6MDAuMDAwWiINCiJUZXh0OiAiIj0xIiwiVGV4dDogIiI9MSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtMTEiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6ICIiPTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog77ydMSsxIiwiVGV4dDog77ydMSsxIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xMiIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog77ydMSsxIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IO+8izEiLCJUZXh0OiDvvIsxIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xMyIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog77yLMSIsIjIwMjYtMTEtMThUMTk6MDA6MDAuMDAwWiINCiJUZXh0OiDvvI0xIiwiVGV4dDog77yNMSIsImh0dHBzOi8vZW1wbG95ZXIuZXhhbXBsZS9jYXJlZXJzL2Zvcm11bGEtMTQiLCLZhdmC2KfYqNmE2KkiLCLZhti52YUiLCIyMDI2LTExLTE4IiwiMjAyNi0xMS0yNCIsIlRleHQ6IO+8jTEiLCIyMDI2LTExLTE4VDE5OjAwOjAwLjAwMFoiDQoiVGV4dDog77ygU1VNKDEpIiwiVGV4dDog77ygU1VNKDEpIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xNSIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog77ygU1VNKDEpIiwiMjAyNi0xMS0xOFQxOTowMDowMC4wMDBaIg0KIlRleHQ6IOOAgO+8nTEiLCJUZXh0OiDjgIDvvJ0xIiwiaHR0cHM6Ly9lbXBsb3llci5leGFtcGxlL2NhcmVlcnMvZm9ybXVsYS0xNiIsItmF2YLYp9io2YTYqSIsItmG2LnZhSIsIjIwMjYtMTEtMTgiLCIyMDI2LTExLTI0IiwiVGV4dDog44CA77ydMSIsIjIwMjYtMTEtMThUMTk6MDA6MDAuMDAwWiINCg=="
+    }
+  ],
+  "scope": "Actual production export functions executed directly with synthetic fixtures. Browser download not tested by this generator."
+}

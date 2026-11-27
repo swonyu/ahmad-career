@@ -48,6 +48,8 @@ class WorkspaceRegressionTest {
         var workspaceWaiting = false
         @Volatile var deferredReadReturned = false
         var malformedProfileReply = false
+        var overrideProfileReplyResume = false
+        var profileReplyResume: Resume? = null
         var malformedWorkspace = false
         var rejectJobSave = false
         var rejectGuardedStop = false
@@ -77,10 +79,11 @@ class WorkspaceRegressionTest {
                         else -> {
                             val pdf = input.getJSONObject("resume")
                             val bytes = Base64.decode(pdf.getString("dataBase64"), Base64.DEFAULT)
-                            Resume(pdf.getString("name"), bytes.size.toLong(), BoundaryPolicy.sha256(bytes))
+                            Resume(pdf.getString("name").trim(::jsWhitespace), bytes.size.toLong(), BoundaryPolicy.sha256(bytes))
                         }
                     })
-                    profile = saved
+                    // The acknowledged response and later workspace read describe one committed revision.
+                    profile = if (overrideProfileReplyResume) saved.copy(resume = profileReplyResume) else saved
                     JSONObject().put("ok", true).put("profile", if (malformedProfileReply) JSONObject() else profileData())
                 }
                 "jobs" -> {
@@ -167,6 +170,81 @@ class WorkspaceRegressionTest {
         await { !model.state.value.busy && !model.state.value.profileDirty }
         assertEquals(2, service.writes.last { it.first == "profile" }.second.getInt("expectedRevision"))
         assertEquals("My edits", service.profile.firstName)
+    }
+
+    @Test fun explicitCvReplacementNeedsMatchingAcknowledgement_andKeepsThePrivateDraft() {
+        val bytes = "%PDF-1.4 synthetic".toByteArray()
+        val selected = Resume("Selected.pdf", bytes.size.toLong(), BoundaryPolicy.sha256(bytes), Base64.encodeToString(bytes, Base64.NO_WRAP))
+        val mismatches = listOf<Resume?>(null, selected.copy(name = "Other.pdf"),
+            selected.copy(size = selected.size + 1), selected.copy(sha256 = "b".repeat(64)))
+        for (reply in mismatches) {
+            val store = connectedStore()
+            val service = Service(connection).apply { overrideProfileReplyResume = true; profileReplyResume = reply }
+            val model = model(store, service)
+            main { model.editProfile { it.copy(resume = selected, removeResume = false) }; model.saveProfile() }
+            await { !model.state.value.busy && model.state.value.error != null }
+            assertEquals("The service did not confirm the CV change. Refresh the online profile and review your draft.", model.state.value.error)
+            assertEquals(selected, model.state.value.profile.resume)
+            assertEquals(1, model.state.value.profile.revision)
+            assertTrue(model.state.value.profileDirty)
+            val durable = store.read(cacheKey())!!
+            assertTrue(durable.getBoolean("profileDirty"))
+            assertEquals(selected, ProfileDraft.fromJson(durable.getJSONObject("profile")).resume)
+            assertEquals(selected.name, service.writes.last().second.getJSONObject("profile").getJSONObject("resume").getString("name"))
+        }
+    }
+
+    @Test fun explicitCvRemovalNeedsNullAcknowledgement_andKeepsThePrivateDraft() {
+        val store = connectedStore(); val service = Service(connection)
+        service.overrideProfileReplyResume = true
+        service.profileReplyResume = service.profile.resume
+        val model = model(store, service)
+        main { model.removePDF(); model.saveProfile() }
+        await { !model.state.value.busy && model.state.value.error != null }
+        assertEquals("The service did not confirm the CV change. Refresh the online profile and review your draft.", model.state.value.error)
+        assertNull(model.state.value.profile.resume)
+        assertTrue(model.state.value.profile.removeResume)
+        assertEquals(1, model.state.value.profile.revision)
+        assertTrue(model.state.value.profileDirty)
+        val durable = store.read(cacheKey())!!
+        assertTrue(durable.getBoolean("profileDirty"))
+        assertTrue(service.writes.last().second.getJSONObject("profile").isNull("resume"))
+        val draft = ProfileDraft.fromJson(durable.getJSONObject("profile"))
+        assertNull(draft.resume)
+        assertTrue(draft.removeResume)
+    }
+
+    @Test fun matchingCvChangesSucceed_andMetadataOnlySaveKeepsItsExistingContract() {
+        val bytes = "%PDF-1.4 synthetic".toByteArray()
+        val selected = Resume("\uFEFFSelected.pdf", bytes.size.toLong(), BoundaryPolicy.sha256(bytes), Base64.encodeToString(bytes, Base64.NO_WRAP))
+        val service = Service(connection)
+        val replacement = model(connectedStore(), service)
+        main { replacement.editProfile { it.copy(resume = selected, removeResume = false) }; replacement.saveProfile() }
+        await { !replacement.state.value.busy && !replacement.state.value.profileDirty }
+        assertNull(replacement.state.value.error)
+        assertEquals("Selected.pdf", replacement.state.value.profile.resume?.name)
+        assertEquals(selected.sha256, replacement.state.value.profile.resume?.sha256)
+        assertEquals(2, replacement.state.value.profile.revision)
+        assertEquals("Selected.pdf", service.profile.resume?.name)
+        assertEquals(2, service.profile.revision)
+
+        val removal = model(connectedStore(), Service(connection))
+        main { removal.removePDF(); removal.saveProfile() }
+        await { !removal.state.value.busy && !removal.state.value.profileDirty }
+        assertNull(removal.state.value.error)
+        assertNull(removal.state.value.profile.resume)
+        assertEquals(2, removal.state.value.profile.revision)
+
+        val metadataService = Service(connection).apply {
+            overrideProfileReplyResume = true
+            profileReplyResume = Resume("Other-valid.pdf", 25, "c".repeat(64))
+        }
+        val metadataOnly = model(connectedStore(), metadataService)
+        main { metadataOnly.editProfile { it.copy(firstName = "Edited name") }; metadataOnly.saveProfile() }
+        await { !metadataOnly.state.value.busy && !metadataOnly.state.value.profileDirty }
+        assertNull(metadataOnly.state.value.error)
+        assertEquals("Other-valid.pdf", metadataOnly.state.value.profile.resume?.name)
+        assertEquals(2, metadataOnly.state.value.profile.revision)
     }
 
     @Test fun copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync() {

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { hasHistoricalText, hasUnpairedText } from "./historical-text";
+import { parseReadOperation, parseReadIntent, operationMatchesIntent, type ReadOperation, type ReadIntent } from "./read-transport";
 
 export const MAX_PDF_BYTES = 5 * 1024 * 1024;
 export const PHONE_SCHEMA = 1;
@@ -6,13 +8,27 @@ export const stages = ["saved", "applied", "interview", "offer", "closed"] as co
 export const stageNames: Record<(typeof stages)[number], string> = { saved: "Saved for later", applied: "Applied", interview: "Interview", offer: "Offer", closed: "Closed" };
 export const countryCodes = "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW".split(" ");
 
-export function publicURL(input: string): string {
-  if (typeof input !== "string" || input.length > 2048 || /[\s\\\x00-\x1f\x7f]/u.test(input)) throw Error("Enter a complete public HTTPS link without spaces.");
+function checkedPublicURL(input: string, writing: boolean): URL {
+  if (typeof input !== "string" || /[\s\\\x00-\x1f\x7f]/u.test(input) || /[\uD800-\uDFFF]/u.test(input)) throw Error("Enter a complete public HTTPS link without spaces.");
+  if (writing && input.length > 2048) throw Error("This link is too long. Use a shorter link.");
   let url: URL;
   try { url = new URL(input); } catch { throw Error("Enter a complete public HTTPS link without spaces."); }
   if (url.protocol !== "https:" || url.username || url.password || url.port && url.port !== "443" || !url.hostname.includes(".") || /^[\d.]+$/.test(url.hostname) || url.hostname.startsWith("[") || /(^|\.)(localhost|local|internal|test|invalid)$/.test(url.hostname)) throw Error("Use a public HTTPS link without a password or custom port.");
+  return url;
+}
+
+/** New values keep the service's input and canonical-output length limit. */
+export function publicURL(input: string): string {
+  const url = checkedPublicURL(input, true);
   url.hash = "";
+  if (url.href.length > 2048) throw Error("This link is too long. Use a shorter link.");
   return url.href;
+}
+
+/** Old canonical URLs may be longer; validate their destination without rewriting them. */
+export function historicalPublicURL(input: string): string {
+  checkedPublicURL(input, false);
+  return input;
 }
 
 export function linkedInURL(input: string): string {
@@ -36,7 +52,9 @@ export function linkedInURL(input: string): string {
 }
 
 export function jobIdentity(input: string): string {
-  const url = new URL(publicURL(input));
+  // Identity is a comparison key, not a replacement for the recorded URL.
+  const url = new URL(historicalPublicURL(input));
+  url.hash = "";
   const lever = url.pathname.match(/^\/([a-z0-9][a-z0-9_-]{0,79})\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(?:\/apply)?\/?$/i);
   if (["jobs.lever.co", "jobs.eu.lever.co"].includes(url.hostname) && lever) return `${url.origin}/${lever[1].toLowerCase()}/${lever[2].toLowerCase()}`;
   for (const key of [...url.searchParams.keys()]) if (/^utm_/i.test(key) || ["gclid", "fbclid", "lever-source", "lever-origin"].includes(key)) url.searchParams.delete(key);
@@ -63,39 +81,53 @@ export function friendlyDate(input: string, language?: "en" | "ar"): string {
 }
 const boundedText = (max: number) => z.string().max(max).refine(v => !/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(v), "Unsupported control characters");
 const https = z.string().max(2048).refine(v => { try { publicURL(v); return true; } catch { return false; } }, "Invalid HTTPS URL");
+const historicalHTTPS = z.string().refine(v => { try { historicalPublicURL(v); return true; } catch { return false; } }, "Invalid HTTPS URL");
 const timestamp = z.string().max(80).refine(v => Number.isFinite(Date.parse(v)), "Invalid timestamp");
 const date = z.string().refine(v => v === "" || civilDate(v), "Choose a valid calendar date");
+const recordedPDFName = boundedText(180).refine(value => value === value.trim() && /\.pdf$/i.test(value) && !/[\x00-\x1f\x7f/\\:]/.test(value) && !value.startsWith("."), "Use a plain PDF filename");
+const manualResumeName = boundedText(180).refine(value => !/[\x00-\x1f\x7f/\\:]/.test(value), "Enter only the filename, without a folder path.");
 const linkedin = z.string().max(2048).refine(v => { if (!v) return true; try { return linkedInURL(v) === v; } catch { return false; } }, "Invalid LinkedIn link");
 export const resumeSchema = z.object({ name: boundedText(180).refine(value => /\.pdf$/i.test(value) && !/[/\\:]/.test(value) && !value.startsWith("."), "Use a plain PDF filename"), mime: z.literal("application/pdf"), size: z.number().int().min(8).max(MAX_PDF_BYTES), sha256: z.string().regex(/^[a-f0-9]{64}$/), dataBase64: z.string().max(Math.ceil(MAX_PDF_BYTES / 3) * 4).refine(value => value.length >= 12 && value.length % 4 === 0 && /^[A-Za-z0-9+/]*={0,2}$/.test(value) && value.startsWith("JVBERi0"), "Invalid PDF bytes").optional() }).refine(value => !value.dataBase64 || value.dataBase64.length / 4 * 3 - (value.dataBase64.endsWith("==") ? 2 : value.dataBase64.endsWith("=") ? 1 : 0) === value.size, "PDF byte size does not match its metadata");
 export const profileSchema = z.object({
   firstName: boundedText(150), lastName: boundedText(150), email: boundedText(254), phone: boundedText(150), city: boundedText(150), country: z.string().refine(v => v === "" || countryCodes.includes(v)), headline: boundedText(500),
   skills: z.array(boundedText(100)).max(30), targetRoles: z.array(boundedText(100)).max(30), targetCountries: z.array(z.string().max(2).refine(value => countryCodes.includes(value), "Choose a supported country or region")).max(30), workModes: z.array(z.enum(["on-site", "hybrid", "remote"])).max(3), experienceLevel: z.enum(["any", "entry", "mid", "senior"]),
-  website: z.union([z.literal(""), https]), linkedin: linkedin.default(""), resume: resumeSchema.nullable(), revision: z.number().int().min(0),
+  website: z.union([z.literal(""), historicalHTTPS]), linkedin: linkedin.default(""), resume: resumeSchema.nullable(), revision: z.number().int().min(0),
 });
-export const draftProfileSchema = profileSchema.extend({ website: boundedText(2048), linkedin: boundedText(2048) });
+// An unchanged historical website can be kept in a local/recovery draft. Online
+// writes still pass through publicURL in profileRequest.
+export const draftProfileSchema = profileSchema.extend({ website: z.union([boundedText(2048), historicalHTTPS]), linkedin: boundedText(2048) });
 export type Profile = z.infer<typeof profileSchema>;
 export function blankProfile(): Profile { return { firstName: "", lastName: "", email: "", phone: "", city: "", country: "", headline: "", skills: [], targetRoles: [], targetCountries: [], workModes: [], experienceLevel: "any", website: "", linkedin: "", resume: null, revision: 0 }; }
 export function profileEssentials(profile: Profile) {
-  return { name: Boolean(profile.firstName.trim()), email: /^[^\s@<>]{1,64}@[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.[a-z]{2,63}$/i.test(profile.email.trim()), resume: Boolean(profile.resume) };
+  return { name: Boolean(profile.firstName.trim()) && !hasUnpairedText(profile.firstName), email: !hasUnpairedText(profile.email) && /^[^\s@<>]{1,64}@[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.[a-z]{2,63}$/i.test(profile.email.trim()), resume: Boolean(profile.resume && !hasUnpairedText(profile.resume.name)) };
 }
 export function profileRequest(profile: Profile) {
   profile = draftProfileSchema.parse(profile);
+  if (hasHistoricalText(profile)) throw Error("Some historical text needs repair before it can be sent. Your original information is still here.");
   const { resume, ...fieldsWithRevision } = profile;
   const fields = { ...fieldsWithRevision }; delete (fields as Partial<Profile>).revision;
   return { ...fields, firstName: profile.firstName.trim(), lastName: profile.lastName.trim(), email: profile.email.trim().toLowerCase(), phone: profile.phone.trim(), city: profile.city.trim(), headline: profile.headline.trim(), skills: [...new Set(profile.skills.map(s => s.trim()).filter(Boolean))], targetRoles: [...new Set(profile.targetRoles.map(s => s.trim()).filter(Boolean))], website: profile.website.trim() ? publicURL(profile.website.trim()) : "", linkedin: profile.linkedin.trim() ? linkedInURL(profile.linkedin.trim()) : "", ...(resume === null ? { resume: null } : resume.dataBase64 ? { resume: { name: resume.name, mime: resume.mime, dataBase64: resume.dataBase64 } } : {}) };
 }
 
-export const jobSchema = z.object({ id: z.string().min(1).max(250), title: boundedText(500), company: boundedText(250), url: https, location: boundedText(500).default(""), country: z.string().max(2).default(""), remoteId: z.string().uuid().optional(), checkedAt: timestamp.optional(), sourceName: boundedText(150).optional(), summary: boundedText(1000).optional() });
+export const jobSchema = z.object({ id: z.string().min(1).max(250), title: boundedText(500), company: boundedText(250), url: historicalHTTPS, location: boundedText(500).default(""), country: z.string().max(2).default(""), remoteId: z.string().uuid().optional(), checkedAt: timestamp.optional(), sourceName: boundedText(150).optional(), summary: boundedText(1000).optional() });
 export type Job = z.infer<typeof jobSchema>;
 // Preserve partially entered links locally; public-URL validation still runs on Save.
 export const jobLinkDraftSchema = z.object({ url: boundedText(2048), title: boundedText(500), company: boundedText(250), location: boundedText(500) });
 export type JobLinkDraft = z.infer<typeof jobLinkDraftSchema>;
 export function blankJobLinkDraft(): JobLinkDraft { return { url: "", title: "", company: "", location: "" }; }
-export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
+export const recordSchema = z.object({ identity: historicalHTTPS.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), sourceName: boundedText(150).optional(), checkedAt: timestamp.optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), manualResumeName: manualResumeName.optional(), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
 export type ApplicationRecord = z.infer<typeof recordSchema>;
-export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
+/** Retain observed job context, without treating a record edit as a posting check. */
+export function retainRecordJobContext(record: ApplicationRecord, job: Job): ApplicationRecord {
+  if (record.identity !== jobIdentity(job.url)) throw Error("This application record changed. Open it again before saving.");
+  const sourceName = job.sourceName?.trim() || record.sourceName;
+  const checkedAt = job.checkedAt && (!record.checkedAt || Date.parse(job.checkedAt) > Date.parse(record.checkedAt)) ? job.checkedAt : record.checkedAt;
+  return { ...record, ...(job.location.trim() ? { location: job.location } : {}),
+    ...(sourceName ? { sourceName } : {}), ...(checkedAt ? { checkedAt } : {}) };
+}
+export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, ...(job.sourceName?.trim() ? { sourceName: job.sourceName.trim() } : {}), ...(job.checkedAt ? { checkedAt: job.checkedAt } : {}), stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
 export function updateRecord(previous: ApplicationRecord, draft: ApplicationRecord, clearApplied = false): ApplicationRecord {
-  const value = recordSchema.parse({ ...draft, appliedElsewhere: ["applied", "interview", "offer"].includes(draft.stage) || (previous.appliedElsewhere && !clearApplied) });
+  const value = recordSchema.parse({ ...draft, ...(draft.manualResumeName === undefined ? {} : { manualResumeName: draft.manualResumeName.trim() }), appliedElsewhere: ["applied", "interview", "offer"].includes(draft.stage) || (previous.appliedElsewhere && !clearApplied) });
   if (value.identity !== previous.identity) throw Error("This application record changed. Open it again before saving.");
   const selectedApplied = ["applied", "interview", "offer"].includes(value.stage);
   if (previous.appliedElsewhere && value.stage === "saved" && !clearApplied) throw Error("Confirm marking this job as not applied before saving.");
@@ -130,6 +162,7 @@ export const employerAnswerSchema = z.object({ comments: boundedText(5000), cons
 export type EmployerAnswer = z.infer<typeof employerAnswerSchema>;
 export const blankEmployerAnswer = (): EmployerAnswer => ({ comments: "", consentStore: false, consentMarketing: false });
 export function reviewRequest(workspaceId: string, jobIds: string[], comments: string, consentStore: boolean, consentMarketing: boolean, individualAnswers?: Record<string, EmployerAnswer>) {
+  if (hasHistoricalText({ comments, individualAnswers })) throw Error("Some historical text needs repair before it can be sent. Your original information is still here.");
   z.string().uuid().parse(workspaceId); z.array(z.string().uuid()).min(1).max(20).parse(jobIds); boundedText(5000).parse(comments);
   if (new Set(jobIds).size !== jobIds.length || typeof consentStore !== "boolean" || typeof consentMarketing !== "boolean") throw Error("Choose distinct jobs and explicit permission answers.");
   const answers = Object.fromEntries(jobIds.map(id => [id, employerAnswerSchema.parse(individualAnswers ? individualAnswers[id] : { comments, consentStore, consentMarketing })]));
@@ -138,21 +171,22 @@ export function reviewRequest(workspaceId: string, jobIds: string[], comments: s
   return body;
 }
 
-const summarySchema = z.object({ name: boundedText(400), email: boundedText(254), phone: boundedText(150), website: z.union([z.literal(""), https]), linkedin: linkedin.optional(), comments: boundedText(5000), consentStore: z.boolean().optional(), consentMarketing: z.boolean().optional() });
-export const reviewItemSchema = z.object({ jobId: z.string().uuid(), job: z.object({ id: z.string().uuid(), url: https, title: boundedText(500), company: boundedText(250), location: boundedText(500), country: z.string() }), title: boundedText(500), company: boundedText(250), state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), reason: boundedText(2000), payloadSummary: summarySchema, resume: resumeSchema.nullable(), privacyPolicyUrl: https.nullable(), requirementsRevision: z.string().nullable(), applicationId: z.string().optional(), retryAt: timestamp.nullable().optional() });
+const summarySchema = z.object({ name: boundedText(400), email: boundedText(254), phone: boundedText(150), website: z.union([z.literal(""), historicalHTTPS]), linkedin: linkedin.optional(), comments: boundedText(5000), consentStore: z.boolean().optional(), consentMarketing: z.boolean().optional() });
+export const reviewItemSchema = z.object({ jobId: z.string().uuid(), job: z.object({ id: z.string().uuid(), url: historicalHTTPS, title: boundedText(500), company: boundedText(250), location: boundedText(500), country: z.string() }), title: boundedText(500), company: boundedText(250), state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), reason: boundedText(2000), payloadSummary: summarySchema, resume: resumeSchema.nullable(), privacyPolicyUrl: historicalHTTPS.nullable(), requirementsRevision: z.string().nullable(), applicationId: z.string().optional(), retryAt: timestamp.nullable().optional() });
 export const planSchema = z.object({ id: z.string().uuid(), digest: z.string().regex(/^[a-f0-9]{64}$/), profileRevision: z.number().int().min(0), createdAt: timestamp, expiresAt: timestamp, stopped: z.boolean(), approvedAt: timestamp.nullable(), items: z.array(reviewItemSchema).min(1).max(20) });
 export type Plan = z.infer<typeof planSchema>;
-export const receiptSchema = z.object({ id: z.string().uuid(), planId: z.string().uuid(), jobId: z.string().uuid(), title: boundedText(500), company: boundedText(250), url: https, state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), applicationId: boundedText(500).optional(), createdAt: timestamp, mode: z.enum(["local", "test"]), evidenceMode: z.enum(["live", "test"]), dispatchCount: z.number().int().min(0).optional(), dispatchedAt: timestamp.nullable().optional(), error: z.object({ message: boundedText(2000), code: z.string() }).nullable(), retryAt: timestamp.optional() }).passthrough().refine(value => value.evidenceMode === (value.mode === "test" ? "test" : "live"), "Receipt evidence does not match its service mode").refine(value => value.state !== "confirmed" || Boolean(value.applicationId?.trim()), "A confirmed receipt needs an employer application ID");
+export const receiptSchema = z.object({ id: z.string().uuid(), planId: z.string().uuid(), jobId: z.string().uuid(), title: boundedText(500), company: boundedText(250), url: historicalHTTPS, state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), applicationId: boundedText(500).optional(), resumeName: recordedPDFName.nullable().optional(), profileRevision: z.number().int().min(0).nullable().optional(), createdAt: timestamp, mode: z.enum(["local", "test"]), evidenceMode: z.enum(["live", "test"]), dispatchCount: z.number().int().min(0).optional(), dispatchedAt: timestamp.nullable().optional(), error: z.object({ message: boundedText(2000), code: z.string() }).nullable(), retryAt: timestamp.optional() }).passthrough().refine(value => value.evidenceMode === (value.mode === "test" ? "test" : "live"), "Receipt evidence does not match its service mode").refine(value => value.state !== "confirmed" || Boolean(value.applicationId?.trim()), "A confirmed receipt needs an employer application ID");
 export type Receipt = z.infer<typeof receiptSchema>;
 export function receiptLabel(receipt: Receipt): string {
-  if (receipt.state === "confirmed") return receipt.applicationId?.trim() ? receipt.evidenceMode === "live" && receipt.mode === "local" ? "Submission confirmed" : "Test receipt — not sent to an employer" : "Outcome needs checking";
+  if (receipt.state === "confirmed") return receipt.applicationId?.trim() && !hasUnpairedText(receipt.applicationId) ? receipt.evidenceMode === "live" && receipt.mode === "local" ? "Submission confirmed" : "Test receipt — not sent to an employer" : "Outcome needs checking";
   if (receipt.state === "cancelled") return (receipt.dispatchCount ?? 0) > 0 || receipt.dispatchedAt ? "Retry stopped — earlier request recorded" : receipt.dispatchCount === 0 ? "Stopped before sending" : "Unsent work stopped — check earlier request details";
-  return ({ ready: "Approved, waiting to send", dispatching: "Checking submission", uncertain: "Outcome needs checking", rate_limited: "Waiting for employer cooldown", rejected: "Employer rejected the request", blocked: "Submission blocked" } as const)[receipt.state];
+  return ({ ready: "Prepared draft", dispatching: "Checking submission", uncertain: "Outcome needs checking", rate_limited: "Waiting for employer cooldown", rejected: "Employer rejected the request", blocked: "Submission blocked" } as const)[receipt.state];
 }
 export const workspaceSchema = z.object({ ok: z.literal(true), accountId: z.string().min(1), accountEmail: z.string(), confirmedEmail: z.string(), emailUpdateRequired: z.boolean(), deleting: z.boolean().default(false), workspaceId: z.string().uuid().nullable(), mode: z.enum(["local", "test"]), profile: profileSchema, jobs: z.array(jobSchema).max(200), attempts: z.array(receiptSchema).max(500), capabilities: z.object({ liveEnabled: z.boolean(), linkedinProfile: z.boolean().optional(), mode: z.enum(["local", "test"]), coverage: z.string() }).passthrough(), recoverablePlans: z.array(planSchema).max(100), activePlanIds: z.array(z.string().uuid()).max(100) });
 export type Workspace = z.infer<typeof workspaceSchema>;
 export function checkReview(plan: Plan, profile: Profile, jobs: Job[], records: ApplicationRecord[]) {
   plan = planSchema.parse(plan); profile = profileSchema.parse(profile); records = z.array(recordSchema).max(500).parse(records);
+  if (hasHistoricalText(plan) || hasHistoricalText(profile)) throw Error("This historical review contains text that needs repair. You can view or stop it. Repair the affected details and prepare a new review before applying.");
   if (plan.stopped || Date.parse(plan.expiresAt) <= Date.now() || plan.profileRevision !== profile.revision) throw Error("This review changed or expired. Prepare a new review.");
   const manuallyApplied = new Set(records.filter(r => r.appliedElsewhere).map(r => r.identity));
   for (const item of plan.items.filter(i => ["ready", "rate_limited"].includes(i.state))) {
@@ -171,12 +205,37 @@ export const stopHoldSchema = z.object({ planId: z.string().uuid(), requestedAt:
 export type StopHold = z.infer<typeof stopHoldSchema>;
 export const phoneSafetySchema = z.object({ holds: z.array(stopHoldSchema).max(100), recovery: z.array(recoveryDraftSchema).max(20) });
 export type PhoneSafety = z.infer<typeof phoneSafetySchema>;
-export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }) }).nullable(), safety: phoneSafetySchema.optional() });
+// Search familiarity belongs to this encrypted profile scope. Older snapshots
+// omit these optional fields and establish a new baseline without new-job badges.
+const searchIdentity = boundedText(250).min(1);
+const searchSourceIdentity = z.string().max(150).regex(/^(?:greenhouse:[a-z0-9][a-z0-9_-]{0,79}|lever:(?:global|eu):[a-z0-9][a-z0-9_-]{0,79})$/);
+const distinctStrings = <T extends z.ZodType<string>>(value: T, maximum: number) => z.array(value).max(maximum).refine(items => new Set(items).size === items.length, "Search history contains duplicate identities");
+const searchHistoryBoardSchema = z.object({ sourceId: searchSourceIdentity, seenIds: distinctStrings(searchIdentity, 1000), ready: z.boolean() }).refine(board => board.seenIds.every(id => id.startsWith(board.sourceId + ":")), "Posting history must belong to its employer board");
+export const searchHistorySchema = z.object({ version: z.literal(1), searches: z.array(z.object({
+  key: boundedText(8192).min(1), lastUsedAt: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+  boards: z.array(searchHistoryBoardSchema).max(4).refine(boards => new Set(boards.map(board => board.sourceId)).size === boards.length, "Search history contains duplicate boards"),
+})).max(8) }).refine(value => new Set(value.searches.map(search => search.key)).size === value.searches.length, "Search history contains duplicate searches")
+  .refine(value => value.searches.reduce((total, search) => total + search.boards.reduce((count, board) => count + board.seenIds.length, 0), 0) <= 4000, "Search history exceeds its local limit");
+export const searchNewResultSchema = z.object({
+  key: boundedText(8192).min(1), newIds: distinctStrings(searchIdentity, 200),
+  comparedSourceIds: distinctStrings(searchSourceIdentity, 4), baselinedSourceIds: distinctStrings(searchSourceIdentity, 4), pendingSourceIds: distinctStrings(searchSourceIdentity, 4),
+  coverageLimited: z.boolean(), baselineReset: z.boolean(),
+});
+export type SearchHistory = z.infer<typeof searchHistorySchema>;
+export type SearchNewResult = z.infer<typeof searchNewResultSchema>;
+
+export const pendingReadOperationSchema = z.object({ id: z.string().uuid(), recordedAt: timestamp,
+  intent: z.custom<ReadIntent>(value => { try { parseReadIntent(value); return true; } catch { return false; } }, "Invalid pending operation").optional(),
+  operation: z.custom<ReadOperation>(value => { try { return parseReadOperation(value) !== null; } catch { return false; } }, "Invalid acknowledged operation").optional(),
+}).refine(value => Boolean(value.intent || value.operation) && (!value.intent || !value.operation || operationMatchesIntent(value.operation, value.intent)), "Pending operation does not match its acknowledgment");
+export type PendingReadOperation = z.infer<typeof pendingReadOperationSchema>;
+export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }), newResult: searchNewResultSchema.optional() }).nullable(), searchHistory: searchHistorySchema.optional(), safety: phoneSafetySchema.optional(), pendingReadOperations: z.array(pendingReadOperationSchema).max(100).optional() });
 export type PhoneSnapshot = z.infer<typeof phoneSnapshotSchema>;
 export function blankSnapshot(scope: string): PhoneSnapshot { return { schema: PHONE_SCHEMA, scope, profile: blankProfile(), profileDirty: false, jobs: [], records: [], filters: { ...emptyFilters, sources: [] }, lastSearch: null }; }
 export function parseSnapshot(value: unknown, scope: string): PhoneSnapshot {
   const data = phoneSnapshotSchema.parse(value);
   if (data.scope !== scope) throw Error("This saved draft belongs to another account. Your previous data was preserved.");
   if (new Set(data.jobs.map(j => jobIdentity(j.url))).size !== data.jobs.length || new Set(data.records.map(r => r.identity)).size !== data.records.length) throw Error("This saved draft contains conflicting records. Your previous data was preserved.");
+  if (data.lastSearch?.newResult && !data.lastSearch.newResult.newIds.every(id => data.lastSearch?.page.jobs.some(job => job.id === id))) throw Error("This saved search contains conflicting new-opening markers. Your previous data was preserved.");
   return data;
 }

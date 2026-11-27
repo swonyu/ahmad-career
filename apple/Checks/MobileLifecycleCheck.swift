@@ -144,7 +144,210 @@ private final class LifecycleSuite {
         scenarios += 1
     }
 
+
+    func savedComparisonLifecycle() async throws {
+        let url = "https://jobs.lever.co/synthetic-harbor/comparison-a"
+        let source = "Synthetic Harbor board", checked = "2026-11-21T18:00:00Z"
+        var remote: [String: ApplicationValue] = ["id": .string("service-compare-a"), "url": .string(url),
+            "title": .string("Canonical Service Designer"), "company": .string("Synthetic Harbor"),
+            "location": .string("Riyadh"), "country": .string("SA")]
+        let service = TestService()
+        service.handle = { call in
+            if call.route == "jobs" && call.method == "POST" { return ["ok": .bool(true), "job": .object(remote)] }
+            if call.route == "workspace" && call.method == "GET" { return self.workspace(3, jobs: [remote]) }
+            throw MobileApplicationError(message: "Unexpected synthetic comparison route")
+        }
+        let (store, folder, tokens) = try fixture(initial(), service: service)
+        let saved = await store.addJob(url: url + "/apply?utm_source=fixture", title: "Service Designer",
+            company: "Synthetic Harbor", location: "Riyadh", country: "SA", sourceName: source, checkedAt: checked)
+        try check(saved && store.jobs.count == 1 && store.jobs[0]["id"]?.string == "service-compare-a",
+                  "Actual save/import/refresh retains one canonical opportunity")
+        let posts = service.calls.filter { $0.method == "POST" }
+        try check(posts.count == 1 && posts[0].route == "jobs"
+                  && Set(posts[0].body!.keys) == ["url", "title", "company", "location", "country"],
+                  "New local source/check metadata never changes the five-field public job POST")
+        try check(store.jobs[0]["sourceName"]?.string == source && store.jobs[0]["checkedAt"]?.string == checked
+                  && store.jobs[0]["title"] == remote["title"], "Service canonical details and local observed facts both survive synchronization")
+        let path = folder.appendingPathComponent("phone-draft.json")
+        let savedState = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: path))
+        try check(savedState.jobs[0]["sourceName"]?.string == source && savedState.jobs[0]["checkedAt"]?.string == checked,
+                  "rememberImported durably retains comparison metadata in the local backup row")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        try check(reopened.jobs[0]["checkedAt"]?.string == checked && reopened.jobs[0]["sourceName"]?.string == source,
+                  "A real store reopen retains the observed facts before any new request")
+        let key = store.savedComparisonKey(for: store.jobs[0])!
+        remote["id"] = .string("service-compare-replacement")
+        let refreshed = await store.refresh()
+        try check(refreshed && store.savedComparisonItem(for: key) == nil
+                  && store.jobs[0]["checkedAt"]?.string == checked,
+                  "A changed row ID invalidates the captured comparison instead of silently substituting a same-posting row")
+        scenarios += 1
+
+        let offline = TestService(); offline.handle = { _ in throw URLError(.notConnectedToInternet) }
+        let (offlineStore, offlineFolder, offlineTokens) = try fixture(initial(), service: offline)
+        let kept = await offlineStore.addJob(url: "https://careers.example.com/offline-comparison", title: "Nurse",
+            company: "Synthetic clinic", location: "Toronto", country: "CA", sourceName: source, checkedAt: checked)
+        let restored = NativeApplicationsStore(folder: offlineFolder, credentials: offlineTokens, clientFactory: { _, _ in offline })
+        try check(kept && restored.jobs.first?["sourceName"]?.string == source && restored.jobs.first?["checkedAt"]?.string == checked,
+                  "A failed network save preserves source/check facts across restart")
+        let before = try Data(contentsOf: offlineFolder.appendingPathComponent("phone-draft.json")), calls = offline.calls.count
+        let invalid = await restored.addJob(url: "https://careers.example.com/invalid-comparison", title: "Nurse",
+            company: "Synthetic clinic", location: "Toronto", country: "CA", sourceName: source, checkedAt: "not-a-date")
+        let after = try Data(contentsOf: offlineFolder.appendingPathComponent("phone-draft.json"))
+        try check(!invalid && before == after && offline.calls.count == calls,
+                  "Invalid new metadata fails before any file mutation or outbound request")
+        scenarios += 1
+
+        let first = TestService(), second = TestService("https://second.example")
+        first.handle = { _ in ["ok": .bool(true)] }
+        var other = remote; other["location"] = .string("Jeddah")
+        second.handle = { call in
+            if call.route == "session" {
+                return ["sessionToken": .string("synthetic-second-token"), "workspaceId": .string("workspace-b"),
+                        "profile": .object(self.server(0, name: "Synthetic B"))]
+            }
+            if call.route == "workspace" { return self.workspace(0, name: "Synthetic B", jobs: [other], workspace: "workspace-b") }
+            throw MobileApplicationError(message: "Unexpected synthetic owner route")
+        }
+        var initialState = try initial()
+        var local = remote; local["localOnly"] = .bool(true); local["sourceName"] = .string(source); local["checkedAt"] = .string(checked)
+        initialState.jobs = [local]
+        let (switching, switchFolder, _) = try fixture(initialState, service: first,
+            factory: { origin, _ in origin.host == "second.example" ? second : first })
+        let captured = switching.savedComparisonKey(for: local)!
+        let connected = await switching.connect(address: "https://second.example", code: "synthetic-fixture-code")
+        try check(connected && switching.workspaceScope.workspaceID == "workspace-b"
+                  && switching.savedComparisonItem(for: captured) == nil, "Actual workspace switching invalidates the old comparison owner")
+        let switched = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: switchFolder.appendingPathComponent("phone-draft.json")))
+        let parked = switched.workspaceDrafts.first { $0.scope.workspaceID == "workspace-a" }
+        try check(parked?.jobs.first?["checkedAt"]?.string == checked && parked?.jobs.first?["sourceName"]?.string == source
+                  && switching.jobs.first?["location"]?.string == "Jeddah" && switching.jobs.first?["sourceName"] == nil,
+                  "Account A's parked facts remain intact and never enrich account B's coincident row ID")
+        scenarios += 1
+    }
+
+    /// Exercise the real store while requests are suspended; no UI, credentials or network.
+    func replacementReviewTransitions() async throws {
+        let job: [String: ApplicationValue] = ["id": .string("job-1"), "url": .string("https://jobs.example/one"),
+            "title": .string("Service Designer"), "company": .string("Synthetic Harbor"), "location": .string("Riyadh")]
+        let choices: [String: ApplicationValue] = ["comments": .string("Fictional updated message"),
+            "consentStore": .bool(true), "consentMarketing": .bool(false)]
+        func detailedReview(_ id: String, revision: Int = 3) -> [String: ApplicationValue] {
+            var value = review(id, revision: revision)
+            var item = value["items"]!.array[0].object
+            item["job"] = .object(job)
+            item["payloadSummary"] = .object(choices)
+            item["resume"] = .object(["name": .string("CV-A.pdf")])
+            value["items"] = .array([.object(item)])
+            return value
+        }
+
+        for failReplacement in [false, true] {
+            let service = TestService(), gate = DelayedResponse()
+            let original = review("before-replacement"), replacement = detailedReview("after-replacement")
+            var plans = [original]
+            service.handle = { call in
+                if call.route == "stop" { plans = []; return ["ok": .bool(true)] }
+                if call.route == "prepare" { return try await gate.wait() }
+                return self.workspace(3, jobs: [job], plans: plans)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh()
+            try check(store.resumeReview(original), "The synthetic unapproved review opens before editing")
+            store.answers["job-1"] = choices
+            let preparing = Task { await store.prepare(replacingUnapprovedReview: true) }
+            try await waitUntil { gate.started }
+            try check(store.busy && store.plan == original && store.heldPlanIDs.contains("before-replacement"),
+                      "During replacement the original review stays mounted, disabled and held from submission")
+            try check(service.calls.first(where: { $0.route == "prepare" })?.body?["answers"]?.object["job-1"] == .object(choices),
+                      "Replacement prepares exactly the edited message and explicit consent choices")
+            if failReplacement { gate.fail(URLError(.notConnectedToInternet)) }
+            else { plans = [replacement]; gate.finish(["ok": .bool(true), "plan": .object(replacement)]) }
+            await preparing.value
+            if failReplacement {
+                try check(!store.busy && store.plan == nil && store.message?.isEmpty == false
+                          && store.selected == ["job-1"] && store.answers["job-1"] == choices,
+                          "A failed replacement after acknowledged Stop returns to Apply with its error and retry choices")
+                service.handle = { call in
+                    if call.route == "prepare" { plans = [replacement]; return ["ok": .bool(true), "plan": .object(replacement)] }
+                    return self.workspace(3, jobs: [job], plans: plans)
+                }
+                await store.prepare()
+            }
+            try check(!store.busy && store.plan == replacement
+                      && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-A.pdf"
+                      && store.plan!["items"]!.array[0].object["payloadSummary"] == .object(choices),
+                      "Success or explicit retry exposes the exact new job, reviewed filename and answer snapshot")
+            try check(!service.calls.contains(where: { $0.route == "submit" || $0.route == "advance" }),
+                      "Replacing or retrying a review never approves or dispatches it")
+            scenarios += 1
+        }
+
+        // A failed Stop is still held locally and can be retried; original 409 approval-race checks remain unchanged.
+        do {
+            let service = TestService(), original = review("stop-not-acknowledged")
+            let replacement = detailedReview("stop-retried")
+            var stopFails = true, plans = [original]
+            service.handle = { call in
+                if call.route == "stop" {
+                    if stopFails { throw URLError(.notConnectedToInternet) }
+                    plans = []; return ["ok": .bool(true)]
+                }
+                if call.route == "prepare" { plans = [replacement]; return ["ok": .bool(true), "plan": .object(replacement)] }
+                return self.workspace(3, jobs: [job], plans: plans)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh(); try check(store.resumeReview(original), "Failed-Stop fixture opens its original review")
+            store.answers["job-1"] = choices
+            await store.prepare(replacingUnapprovedReview: true)
+            try check(store.plan == original && !store.busy && store.heldPlanIDs.contains("stop-not-acknowledged")
+                      && !service.calls.contains(where: { $0.route == "prepare" }),
+                      "An unacknowledged Stop preserves a visible held review and does not prepare another plan")
+            stopFails = false
+            await store.prepare(replacingUnapprovedReview: true)
+            try check(store.plan == replacement && !service.calls.contains(where: { $0.route == "submit" }),
+                      "Retrying the explicit Stop safely replaces the held unapproved review")
+            scenarios += 1
+        }
+
+        // Only the new catch branch is under test here: a late failed old-owner replacement cannot clear a new review.
+        do {
+            let service = TestService(), second = TestService("https://second.example"), gate = DelayedResponse()
+            let original = review("old-owner-review"), newer = detailedReview("new-owner-review", revision: 0)
+            service.handle = { call in
+                if call.route == "prepare" { return try await gate.wait() }
+                if call.route == "stop" || call.route == "session/revoke" { return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [job], plans: [original])
+            }
+            second.handle = { call in
+                if call.route == "session" {
+                    return ["ok": .bool(true), "sessionToken": .string("synthetic-new-token"), "workspaceId": .string("workspace-b"),
+                            "profile": .object(self.server(0))]
+                }
+                return self.workspace(0, jobs: [job], plans: [newer], workspace: "workspace-b")
+            }
+            let (store, _, _) = try fixture(initial(), service: service, factory: { origin, token in
+                let selected = origin == second.origin ? second : service; selected.token = token; return selected
+            })
+            await store.refresh(); try check(store.resumeReview(original), "Old-owner replacement fixture opens its review")
+            store.answers["job-1"] = choices
+            let preparing = Task { await store.prepare(replacingUnapprovedReview: true) }
+            try await waitUntil { gate.started }
+            await store.disconnect()
+            let connected = await store.connect(address: second.origin.absoluteString, code: "SYNTHETIC")
+            try check(connected && store.resumeReview(newer), "Another workspace opens its own current review")
+            gate.fail(URLError(.notConnectedToInternet)); await preparing.value
+            try check(store.connected && store.workspaceScope.workspaceID == "workspace-b" && store.plan == newer,
+                      "Late failed replacement cannot clear a newer workspace's review")
+            try check(!(service.calls + second.calls).contains(where: { $0.route == "submit" || $0.route == "advance" }),
+                      "Neither owner gains approval from a replacement or connection transition")
+            scenarios += 1
+        }
+    }
+
     func run() async throws {
+        try await replacementReviewTransitions()
+        try await savedComparisonLifecycle()
         // Both keyboard commas describe the same lists in sharing, shortcuts and portable backups.
         do {
             func backupData(_ profile: PhoneApplicationProfile) throws -> Data {
@@ -488,6 +691,64 @@ private final class LifecycleSuite {
             try check(service.calls.last?.body?["expectedRevision"]?.integer == 8, "The explicitly reviewed base is sent")
             scenarios += 1
         }
+        // A successful HTTP response can still omit or misidentify the selected CV.
+        do {
+            var state = try initial(), previous = PhoneApplicationProfile()
+            try previous.selectResume(pdf, filename: "Previous.pdf")
+            state.acknowledge(try ApplicationServerProfile(server(3, resume: metadata(previous))))
+            var replacement = state.profile
+            try replacement.selectResume(pdf, filename: "\u{feff} New.pdf")
+            var stored = metadata(replacement).object
+            stored["name"] = .string("New.pdf")
+            stored["sha256"] = .string(replacement.resumeSHA256!.uppercased())
+            var wrongSize = stored, wrongHash = stored
+            wrongSize["size"] = .number(Double(pdf.count + 1))
+            wrongHash["sha256"] = .string(String(repeating: "f", count: 64))
+            let incorrect: [ApplicationValue?] = [nil, .null, metadata(previous), .object(wrongSize), .object(wrongHash)]
+            for reply in incorrect {
+                let service = TestService()
+                service.handle = { _ in
+                    var response = self.server(4); response["resume"] = reply
+                    return ["ok": .bool(true), "profile": .object(response)]
+                }
+                let (store, folder, tokens) = try fixture(state, service: service)
+                let saved = await store.saveProfile(replacement, context: store.editContext)
+                try check(!saved && store.profileNeedsSync && store.profile == replacement && store.revision == 3,
+                          "A missing or mismatched CV acknowledgement keeps the exact replacement pending")
+                let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+                try check(reopened.profile == replacement && reopened.profileNeedsSync && reopened.revision == 3,
+                          "Reopening after an unconfirmed save keeps the replacement bytes and revision")
+                scenarios += 1
+            }
+            let service = TestService()
+            var reply = ApplicationValue.object(stored), revision = 4
+            service.handle = { _ in ["ok": .bool(true), "profile": .object(self.server(revision, resume: reply))] }
+            let (store, folder, tokens) = try fixture(state, service: service)
+            let replaced = await store.saveProfile(replacement, context: store.editContext)
+            try check(replaced && store.profile.resumeName == "New.pdf" && store.profile.resumeData == nil
+                      && !store.profileNeedsSync && store.revision == 4,
+                      "The exact PDF with the service-trimmed filename and equivalent digest is confirmed")
+
+            revision = 5
+            var removal = store.profile; removal.removeResume()
+            let rejected = await store.saveProfile(removal, context: store.editContext)
+            try check(!rejected && store.profile == removal && store.profileNeedsSync && store.revision == 4,
+                      "An uncleared server CV keeps the explicit removal pending")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(reopened.profile.resumeRemoved && reopened.profileNeedsSync,
+                      "The explicit removal survives relaunch until confirmed")
+            reply = .null
+            let removed = await reopened.saveProfile(reopened.profile, context: reopened.editContext)
+            try check(removed && !reopened.profile.resumeRemoved && !reopened.profileNeedsSync
+                      && reopened.profile.resumeName.isEmpty && reopened.revision == 5,
+                      "An explicit null confirms removal and clears the pending change")
+
+            revision = 6
+            let reused = await reopened.saveProfile(reopened.profile, context: reopened.editContext)
+            try check(reused && service.calls.last?.body?["profile"]?.object["resume"] == nil,
+                      "A profile edit without any CV change keeps the existing omission contract")
+            scenarios += 1
+        }
         // Existing drafts without the new revision field are preserved, never assumed to be revision zero.
         do {
             var state = try initial(4); state.profileNeedsSync = true; state.profile.firstName = "Legacy draft"
@@ -538,7 +799,8 @@ private final class LifecycleSuite {
             }
             newService.handle = { call in
                 if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("new-synthetic-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(0, name: "Different person", resume: self.metadata(oldPDF)))] }
-                return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]], workspace: "workspace-b")
+                return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]],
+                    attempts: [["id": .string("shared-attempt-id"), "state": .string("ready"), "resumeName": .string("Workspace-B.pdf"), "profileRevision": .number(0)]], workspace: "workspace-b")
             }
             let (store, folder, _) = try fixture(state, service: oldService, factory: { url, token in
                 let service = url.host == "second.example" ? newService : oldService; service.token = token; return service
@@ -547,9 +809,13 @@ private final class LifecycleSuite {
             let connected = await store.connect(address: "https://SECOND.example:443/", code: "SYNTHETIC")
             try check(connected && store.serviceAddress == "https://second.example", "New connection uses a canonical service origin")
             if returnError { gate.fail(MobileApplicationError(message: "Old token expired", statusCode: 401)) }
-            else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]])) }
+            else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]],
+                attempts: [["id": .string("shared-attempt-id"), "state": .string("ready"), "resumeName": .string("Workspace-A.pdf"), "profileRevision": .number(99)]])) }
             _ = await oldGET.value
             try check(store.connected && store.jobs.first?["id"]?.string == "new-job", "Obsolete connection response/error cannot repopulate or disconnect the new workspace")
+            try check(store.attempts.count == 1 && ApplicationCVDetails(attempt: store.attempts[0]).resumeName == "Workspace-B.pdf"
+                      && ApplicationCVDetails(attempt: store.attempts[0]).profileRevision == 0,
+                      "A delayed old-owner attempt cannot replace the new workspace's filename even when its attempt ID matches")
             try check(!store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Different person", "A different workspace displays only its own profile without adopting the previous person's draft")
             try check(store.profile.resumeName.isEmpty && store.profile.resumeData == nil
                       && store.profile.resumeSize == nil && store.profile.resumeSHA256 == nil,
@@ -718,7 +984,77 @@ private final class LifecycleSuite {
         }
         try await runLiveSubmissionCapability()
         try await runHostedContinuation()
+        try await runReviewedCVHistory()
         try await runPrivateRecords()
+    }
+
+    func runReviewedCVHistory() async throws {
+        var cvA = PhoneApplicationProfile(); try cvA.selectResume(pdf, filename: "CV-A.pdf")
+        var cvB = PhoneApplicationProfile(); try cvB.selectResume(pdf, filename: "CV-B.pdf")
+        try check(cvA.resumeSHA256 == cvB.resumeSHA256, "The fixture deliberately uses identical PDF bytes under different display filenames")
+        let jobA: [String: ApplicationValue] = ["id": .string("cv-job-a"), "url": .string("https://jobs.example/cv-a"), "title": .string("Designer A"), "company": .string("Synthetic Studio")]
+        let jobB: [String: ApplicationValue] = ["id": .string("cv-job-b"), "url": .string("https://jobs.example/cv-b"), "title": .string("Designer B"), "company": .string("Synthetic Studio")]
+        func cvReview(_ id: String, profile: PhoneApplicationProfile, revision: Int, job: [String: ApplicationValue]) -> [String: ApplicationValue] {
+            var plan = review(id, revision: revision), item = review(id, revision: revision)["items"]!.array[0].object
+            item["jobId"] = job["id"]; item["job"] = .object(job); item["resume"] = metadata(profile)
+            plan["items"] = .array([.object(item)]); return plan
+        }
+        let planA = cvReview("cv-plan-a", profile: cvA, revision: 3, job: jobA)
+        let planB = cvReview("cv-plan-b", profile: cvB, revision: 4, job: jobB)
+        let attemptA: [String: ApplicationValue] = ["id": .string("cv-attempt-a"), "planId": .string("cv-plan-a"), "state": .string("ready"),
+            "jobId": jobA["id"]!, "resumeName": .string("CV-A.pdf"), "profileRevision": .number(3), "evidenceMode": .string("test")]
+        let attemptB: [String: ApplicationValue] = ["id": .string("cv-attempt-b"), "planId": .string("cv-plan-b"), "state": .string("ready"),
+            "jobId": jobB["id"]!, "resumeName": .string("CV-B.pdf"), "profileRevision": .number(4), "evidenceMode": .string("test")]
+        let legacy: [String: ApplicationValue] = ["id": .string("legacy-attempt"), "state": .string("uncertain")]
+        let service = TestService(); var savedB = false, preparedA = false, preparedB = false
+        service.handle = { call in
+            switch call.route {
+            case "profile":
+                guard call.method == "PUT", call.body?["expectedRevision"] == .number(3),
+                      call.body?["profile"]?.object["resume"]?.object["name"]?.string == "CV-B.pdf" else {
+                    throw MobileApplicationError(message: "Unexpected synthetic CV profile update")
+                }
+                savedB = true; return ["ok": .bool(true), "profile": .object(self.server(4, resume: self.metadata(cvB)))]
+            case "prepare":
+                if savedB { preparedB = true } else { preparedA = true }
+                return ["ok": .bool(true), "plan": .object(savedB ? planB : planA)]
+            case "workspace":
+                return self.workspace(savedB ? 4 : 3, jobs: [jobA, jobB],
+                    attempts: (preparedA ? [attemptA] : []) + (preparedB ? [attemptB] : []) + [legacy],
+                    plans: (preparedA ? [planA] : []) + (preparedB ? [planB] : []), resume: self.metadata(savedB ? cvB : cvA))
+            default: throw MobileApplicationError(message: "Unexpected synthetic CV history request")
+            }
+        }
+        let (store, folder, tokens) = try fixture(initial(), service: service)
+        let loaded = await store.refresh(); try check(loaded, "The scoped CV-A fixture loads through the real workspace parser")
+        store.selected = ["cv-job-a"]; await store.prepare()
+        try check(store.plan == planA && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-A.pdf",
+                  "The native prepare path retains the CV-A name from its actual review item")
+        var selectedB = store.profile; try selectedB.selectResume(pdf, filename: "CV-B.pdf")
+        let saved = await store.saveProfile(selectedB, context: store.editContext)
+        try check(saved && store.profile.resumeName == "CV-B.pdf" && store.revision == 4, "Changing the selected filename records the new profile revision")
+        await store.refresh()
+        try check(ApplicationCVDetails(attempt: store.attempts.first { $0["id"] == attemptA["id"] }!).resumeName == "CV-A.pdf"
+                  && ApplicationCVDetails(attempt: attemptA).profileRevision == 3,
+                  "The earlier attempt keeps CV-A and its reviewed revision after the current profile becomes CV-B")
+        try check(!store.resumeReview(planA), "Historical filename visibility does not make a stale review approvable")
+        let staleSubmit = await store.submitReviewed()
+        try check(!staleSubmit && !service.calls.contains { $0.route == "submit" }, "The stale review sends no approval request")
+        store.selected = ["cv-job-b"]; await store.prepare()
+        try check(store.plan == planB && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-B.pdf",
+                  "A new review uses CV-B without rewriting CV-A's attempt")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        try check(reopened.attempts.isEmpty, "Restart does not invent an unscoped local attempt cache")
+        let reloaded = await reopened.refresh()
+        let details = reopened.attempts.map { ApplicationCVDetails(attempt: $0) }
+        try check(reloaded && details.map(\.resumeName) == ["CV-A.pdf", "CV-B.pdf", nil]
+                  && details.map(\.profileRevision) == [3, 4, nil] && reopened.profile.resumeName == "CV-B.pdf",
+                  "An authenticated reload restores both immutable filenames and leaves missing historical metadata absent")
+        try check(service.calls.filter { $0.route == "prepare" }.count == 2
+                  && service.calls.allSatisfy { ["workspace", "profile", "prepare"].contains($0.route) }
+                  && reopened.attempts.allSatisfy { !MobileApplicationPolicy.isVerified($0) },
+                  "Filename display and reload add no submission, upload, approval or verified receipt")
+        scenarios += 1
     }
 
     func runPrivateRecords() async throws {
@@ -778,6 +1114,7 @@ private final class LifecycleSuite {
             let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
             let context = store.recordEditContext(for: localJob)!
             var draft = PhoneRecordDraft(); draft.stage = .applied; draft.appliedOn = "2026-11-16"; draft.followUpOn = "2026-11-20"; draft.note = "Private follow-up note"
+            draft.manualResumeName = "Manual-CV-A.pdf"
             let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
             let canceled = draft; _ = canceled
             let unchanged = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
@@ -786,6 +1123,7 @@ private final class LifecycleSuite {
             try check(store.isMarkedApplied(localJob) && store.attempts.isEmpty && service.calls.isEmpty, "A self-reported application creates no receipt or external request")
             let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
             try check(restored.currentRecord(for: localJob)?.note == draft.note && restored.followUpDay(for: localJob) == "2026-11-20", "Private note and civil follow-up date survive a real disk reload")
+            try check(restored.currentRecord(for: localJob)?.manualResumeName == "Manual-CV-A.pdf", "An applied record retains its self-entered filename on reload")
             try check(restored.opportunityDraft.title == "Unrelated draft", "Saving an application record preserves an unrelated opportunity draft")
             var closed = draft; closed.stage = .closed
             try check(store.saveRecord(closed, context: store.recordEditContext(for: localJob)!, now: now) && store.isMarkedApplied(localJob), "Closing an applied application retains duplicate protection")
@@ -981,6 +1319,7 @@ private final class LifecycleSuite {
             let localID = "local-record-job", remoteID = "service-record-job"
             var state = PhoneApplicationState(); state.jobs = [localJob]
             var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(localJob)); record.stage = .applied; record.appliedElsewhere = true; record.note = "Private local applicant note"
+            record.manualResumeName = "Private-CV-A.pdf"
             state.applicationRecords = [record]
             var remoteJob = localJob; remoteJob["id"] = .string(remoteID); remoteJob.removeValue(forKey: "localOnly")
             let first = TestService(), second = TestService(); var destination = first, imported = false
@@ -1010,6 +1349,7 @@ private final class LifecycleSuite {
             try check(request.body?["manualAppliedJobIds"]?.array == [.string(remoteID)], "Explicit local-to-service import maps the durable manual mark to the actual service job ID")
             let serializedBody = String(data: try JSONEncoder().encode(request.body), encoding: .utf8)!
             try check(!serializedBody.contains(record.note) && !serializedBody.contains("followUp") && !serializedBody.contains("appliedOn"), "Only duplicate-prevention IDs leave the phone; private record contents stay local")
+            try check(!serializedBody.contains("manualResumeName") && !serializedBody.contains(record.manualResumeName!), "The self-entered filename never becomes employer payload or an attachment")
             let afterImport = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
             try check(afterImport.applicationRecords.contains(where: { $0.scope.workspaceID == "workspace-a" && $0.note == record.note })
                 && afterImport.applicationRecords.contains(where: { $0.scope.isLocal && $0.note == record.note }) && store.isMarkedApplied(remoteJob),
@@ -1020,6 +1360,7 @@ private final class LifecycleSuite {
             try check(!store.saveRecord(PhoneRecordDraft(record), context: oldEditor, now: now), "An editor from the previous workspace cannot write after an account switch")
             destination = first; let returned = await store.connect(address: first.origin.absoluteString, code: "PAIR-A")
             try check(returned && store.currentRecord(for: remoteJob)?.note == record.note && store.isMarkedApplied(remoteJob), "Returning to the original workspace restores its private record without re-creating it")
+            try check(store.currentRecord(for: remoteJob)?.manualResumeName == "Private-CV-A.pdf", "The private filename returns only with its original record scope")
             scenarios += 1
         }
         // Conflicting copies retain both versions and conservatively keep the applied mark until explicit correction.

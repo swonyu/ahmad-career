@@ -156,7 +156,15 @@ class NativeHttpsAcceptanceTest {
                 assertTrue("The synthetic profile must pass the real validation contract", ProfileValidation.errors(state.profile).isEmpty())
                 assertTrue("The edited synthetic profile must still be an unsaved draft", state.profileDirty)
             }
-            step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).assertIsEnabled().performClick() }
+            val saveProfile = compose.onNodeWithText(strings("Save profile to workspace"))
+            step("profile-save-target") {
+                saveProfile.assertIsDisplayed().assertIsEnabled()
+                val button = saveProfile.fetchSemanticsNode().boundsInRoot
+                val list = compose.onNodeWithTag("profile-list").fetchSemanticsNode().boundsInRoot
+                android.util.Log.i("CareerPhoneAcceptance", "HTTPS profile save bounds: button=$button list=$list")
+                capture("acceptance-profile-save-action.png")
+            }
+            step("profile-save-click") { saveProfile.performClick() }
             step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
             assertEquals("", model.state.value.profile.lastName)
             assertEquals(expectedHash, model.state.value.profile.resume?.sha256)

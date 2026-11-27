@@ -48,13 +48,19 @@ internal object WorkspaceTransfer {
     private fun strings(value: JSONObject, vararg keys: String) {
         keys.forEach { require(value.opt(it) is String) { "The backup contains an invalid $it field." } }
     }
-    private fun jobJson(job: Opportunity) = job.inputJson()
+    private fun jobJson(job: Opportunity) = job.inputJson().apply {
+        SavedJobMetadata.requireValid(job.sourceName, job.checkedAt)
+        job.sourceName?.let { put("sourceName", it) }; job.checkedAt?.let { put("checkedAt", it) }
+    }
     private fun job(value: JSONObject): Opportunity {
         strings(value, "url", "title", "company", "location", "country")
-        BoundaryPolicy.opportunityURL(value.getString("url"))
+        BoundaryPolicy.historicalOpportunityURL(value.getString("url"))
         require(listOf("title", "company", "location").all { value.getString(it).length <= 500 }) { "Saved job details in this backup exceed the common 500-character limit." }
+        val sourceName = SavedJobMetadata.optional(value, "sourceName")
+        val checkedAt = SavedJobMetadata.optional(value, "checkedAt")
+        SavedJobMetadata.requireValid(sourceName, checkedAt)
         return Opportunity("local-" + UUID.randomUUID(), value.getString("url"), value.getString("title"), value.getString("company"),
-            value.getString("location"), value.getString("country"), true)
+            value.getString("location"), value.getString("country"), true, sourceName, checkedAt)
     }
     private fun draftJson(checkpoint: RecordDraftCheckpoint, recordID: String?) = JSONObject()
         .put("job", jobJson(checkpoint.job)).apply {
@@ -62,14 +68,17 @@ internal object WorkspaceTransfer {
             recordID?.let { put("recordID", it) }
         }
         .put("draft", JSONObject().put("stage", checkpoint.draft.stage.stored).put("appliedOn", checkpoint.draft.appliedDate)
-            .put("followUpOn", checkpoint.draft.followUpDate).put("note", checkpoint.draft.note))
+            .put("followUpOn", checkpoint.draft.followUpDate).put("note", checkpoint.draft.note)
+            .also { ApplicationCvEvidence.putManualName(it, checkpoint.draft.manualResumeName) })
     private fun versionJson(job: Opportunity, version: ApplicationRecordVersion, revision: Int, archived: Boolean) = JSONObject()
         .put("id", version.id).put("job", jobJson(job)).put("stage", version.record.stage.stored)
         .put("appliedElsewhere", version.record.appliedElsewhere).put("appliedOn", version.record.appliedDate)
         .put("followUpOn", version.record.followUpDate).put("note", version.record.note).put("revision", revision)
         .put("archived", archived).put("updatedAt", version.savedAt)
+        .also { ApplicationCvEvidence.putManualName(it, version.record.manualResumeName) }
 
     fun export(snapshot: CareerUiState, search: JSONObject?, includePDF: Boolean): JSONObject {
+        require(!WorkspaceStorage.hasHistoricalValues(snapshot)) { HISTORICAL_BACKUP_NOTICE }
         val profile = snapshot.profile.apiJson(includeLinkedIn = false).put("linkedin", snapshot.profile.linkedin)
         // Preserve unfinished fields without turning them into a provider payload.
         for (key in listOf("firstName", "lastName", "email", "phone", "city", "country", "headline", "website"))
@@ -104,6 +113,8 @@ internal object WorkspaceTransfer {
     }
 
     fun decode(value: JSONObject, destinationScope: String): WorkspaceImportPreview {
+        require(value.opt("format") != "career-finder-raw-recovery") { "This file preserves original historical evidence. It cannot be imported as a phone backup or used to approve applications." }
+        HistoricalText.requireWellFormed(value)
         require(value.toString().toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Choose a phone workspace backup no larger than 24 MiB." }
         objectOnly(value, setOf("format", "version", "platform", "exportedAt", "source", "data", "extensions"))
         require(value.opt("format") == FORMAT && value.opt("version") == 1) { "Choose a supported Career Finder phone workspace backup." }
@@ -139,10 +150,12 @@ internal object WorkspaceTransfer {
             val importedJob = job(item.getJSONObject("job")); val identity = BoundaryPolicy.jobIdentity(importedJob.url)
             val record = ApplicationRecord.decode(JSONObject().put("stage", item.getString("stage"))
                 .put("appliedDate", item.getString("appliedOn")).put("followUpDate", item.getString("followUpOn"))
-                .put("note", item.getString("note")).put("appliedElsewhere", item.getBoolean("appliedElsewhere")))
+                .put("note", item.getString("note")).put("appliedElsewhere", item.getBoolean("appliedElsewhere"))
+                .also { ApplicationCvEvidence.putManualName(it, ApplicationCvEvidence.manualName(item)) })
             val version = ApplicationRecordVersion.decode(JSONObject().put("id", UUID.fromString(item.getString("id")).toString()).put("record", record.json())
                 .put("savedAt", item.getString("updatedAt")).put("source", "copied"))
-            FlatVersion(byIdentity[identity] ?: importedJob, version, (revision as Number).toInt(), item.getBoolean("archived"))
+            FlatVersion(byIdentity[identity]?.let { SavedJobMetadata.preserving(it, importedJob) } ?: importedJob,
+                version, (revision as Number).toInt(), item.getBoolean("archived"))
         }
         require(flattened.map { it.version.id }.distinct().size == flattened.size) { "The backup contains repeated record version identifiers." }
         var records = flattened.groupBy { BoundaryPolicy.jobIdentity(it.job.url) }.mapValues { (_, entries) ->
@@ -159,7 +172,7 @@ internal object WorkspaceTransfer {
             val draft = entry.getJSONObject("draft"); strings(draft, "stage", "appliedOn", "followUpOn", "note")
             RecordDraftCheckpoint(destinationScope, identity, byIdentity[identity] ?: records[identity]?.job ?: draftJob, (revision as Number).toInt(),
                 ApplicationRecordDraft(ApplicationStage.decode(draft.getString("stage")), draft.getString("appliedOn"),
-                    draft.getString("followUpOn"), draft.getString("note")).validated())
+                    draft.getString("followUpOn"), draft.getString("note"), ApplicationCvEvidence.manualName(draft)).validated())
         }
         require(checkpoints.size <= 200) { "The destination changed or the backup is not supported. Nothing was imported." }
         val opportunityDraft = OpportunityDraft.fromJson(data.getJSONObject("opportunityDraft"))
@@ -176,7 +189,14 @@ internal object WorkspaceTransfer {
                 val decoded = ApplicationRecordsCodec.decode(exact)
                 val exactIDs = decoded.values.flatMap { listOf(it.current) + it.alternatives + it.history }.map { it.id }.toSet()
                 require(exactIDs == flattened.map { it.version.id }.toSet()) { "The backup's common and Android record histories disagree." }
-                records = decoded.mapValues { (identity, bundle) -> bundle.copy(job = byIdentity[identity] ?: bundle.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)) }
+                val exactManualNames = decoded.values.flatMap { listOf(it.current) + it.alternatives + it.history }
+                    .associate { it.id to it.record.manualResumeName }
+                require(exactManualNames == flattened.associate { it.version.id to it.version.record.manualResumeName }) {
+                    "The backup's common and Android record histories disagree."
+                }
+                records = decoded.mapValues { (identity, bundle) -> bundle.copy(job =
+                    byIdentity[identity]?.let { SavedJobMetadata.preserving(it, bundle.job) }
+                        ?: bundle.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)) }
             }
             if (extension.has("answers")) answers = extension.requiredObjects("answers").mapNotNull { entry ->
                 strings(entry, "url"); val identity = BoundaryPolicy.jobIdentity(entry.getString("url"))

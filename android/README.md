@@ -55,6 +55,8 @@ Use JDK 21 (JDK 17 also meets AGP's baseline) and Android SDK Platform 36. AGP s
 bash checks/run-policy-checks.sh
 ```
 
+With a Gradle distribution cached locally, run `python3 checks/search-observation-jvm-harness.py` from this directory to check search-history persistence, outage recovery and cursor handling on a JVM. Set `GRADLE_HOME` to select a distribution and `JAVA_HOME` to select its compatible JDK.
+
 The checked-in wrapper launcher matches the official Gradle 8.13 checksum; it now downloads the security-patched Gradle 8.14.7 distribution and verifies its official SHA-256. The narrow distribution update follows the upstream security advisories and retains the documented AGP/Kotlin compatibility bounds. Pinned dependencies: AGP 8.13.2, Kotlin and Compose compiler plugin 2.3.10, Compose BOM 2025.10.01, Activity 1.11.0, Lifecycle 2.9.4. Minimum phone version: Android 8 / API 26. Current unreleased candidate: **0.6.0**, version code **7**. Debug package: `com.saleh.careerfinder.preview`. Release package: `com.saleh.careerfinder`; release signing is not configured.
 
 Compatibility references:
@@ -156,3 +158,43 @@ The common synthetic fixture is `app/src/androidTest/assets/phone-workspace-v1.j
 `checks/run-policy-checks.sh` passes **122** executable JVM boundary checks without a device or network. `checks/strict-review-2026-11-17.json` records the baseline and exact policy-source hashes. New native tests are `WorkspaceSafetyRegressionTest` (11 cases) and `WorkspaceAccessibilityRegressionTest` (one large-text multiline-note case); additional checks extend `ContinuationRegressionTest`, `ApplicationRecordRegressionTest`, `NavigationPhoneAcceptanceTest` and `VaultAcceptanceTest`. The connected LinkedIn fixture now uses a contract-valid synthetic public portfolio URL while keeping all service requests injected.
 
 Compilation, lint, all new instrumentation, real document-picker/process-recreation behavior and physical-device accessibility remain gates until the coordinated CI/device results identify an exact new commit. No Gradle build, emulator, signing, publishing or external employer submission was performed by the Android source-editing worker.
+
+
+### Dedicated recovery proof under bounded heap pressure
+
+`CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace`
+is an additional environment-scoped regression for the observed 192 MiB app heap.
+It retains at most 96 MiB, requires the real read-memory guard to refuse the exact
+20,373,220-byte historical document before any follow-up page, and keeps that
+pressure alive while encrypted recovery is saved, reopened, verified and exported.
+The exported bytes, length and SHA-256 must match the complete synthetic asset;
+the earlier workspace and draft must retain identical plaintext and ciphertext.
+The captured refusal is also routed through an injected service to check the
+ViewModel recovery offer. This does not exercise real HTTPS recovery or the system
+document chooser.
+
+The CI runner excludes this method and the three exact-handler capacity methods
+from its combined ordinary invocation with AndroidJUnitRunner's `notClass`
+selector. It then runs each of the four methods in a separate fresh app process,
+checks each exact one-method pass, and accounts for every method in the source
+inventory. A missing capacity or pressure pass fails CI. Generic direct runs of
+the pressure method report an explicit assumption unless
+`careerRecoveryPressure192MiB=true` is supplied; that assumption is not acceptance
+evidence. The dedicated invocation verifies `Runtime.maxMemory() == 201326592`:
+
+```sh
+adb -s <owned-serial> shell am instrument -w -r \
+  -e class com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace \
+  -e careerRecoveryPressure192MiB true \
+  com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+Use an already reviewed isolated emulator with that heap; this test does not call
+GC, increase the heap, or change the production memory guard. A larger generic
+heap must not be forced through the 96 MiB pressure budget. The separately reviewed
+31-method continuation run rejects every skip and requires this case to pass.
+Independent-process results remain distinct from the failed combined-class
+memory-continuity runs; the latter are retained in the validation evidence.
+
+The selector is supported by the pinned `androidx.test:runner:1.7.0`; see the
+[AndroidJUnitRunner API](https://developer.android.com/reference/androidx/test/runner/AndroidJUnitRunner).

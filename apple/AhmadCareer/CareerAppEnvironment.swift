@@ -15,12 +15,196 @@ enum CareerAppEnvironment {
         #endif
     }
     static var isUIAcceptance: Bool { acceptanceRoot != nil }
+
+    #if DEBUG
+    enum BrowserLifecycleEvent: String {
+        case bindingUpdate = "binding_update"
+        case presenterDidAppear = "presenter_did_appear"
+        case detachedBrowserObserved = "detached_browser_observed"
+        case presentRequested = "present_requested"
+        case presentCompleted = "present_completed"
+        case delegateDidFinish = "delegate_did_finish"
+        case presentationDidDismiss = "presentation_did_dismiss"
+        case reportDismissalEntered = "report_dismissal_entered"
+        case reportDismissalApplied = "report_dismissal_applied"
+        case bindingAssignedFalse = "binding_assigned_false"
+        case dismantleEntered = "dismantle_entered"
+        case teardownDismissRequested = "teardown_dismiss_requested"
+        case teardownDismissCompleted = "teardown_dismiss_completed"
+        case dismantleFinished = "dismantle_finished"
+        case capacityReached = "capacity_reached"
+    }
+    enum BrowserLifecycleFlag: String {
+        case requestedPresentation, hasTrackedBrowser, hasObservedController, matchesTrackedBrowser
+        case dismissalReported, dismantled, hasDismissCallback, presenterInWindow
+        case presenterIsBeingPresented, presenterIsBeingDismissed, presentedControllerIsObserved
+        case observedHasPresenter, observedIsBeingPresented, observedIsBeingDismissed, observedViewInWindow
+        case bindingPresented, capacityReached
+    }
+    private static var browserLifecycleLoggingStopped = false
+
+    /// The existing UUID-scoped acceptance root is the only destination. The
+    /// payload has fixed event/flag names, uptime and booleans; no user text.
+    /// Failure or capacity exhaustion must never change a presentation action.
+    static func recordBrowserLifecycle(_ event: BrowserLifecycleEvent, flags: [BrowserLifecycleFlag: Bool]) {
+        guard !browserLifecycleLoggingStopped, let root = acceptanceRoot else { return }
+        let observedAt = ProcessInfo.processInfo.systemUptime
+        let maximumBytes: UInt64 = 64 * 1024
+        func encoded(_ event: BrowserLifecycleEvent, _ flags: [BrowserLifecycleFlag: Bool], uptime: TimeInterval) throws -> Data {
+            let state = Dictionary(uniqueKeysWithValues: flags.map { ($0.key.rawValue, $0.value) })
+            var bytes = try JSONSerialization.data(withJSONObject: [
+                "event": event.rawValue, "uptime": uptime, "flags": state
+            ], options: [.sortedKeys])
+            bytes.append(0x0A)
+            return bytes
+        }
+        do {
+            let file = root.appendingPathComponent("browser-lifecycle.jsonl")
+            let manager = FileManager.default
+            try manager.createDirectory(at: root, withIntermediateDirectories: true)
+            if !manager.fileExists(atPath: file.path) {
+                guard manager.createFile(atPath: file.path, contents: Data(), attributes: [.posixPermissions: 0o600]) else {
+                    browserLifecycleLoggingStopped = true; return
+                }
+            }
+            let attributes = try manager.attributesOfItem(atPath: file.path)
+            guard let kind = attributes[.type] as? FileAttributeType, kind == .typeRegular else {
+                browserLifecycleLoggingStopped = true; return
+            }
+            let handle = try FileHandle(forWritingTo: file)
+            defer { try? handle.close() }
+            let size = try handle.seekToEnd()
+            guard size <= maximumBytes else { browserLifecycleLoggingStopped = true; return }
+            let bytes = try encoded(event, flags, uptime: observedAt)
+            // Reserve room for a fixed marker so a capped trace is explicit.
+            if size + UInt64(bytes.count) > maximumBytes - 512 {
+                let marker = try encoded(.capacityReached, [.capacityReached: true], uptime: ProcessInfo.processInfo.systemUptime)
+                if size + UInt64(marker.count) <= maximumBytes { try handle.write(contentsOf: marker) }
+                browserLifecycleLoggingStopped = true
+                return
+            }
+            try handle.write(contentsOf: bytes)
+        } catch {
+            browserLifecycleLoggingStopped = true
+        }
+    }
+
+    enum OpportunityFocusEvent: String {
+        case editorAppeared = "editor_appeared"
+        case focusBindingChanged = "focus_binding_changed"
+        case textEditingBegan = "text_editing_began"
+        case textEditingEnded = "text_editing_ended"
+        case keyboardWillShow = "keyboard_will_show"
+        case keyboardDidShow = "keyboard_did_show"
+        case keyboardWillHide = "keyboard_will_hide"
+        case keyboardDidHide = "keyboard_did_hide"
+        case doneActionEntered = "done_action_entered"
+        case editorDisappeared = "editor_disappeared"
+        case capacityReached = "capacity_reached"
+    }
+    enum OpportunityFocusField: String {
+        case none, url, title, company, location, unknown
+        init(binding: String?) {
+            switch binding {
+            case nil: self = .none
+            case "url": self = .url
+            case "title": self = .title
+            case "company": self = .company
+            case "location": self = .location
+            default: self = .unknown
+            }
+        }
+        init(nativeIdentifier: String?) {
+            switch nativeIdentifier {
+            case "opportunity.url": self = .url
+            case "opportunity.title": self = .title
+            case "opportunity.company": self = .company
+            case "opportunity.location": self = .location
+            default: self = .unknown
+            }
+        }
+    }
+    enum OpportunityFocusFlag: String {
+        case bindingNone, bindingURL, bindingTitle, bindingCompany, bindingLocation, bindingUnknown
+        case busy, sceneActive, hasNativeField, nativeIsFirstResponder, nativeHasWindow
+        case nativeEnabled, nativeUserInteractionEnabled, nativeIdentifierKnown, capacityReached
+    }
+    private static var opportunityFocusLoggingStopped = false
+
+    /// Passive, bounded observations for the existing UUID-scoped offline UI
+    /// fixture only. No text/value, notification userInfo or raw identifier is
+    /// serialized. Diagnostics failure never changes focus or an editor action.
+    static func recordOpportunityFocus(_ event: OpportunityFocusEvent, field: OpportunityFocusField,
+                                       flags: [OpportunityFocusFlag: Bool]) {
+        guard !opportunityFocusLoggingStopped, let root = acceptanceRoot else { return }
+        let observedAt = ProcessInfo.processInfo.systemUptime
+        guard observedAt.isFinite, observedAt >= 0 else { opportunityFocusLoggingStopped = true; return }
+        let maximumBytes: UInt64 = 64 * 1024
+        func encoded(_ event: OpportunityFocusEvent, field: OpportunityFocusField,
+                     flags: [OpportunityFocusFlag: Bool]) throws -> Data {
+            let state = Dictionary(uniqueKeysWithValues: flags.map { ($0.key.rawValue, $0.value) })
+            var bytes = try JSONSerialization.data(withJSONObject: [
+                "event": event.rawValue, "field": field.rawValue, "uptime": observedAt, "flags": state
+            ], options: [.sortedKeys])
+            bytes.append(0x0A)
+            return bytes
+        }
+        do {
+            let file = root.appendingPathComponent("focus-lifecycle.jsonl")
+            let manager = FileManager.default
+            try manager.createDirectory(at: root, withIntermediateDirectories: true)
+            if !manager.fileExists(atPath: file.path) {
+                guard manager.createFile(atPath: file.path, contents: Data(), attributes: [.posixPermissions: 0o600]) else {
+                    opportunityFocusLoggingStopped = true; return
+                }
+            }
+            let attributes = try manager.attributesOfItem(atPath: file.path)
+            guard let kind = attributes[.type] as? FileAttributeType, kind == .typeRegular else {
+                opportunityFocusLoggingStopped = true; return
+            }
+            let handle = try FileHandle(forWritingTo: file)
+            defer { try? handle.close() }
+            let size = try handle.seekToEnd()
+            guard size <= maximumBytes else { opportunityFocusLoggingStopped = true; return }
+            let bytes = try encoded(event, field: field, flags: flags)
+            if size + UInt64(bytes.count) > maximumBytes - 512 {
+                let marker = try encoded(.capacityReached, field: .none, flags: [.capacityReached: true])
+                if size + UInt64(marker.count) <= maximumBytes { try handle.write(contentsOf: marker) }
+                opportunityFocusLoggingStopped = true
+                return
+            }
+            try handle.write(contentsOf: bytes)
+        } catch {
+            opportunityFocusLoggingStopped = true
+        }
+    }
+    #endif
     static func makeCareerStore() -> NativeCareerStore {
         NativeCareerStore(storageURL: acceptanceRoot?.appendingPathComponent("planning.json"))
     }
     static func makeApplicationsStore() -> NativeApplicationsStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile" {
+                do { return try AcceptanceNativeJourney(root: root).makeApplicationsStore() }
+                catch { preconditionFailure("The isolated blank-profile journey could not be opened.") }
+            }
+            if ProcessInfo.processInfo.environment["CAREER_UI_SAVED_COMPARISON"] == "two-openings" {
+                let folder = root.appendingPathComponent("applications", isDirectory: true)
+                let service = AcceptanceSavedComparison(root: root)
+                do { try service.seedIfAbsent(folder: folder) }
+                catch { preconditionFailure("The isolated Saved-comparison fixture could not be prepared.") }
+                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(),
+                    clientFactory: { _, _ in service })
+            }
+            if ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_HISTORY"] == "cv-details" {
+                let folder = root.appendingPathComponent("applications", isDirectory: true)
+                let service = AcceptanceApplicationHistory(root: root)
+                do { try service.seedIfAbsent(folder: folder) }
+                catch { preconditionFailure("The isolated CV-history fixture could not be prepared.") }
+                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),
+                    clientFactory: { _, _ in service })
+            }
             if let availability = ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_AVAILABILITY"],
                ["disabled", "unverified"].contains(availability) {
                 let folder = root.appendingPathComponent("applications", isDirectory: true)
@@ -70,6 +254,15 @@ enum CareerAppEnvironment {
     static func makeDiscoveryStore() -> CareerDiscoveryStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_NATIVE_JOURNEY"] == "blank-profile" {
+                do { return try AcceptanceNativeJourney(root: root).makeDiscoveryStore() }
+                catch { preconditionFailure("The isolated blank-profile discovery transport could not be opened.") }
+            }
+            if let raw = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_SEQUENCE"],
+               let sequence = AcceptanceDiscoveryHistory.Sequence(rawValue: raw) {
+                return CareerDiscoveryStore(file: root.appendingPathComponent("discovery.json"),
+                    service: AcceptanceDiscoveryHistory(root: root, sequence: sequence))
+            }
             return CareerDiscoveryStore(file: root.appendingPathComponent("discovery.json"), service: AcceptanceDiscovery())
         }
         #endif

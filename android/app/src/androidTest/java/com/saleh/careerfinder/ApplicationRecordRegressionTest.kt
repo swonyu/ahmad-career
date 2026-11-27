@@ -345,7 +345,10 @@ class ApplicationRecordRegressionTest {
         assertTrue(model.state.value.error.orEmpty().contains("Stop active Auto Apply"))
         assertEquals(before, model.state.value.applicationRecords)
         assertTrue(model.state.value.jobs.any { it.id == localJob.id })
-        main { model.stop("active-record-review") }; await { model.state.value.activePlans.isEmpty() }
+        main { model.stop("active-record-review") }
+        // Stop refresh publishes the empty plan list before it clears pending mutation intents.
+        await { model.state.value.activePlans.isEmpty() && !model.state.value.readReconciliationRequired &&
+            model.state.value.pendingReadAcknowledgments == 0 }
         main { model.syncOpportunity(localJob) }; await { !model.state.value.busy }
         val merged = model.state.value.applicationRecords.getValue(identity(destination))
         assertTrue(merged.appliedElsewhere); assertTrue(merged.needsReview)
@@ -401,6 +404,10 @@ class ApplicationRecordRegressionTest {
         main { model.syncOpportunity(tracked) }; await { !model.state.value.busy }
         assertEquals("LinkedIn follow-up", model.state.value.applicationRecords.getValue(identity(tracked)).current.record.note)
         assertTrue(model.state.value.jobs.any { it.id == tracked.id })
+        assertTrue(model.state.value.readReconciliationRequired)
+        // The failed write may have reached the service; reconcile its durable intent before a retry.
+        main { model.refresh() }; await { !model.state.value.busy && !model.state.value.readReconciliationRequired }
+        assertEquals("LinkedIn follow-up", model.state.value.applicationRecords.getValue(identity(tracked)).current.record.note)
         service.failJobSave = false
         main { model.syncOpportunity(tracked) }; await { !model.state.value.busy && model.state.value.jobs.any { it.id == "synced-record-job" } }
         assertEquals(1, model.state.value.applicationRecords.size)

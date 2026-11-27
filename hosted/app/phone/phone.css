@@ -64,3 +64,124 @@
 .phone-source-domain bdi{color:var(--ink);font-weight:550}
 @media(min-width:980px){.phone-tab-apply>.phone-card{max-width:740px}.phone-application-steps{gap:22px}.phone-application-guide>.button{width:auto;min-width:220px}}
 @media(prefers-reduced-motion:reduce){.phone-shell *,.phone-dialog *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Keep the next profile action beside its essentials, before optional sections. */
+.phone-profile-quick-save{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.phone-profile-quick-save>.phone-note:first-child{margin-top:0}
+.phone-profile-quick-save>.phone-note:last-child{margin-bottom:0}
+/* Give phone branding and sign-in room; Settings keeps its accessible name. */
+@media(max-width:979px){
+  .phone-header{flex-wrap:wrap}
+  .phone-brand{min-width:0}
+  .phone-brand .brand-icon{flex-shrink:0}
+  .phone-header-actions{flex-shrink:0}
+  .phone-header-actions .header-settings{min-width:44px;min-height:44px;padding:9px}
+  .phone-header-actions .header-settings>span{display:none}
+  .phone-header-actions .header-signin{white-space:nowrap}
+}
+
+.phone-search-updates{display:grid;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--soft);margin:12px 0}.phone-search-updates strong{font-size:.94rem;line-height:1.45}.phone-search-updates .phone-note{margin:4px 0 0}.phone-search-updates .phone-segmented{grid-template-columns:repeat(2,minmax(0,1fr));margin:0;padding:3px;border-radius:12px}.phone-search-updates .phone-segmented button{min-width:0;min-height:44px;padding:8px 6px;overflow-wrap:anywhere}.phone-new-opening{display:inline-flex;max-width:100%;align-items:center;padding:5px 10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--accent);font-size:.75rem;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+
+.phone-application-details{margin-top:.75rem;min-width:0;flex-basis:100%}.phone-application-details .phone-review-data{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:8px 12px;margin:.75rem 0 0}.phone-application-details dt,.phone-application-details dd{margin:0;min-width:0;overflow-wrap:anywhere}.phone-application-details .phone-note{margin-bottom:0}
+
+/* Read-only saved comparison: two aligned columns remain useful on a phone. */
+.phone-saved-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:4px}
+.phone-saved-card-head>.phone-company{flex:1 1 145px;min-width:0;margin:0}
+.phone-shell .phone-compare-choice{display:inline-flex;align-items:center;gap:7px;min-height:44px;margin:0!important;padding:3px 10px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:.75rem;font-weight:600}
+.phone-shell .phone-compare-choice>input{display:inline-block;margin:0}
+.phone-compare-choice.is-selected{color:var(--accent);background:var(--soft);border-color:var(--accent)}
+.phone-compare-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;padding:14px 0 18px;margin:-5px 0 18px;border-bottom:1px solid var(--line)}
+.phone-compare-toolbar strong{font-size:.9rem}.phone-compare-toolbar p{font-size:.76rem;color:var(--muted);margin:3px 0 0}
+.phone-compare-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px}.phone-compare-actions>.button{font-size:.8rem;min-height:44px;padding:9px 12px}
+.phone-comparison-head,.phone-comparison-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.phone-comparison-head>section{min-width:0;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:13px}
+.phone-comparison-location{display:inline-block;font-size:.82rem;font-weight:700;color:var(--accent);line-height:1.5;overflow-wrap:anywhere}
+.phone-comparison-head h3{font-size:.95rem;line-height:1.45;margin:9px 0 6px;letter-spacing:-.02em}
+.phone-comparison-head .phone-company{font-size:.7rem;line-height:1.6;margin:0;color:var(--muted)}
+.phone-comparison-fields{margin:14px 0 0}.phone-comparison-fields>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:5px;border-bottom:1px solid var(--line);padding:11px 0}
+.phone-comparison-fields dt{grid-column:1/-1;color:var(--muted);font-size:.72rem;font-weight:600}
+.phone-comparison-fields dd{margin:0;min-width:0;font-size:.85rem;line-height:1.55;overflow-wrap:anywhere;padding-inline:5px}
+.phone-comparison-fields dd+dd{border-inline-start:1px solid var(--line);padding-inline-start:12px}
+.phone-comparison-links{margin-top:8px}.phone-comparison-links a{font-size:.78rem;text-align:start;justify-content:flex-start}
+.phone-comparison>.phone-note{margin:10px 0 0}
+
+/* Keep the common search and CV actions visible before secondary guidance. */
+.phone-search-options>summary{display:block;padding:12px 0;min-height:48px}
+.phone-search-options>summary>span{margin:0;font-weight:400}
+.phone-search-options>summary>.phone-search-options-heading{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:.8rem;font-weight:650}
+.phone-search-options-heading>svg{flex-shrink:0}
+.phone-search-options-heading>.phone-search-board-count{margin-inline-start:auto;flex-shrink:0;color:var(--muted);font-size:.7rem;font-weight:400}
+.phone-search-options>summary>.phone-search-coverage{display:block;margin:5px 0 0;padding-inline-start:26px;font-size:.75rem;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+.phone-profile-cv .phone-cv{margin-top:16px}
+.phone-profile-cv>.phone-actions{margin:12px 0}
+.phone-profile-quick-save{display:grid;gap:8px;margin-top:12px;padding-top:12px}
+.phone-profile-quick-save>.phone-note{margin:0}
+.phone-contact-fields{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.phone-contact-fields .phone-field-pair>label{margin-top:0!important}
+@media(max-width:979px){
+  .phone-main{padding-top:20px}
+  .phone-page-heading{margin-bottom:20px}
+  .phone-page-heading>p:last-child{margin-top:10px}
+  .phone-search-card{padding:18px}
+}
+
+/* A submitted search lands at its result summary without hiding it under chrome. */
+.phone-results>.phone-section-heading>h2{scroll-margin-top:20px}.phone-results>.phone-section-heading>h2:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}
+
+/* Saved keeps its first role and next step ahead of the secondary controls. */
+.phone-saved-heading{margin-bottom:12px}
+.phone-saved-heading-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-top:6px}
+.phone-saved-heading-actions>p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.5}
+.phone-tab-saved>.phone-segmented{display:flex;flex-wrap:wrap;margin-bottom:12px}
+.phone-tab-saved>.phone-segmented>button{flex:1 1 auto;min-width:max-content;overflow-wrap:normal}
+.phone-shell .phone-saved-stage{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 12px}
+.phone-saved-stage>span{flex:1 1 7rem}
+.phone-shell .phone-saved-stage>select{flex:1 1 11rem;width:auto;min-width:0;margin-top:0}
+.phone-shell .phone-saved-search{margin-bottom:12px!important}
+.phone-tab-saved .phone-compare-toolbar{padding:0 0 12px;margin:0 0 12px;gap:8px 12px}
+.phone-tab-saved .phone-compare-toolbar>div:first-child{flex:1 1 9rem;min-width:0}
+.phone-tab-saved .phone-compare-toolbar p{margin:0;line-height:1.6}
+
+/* Apply puts the current CV and next job action before extended guidance. */
+.phone-tab-apply>.phone-page-heading{margin-bottom:14px}
+.phone-tab-apply>.phone-apply-intro{padding:18px;margin-bottom:14px}
+.phone-apply-intro-heading{display:flex;align-items:flex-start;gap:10px}
+.phone-apply-intro-heading>svg{color:var(--accent);flex-shrink:0;margin-top:2px}
+.phone-apply-intro-heading>h2{min-width:0}
+.phone-apply-intro>p,.phone-application-guide>p{font-size:.85rem;line-height:1.65}
+.phone-apply-intro .phone-readiness{margin:12px 0}
+.phone-apply-profile{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:12px;min-width:0}
+.phone-apply-profile>.phone-selected-cv{flex:1 1 auto;min-width:0;margin:0}
+.phone-apply-profile>.text-button{flex:0 1 auto;min-width:0;text-align:start}
+.phone-application-guide>.button{margin-top:14px}
+.phone-application-guide>.phone-application-steps{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line);gap:16px}
+
+/* Keep identically titled openings distinct while editing their private records. */
+.phone-record-location{display:flex;align-items:center;gap:6px;margin-top:4px;color:var(--ink);font-weight:550}
+.phone-record-location>bdi{min-width:0;overflow-wrap:anywhere}
+
+/* Keep result provenance above a single row of job actions. */
+.phone-results .phone-job-footer {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 12px;
+}
+.phone-results .phone-job-footer > span {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.phone-results .phone-job-footer > .text-button {
+  justify-self: start;
+  min-width: 0;
+  max-width: 100%;
+}
+.phone-results .phone-job-footer > a {
+  justify-self: end;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}

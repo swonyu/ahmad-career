@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { productionRead } from './phone-read-test-helpers.mjs';
 import test, { after } from 'node:test';
 import { readFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -15,10 +16,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const directory = await mkdtemp(join(tmpdir(), 'career-record-tools-'));
 after(() => rm(directory, { recursive: true, force: true }));
 await Promise.all([
-  ['app/phone/record-tools.ts', 'tools.mjs'], ['app/phone/model.ts', 'model.mjs'], ['app/i18n/core.ts', 'i18n.mjs'],
+  ['app/phone/record-tools.ts', 'tools.mjs'], ['app/phone/saved-comparison.ts', 'comparison.mjs'], ['app/phone/model.ts', 'model.mjs'], ['app/i18n/core.ts', 'i18n.mjs'],
 ].map(([entry, filename]) => build({ entryPoints: [entry], outfile: join(directory, filename), bundle: true, platform: 'node', format: 'esm', logLevel: 'silent' })));
 const tools = await import(pathToFileURL(join(directory, 'tools.mjs')).href);
 const model = await import(pathToFileURL(join(directory, 'model.mjs')).href);
+const comparison = await import(pathToFileURL(join(directory, 'comparison.mjs')).href);
 const i18n = await import(pathToFileURL(join(directory, 'i18n.mjs')).href);
 const t = language => (key, values) => i18n.translate(key, language, values);
 const job = Object.freeze({ id: 'synthetic-job', title: 'Software Engineer', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/careers/123' });
@@ -81,9 +83,9 @@ test('Saved comparison removes only the agreed Arabic vowel marks and tatweel wh
 test('CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes', () => {
   const input = Object.freeze(record({ title: 'مهندس, "أول"', company: 'شركة الاختبار', note: 'line one\nline two, "quoted"\r\nنص خاص', stage: 'interview', appliedElsewhere: true, appliedDate: '2026-11-17' }));
   const before = JSON.stringify(input), csv = tools.applicationRecordsCSV([input]), rows = parseCSV(csv);
-  assert.equal(rows.length, 2); assert.equal(rows[0].length, 9); assert.equal(rows[1].length, 9);
-  assert.deepEqual(rows[1], [input.title, input.company, input.identity, 'Interview', 'Yes', input.appliedDate, input.followUpDate, input.note, input.updatedAt]);
-  assert.match(rows[0][3], /self-entered/); assert.match(rows[0][8], /not application time/);
+  assert.equal(rows.length, 2); assert.equal(rows[0].length, 10); assert.equal(rows[1].length, 10);
+  assert.deepEqual(rows[1], [input.title, input.company, input.identity, 'Interview', 'Yes', input.appliedDate, input.followUpDate, input.note, '', input.updatedAt]);
+  assert.match(rows[0][3], /self-entered/); assert.match(rows[0][9], /not application time/);
   assert.equal(JSON.stringify(input), before);
 });
 
@@ -169,6 +171,7 @@ function extract(name) {
   assert.fail(`Actual production declaration ${name} must exist`);
 }
 function install(name, context) {
+  Object.assign(context, { ...productionRead, retainRecordJobContext: model.retainRecordJobContext, jobFromRecord: comparison.jobFromRecord });
   const js = ts.transpileModule('globalThis.' + name + ' = ' + extract(name), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
   vm.runInNewContext(js, context); return context[name];
 }
@@ -636,5 +639,113 @@ test('zero-item Saved filters keep recovery visible and return to the default em
     const cleared = render();
     assert(!buttonLabels(cleared).includes(t(language)('Clear search and filters')));
     assert(buttonLabels(cleared).includes(t(language)('Explore jobs ')));
+  }
+});
+
+
+test('CSV adds only the saved self-entered filename and keeps legacy cells empty in both languages', () => {
+  for (const language of ['en', 'ar']) {
+    const filename = 'نسخة, "CV" (QA).docx';
+    const current = record({ manualResumeName: filename }), legacy = record();
+    const before = JSON.stringify([current, legacy]);
+    const rows = parseCSV(tools.applicationRecordsCSV([current, legacy], t(language)));
+    assert.equal(rows[0].length, 10); assert.equal(rows[1].length, 10); assert.equal(rows[2].length, 10);
+    assert.equal(rows[0][8], t(language)('CV filename (self-entered)'));
+    assert.equal(rows[0][9], t(language)('Last edited (not application time)'));
+    assert.equal(rows[1][8], filename); assert.equal(rows[1][9], current.updatedAt);
+    assert.equal(rows[2][8], ''); assert.equal(rows[2][9], legacy.updatedAt);
+    assert.equal(JSON.stringify([current, legacy]), before);
+  }
+  for (const filename of ['=1+1.pdf', '+SUM(1,2).pdf', '-CV.pdf', '@resume.pdf', '＝1+1.pdf', '＋CV.pdf', "'=CV.pdf"]) {
+    assert.equal(parseCSV(tools.applicationRecordsCSV([record({ manualResumeName: filename })]))[1][8], 'Text: ' + filename);
+  }
+});
+
+test('actual record CSV export never substitutes current-profile or service-reviewed filenames for a manual note', async () => {
+  for (const signedIn of [false, true]) {
+    const h = exportHarness({ signedIn });
+    h.saved.records[0].manualResumeName = 'Own-manual-نسخة.pdf';
+    h.saved.profile.resume = { name: 'PRIVATE_CURRENT_PROFILE_B.pdf', mime: 'application/pdf', size: 12, sha256: 'a'.repeat(64) };
+    h.context.workspaceRef.current = signedIn ? { ...h.context.workspaceRef.current,
+      attempts: [{ resumeName: 'PRIVATE_SERVICE_REVIEW_A.pdf', profileRevision: 1 }] } : null;
+    h.context.olderDrafts = [{ scope: 'account:other-owner', manualResumeName: 'PRIVATE_OTHER_OWNER.pdf' }];
+    const before = JSON.stringify(h.saved);
+    await h.context.exportRecordsCSV();
+    const csv = h.downloads[0].value, rows = parseCSV(csv);
+    assert.equal(rows[1][8], 'Own-manual-نسخة.pdf');
+    for (const forbidden of ['PRIVATE_CURRENT_PROFILE_B.pdf', 'PRIVATE_SERVICE_REVIEW_A.pdf', 'PRIVATE_OTHER_OWNER.pdf']) {
+      assert(!csv.includes(forbidden));
+    }
+    assert.equal(JSON.stringify(h.saved), before);
+  }
+  const calendar = await tools.followUpCalendar(record({ manualResumeName: 'PRIVATE_MANUAL_CV.pdf' }));
+  assert(!calendar.includes('PRIVATE_MANUAL_CV.pdf'));
+});
+
+// Render the actual editor with controlled React hook state. These are input,
+// cancel and submit observations; they are not a browser or persistence run.
+function filenameEditorHarness(initialRecord, language = 'en') {
+  const names = ['RecordEditor', 'RecordSummary', 'ApplicationDetails'];
+  const declarations = componentTree.statements.filter(node => ts.isFunctionDeclaration(node) && names.includes(node.name?.text))
+    .map(node => node.getText(componentTree).replace(/^export\s+/, '')).join('\n');
+  assert.equal(declarations.match(/function (?:RecordEditor|RecordSummary|ApplicationDetails)\(/g).length, 3);
+  const values = [], refs = [], drafts = [], saves = [], dirty = [];
+  let stateIndex = 0, refIndex = 0, effects = [], cancelled = 0;
+  const props = { record: initialRecord, busy: false,
+    onDraftChange: value => drafts.push(value), onSave: (value, clearApplied) => saves.push({ value, clearApplied }),
+    onCancel: () => { cancelled++; }, onDirtyChange: value => dirty.push(value) };
+  const context = { ...productionRead, exports: {}, require: createRequire(import.meta.url), stages: model.stages, stageNames: model.stageNames,
+    friendlyDate: model.friendlyDate, formatNumber: i18n.formatNumber, useI18n: () => ({ t: t(language), language }),
+    useState: initial => {
+      const index = stateIndex++; if (values.length <= index) values.push(initial);
+      return [values[index], value => { values[index] = typeof value === 'function' ? value(values[index]) : value; }];
+    },
+    useRef: initial => { const index = refIndex++; if (refs.length <= index) refs.push({ current: initial }); return refs[index]; },
+    useEffect: effect => effects.push(effect),
+  };
+  vm.runInNewContext(ts.transpileModule(declarations + '\nexports.RecordEditor = RecordEditor;', {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
+  }).outputText, context);
+  const render = () => {
+    stateIndex = 0; refIndex = 0; effects = [];
+    const element = context.exports.RecordEditor(props);
+    effects.forEach(effect => effect());
+    return element;
+  };
+  return { render, drafts, saves, dirty, cancelled: () => cancelled };
+}
+function editorNodes(element) {
+  if (Array.isArray(element)) return element.flatMap(editorNodes);
+  if (!React.isValidElement(element)) return [];
+  return [element, ...editorNodes(element.props.children)];
+}
+test('actual optional filename editor preserves raw unsaved text, cancels without saving, and submits only an explicit note', () => {
+  for (const language of ['en', 'ar']) {
+    const original = Object.freeze(record()), before = JSON.stringify(original);
+    const h = filenameEditorHarness(original, language);
+    const findInput = element => editorNodes(element).find(node => node.type === 'input' && node.props.maxLength === 180);
+    const input = findInput(h.render());
+    assert(input); assert.equal(input.props.value, ''); assert.equal(input.props.dir, 'auto');
+    assert.equal(Object.hasOwn(original, 'manualResumeName'), false);
+    const raw = '  CV-نسخة (QA).docx  ';
+    input.props.onChange({ target: { value: raw } });
+    assert.equal(h.drafts.at(-1).manualResumeName, raw); assert.equal(h.saves.length, 0);
+    const edited = h.render();
+    assert.equal(findInput(edited).props.value, raw); assert.equal(h.dirty.at(-1), true);
+    const cancel = editorNodes(edited).find(node => node.type === 'button' && node.props.children === t(language)('Cancel'));
+    assert(cancel); cancel.props.onClick(); assert.equal(h.cancelled(), 1); assert.equal(h.saves.length, 0);
+    assert.equal(JSON.stringify(original), before);
+
+    const submitted = filenameEditorHarness(original, language);
+    findInput(submitted.render()).props.onChange({ target: { value: raw } });
+    let prevented = false;
+    submitted.render().props.onSubmit({ preventDefault() { prevented = true; } });
+    assert(prevented); assert.equal(submitted.saves.length, 1);
+    assert.equal(submitted.saves[0].value.manualResumeName, raw);
+    assert.equal(submitted.saves[0].clearApplied, false);
+    const persisted = model.updateRecord(original, submitted.saves[0].value);
+    assert.equal(persisted.manualResumeName, raw.trim()); assert.equal(persisted.note, original.note);
+    assert.equal(persisted.stage, original.stage); assert.equal(persisted.appliedElsewhere, original.appliedElsewhere);
+    assert.equal(JSON.stringify(original), before);
   }
 });

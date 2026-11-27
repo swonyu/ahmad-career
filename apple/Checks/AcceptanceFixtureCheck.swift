@@ -1,8 +1,14 @@
 import Foundation
 import Darwin
 
-/// Calls the same DEBUG-only factory as the app. No Keychain, network, simulator,
-/// production folder or persisted language preference is accessed by this gate.
+@MainActor private final class HistoryFixtureCredentials: ApplicationTokenStore {
+    func load(account: String) throws -> String? { "offline-synthetic-token" }
+    func save(_ token: String, account: String) throws { throw MobileApplicationError(message: "The history check never saves credentials.") }
+    func remove(account: String) throws {}
+}
+
+/// Exercises the app's DEBUG-only initializer and CV-history fixture. No Keychain,
+/// network, simulator, production folder or persisted language preference is accessed.
 @MainActor
 private final class AcceptanceFixtureSuite {
     var checks = 0
@@ -89,6 +95,20 @@ private final class AcceptanceFixtureSuite {
             try check(!mismatchedRefresh && afterMismatchedRefresh == scopedBytes,
                       "An offline fixture response for another workspace fails closed without changing the existing account bytes")
         }
+
+        let historyRoot = folder().appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let historyFolder = historyRoot.appendingPathComponent("applications", isDirectory: true)
+        let historyService = AcceptanceApplicationHistory(root: historyRoot)
+        try historyService.seedIfAbsent(folder: historyFolder)
+        let historyStore = NativeApplicationsStore(folder: historyFolder, credentials: HistoryFixtureCredentials(),
+            clientFactory: { _, _ in historyService })
+        let historyRefreshed = await historyStore.refresh()
+        try check(historyRefreshed, "The actual CV-history fixture loads its synthetic workspace")
+        let reviews = historyStore.availableReviews
+        try check(reviews.count == 1 && ApplicationReviewPolicy.current(reviews[0].value, revision: historyStore.revision),
+            "The fixture's unsent review is still current when this suite runs")
+        try check(historyStore.resumeReview(reviews[0].value) && historyStore.plan?["id"]?.string == "cv-review-b",
+            "The genuine store can open the fixture's recoverable CV-B review")
 
         // Corrupt and unsupported drafts must reach the real store's read-only
         // recovery state, rather than being replaced with a fresh fixture.

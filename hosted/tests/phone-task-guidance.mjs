@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { productionRead } from './phone-read-test-helpers.mjs';
 import test from 'node:test';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -20,13 +21,32 @@ const icon = ()=>null;
 function fixture(language='en',overrides={}){
   let completeNotice;
   const noticePromise=new Promise(resolve=>{completeNotice=resolve;});
-  const ctx={React,t:translate(language),language,useI18n:()=>({language,t:translate(language)}),formatNumber:value=>new Intl.NumberFormat(language).format(value),ListChecks:icon,FileText:icon,ArrowRight:icon,Copy:icon,profile:{firstName:'Maya',lastName:'Faris',email:'maya@example.invalid',phone:'',linkedin:'',website:'',resume:null},account:null,workspace:null,jobs:[],records:[],checkingIdentity:false,locked:false,tab:'apply',noticePromise,setSavedQuery:value=>ctx.query=value,setSavedFilter:value=>ctx.view=value,setSavedStage:value=>ctx.stage=value,navigate:value=>ctx.destination=value,SignInOptions:()=>React.createElement('div',null,'Optional sign-in'),useState:initial=>[initial,value=>{ctx.notice=value;completeNotice(value);}],...overrides};
+  const ctx={...productionRead,React,t:translate(language),language,useI18n:()=>({language,t:translate(language)}),formatNumber:value=>new Intl.NumberFormat(language).format(value),ListChecks:icon,FileText:icon,ArrowRight:icon,Copy:icon,profile:{firstName:'Maya',lastName:'Faris',email:'maya@example.invalid',phone:'',linkedin:'',website:'',resume:null},account:null,workspace:null,jobs:[],records:[],checkingIdentity:false,locked:false,tab:'apply',noticePromise,setSavedQuery:value=>ctx.query=value,setSavedFilter:value=>ctx.view=value,setSavedStage:value=>ctx.stage=value,navigate:value=>ctx.destination=value,SignInOptions:()=>React.createElement('div',null,'Optional sign-in'),useState:initial=>[initial,value=>{ctx.notice=value;completeNotice(value);}],...overrides};
   compile(declaration('app/phone/ApplicationGuide.tsx','ApplicationGuide')+';globalThis.ApplicationGuide=ApplicationGuide;',ctx);
   return ctx;
 }
 const apply=nodes(tree,node=>ts.isJsxExpression(node)&&node.getText(tree).startsWith('{!checkingIdentity && !locked && tab === "apply"'))[0];assert(apply);
 function appView(ctx){compile('globalThis.result=('+apply.expression.getText(tree)+');',ctx);return ctx.result;}
 function descendants(node){if(!node||typeof node!=='object')return[];return[node,...React.Children.toArray(node.props?.children).flatMap(descendants)];}
+
+test('the phone skip link moves focus into the current tab without replacing its route', () => {
+  const link = nodes(tree, node => ts.isJsxElement(node) && node.openingElement.tagName.getText(tree) === 'a' &&
+    node.openingElement.attributes.getText(tree).includes('className="skip-link"'))[0];
+  const context = compile('globalThis.link = (' + link.getText(tree) + ');', {React, t: text => text});
+  const target = nodes(tree, node => ts.isJsxOpeningElement(node) && node.tagName.getText(tree) === 'main')[0];
+  const attributes = target.attributes.getText(tree);
+  assert.match(attributes, /id="phone-main"/);
+  assert.match(attributes, /tabIndex=\{-1\}/);
+  let focused = false, prevented = false;
+  context.link.props.onClick({
+    currentTarget: {ownerDocument: {getElementById(id) {
+      assert.equal('#' + id, context.link.props.href);
+      return {focus() { focused = true; }};
+    }}},
+    preventDefault() { prevented = true; },
+  });
+  assert(focused && prevented);
+});
 
 test('the actual guest Apply route offers manual work before optional sign-in and resets stale Saved filters',()=>{
   for(const recordKind of ['none','bookmark','record']){
@@ -57,7 +77,8 @@ test('saved profile role shortcuts change only the explicit keyword field and ne
   const expression=nodes(tree,node=>ts.isVariableDeclaration(node)&&node.name.getText(tree)==='savedRoleSuggestions')[0].initializer.getText(tree);
   const shortcut=nodes(tree,node=>ts.isJsxElement(node)&&node.openingElement.attributes.properties.some(p=>ts.isJsxAttribute(p)&&p.name.text==='className'&&p.initializer?.text==='phone-profile-search'))[0].getText(tree);
   const ctx=fixture('ar',{snapshot:{profile:{targetRoles:['  Analyst  ','Analyst','ممرّض','Designer','Sales','']}},filters:{query:'old',location:'Riyadh',remoteOnly:true,sources:['lever:global:synthetic']},setFilters:value=>ctx.changed=value});
-  compile('globalThis.savedRoleSuggestions='+expression+';globalThis.shortcut=('+shortcut+');',ctx);
+  ctx.filterDraftRef = {current:ctx.filters}; ctx.snapshotRef = {current:ctx.snapshot};
+  compile(declaration('app/phone/PhoneApp.tsx','editFilter')+';globalThis.savedRoleSuggestions='+expression+';globalThis.shortcut=('+shortcut+');',ctx);
   assert.deepEqual(Array.from(ctx.savedRoleSuggestions),['Analyst','ممرّض','Designer']);
   const buttons=descendants(ctx.shortcut).filter(node=>node.type==='button');assert.equal(buttons.length,3);
   buttons[1].props.onClick();assert.equal(ctx.changed.query,'ممرّض');assert.equal(ctx.changed.location,'Riyadh');assert.equal(ctx.changed.remoteOnly,true);assert.equal(ctx.changed.sources,ctx.filters.sources);
@@ -79,15 +100,24 @@ test('clipboard denial leaves selectable details available with a recovery messa
   assert.match(ctx.notice,/Copy is unavailable/);assert(renderToStaticMarkup(ctx.reuse).includes('maya@example.invalid'));assert.equal(ctx.profile.email,'maya@example.invalid');
 });
 
-test('job link accessible names retain the visible label, exact title and exact destination in both languages',()=>{
+test('job actions name the employer and location of same-title openings in both languages',()=>{
   for(const language of ['en','ar']){
     const ctx=fixture(language,{ArrowUpRight:icon,Bookmark:icon});
-    ctx.job={title:'محلل / Analyst',company:'Synthetic employer',url:'https://example.com/careers/analyst?source=qa',location:'',sourceName:'Example board'};
-    compile(declaration('app/phone/components.tsx','JobCard')+';globalThis.card=JobCard({job,saved:false,onDetails:()=>{}});',ctx);
-    const anchor=descendants(ctx.card).find(node=>node.type==='a');assert(anchor);
-    const visible=React.Children.toArray(anchor.props.children).filter(value=>typeof value==='string').join('').trim();
-    assert(visible);assert(anchor.props['aria-label'].includes(visible));assert(anchor.props['aria-label'].includes(ctx.job.title));assert.equal(anchor.props.href,ctx.job.url);
-    assert.equal(anchor.props.rel,'noopener noreferrer');
+    for(const location of ['Amman','Toronto','']){
+      ctx.job={title:'محلل / Analyst',company:'Synthetic employer',url:'https://example.com/careers/'+(location||'remote'),location,sourceName:'Example board'};
+      compile(declaration('app/phone/components.tsx','JobCard')+';globalThis.card=JobCard({job,saved:false,onSave:()=>{},onDetails:()=>{}});',ctx);
+      const actions=descendants(ctx.card).filter(node=>node.type==='button'||node.type==='a');
+      assert.equal(actions.length,4);
+      for(const {props} of actions){
+        const label=props['aria-label'];
+        for(const field of [ctx.job.title,ctx.job.company,location].filter(Boolean))assert(label.includes(field));
+        assert(!label.trimEnd().endsWith('·'));
+      }
+      const anchor=actions.find(node=>node.type==='a');
+      const visible=React.Children.toArray(anchor.props.children).filter(value=>typeof value==='string').join('').trim();
+      assert(visible);assert(anchor.props['aria-label'].includes(visible));assert.equal(anchor.props.href,ctx.job.url);
+      assert.equal(anchor.props.rel,'noopener noreferrer');
+    }
   }
 });
 

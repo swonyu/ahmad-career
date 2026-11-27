@@ -991,7 +991,166 @@ private final class RecoverySuite {
         scenarios += 1
     }
 
+
+    func savedComparisonMetadata() throws {
+        var a = jobMap("comparison-riyadh", noteTitle: "Service Designer")
+        a["id"] = .string("local-compare-a"); a["localOnly"] = .bool(true)
+        a["sourceName"] = .string("Synthetic Harbor board")
+        a["checkedAt"] = .string("2026-11-21T18:00:00Z")
+        var b = jobMap("comparison-jeddah", noteTitle: "Service Designer")
+        b["id"] = .string("local-compare-b"); b["localOnly"] = .bool(true); b["location"] = .string("Jeddah")
+        let old = try JSONDecoder().decode(PhoneRecordJob.self, from: JSONEncoder().encode(PhoneRecordJob(b)))
+        try check(old.sourceName == nil && old.checkedAt == nil && old.valid, "Old rows keep missing source/check facts absent")
+        var newer = a; newer["title"] = .string("Current provider title")
+        newer["checkedAt"] = .string("2026-11-21T19:00:00Z"); newer.removeValue(forKey: "sourceName")
+        let enriched = PhoneSavedJobMetadata.preserving(newer, from: a)
+        try check(enriched["title"] == newer["title"] && enriched["sourceName"] == a["sourceName"]
+                  && enriched["checkedAt"] == newer["checkedAt"], "Same-posting metadata preservation keeps current title and latest observed check")
+        var older = newer; older["checkedAt"] = .string("2026-11-20T18:00:00Z")
+        try check(PhoneSavedJobMetadata.preserving(older, from: a)["checkedAt"] == a["checkedAt"],
+                  "An older check cannot replace a newer observed check")
+        try check(PhoneSavedJobMetadata.preserving(b, from: a) == b, "Matching titles/employers never copy facts across different posting URLs")
+        var alias = a; alias["url"] = .string("https://jobs.example.com/comparison-riyadh/?utm_source=fixture#role")
+        alias.removeValue(forKey: "checkedAt"); alias.removeValue(forKey: "sourceName")
+        try check(PhoneSavedJobMetadata.preserving(alias, from: a)["checkedAt"] == a["checkedAt"],
+                  "Canonical URL aliases preserve this posting's known facts")
+        let merge = ApplicationJobMerge(remote: [newer], local: [a, b], selected: ["local-compare-a"],
+                                        answers: ["local-compare-a": ["note": .string("private-answer")]])
+        try check(merge.jobs[0]["sourceName"] == a["sourceName"] && merge.jobs[1] == b
+                  && merge.selected == ["local-compare-a"] && merge.answers["local-compare-a"]?["note"]?.string == "private-answer",
+                  "Metadata enrichment preserves existing Apply selection/answer mapping and the other city")
+        scenarios += 1
+
+        var transfer = backup([], jobs: [a, b])
+        var record = PhoneOpportunityRecord(scope: scope(), job: PhoneRecordJob(a)); record.note = "Private note"; record.manualResumeName = "CV-A.pdf"
+        transfer.records = [record]
+        var draft = PhoneRecordDraft(); draft.note = "Unfinished"; draft.manualResumeName = "CV-B.pdf"
+        transfer.recordDrafts = [PhoneRecordDraftCheckpoint(scope: scope(), identity: record.identity, job: record.job,
+                                                           recordID: record.id, revision: record.revision, draft: draft)]
+        let bytes = try JSONEncoder().encode(transfer)
+        let restored = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: bytes)
+        try check(restored.valid && restored.draft.jobs[0]["sourceName"] == a["sourceName"]
+                  && restored.draft.jobs[0]["checkedAt"] == a["checkedAt"] && restored.draft.jobs[1]["sourceName"] == nil,
+                  "Common backup keeps known listing facts and does not invent missing facts")
+        try check(restored.records[0].job == record.job && restored.recordDrafts[0].job == record.job
+                  && restored.records[0].manualResumeName == "CV-A.pdf" && restored.recordDrafts[0].draft.manualResumeName == "CV-B.pdf",
+                  "Record and unfinished-record snapshots preserve listing facts alongside immutable CV notes")
+        let service = TestService(), (imported, folder, tokens) = try fixture(PhoneApplicationState(), service: service)
+        try check(imported.mergeBackup(restored, context: imported.workspaceActionContext, replaceProfile: false),
+                  "The common backup imports through the existing explicit local merge")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        let importedA = reopened.jobs.first { $0["url"] == a["url"] }!
+        try check(importedA["sourceName"] == a["sourceName"] && importedA["checkedAt"] == a["checkedAt"]
+                  && reopened.currentRecord(for: importedA)?.manualResumeName == "CV-A.pdf" && service.calls.isEmpty,
+                  "Actual persisted import/reopen retains facts without contacting a service")
+        scenarios += 1
+
+        for (key, value) in [("sourceName", ApplicationValue.string(String(repeating: "x", count: 151))),
+                             ("sourceName", .string("Board\nhidden")), ("sourceName", .number(7)),
+                             ("checkedAt", .string("not-a-date")), ("checkedAt", .bool(true)),
+                             ("checkedAt", .string(String(repeating: "2", count: 65)))] {
+            var malformed = a; malformed[key] = value
+            try check(!PhoneSavedJobMetadata.valid(malformed), "Malformed optional listing metadata is rejected")
+            var invalidState = PhoneApplicationState(); invalidState.jobs = [malformed]
+            let invalidBytes = try JSONEncoder().encode(invalidState)
+            var rejected = false
+            do { _ = try JSONDecoder().decode(PhoneApplicationState.self, from: invalidBytes) } catch { rejected = true }
+            try check(rejected && !backup([], jobs: [malformed]).valid, "Malformed facts cannot enter active storage or a portable backup")
+        }
+        var nullable = b; nullable["sourceName"] = .null; nullable["checkedAt"] = .null
+        try check(PhoneSavedJobMetadata.valid(nullable), "Missing or explicit null optional facts remain compatible")
+        scenarios += 1
+    }
+
+    func savedComparisonIsolation() async throws {
+        var a = jobMap("compare-a", noteTitle: "Service Designer")
+        a["id"] = .string("local-compare-a"); a["localOnly"] = .bool(true)
+        a["sourceName"] = .string("Synthetic Harbor board"); a["checkedAt"] = .string("2026-11-21T18:00:00Z")
+        var b = jobMap("compare-b", noteTitle: "Service Designer")
+        b["id"] = .string("local-compare-b"); b["localOnly"] = .bool(true); b["location"] = .string("Jeddah")
+        var state = try initial(); state.jobs = [a, b]
+        var recordA = PhoneOpportunityRecord(scope: scope(), job: PhoneRecordJob(a))
+        recordA.stage = .applied; recordA.appliedElsewhere = true; recordA.followUpOn = "2026-11-22"; recordA.note = "Riyadh private"
+        var recordB = PhoneOpportunityRecord(scope: scope(), job: PhoneRecordJob(b))
+        recordB.stage = .interview; recordB.appliedElsewhere = true; recordB.followUpOn = "2026-11-29"; recordB.manualResumeName = "CV-A.pdf"
+        let otherScope = PhoneRecordScope(origin: "https://second.example", workspaceID: "workspace-b")
+        var other = recordA; other.id = UUID().uuidString; other.scope = otherScope; other.stage = .offer; other.followUpOn = "2026-12-31"
+        state.applicationRecords = [recordA, recordB, other]
+        let service = TestService(), (store, folder, tokens) = try fixture(state, service: service)
+        store.selected = ["local-compare-b"]; store.answers = ["local-compare-b": ["note": .string("Apply sentinel")]]
+        let path = folder.appendingPathComponent("phone-draft.json"), priorBytes = try Data(contentsOf: path)
+        let keys = [store.savedComparisonKey(for: a)!, store.savedComparisonKey(for: b)!]
+        let pair = store.savedComparisonItems(keys)!
+        try check(pair.map(\.job.location) == ["Riyadh", "Jeddah"] && pair.map(\.job.url) == [a["url"]!.string!, b["url"]!.string!],
+                  "Same-title same-employer roles retain separate city and employer-link identities")
+        try check(pair.map(\.stage) == [.applied, .interview] && pair.map(\.followUpOn) == ["2026-11-22", "2026-11-29"],
+                  "Each role reads only its own active record and ignores another account's stage/date")
+        try check(pair[0].job.sourceName == "Synthetic Harbor board" && pair[1].job.sourceName == nil && pair[1].job.checkedAt == nil,
+                  "The comparison projects known and unknown source/check facts truthfully")
+        try check(store.savedComparisonItems([]) == nil && store.savedComparisonItems([keys[0]]) == nil
+                  && store.savedComparisonItems([keys[0], keys[0]]) == nil && store.savedComparisonItems(keys + [keys[0]]) == nil,
+                  "A comparison requires exactly two different canonical openings")
+        try check(try Data(contentsOf: path) == priorBytes && service.calls.isEmpty
+                  && store.selected == ["local-compare-b"] && store.answers["local-compare-b"]?["note"]?.string == "Apply sentinel"
+                  && store.profile == state.profile && store.plan == nil && store.attempts.isEmpty,
+                  "Read-only comparison changes no file, Apply state, profile, receipt, or request")
+        scenarios += 1
+
+        var duplicateState = state, alias = a
+        alias["id"] = .string("local-alias"); alias["url"] = .string("https://jobs.example.com/compare-a/?utm_source=fixture#same")
+        duplicateState.jobs.append(alias)
+        let (duplicate, _, _) = try fixture(duplicateState, service: TestService())
+        try check(duplicate.savedComparisonItems([duplicate.savedComparisonKey(for: a)!, duplicate.savedComparisonKey(for: alias)!]) == nil,
+                  "Two saved rows for the same canonical posting cannot masquerade as two openings")
+        var conflictState = state, conflict = recordA
+        conflict.id = UUID().uuidString; conflict.stage = .offer; conflict.followUpOn = "2026-12-20"
+        conflictState.applicationRecords.append(conflict)
+        let (conflicted, _, _) = try fixture(conflictState, service: TestService())
+        let uncertain = conflicted.savedComparisonItem(for: conflicted.savedComparisonKey(for: a)!)!
+        try check(uncertain.conflictingRecords && uncertain.stage == nil && uncertain.followUpOn == nil,
+                  "Competing private versions remain explicitly unresolved rather than choosing a stage or earliest date")
+        scenarios += 1
+
+        // An older record snapshot must retain newly known facts when its bookmark is deliberately removed.
+        var removalState = state
+        removalState.applicationRecords[0].job.sourceName = nil; removalState.applicationRecords[0].job.checkedAt = nil
+        var archived = removalState.applicationRecords[0]; archived.id = UUID().uuidString; archived.archived = true
+        removalState.applicationRecords.append(archived)
+        let (removing, removalFolder, removalTokens) = try fixture(removalState, service: TestService())
+        let oldKey = removing.savedComparisonKey(for: a)!, oldEdit = removing.recordEditContext(for: a)!
+        try check(removing.removeLocalJob(removing.removalContext("local-compare-a")!), "The existing explicit bookmark removal still succeeds")
+        try check(removing.savedComparisonItem(for: oldKey) == nil, "A removed row is not silently replaced by a retained-record row")
+        let retained = removing.savedOpportunities.first { $0["recordOnly"]?.bool == true }!
+        let retainedItem = removing.savedComparisonItem(for: removing.savedComparisonKey(for: retained)!)!
+        try check(retainedItem.recordOnly && retainedItem.job.sourceName == a["sourceName"]?.string
+                  && retainedItem.job.checkedAt == a["checkedAt"]?.string && retainedItem.stage == .applied
+                  && retainedItem.followUpOn == "2026-11-22", "Retained records keep observed listing facts and their own private stage/date")
+        let removalSaved = try savedState(removalFolder)
+        try check(removalSaved.applicationRecords.first { $0.id == archived.id } == archived
+                  && removalSaved.applicationRecords.first { $0.id == other.id } == other,
+                  "Metadata retention changes neither archived record history nor another account's records")
+        try check(!removing.saveRecord(PhoneRecordDraft(recordA), context: oldEdit),
+                  "A record context captured before metadata retention cannot overwrite the revised snapshot")
+        let relaunched = NativeApplicationsStore(folder: removalFolder, credentials: removalTokens, clientFactory: { _, _ in TestService() })
+        try check(relaunched.savedOpportunities.contains { $0["recordOnly"]?.bool == true && $0["checkedAt"] == a["checkedAt"] },
+                  "Retained comparison facts survive a real store reopen")
+        scenarios += 1
+
+        var stateB = state; stateB.workspaceID = "workspace-b"; stateB.serviceAddress = "https://second.example"
+        let (second, _, _) = try fixture(stateB, service: TestService("https://second.example"))
+        try check(second.savedComparisonItems(keys) == nil && second.savedComparisonItem(for: keys[0]) == nil,
+                  "Captured comparison keys cannot cross owners even if the row IDs and titles coincide")
+        let resumed = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        try check(resumed.savedComparisonItems(keys) == nil, "Ephemeral comparison keys cannot survive a different connection instance")
+        await store.disconnect()
+        try check(store.savedComparisonItems(keys) == nil, "Disconnecting invalidates already captured comparison keys")
+        scenarios += 1
+    }
+
     func run() async throws {
+        try savedComparisonMetadata()
+        try await savedComparisonIsolation()
+        try manualCVNames()
         try recoveredDraftRebase()
         try profileLabels()
         try await receipts()
@@ -1001,6 +1160,96 @@ private final class RecoverySuite {
         try oversizedOpportunityExport()
         try oversizedCurrentRestore()
         try savedNoteControls()
+    }
+
+    /// The optional filename is a private note; every persistence path keeps that meaning.
+    func manualCVNames() throws {
+        var job = jobMap("manual-cv", noteTitle: "Synthetic designer")
+        job["id"] = .string("local-manual-cv"); job["localOnly"] = .bool(true)
+        var initialState = PhoneApplicationState(); initialState.jobs = [job]
+        let service = TestService(), (store, folder, tokens) = try fixture(initialState, service: service)
+        let path = folder.appendingPathComponent("phone-draft.json")
+        var draft = PhoneRecordDraft(); draft.manualResumeName = "  CV-A.pdf  "
+        let edit = store.recordEditContext(for: job)!
+        try check(store.saveRecord(draft, context: edit), "A filename-only private record can be saved without an account or attachment")
+        let original = store.currentRecord(for: job)!
+        try check(original.manualResumeName == "CV-A.pdf" && original.meaningful && !original.appliedElsewhere
+                  && original.stage == .saved && store.attempts.isEmpty && service.calls.isEmpty,
+                  "Saving trims the filename note but creates no application mark, receipt or request")
+        try check(PhoneRecordDraft(original).manualResumeName == "CV-A.pdf", "Opening a saved record retains its own filename note")
+        scenarios += 1
+
+        var edited = PhoneRecordDraft(original); edited.manualResumeName = "سيرة-ب.pdf"
+        let current = store.recordEditContext(for: job)!
+        try check(store.keepRecordDraft(edited, context: current), "An unfinished filename edit is checkpointed separately")
+        try check(store.discardRecordDraft(context: current) && store.currentRecord(for: job)?.manualResumeName == "CV-A.pdf",
+                  "Canceling the checkpoint leaves the saved filename unchanged")
+        try check(store.keepRecordDraft(edited, context: current), "The same filename edit can be checkpointed again")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        let reopenedContext = reopened.recordEditContext(for: job)!
+        try check(reopened.currentRecord(for: job)?.manualResumeName == "CV-A.pdf"
+                  && reopened.restoredRecordDraft(for: reopenedContext)?.manualResumeName == "سيرة-ب.pdf",
+                  "A disk reload keeps saved and unfinished filenames distinct")
+        guard let url = reopened.exportWorkspace(context: reopened.workspaceActionContext) else {
+            throw MobileApplicationError(message: "A filename-bearing workspace could not be exported")
+        }
+        let portable = try NativeApplicationsStore.readWorkspaceBackup(at: url)
+        try check(portable.records.map(\.manualResumeName) == ["CV-A.pdf"]
+                  && portable.recordDrafts.map(\.draft.manualResumeName) == ["سيرة-ب.pdf"],
+                  "The common backup explicitly round-trips the record adapter and unfinished filename")
+        let (imported, importedFolder, _) = try fixture(PhoneApplicationState(), service: service)
+        try check(imported.mergeBackup(portable, context: imported.workspaceActionContext), "An explicit backup import accepts the optional filename")
+        let importedState = try savedState(importedFolder)
+        try check(importedState.applicationRecords.map(\.manualResumeName) == ["CV-A.pdf"]
+                  && importedState.recordDrafts.map(\.draft.manualResumeName) == ["سيرة-ب.pdf"]
+                  && imported.attempts.isEmpty && !imported.connected && service.calls.isEmpty,
+                  "Import retains private filename notes without importing receipt or connection authority")
+        scenarios += 1
+
+        let preserved = try Data(contentsOf: path)
+        for bad in ["/Users/example/CV.pdf", "CV\\copy.pdf", "CV:copy.pdf", "CV\ncopy.pdf", String(repeating: "x", count: 181)] {
+            var invalid = edited; invalid.manualResumeName = bad
+            try check(!reopened.saveRecord(invalid, context: reopenedContext)
+                      && reopened.message == MobileApplicationPolicy.manualResumeNameError,
+                      "An unsafe filename cannot overwrite the saved record")
+            try check(!reopened.keepRecordDraft(invalid, context: reopenedContext)
+                      && (try Data(contentsOf: path)) == preserved,
+                      "Invalid filename checkpoints preserve the preceding saved record and recoverable draft bytes")
+        }
+        try check(reopened.saveRecord(edited, context: reopenedContext)
+                  && reopened.currentRecord(for: job)?.manualResumeName == "سيرة-ب.pdf"
+                  && !reopened.isMarkedApplied(job), "An explicit recovered filename save remains self-entered and unapplied")
+        scenarios += 1
+
+        // Old common-format records/drafts omit the optional key and must remain readable.
+        var object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(portable)) as! [String: Any]
+        var contents = object["data"] as! [String: Any]
+        var records = contents["applicationRecords"] as! [[String: Any]]
+        records[0].removeValue(forKey: "manualResumeName"); contents["applicationRecords"] = records
+        var drafts = contents["recordDrafts"] as! [[String: Any]], oldDraft = drafts[0]["draft"] as! [String: Any]
+        oldDraft.removeValue(forKey: "manualResumeName"); drafts[0]["draft"] = oldDraft; contents["recordDrafts"] = drafts; object["data"] = contents
+        let old = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: JSONSerialization.data(withJSONObject: object))
+        try check(old.valid && old.records[0].manualResumeName == nil && old.recordDrafts[0].draft.manualResumeName == nil,
+                  "An old backup never fabricates a filename from the current profile")
+        var invalidPortable = portable; invalidPortable.records[0].manualResumeName = "/private/CV.pdf"
+        try check(!invalidPortable.valid, "A path in an imported saved filename fails the existing whole-backup validation")
+        scenarios += 1
+
+        // A filename alone is useful history even after its bookmark is removed.
+        try check(reopened.removeLocalJob(reopened.removalContext("local-manual-cv")!), "Removing a bookmark keeps its filename-only private record")
+        try check(reopened.jobs.isEmpty && reopened.savedOpportunities.count == 1
+                  && reopened.currentRecord(for: reopened.savedOpportunities[0])?.manualResumeName == "سيرة-ب.pdf",
+                  "The retained record still exposes its own filename after bookmark removal")
+        var versionState = try savedState(folder), archived = original
+        archived.id = UUID().uuidString; archived.archived = true; versionState.applicationRecords.append(archived)
+        let (versions, _, _) = try fixture(versionState, service: service)
+        let retained = versions.savedOpportunities[0]
+        try check(versions.useRecordVersion(archived.id, context: versions.recordChoiceContext(for: retained)),
+                  "Selecting an archived private version restores that version's filename")
+        try check(versions.currentRecord(for: retained)?.manualResumeName == "CV-A.pdf"
+                  && !versions.isMarkedApplied(retained) && versions.attempts.isEmpty && service.calls.isEmpty,
+                  "Version selection keeps the filename distinct from applied marks and submission evidence")
+        scenarios += 1
     }
 
     /// An unfinished link past the shared limit must not become a backup iPhone would reject entirely.

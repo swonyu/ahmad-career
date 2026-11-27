@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createRequire } from 'node:module';
+import * as sourceIdentity from "../shared/discovery-source-identity.mjs";
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -10,16 +11,19 @@ const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
+let historicalHelpers = {};
 
 function execute(source, scope = {}, loader = require) {
   const result = ts.transpileModule(source, { compilerOptions: {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022,
     jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true,
   } });
-  const context = { exports: {}, require: loader, Intl, ...scope };
+  const context = { exports: {}, require: loader, Intl, ...historicalHelpers, ...scope };
   vm.runInNewContext(result.outputText, context);
   return context.exports;
 }
+historicalHelpers = execute(read("app/phone/historical-text.ts"));
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../shared/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const translator = language => (key, values) => translate(key, language, values);
 
@@ -36,13 +40,23 @@ function assertArabic(text) {
   assert.doesNotMatch(text, /[a-z]/i);
 }
 
+const actualReceiptLabel = execute(declarations(read('app/phone/model.ts'), ['receiptLabel'])
+  + '\nexports.receiptLabel = receiptLabel;').receiptLabel;
+function actualApplicationDetails(language) {
+  return execute(declarations(read('app/phone/components.tsx'), ['ApplicationDetails'])
+    + '\nexports.ApplicationDetails = ApplicationDetails;', {
+      useI18n: () => ({ language, t: translator(language) }), formatNumber,
+      profile: { resume: { name: 'Current-CV-B.pdf' }, revision: 99 },
+    }).ApplicationDetails;
+}
+
 test('real review rendering localizes every state and preserves user and employer content', () => {
-  const source = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
+  const source = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'HistoricalTextNotice', 'ReviewDetails']);
   const ReviewDetails = execute(`${source}\nexports.ReviewDetails = ReviewDetails;`, {
-    useI18n: () => ({ language: 'ar', t: translator('ar') }),
+    useI18n: () => ({ language: 'ar', t: translator('ar') }), formatNumber,
   }).ReviewDetails;
   const states = ['ready', 'blocked', 'dispatching', 'confirmed', 'uncertain', 'rate_limited', 'rejected', 'cancelled'];
-  const plan = { items: states.map((state, index) => ({
+  const plan = { profileRevision: 1, items: states.map((state, index) => ({
     jobId: `synthetic-${index}`, state, reason: '',
     title: 'Ready for your review', company: 'English employer title',
     job: { url: 'https://employer.example/posting' },
@@ -181,6 +195,18 @@ const mixedJob = Object.freeze({ id: 'mixed-direction-synthetic',
   title: 'Data (QA) 2 — العربية', company: 'شركة (Acme) 17', location: 'Riyadh (الرياض) 123',
   url: 'https://example.org/career-finder-bidi/17', country: 'SA', summary: 'Synthetic mixed-script posting', checkedAt: '2026-11-17T15:00:00Z' });
 const mixedFile = 'CV-أحمد-(QA)-2026.pdf';
+function actualComparisonChoice(language) {
+  const source = read('app/phone/SavedComparison.tsx');
+  const tree = ts.createSourceFile('SavedComparison.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const component = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'SavedComparison');
+  const choices = component.body.statements.flatMap(node => ts.isVariableStatement(node) ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(tree) === 'choice');
+  assert.equal(choices.length, 1);
+  const identity = execute(declarations(read('app/phone/model.ts'), ['checkedPublicURL', 'publicURL', 'historicalPublicURL', 'jobIdentity']) + '\nexports.jobIdentity = jobIdentity;', { URL }).jobIdentity;
+  return execute('exports.choice = ' + choices[0].initializer.getText(tree), {
+    t: translator(language), jobIdentity: identity, chosen: [], disabled: false, closing: false,
+    setSelected: () => { throw Error('Presentation rendering must not change selection'); },
+  }).choice;
+}
 function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
   const t = translator(language);
   const profile = { firstName: 'أحمد (Alex)', lastName: 'Example-17', email: 'synthetic+ar@example.org',
@@ -193,11 +219,11 @@ function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
     draft: { id: 'synthetic-recovery', savedAt: '2026-11-17T15:00:00Z', record: { job: mixedJob } },
     receipt: { id: 'synthetic-receipt', state: 'uncertain', title: mixedJob.title, company: mixedJob.company,
       createdAt: '2026-11-17T15:00:00Z', url: mixedJob.url },
-    RecordSummary: () => null, today: () => '2026-11-17', formatNumber,
+    choice: actualComparisonChoice(language), RecordSummary: () => null, ApplicationDetails: actualApplicationDetails(language), today: () => '2026-11-17', formatNumber,
     displayTime: () => '17 November 2026', countryName: code => code, workModeLabel: value => value,
-    experienceLabel: value => value, receiptLabel: () => 'Outcome needs checking',
+    experienceLabel: value => value, receiptLabel: actualReceiptLabel,
     ...additions };
-  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check']) context[name] = () => null;
+  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check', 'RefreshCw', 'Download', 'MapPin']) context[name] = () => null;
   const View = execute(`${setup}\nexports.View = () => (${fragment});`, context).View;
   return View();
 }
@@ -209,9 +235,9 @@ test('actual Saved, Apply, details and recovery values retain separate bidi boun
     ['Apply choice', phoneFragment(node => hasClass(node, 'phone-check phone-job-choice')), [mixedJob.title, mixedJob.company]],
     ['Employer-answer legend', phoneFragment((node, text) => tagName(node) === 'legend' && text.includes('job.company') && text.includes('job.title')), [mixedJob.title, mixedJob.company]],
     ['Submission receipt', phoneFragment((node, text) => tagName(node) === 'article' && text.includes('phone-receipt') && text.includes('receipt.title')), [mixedJob.title, mixedJob.company]],
-    ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'dialog.job.location')), [mixedJob.location]],
+    ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'displayHistoricalText(dialog.job.location)')), [mixedJob.location]],
     ['Unfinished recovery label', phoneFragment((node, text) => tagName(node) === 'button' && text.includes('draft.record?.job.title')), [mixedJob.title, mixedJob.company]],
-    ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company]],
+    ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company, mixedJob.location]],
     ['Private-record deletion', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.record.title') && text.includes('dialog.record.company')), [mixedJob.title, mixedJob.company]],
   ];
   for (const language of ['en', 'ar']) for (const [label, fragment, values] of cases) {
@@ -222,15 +248,15 @@ test('actual Saved, Apply, details and recovery values retain separate bidi boun
 
 test('actual profile comparison and application review isolate names and CV filenames without changing them', () => {
   const versions = phoneFragment(node => hasClass(node, 'phone-version-grid'));
-  const reviewSource = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
+  const reviewSource = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'HistoricalTextNotice', 'ReviewDetails']);
   for (const language of ['en', 'ar']) {
     const element = renderPhoneFragment(versions, language);
     assert.equal(assertIsolatedRawValue(element, 'أحمد (Alex) Example-17', `${language} profile comparison name`), 2);
     assert.equal(assertIsolatedRawValue(element, mixedFile, `${language} profile comparison CV`), 2);
     const ReviewDetails = execute(`${reviewSource}\nexports.ReviewDetails = ReviewDetails;`, {
-      useI18n: () => ({ language, t: translator(language) }),
+      useI18n: () => ({ language, t: translator(language) }), formatNumber,
     }).ReviewDetails;
-    const review = React.createElement(ReviewDetails, { plan: { items: [{
+    const review = React.createElement(ReviewDetails, { plan: { profileRevision: 1, items: [{
       jobId: 'synthetic-review-bidi', state: 'ready', reason: '', title: mixedJob.title, company: mixedJob.company,
       job: { url: mixedJob.url }, payloadSummary: { name: 'أحمد (Alex) Example-17', email: 'synthetic+ar@example.org', comments: '' },
       resume: { name: mixedFile }, privacyPolicyUrl: null,
@@ -286,13 +312,20 @@ function renderBoardOptions(language) {
     ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'addEmployerBoard');
   assert.equal(actions.length, 1, 'Expected one actual addEmployerBoard declaration');
   assert(actions[0].initializer, 'Expected the actual addEmployerBoard initializer');
-  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)};`;
+  const names = app.body.statements.flatMap(node => ts.isVariableStatement(node)
+    ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'searchSourceNames');
+  assert.equal(names.length, 1, 'Expected the actual selected board names declaration');
+  assert(names[0].initializer, 'Expected the actual selected board names initializer');
+  const editFilter = app.body.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'editFilter');
+  const setup = `${editFilter.getText(phoneTree)}
+const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)}; const searchSourceNames = ${names[0].initializer.getText(phoneTree)};`;
   const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
   const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
   const changes = [], touched = [];
   const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
-    catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
+    ...sourceHelpers, ...sourceIdentity, catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
     SlidersHorizontal: () => null,
+    filterDraftRef: { current: filters }, snapshotRef: { current: {} },
     setFilters: value => changes.push(value),
     setBoardsTouched: value => touched.push(value),
     setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
@@ -377,3 +410,108 @@ for (const language of ['en', 'ar']) {
     }
   });
 }
+
+
+test('actual application details keep historical metadata separate from current profile and manual notes', () => {
+  for (const language of ['en', 'ar']) {
+    const Component = actualApplicationDetails(language), t = translator(language);
+    const reviewed = React.createElement(Component, { resumeName: mixedFile, profileRevision: 7 });
+    const reviewedText = allText(reviewed);
+    assertIsolatedRawValue(reviewed, mixedFile, language + ' historical CV');
+    assert(reviewedText.includes(t('Reviewed CV')));
+    assert(reviewedText.includes(t('Profile version')));
+    assert(reviewedText.includes(formatNumber(7, language)));
+    for (const absent of [undefined, null]) {
+      const legacy = React.createElement(Component, { resumeName: absent, profileRevision: absent });
+      const text = allText(legacy);
+      assert(text.includes(t('CV not recorded')));
+      assert(!text.includes(t('Profile version')));
+      assert(!text.includes('Current-CV-B.pdf'));
+    }
+    const versionZero = allText(React.createElement(Component, { profileRevision: 0 }));
+    assert(versionZero.includes(t('Profile version')));
+    assert(versionZero.includes(formatNumber(0, language)));
+    const manualName = 'نسخة شخصية (QA).docx';
+    const manual = React.createElement(Component, { resumeName: manualName, profileRevision: 7, manual: true });
+    assertIsolatedRawValue(manual, manualName, language + ' self-entered filename');
+    assert(allText(manual).includes(t('Filename you recorded')));
+    assert(allText(manual).includes(t('Self-entered information. This is not a submission receipt.')));
+    assert(!allText(manual).includes(t('Profile version')));
+    assert.match(renderToStaticMarkup(reviewed), /^<details\b/);
+    assert.doesNotMatch(renderToStaticMarkup(reviewed), /<details[^>]*\bopen(?:=|[ >])/);
+  }
+});
+
+test('actual Application history retains an unapproved CV-A draft after profile B makes its review stale', () => {
+  const fragment = phoneFragment(node => hasClass(node, 'phone-receipts'));
+  const pending = Object.freeze({ id: '00000000-0000-4000-8000-000000000061',
+    planId: '00000000-0000-4000-8000-000000000062', jobId: mixedJob.id,
+    state: 'ready', title: mixedJob.title, company: mixedJob.company, url: mixedJob.url,
+    createdAt: '2026-11-17T15:00:00Z', resumeName: 'Reviewed-CV-A.pdf', profileRevision: 1,
+    dispatchCount: 0, dispatchedAt: null, mode: 'test', evidenceMode: 'test', error: null });
+  for (const language of ['en', 'ar']) {
+    const t = translator(language);
+    const workspace = { profile: { revision: 2, resume: { name: 'Current-CV-B.pdf' } },
+      attempts: [pending], recoverablePlans: [], activePlanIds: [] };
+    const before = JSON.stringify(workspace);
+    const element = renderPhoneFragment(fragment, language, { workspace });
+    const html = renderToStaticMarkup(element), text = allText(element);
+    assert.equal((html.match(/<article\b/g) || []).length, 1);
+    assert(text.includes(t('Application history')));
+    assert(text.includes(t('Prepared draft')));
+    assert(text.includes(t('Nothing has been submitted from this draft.')));
+    assert(text.includes(t('Your profile has changed since this draft. Prepare a new review before approving.')));
+    assertIsolatedRawValue(element, pending.resumeName, language + ' retained ready draft CV');
+    assert(!text.includes('Current-CV-B.pdf'));
+    assert(!text.includes(t('Continue approved applications')));
+    assert(!text.includes(t('Export receipts')), 'A ready-only history is not a submission receipt export');
+    assert.equal(JSON.stringify(workspace), before);
+    for (const change of [{ dispatchCount: undefined }, { dispatchCount: 1 }, { dispatchedAt: '2026-11-17T15:01:00Z' }]) {
+      const uncertainDispatch = renderPhoneFragment(fragment, language, { workspace: { ...workspace, attempts: [{ ...pending, ...change }] } });
+      assert(!allText(uncertainDispatch).includes(t('Nothing has been submitted from this draft.')));
+    }
+    const legacy = renderPhoneFragment(fragment, language, { workspace: { ...workspace,
+      attempts: [{ ...pending, resumeName: undefined, profileRevision: undefined, dispatchCount: undefined }] } });
+    assert(allText(legacy).includes(t('CV not recorded')));
+    assert(!allText(legacy).includes(t('Your profile has changed since this draft. Prepare a new review before approving.')));
+    assert(!allText(legacy).includes('Current-CV-B.pdf'));
+  }
+});
+
+test('actual history preserves uncertain, live-confirmed and synthetic evidence labels while showing each recorded CV', () => {
+  const fragment = phoneFragment(node => hasClass(node, 'phone-receipts'));
+  for (const language of ['en', 'ar']) {
+    const t = translator(language);
+    const attempts = [
+      { id: 'uncertain', state: 'uncertain', mode: 'local', evidenceMode: 'live', resumeName: 'Uncertain-A.pdf' },
+      { id: 'confirmed', state: 'confirmed', mode: 'local', evidenceMode: 'live', applicationId: 'synthetic-live-contract-id', resumeName: 'Confirmed-A.pdf' },
+      { id: 'test', state: 'confirmed', mode: 'test', evidenceMode: 'test', applicationId: 'synthetic-test-id', resumeName: 'Test-A.pdf' },
+    ].map(value => ({ ...value, title: mixedJob.title, company: mixedJob.company, url: mixedJob.url,
+      createdAt: '2026-11-17T15:00:00Z', profileRevision: 1, dispatchCount: 1, error: null }));
+    const element = renderPhoneFragment(fragment, language, { workspace: { profile: { revision: 2 }, attempts } });
+    assert.equal((renderToStaticMarkup(element).match(/<article\b/g) || []).length, 3);
+    for (const receipt of attempts) {
+      assert(allText(element).includes(t(actualReceiptLabel(receipt))));
+      assertIsolatedRawValue(element, receipt.resumeName, language + ' outcome metadata');
+    }
+    assert(allText(element).includes(t('Check with the employer before applying again. Career Finder will not automatically resend an uncertain application.')));
+    assert(!allText(element).includes(t('Nothing has been submitted from this draft.')));
+    assert(allText(element).includes(t('Export receipts')));
+  }
+});
+
+
+test('job sharing rejects private host aliases and keeps public posting details exact', () => {
+  const urlSource = declarations(read('app/phone/model.ts'), ['checkedPublicURL', 'publicURL']);
+  const { publicURL } = execute(`${urlSource}\nexports.publicURL = publicURL;`, { URL });
+  const shareSource = declarations(read('app/phone/components.tsx'), ['jobShareText']);
+  const { jobShareText } = execute(`${shareSource}\nexports.jobShareText = jobShareText;`, { URL, publicURL });
+  const job = { title: 'مهندس برمجيات', company: 'Synthetic\r\nStudio', sourceName: 'Synthetic board', note: 'PRIVATE' };
+  const url = 'https://jobs.example.com/posting?jobId=123&utm_source=board';
+  assert.equal(jobShareText({ ...job, url: `${url}#candidate` }),
+    `مهندس برمجيات\nSynthetic Studio\nSynthetic board\n${url}`);
+  for (const privateURL of [
+    'https://jobs.internal./posting', 'https://private.local%2E/posting', 'https://jobs.example.com./posting',
+    'https://jobs.example.com/invitations/secret', 'https://jobs.example.com/posting?utm_token=secret',
+  ]) assert.throws(() => jobShareText({ ...job, url: privateURL }), `Expected share rejection for ${privateURL}`);
+});

@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-18T07:21:50.140Z",
+  "observedAt": "2026-11-22T20:57:26.722Z",
   "status": "passed",
   "groups": [
     "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",
@@ -30,9 +30,9 @@
   "observedR2Writes": 3,
   "realEmployerRequests": 0,
   "sourceHashes": {
-    "server/applications.mjs": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a",
-    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
-    "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
+    "server/applications.mjs": "13563c7ab349d7471286a9f6ec3b4f6951c71642cbb2377f4ef5ec2b24fcbf3c",
+    "server/provider.mjs": "7b72125d9d02602c08e4dbcad059d369e8f67ede0bc248f3688728e2bfa7f97a",
+    "server/validation.mjs": "63384f08660582be451a359d88b495cd0bd86dff5082526845923ff110072837",
     "worker/index.ts": "f5d914ba412bbb604a73ef63cbb4519e41cd423c278cd3fed588509fa88a000f",
     "tests/hosted-phone.mjs": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00",
     "tests/fixtures/phone-runtime.mjs": "9be5ddb7d9fcd5fef67e372c7812d1a30bb8ae0970bf3938d98345144ac59331"

@@ -442,6 +442,206 @@ try {
 
 
   }
+
+  // Immutable reviewed CV metadata: only fictional accounts/files and the
+  // injected provider transport above are used. Fresh handler instances read
+  // the same actual D1/R2 state; no browser fixture or real provider is involved.
+  {
+    const saveNamedCV = async (account, expectedRevision, name, bytes = pdf) => {
+      const result = await call('/api/apply/profile', {
+        method: 'PUT', token: account.token,
+        body: { expectedRevision, profile: { ...profile(account.id, bytes), resume: résumé(bytes, name) } },
+      });
+      assert.equal(result.status, 200, JSON.stringify(result.data));
+      return result.data.profile;
+    };
+    const reopenedWorkspace = async account => {
+      const reopened = createHostedApplicationHandler({
+        clock: () => time,
+        adapterFactory: value => ({ ...makeAdapter(value, { fetchImpl: fetchFixture }), mode: 'test' }),
+      });
+      const result = await call('/api/apply/workspace', { token: account.token, useHandler: reopened });
+      assert.equal(result.status, 200, JSON.stringify(result.data));
+      return result.data;
+    };
+    const attemptRow = async id => {
+      const row = await db.prepare('SELECT * FROM attempts WHERE id=?').bind(id).first();
+      assert.ok(row, 'The actual service must retain the attempt row');
+      return row;
+    };
+    const attemptFor = (workspace, plan) => {
+      const rows = workspace.attempts.filter(value => value.planId === plan.id);
+      assert.equal(rows.length, 1, 'Each one-job review must retain its own attempt association');
+      return rows[0];
+    };
+    const cases = [];
+    for (const sameBytes of [false, true]) {
+      const person = await account(sameBytes ? 'cv-filename-same' : 'cv-filename-distinct');
+      const firstProfile = await saveNamedCV(person, 0, 'CV-A.pdf');
+      assert.equal(firstProfile.revision, 1);
+      const completedJob = await addJob(person), completedPlan = await review(person, [completedJob]);
+      assert.equal(completedPlan.approvedAt, null);
+      assert.equal(completedPlan.profileRevision, 1);
+      assert.equal(completedPlan.items[0].resume.name, 'CV-A.pdf');
+      assert.equal((await approve(person, completedPlan)).status, 202);
+      const beforeSend = postCount, sent = await advance(person, completedPlan);
+      assert.equal(sent.status, 200, JSON.stringify(sent.data));
+      const oldReceipt = sent.data.attempts[0];
+      assert.equal(oldReceipt.state, 'confirmed');
+      assert.equal(oldReceipt.mode, 'test');
+      assert.equal(oldReceipt.evidenceMode, 'test');
+      assert.equal(oldReceipt.resumeName, 'CV-A.pdf');
+      assert.equal(oldReceipt.profileRevision, 1);
+      assert.equal(oldReceipt.resumeSHA256, digest(pdf));
+      assert.equal(oldReceipt.dispatchCount, 1);
+      assert.equal(postCount, beforeSend + 1);
+
+      const pendingJob = await addJob(person), pendingPlan = await review(person, [pendingJob]);
+      assert.equal(pendingPlan.approvedAt, null);
+      assert.equal(pendingPlan.items[0].resume.name, 'CV-A.pdf');
+      const prepared = attemptFor(await reopenedWorkspace(person), pendingPlan);
+      assert.equal(prepared.resumeName, 'CV-A.pdf');
+      assert.equal(prepared.profileRevision, 1);
+      assert.equal(prepared.state, 'ready');
+      assert.equal(prepared.dispatchCount, 0);
+      assert.equal(prepared.applicationId, undefined);
+      const oldRow = await attemptRow(oldReceipt.id), preparedRow = await attemptRow(prepared.id);
+      assert.equal(JSON.parse(oldRow.snapshot_json).profile.resume.name, 'CV-A.pdf');
+      assert.equal(JSON.parse(preparedRow.snapshot_json).profileRevision, 1);
+
+      const nextBytes = sameBytes ? pdf : Buffer.concat([pdf, Buffer.from('\n% Synthetic CV-B revision\n')]);
+      const secondProfile = await saveNamedCV(person, 1, 'CV-B.pdf', nextBytes);
+      assert.equal(secondProfile.revision, 2);
+      assert.equal(secondProfile.resume.name, 'CV-B.pdf');
+      assert.equal(secondProfile.resume.sha256, digest(nextBytes));
+      assert.equal(digest(pdf) === digest(nextBytes), sameBytes);
+      const documents = await db.prepare('SELECT name,hash FROM resumes WHERE workspace_id=? ORDER BY name').bind(person.workspaceId).all();
+      assert.equal(documents.results.length, sameBytes ? 1 : 2);
+      if (sameBytes) assert.deepEqual(documents.results, [{ name: 'CV-A.pdf', hash: digest(pdf) }]);
+
+      const beforeStale = postCount, stale = await approve(person, pendingPlan);
+      assert.equal(stale.status, 409);
+      assert.equal(stale.data.error.code, 'stale_review');
+      assert.equal(postCount, beforeStale);
+      assert.deepEqual(await attemptRow(oldReceipt.id), oldRow);
+      assert.deepEqual(await attemptRow(prepared.id), preparedRow);
+      assert.equal((await db.prepare('SELECT approval_generation FROM plans WHERE id=?').bind(pendingPlan.id).first()).approval_generation, 0);
+
+      const nextJob = await addJob(person), nextPlan = await review(person, [nextJob]);
+      assert.equal(nextPlan.profileRevision, 2);
+      assert.equal(nextPlan.items[0].resume.name, 'CV-B.pdf');
+      assert.equal(nextPlan.items[0].resume.sha256, digest(nextBytes));
+      assert.equal(nextPlan.approvedAt, null);
+      const reopened = await reopenedWorkspace(person);
+      assert.equal(reopened.profile.resume.name, 'CV-B.pdf');
+      assert.deepEqual(attemptFor(reopened, completedPlan), oldReceipt);
+      assert.deepEqual(attemptFor(reopened, pendingPlan), prepared);
+      const nextAttempt = attemptFor(reopened, nextPlan);
+      assert.equal(nextAttempt.resumeName, 'CV-B.pdf');
+      assert.equal(nextAttempt.profileRevision, 2);
+      assert.equal(nextAttempt.state, 'ready');
+      assert.equal(nextAttempt.dispatchCount, 0);
+      assert.equal(postCount, beforeStale);
+      assert.deepEqual(await attemptRow(oldReceipt.id), oldRow);
+      assert.deepEqual(await attemptRow(prepared.id), preparedRow);
+      const receiptExport = await call('/api/apply/receipts', { token: person.token });
+      assert.equal(receiptExport.status, 200);
+      assert.deepEqual(receiptExport.data.receipts.find(value => value.id === oldReceipt.id), oldReceipt);
+      cases.push({ person, completedPlan, oldReceipt, pendingPlan, pendingJob, nextPlan });
+      checkpoint(sameBytes
+        ? 'Same PDF bytes with a new display filename retain CV-A/revision1 in old attempts and CV-B/revision2 in the next review'
+        : 'A replacement PDF preserves original reviewed filename/revision across fresh-handler reads and blocks stale approval');
+    }
+
+    const original = cases[1], historical = await attemptRow(original.oldReceipt.id);
+    const historicalSnapshot = JSON.parse(historical.snapshot_json);
+    delete historicalSnapshot.profile.resume.name;
+    await db.prepare('UPDATE attempts SET snapshot_json=? WHERE id=?').bind(JSON.stringify(historicalSnapshot), historical.id).run();
+    const missingNameRow = await attemptRow(historical.id), beforeHistoricalRead = postCount;
+    const missing = attemptFor(await reopenedWorkspace(original.person), original.completedPlan);
+    assert.equal(missing.resumeName, null);
+    assert.equal(missing.profileRevision, 1);
+    assert.equal(missing.resumeSHA256, digest(pdf));
+    assert.equal(missing.state, 'confirmed');
+    assert.equal(missing.evidenceMode, 'test');
+    assert.equal(missing.dispatchCount, 1);
+    assert.equal(missing.applicationId, original.oldReceipt.applicationId);
+    const browserRead = await call('/api/phone/workspace', { user: original.person.user });
+    assert.equal(browserRead.status, 200);
+    assert.equal(attemptFor(browserRead.data, original.completedPlan).resumeName, null);
+    const historicalExport = await call('/api/apply/receipts', { token: original.person.token });
+    assert.equal(historicalExport.status, 200);
+    assert.equal(historicalExport.data.receipts.find(value => value.id === historical.id).resumeName, null);
+    assert.equal((await reopenedWorkspace(original.person)).profile.resume.name, 'CV-B.pdf');
+    assert.deepEqual(await attemptRow(historical.id), missingNameRow);
+    assert.equal(postCount, beforeHistoricalRead);
+    checkpoint('A historical attempt without its own filename returns null despite a current CV and a same-hash document name');
+
+    const outcomeOwner = await account('cv-outcome-labels');
+    await saveNamedCV(outcomeOwner, 0, 'Outcome-CV-A.pdf');
+    const outcomes = [];
+    for (const [behavior, expectedState] of [['success', 'confirmed'], ['timeout', 'uncertain'], ['rejected', 'rejected'], ['429', 'rate_limited']]) {
+      const job = await addJob(outcomeOwner, behavior), plan = await review(outcomeOwner, [job]);
+      assert.equal((await approve(outcomeOwner, plan)).status, 202);
+      const count = postCount, result = await advance(outcomeOwner, plan);
+      assert.equal(result.status, 200, JSON.stringify(result.data));
+      const attempt = result.data.attempts[0];
+      assert.equal(attempt.state, expectedState);
+      assert.equal(attempt.mode, 'test');
+      assert.equal(attempt.evidenceMode, 'test');
+      assert.equal(attempt.resumeName, 'Outcome-CV-A.pdf');
+      assert.equal(attempt.profileRevision, 1);
+      assert.equal(attempt.dispatchCount, 1);
+      assert.equal(postCount, count + 1);
+      assert.equal(Boolean(attempt.applicationId), expectedState === 'confirmed');
+      if (expectedState === 'rate_limited') assert.ok(Date.parse(attempt.retryAt) > time);
+      outcomes.push({ plan, attempt, row: await attemptRow(attempt.id) });
+    }
+    const outcomePosts = postCount;
+    await saveNamedCV(outcomeOwner, 1, 'Outcome-CV-B.pdf');
+    const outcomeWorkspace = await reopenedWorkspace(outcomeOwner);
+    for (const { plan, attempt, row } of outcomes) {
+      assert.deepEqual(attemptFor(outcomeWorkspace, plan), attempt);
+      assert.deepEqual(await attemptRow(attempt.id), row);
+    }
+    assert.equal(postCount, outcomePosts);
+    const uncertainty = outcomes.find(value => value.attempt.state === 'uncertain');
+    const stoppedRetry = await advance(outcomeOwner, uncertainty.plan);
+    assert.equal(stoppedRetry.status, 409);
+    assert.equal(postCount, outcomePosts);
+    checkpoint('CV metadata preserves test, uncertain, rejected and cooldown outcomes without upgrading evidence or dispatching again');
+
+    const peer = await account('cv-filename-other-owner');
+    await saveNamedCV(peer, 0, 'Peer-Only-CV.pdf');
+    const samePosting = await call('/api/apply/jobs', {
+      method: 'POST', token: peer.token,
+      body: { url: 'https://jobs.lever.co/career-fixture/' + original.pendingJob.postingId },
+    });
+    assert.equal(samePosting.status, 201);
+    const peerPlan = await review(peer, [{ id: samePosting.data.job.id }]), isolationPosts = postCount;
+    assert.notEqual(peerPlan.items[0].jobId, original.pendingJob.id);
+    const peerWorkspace = await reopenedWorkspace(peer);
+    assert.deepEqual(peerWorkspace.attempts.map(value => value.resumeName), ['Peer-Only-CV.pdf']);
+    assert.equal(peerWorkspace.attempts[0].planId, peerPlan.id);
+    assert.equal(peerWorkspace.attempts[0].profileRevision, 1);
+    assert.equal(peerWorkspace.attempts[0].dispatchCount, 0);
+    assert.equal(JSON.stringify(peerWorkspace).includes(original.pendingPlan.id), false);
+    const originalWorkspace = await reopenedWorkspace(original.person);
+    assert.equal(JSON.stringify(originalWorkspace).includes('Peer-Only-CV.pdf'), false);
+    assert.equal(JSON.stringify(originalWorkspace).includes(peerPlan.id), false);
+    const peerRows = await db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY id').bind(peer.workspaceId).all();
+    const foreignApproval = await approve(peer, original.nextPlan);
+    assert.equal(foreignApproval.status, 404);
+    assert.equal(foreignApproval.data.error.code, 'plan_not_found');
+    const foreignExport = await call('/api/account/export?expectedWorkspaceId=' + original.person.workspaceId, { user: peer.user });
+    assert.equal(foreignExport.status, 409);
+    assert.equal(foreignExport.data.error.code, 'workspace_changed');
+    assert.deepEqual((await db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY id').bind(peer.workspaceId).all()).results, peerRows.results);
+    assert.equal(postCount, isolationPosts);
+    checkpoint('Same posting and same PDF hash in distinct owners keep reviewed filenames, revisions and plan authorization isolated');
+  }
+
+
   const currentAccounts=(await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,accountSeed=[];for(let i=currentAccounts;i<LIMITS.maxAccounts-1;i++)accountSeed.push(db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)').bind(randomUUID(),'seeded-account-'+i,'synthetic@example.com',new Date(time).toISOString(),'{}'));await db.batch(accountSeed);
   const accountRace=await Promise.all(['cap-a','cap-b'].map(id=>call('/api/account/pairing',{method:'POST',body:{expectedAccountId:owner(id)['oai-authenticated-user-id']},user:owner(id)})));assert.deepEqual(accountRace.map(r=>r.status).sort(),[201,503]);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,LIMITS.maxAccounts);checkpoint('Global free-service account cap is atomic rather than count-then-create');
 

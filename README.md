@@ -2,9 +2,29 @@
 
 Career Finder helps people find jobs, keep a shortlist, prepare a profile and PDF CV, and track what happens after applying. It is designed for **iPhone and Android phones**, starts with a blank personal profile, and has no country or profession whitelist.
 
-## Verified baseline and isolated continuation — 17 November 2026
+## Start here
 
-The public deployment remains **version 7**, from hosted commit `1135a3270435d3719c6f62f1a2e3a53e2c040146`. At the `949ce0ad327beab79fa7033423b462ebc7bd98be` handoff, its 186 tracked source files matched the repository mirror. Live discovery returned 50 jobs; a bookmark survived navigation, the prior synthetic local record survived reload, and Account/Connect loaded without changing the owner's cloud data. See the [deployment receipt](docs/strict-review-evidence/hosted-v7-deployment.json) and [bounded browser receipt](docs/strict-review-evidence/hosted-v7-browser-verification.json).
+- [Public Career Finder service](https://career-finder-service.jazzy-drake-8323.chatgpt.site)
+- [Open the phone browser app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone)
+- [Connect a native phone app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect)
+- [Manage your account](https://career-finder-service.jazzy-drake-8323.chatgpt.site/account)
+- [Help](https://career-finder-service.jazzy-drake-8323.chatgpt.site/support) · [Privacy](https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy)
+- [Existing Android 0.4 preview downloads](https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview) (November 16 preview).
+
+The native Android app targets Android 8 or newer. Its ordinary preview uses `com.saleh.careerfinder.preview` and the existing preview signing certificate; it is separate from Google Play distribution. The iPhone project targets iOS 16 or newer. An unsigned build or simulator test does not make an iPhone app available through TestFlight or the App Store.
+
+## Release status
+
+On November 27 the hosted service was reachable, and its health endpoint reported that live application submission was disabled. Sites records show a successful deployment of version 14 and a saved version 15. The November 27 code combines search recovery, saved-opening comparison, public job sharing, CV draft recovery and native history. [Integrated changes and verification](https://github.com/swonyu/ahmad-career/pull/4)
+
+<details>
+<summary>Earlier verification and implementation history</summary>
+
+### November 17 baseline and development handoff
+
+The [November 17 acceptance archive](https://github.com/swonyu/ahmad-career/tree/636d79a808bd4ecdd7ebd386b0f98a16ab3d2a32/docs/strict-review-evidence/continuation-2026-11-17-cloud) preserves the publisher’s partial iPhone results, test logs and supporting research from that date.
+
+On November 17 the public deployment ran **version 7**, from hosted commit `1135a3270435d3719c6f62f1a2e3a53e2c040146`. At the `949ce0ad327beab79fa7033423b462ebc7bd98be` handoff, its 186 tracked source files matched the repository mirror. Live discovery returned 50 jobs; a bookmark survived navigation, the prior synthetic local record survived reload, and Account/Connect loaded without changing the owner's cloud data. See the [deployment receipt](docs/strict-review-evidence/hosted-v7-deployment.json) and [bounded browser receipt](docs/strict-review-evidence/hosted-v7-browser-verification.json).
 
 Further work is an **isolated, unpublished development candidate**. Its changes require their own source-bound test receipts; the baseline results below do not certify later edits. The publishing branch remains separate at `fd9c5399f2b7001b234b3b86bf72e2b36b5114c1`. Its owner's current acknowledgment could not be obtained, so no release integration, shared Mac build, signing or store change is established by this continuation. The [release integration checklist](docs/Release-Integration-Checklist-2026-11-17.md) records the exact publishing changes to preserve and the remaining gates.
 
@@ -16,7 +36,7 @@ The v7 source includes Google OAuth and basic LinkedIn connection code, but the 
 
 **Free-only requirement:** use available free infrastructure; do not add paid APIs, subscriptions, purchases, upgrades or automatic paid overages. Existing limits, including 250 service accounts, remain real limits. External developer-program costs and approvals are publishing-owner gates, with no new payment authorized. Preview availability, simulator success and deployment do not establish a public store release.
 
-### Current candidate implementation
+### Candidate implementation at that checkpoint
 
 The isolated continuation adds five-section browser navigation with **Settings**, a slate/indigo light and dark appearance, updated icon assets, English/Arabic display controls, direct LinkedIn OIDC sign-in, stronger provider connection generations, guarded private recovery and a bounded PDF worker. These are candidate-source features until the corresponding source is deployed. Native appearance/settings and English/Arabic resources are integrated. The follow-up adds Saved-note search; the web also adds secondary CSV export and a contextual calendar-file action, without additional main tabs.
 
@@ -28,16 +48,7 @@ The original request was made at `2026-11-16T22:26:12Z` and accepted as **24 hou
 
 **Historical v6 checkpoint — superseded:** version 6 had been deployed with the phone browser app and dependency corrections. At that earlier checkpoint, its hosted GitHub CI gate had passed with zero audit findings, browser acceptance was in progress, Android had passed 91 policy checks and 83 native tests, and iPhone UI had passed nine of thirteen cases. The four iPhone corrections still needed a fresh run then. The [v6 deployment receipt](docs/strict-review-evidence/phone-web-hosted-deployment-v6.json) and [earlier strict review](docs/Strict-Review-2026-11-17.md) preserve those dated outcomes. The v7 and e66d180 evidence above supersedes these former open automated gates; it does not close provider, physical-device or store acceptance.
 
-## Start here
-
-- [Public Career Finder service](https://career-finder-service.jazzy-drake-8323.chatgpt.site)
-- [Open the phone browser app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone)
-- [Connect a native phone app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect)
-- [Manage your account](https://career-finder-service.jazzy-drake-8323.chatgpt.site/account)
-- [Help](https://career-finder-service.jazzy-drake-8323.chatgpt.site/support) · [Privacy](https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy)
-- [Existing Android 0.4 preview downloads](https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview) — retained historical release; it does not include the pending 0.6 changes.
-
-The native Android app targets Android 8 or newer. Its ordinary preview uses `com.saleh.careerfinder.preview` and the existing preview signing certificate; it is separate from Google Play distribution. The iPhone project targets iOS 16 or newer. An unsigned build or simulator test does not make an iPhone app available through TestFlight or the App Store.
+</details>
 
 ## Simple phone navigation
 
@@ -59,7 +70,7 @@ Removing a bookmark keeps its application record. Closing an application keeps i
 
 Searching and local preparation do not require an account. New users supply their own details. Signing in does not automatically upload an existing draft.
 
-The last verified live baseline supports **ChatGPT sign-in**, including its **Continue with Google** option. The candidate also implements direct Google and LinkedIn sign-in; it offers a direct method only when the backend reports it configured and supported. Google setup is saved in private revision 1, but activation and real consent remain unverified. LinkedIn direct login requires a provider-reported verified email; if none is available, the UI explains the available ChatGPT/Google sign-in plus basic-link alternative without inventing an applicant address. Use the same identity on another phone to recover the same workspace. To add a method to an existing workspace, sign in to that workspace first and connect it from Account or Settings. Matching email addresses never merge accounts. Native apps use a short-lived, single-use connection code; the browser app uses its verified account directly without a pairing code.
+The Connect page shows the sign-in methods available for that deployment. Direct Google and LinkedIn sign-in require provider configuration. LinkedIn sign-in also requires a provider-reported verified email. Use the same identity on another phone to recover the same workspace. To add a sign-in method, open the existing workspace first and connect it from Account or Settings. Matching email addresses never merge accounts. Native apps use a short-lived, single-use connection code. The browser app uses its verified account directly.
 
 **Save on this phone** preserves a local draft. **Save profile online** uploads the chosen profile and PDF to the private workspace. Online saves check profile revisions so another phone's changes are not silently overwritten. A comparison screen shows both versions before a deliberate choice.
 
@@ -71,7 +82,7 @@ Account controls provide cloud export, retained PDF downloads, phone disconnecti
 
 | Capability | Actual scope |
 | --- | --- |
-| Google sign-in | Available through the existing ChatGPT flow. Direct OAuth code is present; the Google client/branding and private configuration revision 1 are saved, but no matching deployment or real callback is yet recorded. Provider tokens are not retained, and Career Finder does not receive the Google password. |
+| Google sign-in | The account recovery check verified that signing out and signing in with Google reopened its own workspace. The Connect page reports which Google options are currently available. Provider tokens are discarded after verification. [Account recovery receipt](https://github.com/swonyu/ahmad-career/pull/4) |
 | LinkedIn profile | Save and open an optional personal profile URL. The app removes tracking information and displays the exact link in an application review. |
 | LinkedIn job search | Explicitly open LinkedIn with your entered keywords and location. LinkedIn handles its own login and application. |
 | LinkedIn account connection/sign-in | v7 has basic-link code. The candidate adds direct OIDC login with `openid profile email`, accepting a fresh provider-reported verified email or failing safely with `email_required`. Explicit basic linking requests only `openid profile` and collects no new email. Provider registration/product activation and real consent remain open. Neither flow imports a CV, submits LinkedIn applications or verifies legal identity. |

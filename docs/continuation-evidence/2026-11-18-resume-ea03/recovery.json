@@ -1,0 +1,46 @@
+{
+  "owner": "ChatGPT recovery coordinator ea03ff43",
+  "sourceOwner": "ebb3eed5, user-reported interrupted",
+  "authorization": "User: continue career finder the other session interrupted; prior integration, review and release authority preserved",
+  "createdAtUTC": "2026-11-18T12:45:22.746247+00:00",
+  "baseHEAD": "ead12355246f1889f53f3d7bc3ff71cd42da4d92",
+  "worktree": "/Users/saleh/Developer/career-finder-resume-20261118-ea03ff43",
+  "branch": "continuation/career-finder-resume-20261118-ea03",
+  "preservedWork": [
+    "All existing worktrees and dirty untracked ten-pass ledger",
+    "Existing Career Finder preview servers",
+    "Active Nulaya native acceptance and Grok terminal processes"
+  ],
+  "latestCI": {
+    "id": 44372262687,
+    "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "checkedAtUTC": "2026-11-18 19:11:00 UTC",
+    "state": "4/5 jobs passed; current iPhone native UI still running; final acceptance not claimed"
+  },
+  "release": {
+    "hosted": {
+      "project": "appgprj_6afb13851fb4819193358d5db54e73b7",
+      "version": 11,
+      "status": "active",
+      "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+      "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+      "deploymentStatus": "succeeded"
+    },
+    "native": "Current UI acceptance and separate provider/device/signing/store gates not complete"
+  },
+  "costs": "No additional paid services authorized",
+  "originalBudget": "24 active engineering hours from 2026-11-16T22:26:12Z; consumed balance unknown",
+  "inheritedRecordedCutoffRiyadh": "2026-11-19T01:26:12+03:00",
+  "cutoffQualification": "Inherited record; not evidence of remaining active hours",
+  "nativeConflictPolicy": "Use cloud native CI; no local simulator interference with Nulaya",
+  "ciAtInitialRecovery": {
+    "id": 44294650087,
+    "head": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "state": "completed failure; 3/5 gates passed"
+  },
+  "initialReleaseAssessment": "Pending full exact-candidate CI, real provider/device and publishing-specific gates",
+  "state": "Reconciled with newer continuation; this branch is retrospective evidence and must not replace current PR source",
+  "currentIntegrationOwner": "20698f1e14d3 per recovered ownership record;585525b87de6 records current reconciliation/Android evidence",
+  "currentHandoff": "reconciliation-handoff.json",
+  "updatedAtUTC": "2026-11-18 19:11:00 UTC"
+}

@@ -14,11 +14,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Set;
 
 /** Shared, executable boundary policy; no Android classes or network side effects. */
 public final class BoundaryPolicy {
     public static final int MAX_PDF_BYTES = 5 * 1024 * 1024;
     public static final int MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+    // Private workspace responses include bounded review payloads and receipts.
+    // Keep the smaller public-discovery limit separate. Never trust a header as a cap.
+    public static final int MAX_APPLICATION_RESPONSE_BYTES = 12 * 1024 * 1024;
     public static final int MAX_PRIVATE_BYTES = 9 * 1024 * 1024;
     private BoundaryPolicy() { }
 
@@ -55,9 +59,98 @@ public final class BoundaryPolicy {
     }
 
     public static String opportunityURL(String input) {
-        URI uri = httpsURI(input, 4096);
-        String normalized = uri.toASCIIString();
-        return uri.getRawFragment() == null ? normalized : normalized.substring(0, normalized.indexOf('#'));
+        return newOpportunityURL(input, 4096);
+    }
+
+    /** The service bounds the encoded spelling too, independently of the local shortlist limit. */
+    public static String serviceOpportunityURL(String input) {
+        return newOpportunityURL(input, 2048);
+    }
+
+    private static String newOpportunityURL(String input, int maximum) {
+        URI uri = httpsURI(input, maximum);
+        // URI.toASCIIString() normalizes Unicode to NFC. The service's URL parser
+        // preserves code points; encode them first so decomposed names retain their length.
+        String path = uri.getRawPath();
+        java.util.List<String> segments = new java.util.ArrayList<>();
+        if (path != null && !path.isEmpty()) {
+            String[] pieces = path.substring(1).split("/", -1);
+            for (int index = 0; index < pieces.length; index++) {
+                String segment = pieces[index];
+                String dots = segment.toLowerCase(Locale.ROOT).replace("%2e", ".");
+                if (dots.equals("..")) {
+                    if (!segments.isEmpty()) segments.remove(segments.size() - 1);
+                    if (index == pieces.length - 1) segments.add("");
+                } else if (dots.equals(".")) {
+                    if (index == pieces.length - 1) segments.add("");
+                } else segments.add(asciiPreservingUnicode(segment));
+            }
+        }
+        String query = uri.getRawQuery();
+        // HTTPS uses the URL Standard's special-query set, which also escapes apostrophes.
+        if (query != null) query = asciiPreservingUnicode(query).replace("'", "%27");
+        String result = "https://" + uri.getHost().toLowerCase(Locale.ROOT) +
+            (uri.getPort() == -1 || uri.getPort() == 443 ? "" : ":" + uri.getPort()) +
+            "/" + String.join("/", segments) + (query == null ? "" : "?" + query);
+        if (result.length() > maximum) throw new IllegalArgumentException("This link is too long. Use a shorter link.");
+        return result;
+    }
+
+    /** Historical links are bounded by their containing response/file, not today's new-entry limit. */
+    public static String historicalOpportunityURL(String input) {
+        httpsURI(input, Integer.MAX_VALUE);
+        // Preserve exact stored spelling and fragments. This is a read/navigation boundary.
+        return input;
+    }
+
+    /** Only the public posting fields may cross the Android share sheet boundary. */
+    public static String jobShareText(String title, String employer, String board, String link) {
+        String role = shareLine(title), company = shareLine(employer), source = shareLine(board);
+        if (role.isEmpty() || company.isEmpty()) throw new IllegalArgumentException("A public job title and employer are required.");
+        return role + "\n" + company + (source.isEmpty() ? "" : "\n" + source) + "\n" + shareableJobURL(link);
+    }
+
+    private static String shareLine(String value) {
+        if (value == null) return "";
+        if (!validUnicode(value) || value.codePoints().anyMatch(c -> Character.isISOControl(c) && c != '\r' && c != '\n' && c != '\t'))
+            throw new IllegalArgumentException("The posting contains unsupported text.");
+        return value.replaceAll("[\\r\\n\\t]+", " ").trim();
+    }
+
+    /** A conservative share filter: never remove an unknown query field and guess its destination. */
+    public static String shareableJobURL(String input) {
+        if (input == null || input.length() > 2048) throw new IllegalArgumentException("Use a public job posting link.");
+        // Validate the original spelling before new-entry canonicalization removes dot segments.
+        // A private path must not become shareable merely because its traversal was normalized away.
+        URI uri = httpsURI(input, 2048);
+        String link = opportunityURL(input);
+        if (link.length() > 2048) throw new IllegalArgumentException("Use a shorter public job posting link.");
+        String host = uri.getHost().toLowerCase(Locale.ROOT);
+        if (!host.contains(".") || host.endsWith(".") || host.contains(":") || host.matches("[0-9.]+") ||
+            host.matches("(?:.*\\.)?(?:localhost|local|internal|test|invalid)") ||
+            (uri.getPort() != -1 && uri.getPort() != 443))
+            throw new IllegalArgumentException("Use a public HTTPS posting without a custom port.");
+        String path = uri.getRawPath();
+        if (path != null) for (String rawSegment : path.split("/", -1)) {
+            String segment = decodeURLPart(rawSegment);
+            if (segment.equals(".") || segment.equals("..") ||
+                segment.matches("(?i)(?:invites?|invitations?|candidates?|applicants?|auth|session|reset|verify|magic-link|personal-invite|password[-_]reset)(?:[-_].*)?") ||
+                segment.contains("@") || segment.contains("%") || segment.contains("\\") || segment.contains("/") ||
+                segment.matches("(?i).*https?:.*") || segment.codePoints().anyMatch(c -> c <= 0x20 || c == 0x7f))
+                throw new IllegalArgumentException("The job link may contain private access details.");
+        }
+        Set<String> jobKeys = Set.of("jobid", "ghjid", "job", "postingid", "requisitionid", "reqid", "positionid", "vacancyid", "jobreqid", "source", "leversource", "leverorigin");
+        Set<String> attributionKeys = Set.of("utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id");
+        String query = uri.getRawQuery();
+        if (query != null) for (String pair : query.split("&", -1)) {
+            int equals = pair.indexOf('=');
+            String key = decodeURLPart(equals < 0 ? pair : pair.substring(0, equals)).toLowerCase(Locale.ROOT);
+            String value = decodeURLPart(equals < 0 ? "" : pair.substring(equals + 1));
+            if ((!jobKeys.contains(key.replaceAll("[^a-z0-9]", "")) && !attributionKeys.contains(key)) ||
+                !value.matches("[A-Za-z0-9._~-]{1,150}"))
+                throw new IllegalArgumentException("The job link may contain private query details.");
+        }
+        return link;
     }
 
     /** A saved public profile link is not an OAuth session or proof of account ownership. */
@@ -133,7 +226,7 @@ public final class BoundaryPolicy {
 
     /** A stable private-record identity; never changes the original link opened for the user. */
     public static String jobIdentity(String input) {
-        URI uri = httpsURI(input, 4096);
+        URI uri = httpsURI(input, Integer.MAX_VALUE);
         String host = uri.getHost().toLowerCase(Locale.ROOT);
         String path = uri.getRawPath() == null ? "" : asciiPreservingUnicode(uri.getRawPath());
         if ((host.equals("jobs.lever.co") || host.equals("jobs.eu.lever.co")) && (uri.getPort() == -1 || uri.getPort() == 443)) {
@@ -256,7 +349,7 @@ public final class BoundaryPolicy {
 
     public static boolean isConfirmed(String state, String applicationId) {
         return "confirmed".equals(state) && applicationId != null && !applicationId.trim().isEmpty() &&
-            applicationId.length() <= 200 && applicationId.chars().noneMatch(c -> c < 0x20 || c == 0x7f);
+            applicationId.length() <= 200 && validUnicode(applicationId) && applicationId.chars().noneMatch(c -> c < 0x20 || c == 0x7f);
     }
 
     public static boolean isLiveReceipt(String evidenceMode, String provider, String state, String applicationId) {

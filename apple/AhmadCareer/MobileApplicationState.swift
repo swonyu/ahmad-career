@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 struct ApplicationServerProfile {
     let profile: PhoneApplicationProfile
@@ -163,28 +164,91 @@ struct PhoneRecoveredOpportunity: Codable, Equatable {
     var valid: Bool { scope.valid && draft.hasContent && draft.storageError == nil }
 }
 
+/// Optional observed listing facts stay local. Saving or comparing never invents a check time.
+enum PhoneSavedJobMetadata {
+    static func valid(sourceName: String?, checkedAt: String?) -> Bool {
+        if let sourceName, sourceName.utf16.count > 150
+            || sourceName.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) { return false }
+        if let checkedAt {
+            guard checkedAt.utf16.count <= 64, let date = ApplicationReviewPolicy.date(checkedAt),
+                  date.timeIntervalSince1970.isFinite else { return false }
+        }
+        return true
+    }
+    static func valid(_ job: [String: ApplicationValue]) -> Bool {
+        for key in ["sourceName", "checkedAt"] {
+            if let value = job[key], value != .null, value.string == nil { return false }
+        }
+        return valid(sourceName: job["sourceName"]?.string, checkedAt: job["checkedAt"]?.string)
+    }
+    /// Public details come from the preferred row; only known facts for this exact posting survive.
+    static func preserving(_ preferred: [String: ApplicationValue], from previous: [String: ApplicationValue]) -> [String: ApplicationValue] {
+        guard valid(preferred), valid(previous),
+              let nextURL = preferred["url"]?.string, let oldURL = previous["url"]?.string,
+              MobileApplicationPolicy.jobURL(nextURL) != nil, MobileApplicationPolicy.jobURL(oldURL) != nil,
+              MobileApplicationPolicy.jobIdentity(nextURL) == MobileApplicationPolicy.jobIdentity(oldURL) else { return preferred }
+        var result = preferred
+        if (result["sourceName"]?.string?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true),
+           let name = previous["sourceName"]?.string { result["sourceName"] = .string(name) }
+        if let old = previous["checkedAt"]?.string, let oldDate = ApplicationReviewPolicy.date(old),
+           result["checkedAt"]?.string.flatMap(ApplicationReviewPolicy.date).map({ $0 < oldDate }) ?? true {
+            result["checkedAt"] = .string(old)
+        }
+        return result
+    }
+}
+
+/// Ephemeral comparison identity is independent of Apply selection and never enters a backup.
+struct PhoneSavedComparisonOwner: Equatable {
+    let scope: PhoneRecordScope
+    let connection: UUID
+}
+struct PhoneSavedComparisonKey: Equatable {
+    let owner: PhoneSavedComparisonOwner
+    let recordScope: PhoneRecordScope
+    let rowID: String
+    let identity: String
+}
+struct PhoneSavedComparisonItem {
+    let key: PhoneSavedComparisonKey
+    let job: PhoneRecordJob
+    let recordOnly: Bool
+    let stage: PhoneApplicationStage?
+    let followUpOn: String?
+    let conflictingRecords: Bool
+}
+
 struct PhoneRecordJob: Codable, Equatable {
     var url: String
     var title: String
     var company: String
     var location: String
     var country: String
+    var sourceName: String?
+    var checkedAt: String?
+    var historicalProjection: Bool?
     init(_ job: [String: ApplicationValue]) {
         url = job["url"]?.string ?? ""
         title = String((job["title"]?.string ?? "Opportunity").prefix(500))
         company = String((job["company"]?.string ?? "").prefix(500))
         location = String((job["location"]?.string ?? "").prefix(500))
         country = String((job["country"]?.string ?? "").prefix(2))
+        sourceName = job["sourceName"]?.string; checkedAt = job["checkedAt"]?.string
+        historicalProjection = job["_careerHistoricalText"]?.bool == true ? true : nil
     }
     var identity: String { MobileApplicationPolicy.jobIdentity(url) }
     var valid: Bool {
-        MobileApplicationPolicy.jobURL(url) != nil && url.utf16.count <= 4_096
+        // A stored opportunity may predate the new-entry URL limit. Keep its exact safe URL.
+        historicalProjection != true && MobileApplicationPolicy.jobURL(url) != nil
             && [title, company, location].allSatisfy { $0.count <= 500 }
-            && country.count <= 2
+            && country.count <= 2 && PhoneSavedJobMetadata.valid(sourceName: sourceName, checkedAt: checkedAt)
     }
     func applicationJob(id: String) -> [String: ApplicationValue] {
-        ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
-         "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+        var value: [String: ApplicationValue] = ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
+            "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+        if let sourceName { value["sourceName"] = .string(sourceName) }
+        if let checkedAt { value["checkedAt"] = .string(checkedAt) }
+        return value
     }
 }
 
@@ -197,6 +261,7 @@ struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
     var appliedOn = ""
     var followUpOn = ""
     var note = ""
+    var manualResumeName: String?
     var revision = 1
     var archived = false
     var updatedAt = ISO8601DateFormatter().string(from: Date())
@@ -204,11 +269,13 @@ struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
     var meaningful: Bool {
         stage != .saved || appliedElsewhere || !appliedOn.isEmpty || !followUpOn.isEmpty
             || !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            || !(manualResumeName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
     }
     var valid: Bool {
         UUID(uuidString: id) != nil && scope.valid && job.valid && revision > 0 && revision < Int.max
             && PhoneRecordDay.valid(appliedOn) && PhoneRecordDay.valid(followUpOn)
             && note.unicodeScalars.count <= 2_000
+            && MobileApplicationPolicy.manualResumeNameIsValid(manualResumeName)
             && !note.unicodeScalars.contains { $0.value < 0x20 && ![0x09, 0x0a, 0x0d].contains($0.value) || $0.value == 0x7f }
             && ApplicationReviewPolicy.date(updatedAt) != nil
             && (!stage.marksApplied || appliedElsewhere)
@@ -220,8 +287,12 @@ struct PhoneRecordDraft: Codable, Equatable {
     var appliedOn = ""
     var followUpOn = ""
     var note = ""
+    var manualResumeName: String?
     init(_ record: PhoneOpportunityRecord? = nil) {
-        if let record { stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note }
+        if let record {
+            stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note
+            manualResumeName = record.manualResumeName
+        }
     }
 }
 
@@ -235,6 +306,7 @@ struct PhoneRecordDraftCheckpoint: Codable, Equatable {
     var draft: PhoneRecordDraft
     var valid: Bool {
         scope.valid && job.valid && identity == job.identity && draft.note.unicodeScalars.count <= 2_000
+            && MobileApplicationPolicy.manualResumeNameIsValid(draft.manualResumeName)
             && PhoneRecordDay.valid(draft.appliedOn) && PhoneRecordDay.valid(draft.followUpOn)
             && (recordID == nil || UUID(uuidString: recordID!) != nil)
             && (revision == nil || revision! > 0)
@@ -259,9 +331,9 @@ struct PhoneWorkspaceDraft: Codable, Equatable {
     var opportunityDraft: PhoneOpportunityDraft
     var valid: Bool {
         scope.valid && jobs.count <= 200 && jobs.allSatisfy { job in
-            guard let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil, url.utf16.count <= 4_096 else { return false }
+            guard let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil else { return false }
             return ["title", "company", "location"].allSatisfy { (job[$0]?.string?.utf16.count ?? 0) <= 500 }
-                && (job["country"]?.string?.count ?? 0) <= 2
+                && (job["country"]?.string?.count ?? 0) <= 2 && PhoneSavedJobMetadata.valid(job)
         }
             && opportunityDraft.storageError == nil
             && (profile.resumeData?.count ?? 0) <= MobileApplicationPolicy.maximumResumeBytes
@@ -331,8 +403,12 @@ struct PhoneWorkspaceBackup: Codable {
             }
         }
         func decoded() throws -> PhoneApplicationProfile {
-            let strings = [firstName, lastName, email, phone, city, country, headline, website, linkedin]
-            guard strings.allSatisfy({ $0.utf16.count <= 10_000 }), skills.count <= 30, targetRoles.count <= 30, targetCountries.count <= 30,
+            let strings = [firstName, lastName, email, phone, city, country, headline, linkedin]
+            // Preserve the existing unfinished-draft allowance and longer historical public URLs.
+            // The containing backup/file byte limit still applies; no URL is shortened or rewritten.
+            let websiteReadable = website.utf16.count <= 10_000 || MobileApplicationPolicy.jobURL(website) != nil
+            guard strings.allSatisfy({ $0.utf16.count <= 10_000 }), websiteReadable,
+                  skills.count <= 30, targetRoles.count <= 30, targetCountries.count <= 30,
                   (skills + targetRoles + targetCountries).allSatisfy({ $0.utf16.count <= 1_000 }),
                   workModes.count <= 3, Set(workModes).count == workModes.count,
                   workModes.allSatisfy({ ["remote", "hybrid", "on-site"].contains($0) }),
@@ -365,14 +441,17 @@ struct PhoneWorkspaceBackup: Codable {
     private struct Record: Codable {
         var id: String; var job: PhoneRecordJob; var stage: PhoneApplicationStage; var appliedElsewhere: Bool
         var appliedOn: String; var followUpOn: String; var note: String; var revision: Int; var archived: Bool; var updatedAt: String
+        var manualResumeName: String?
         init(_ r: PhoneOpportunityRecord) {
             id = r.id; job = r.job; stage = r.stage; appliedElsewhere = r.appliedElsewhere; appliedOn = r.appliedOn
             followUpOn = r.followUpOn; note = r.note; revision = r.revision; archived = r.archived; updatedAt = r.updatedAt
+            manualResumeName = r.manualResumeName
         }
         func decoded(scope: PhoneRecordScope) -> PhoneOpportunityRecord {
             var r = PhoneOpportunityRecord(scope: scope, job: job)
             r.id = id; r.stage = stage; r.appliedElsewhere = appliedElsewhere; r.appliedOn = appliedOn; r.followUpOn = followUpOn
-            r.note = note; r.revision = revision; r.archived = archived; r.updatedAt = updatedAt; return r
+            r.note = note; r.revision = revision; r.archived = archived; r.updatedAt = updatedAt
+            r.manualResumeName = manualResumeName; return r
         }
     }
     private struct RecordDraft: Codable {
@@ -380,13 +459,18 @@ struct PhoneWorkspaceBackup: Codable {
     }
     private struct Job: Codable {
         var url: String; var title: String; var company: String; var location: String; var country: String
+        var sourceName: String?; var checkedAt: String?
         init(_ value: [String: ApplicationValue]) {
             url = value["url"]?.string ?? ""; title = value["title"]?.string ?? ""; company = value["company"]?.string ?? ""
             location = value["location"]?.string ?? ""; country = value["country"]?.string ?? ""
+            sourceName = value["sourceName"]?.string; checkedAt = value["checkedAt"]?.string
         }
         func decoded(index: Int) -> [String: ApplicationValue] {
-            ["id": .string("local-import-\(index)"), "localOnly": .bool(true), "url": .string(url), "title": .string(title),
-             "company": .string(company), "location": .string(location), "country": .string(country)]
+            var value: [String: ApplicationValue] = ["id": .string("local-import-\(index)"), "localOnly": .bool(true), "url": .string(url), "title": .string(title),
+                "company": .string(company), "location": .string(location), "country": .string(country)]
+            if let sourceName { value["sourceName"] = .string(sourceName) }
+            if let checkedAt { value["checkedAt"] = .string(checkedAt) }
+            return value
         }
     }
     private struct Contents: Codable {
@@ -531,6 +615,377 @@ struct ApplicationProfileReadiness {
 
 /// The draft's base revision is deliberately independent of the latest server revision.
 /// Old files without a revision migrate to an unknown base, which requires an explicit conflict choice.
+/// A bounded last-known display projection, never a review, approval, queue or
+/// credential. Raw service errors, request payloads and undisplayed fields are omitted.
+struct PhoneApplicationHistoryEntry: Codable, Equatable {
+    let value: [String: ApplicationValue]
+    private static let stringLimits: [String: Int] = [
+        "id": 200, "attemptId": 200, "state": 40, "provider": 40, "evidenceMode": 8, "mode": 8,
+        "title": 500, "company": 500, "applicationId": 500, "resumeName": 180,
+        "resumeSHA256": 64, "payloadSHA256": 64, "requirementsRevision": 200,
+        "createdAt": 40, "dispatchedAt": 40, "confirmedAt": 40
+    ]
+    private static let evidenceKeys: Set<String> = ["_careerHistoricalText", "_careerRecoverySHA256", "_careerHistoricalApplicationId", "_careerOriginalLengths", "_careerLegacyResumeName"]
+    private static let allowed = Set(stringLimits.keys).union(["profileRevision"]).union(evidenceKeys)
+    private static func text(_ value: String, maximum: Int, multiline: Bool = false) -> Bool {
+        value.utf16.count <= maximum && !value.unicodeScalars.contains {
+            $0.value == 0x7f || ($0.value < 0x20 && !(multiline && [0x09, 0x0a, 0x0d].contains($0.value)))
+        }
+    }
+    static func valid(_ value: [String: ApplicationValue]) -> Bool {
+        guard Set(value.keys).isSubset(of: allowed),
+              let id = value["id"]?.string, !id.isEmpty,
+              let state = value["state"]?.string, !state.isEmpty else { return false }
+        if !Set(value.keys).intersection(evidenceKeys).isEmpty {
+            guard value["_careerHistoricalText"] == .bool(true), let hash = value["_careerRecoverySHA256"]?.string,
+                  ApplicationReadWire.hash(hash) else { return false }
+            if let flag = value["_careerHistoricalApplicationId"], flag != .bool(true) { return false }
+            if let lengths = value["_careerOriginalLengths"] {
+                guard case .object(let fields) = lengths, fields.allSatisfy({ key, length in
+                    ["title", "company", "applicationId", "resumeName", "requirementsRevision"].contains(key)
+                        && length.integer.map { $0 >= 0 && $0 <= (stringLimits[key] ?? 0) } == true
+                        && value[key]?.string != nil
+                }) else { return false }
+            }
+            if let name = value["_careerLegacyResumeName"] {
+                guard case .object(let fields) = name, Set(fields.keys) == ["originalUTF16Count", "filenameValid"],
+                      fields["originalUTF16Count"]?.integer.map({ (1...180).contains($0) }) == true,
+                      fields["filenameValid"] == .bool(true) else { return false }
+            }
+        }
+        for (key, field) in value {
+            if evidenceKeys.contains(key) { continue }
+            if key == "profileRevision" {
+                guard let revision = field.integer, revision >= 0 else { return false }
+            } else {
+                guard let maximum = stringLimits[key], let string = field.string else { return false }
+                let original = value["_careerOriginalLengths"]?.object[key]?.integer
+                guard text(string, maximum: original == nil ? maximum : maximum * 6, multiline: key == "title" || key == "company") else { return false }
+            }
+        }
+        if let attemptID = value["attemptId"]?.string, attemptID != id { return false }
+        for key in ["mode", "evidenceMode"] {
+            if let mode = value[key]?.string, !["test", "live"].contains(mode) { return false }
+        }
+        if let mode = value["mode"]?.string, let evidence = value["evidenceMode"]?.string, mode != evidence { return false }
+        if let name = value["resumeName"]?.string, ApplicationCVDetails(attempt: value).resumeName != name { return false }
+        for key in ["resumeSHA256", "payloadSHA256"] {
+            if let hash = value[key]?.string, hash.range(of: "^[a-fA-F0-9]{64}$", options: .regularExpression) == nil { return false }
+        }
+        for key in ["createdAt", "dispatchedAt", "confirmedAt"] {
+            if let date = value[key]?.string, ApplicationReviewPolicy.date(date) == nil { return false }
+        }
+        if let applicationID = value["applicationId"]?.string,
+           applicationID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
+        return true
+    }
+    init?(projecting source: [String: ApplicationValue]) {
+        var fields: [String: ApplicationValue] = [:]
+        let emptyLegacyFields: Set<String> = ["resumeName", "resumeSHA256", "payloadSHA256", "createdAt", "dispatchedAt", "confirmedAt", "applicationId"]
+        for key in Self.allowed {
+            if let value = source[key], value != .null {
+                // Legacy service blanks mean unknown display metadata, never today's CV.
+                // The stored-cache decoder remains strict and does not normalize bad bytes.
+                if value.string == "", emptyLegacyFields.contains(key) { continue }
+                fields[key] = value
+            }
+        }
+        if fields["id"] == nil { fields["id"] = fields["attemptId"] }
+        for key in ["title", "company"] where fields[key] == nil {
+            if let value = source["job"]?.object[key], value != .null { fields[key] = value }
+        }
+        guard Self.valid(fields) else { return nil }
+        value = fields
+    }
+    init(from decoder: Decoder) throws {
+        let fields = try decoder.singleValueContainer().decode([String: ApplicationValue].self)
+        guard Self.valid(fields) else { throw CocoaError(.coderInvalidValue) }
+        value = fields
+    }
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer(); try container.encode(value)
+    }
+}
+
+struct PhoneApplicationHistoryCache: Codable, Equatable {
+    static let maximumRows = 500 // Same bound as the authenticated hosted workspace.
+    static let maximumBytes = 1_024 * 1_024
+    let schemaVersion: Int
+    let scope: PhoneRecordScope
+    let credentialAccount: String
+    let savedAt: String
+    let entries: [PhoneApplicationHistoryEntry]
+    var valid: Bool {
+        guard schemaVersion == 1, scope.valid, !scope.isLocal,
+              scope.origin.utf16.count <= 2_048, scope.workspaceID.utf16.count <= 200,
+              !credentialAccount.isEmpty, credentialAccount.utf16.count <= 512,
+              !credentialAccount.unicodeScalars.contains(where: { $0.value < 0x20 || $0.value == 0x7f }),
+              savedAt.utf16.count <= 40, ApplicationReviewPolicy.date(savedAt) != nil,
+              entries.count <= Self.maximumRows, entries.allSatisfy({ PhoneApplicationHistoryEntry.valid($0.value) }),
+              Set(entries.compactMap { $0.value["id"]?.string }).count == entries.count,
+              let data = try? JSONEncoder().encode(self), data.count <= Self.maximumBytes else { return false }
+        return true
+    }
+    init?(scope: PhoneRecordScope, credentialAccount: String, attempts: [[String: ApplicationValue]], savedAt: String) {
+        guard attempts.count <= Self.maximumRows else { return nil }
+        let projected = attempts.compactMap(PhoneApplicationHistoryEntry.init(projecting:))
+        guard projected.count == attempts.count else { return nil }
+        schemaVersion = 1; self.scope = scope; self.credentialAccount = credentialAccount
+        self.savedAt = savedAt; entries = projected
+        guard valid else { return nil }
+    }
+    func matches(_ state: PhoneApplicationState) -> Bool {
+        state.connectionEnabled && !state.recordScope.isLocal && scope == state.recordScope
+            && state.credentialAccount == credentialAccount
+    }
+    func sameProjection(as other: Self) -> Bool {
+        schemaVersion == other.schemaVersion && scope == other.scope
+            && credentialAccount == other.credentialAccount && entries == other.entries
+    }
+}
+
+/// Reference to immutable, protected evidence. It carries no token, cursor or approval authority.
+struct PhoneRecoveryReference: Codable, Equatable {
+    let version: Int
+    let origin: String
+    let accountId: String
+    let workspaceId: String
+    let kind: String
+    let asOf: String
+    let sha256: String
+    let totalBytes: Int
+    let documentFileName: String
+    init(origin: String, metadata: ApplicationReadMetadata) {
+        version = 1; self.origin = origin; accountId = metadata.accountId; workspaceId = metadata.workspaceId
+        kind = metadata.kind; asOf = metadata.asOf; sha256 = metadata.sha256; totalBytes = metadata.totalBytes
+        documentFileName = Self.filename(origin: origin, account: metadata.accountId, workspace: metadata.workspaceId, hash: metadata.sha256)
+    }
+    static func filename(origin: String, account: String, workspace: String, hash: String) -> String {
+        "recovery-" + ApplicationReadWire.sha256(Data((origin + "\0" + account + "\0" + workspace).utf8)) + "-" + hash + ".json"
+    }
+    var valid: Bool {
+        version == 1 && MobileApplicationPolicy.serviceURL(origin)?.absoluteString == origin
+            && ApplicationReadWire.identifier(accountId) && ApplicationReadWire.workspaceID(workspaceId)
+            && ApplicationReadWire.kinds.contains(kind) && ApplicationReadWire.date(asOf) != nil
+            && ApplicationReadWire.hash(sha256) && totalBytes > 0 && totalBytes <= 9_007_199_254_740_991
+            && documentFileName == Self.filename(origin: origin, account: accountId, workspace: workspaceId, hash: sha256)
+    }
+    func matches(_ scope: PhoneRecordScope) -> Bool { origin == scope.origin && workspaceId == scope.workspaceID }
+    func document(in folder: URL) throws -> ApplicationReadDocument {
+        guard valid else { throw ApplicationReadWire.invalid() }
+        return try ApplicationReadDocument(file: folder.appendingPathComponent(documentFileName), kind: kind, sha256: sha256, totalBytes: totalBytes)
+    }
+    var source: [String: ApplicationValue] {
+        ["origin": .string(origin), "accountId": .string(accountId), "workspaceId": .string(workspaceId),
+         "kind": .string(kind), "asOf": .string(asOf), "sha256": .string(sha256), "totalBytes": .number(Double(totalBytes))]
+    }
+}
+
+enum PhoneRecoveryStorage {
+    private static let exportPrefix = "Career-Finder-Raw-Recovery-"
+    static func isTemporaryExport(_ file: URL) -> Bool {
+        let name = file.lastPathComponent
+        guard file.deletingLastPathComponent().standardizedFileURL == FileManager.default.temporaryDirectory.standardizedFileURL,
+              name.hasPrefix(exportPrefix), name.hasSuffix(".json") else { return false }
+        let identifier = String(name.dropFirst(exportPrefix.count).dropLast(".json".count))
+        return UUID(uuidString: identifier) != nil
+    }
+    static func removeTemporaryExport(_ file: URL) {
+        guard isTemporaryExport(file) else { return }
+        try? FileManager.default.removeItem(at: file)
+    }
+    static func attributes() -> [FileAttributeKey: Any] {
+        #if os(iOS)
+        return [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication, .posixPermissions: 0o600]
+        #else
+        return [.posixPermissions: 0o600]
+        #endif
+    }
+    static func write(_ data: Data, to file: URL) throws {
+        #if os(iOS)
+        try data.write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        #else
+        try data.write(to: file, options: .atomic)
+        #endif
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
+        let handle = try FileHandle(forWritingTo: file); defer { try? handle.close() }; try handle.synchronize()
+    }
+    static func verify(_ reference: PhoneRecoveryReference, file: URL) throws {
+        guard reference.valid,
+              (try FileManager.default.attributesOfItem(atPath: file.path)[.size] as? NSNumber)?.intValue == reference.totalBytes else { throw ApplicationReadWire.invalid() }
+        let input = try FileHandle(forReadingFrom: file); defer { try? input.close() }
+        var count = 0, hash = SHA256()
+        while let chunk = try input.read(upToCount: 64 * 1_024), !chunk.isEmpty {
+            guard count <= reference.totalBytes - chunk.count else { throw ApplicationReadWire.invalid() }
+            count += chunk.count; hash.update(data: chunk)
+        }
+        guard count == reference.totalBytes, hash.finalize().map({ String(format: "%02x", $0) }).joined() == reference.sha256 else { throw ApplicationReadWire.invalid() }
+    }
+    static func catalog(in folder: URL) throws -> [PhoneRecoveryReference] {
+        let file = folder.appendingPathComponent("historical-recovery-index.json")
+        guard FileManager.default.fileExists(atPath: file.path) else { return [] }
+        let handle = try FileHandle(forReadingFrom: file); defer { try? handle.close() }
+        let bytes = try handle.read(upToCount: 4 * 1_024 * 1_024 + 1) ?? Data()
+        guard bytes.count <= 4 * 1_024 * 1_024 else { throw ApplicationReadWire.invalid() }
+        let values = try JSONDecoder().decode([PhoneRecoveryReference].self, from: bytes)
+        guard values.count <= 10_000, values.allSatisfy(\.valid), Set(values.map(\.documentFileName)).count == values.count else { throw ApplicationReadWire.invalid() }
+        return values
+    }
+    static func retain(_ reference: PhoneRecoveryReference, file: URL, in folder: URL) throws {
+        try verify(reference, file: file)
+        let target = folder.appendingPathComponent(reference.documentFileName)
+        var needsCopy = !FileManager.default.fileExists(atPath: target.path)
+        if !needsCopy {
+            do { try verify(reference, file: target) }
+            catch {
+                // Preserve the unreadable bytes; a fresh independently verified download may repair the reference.
+                let preserved = folder.appendingPathComponent(reference.documentFileName + ".preserved-" + UUID().uuidString)
+                try FileManager.default.moveItem(at: target, to: preserved); needsCopy = true
+            }
+        }
+        if needsCopy {
+            let temporary = folder.appendingPathComponent("recovery-copy-" + UUID().uuidString)
+            defer { try? FileManager.default.removeItem(at: temporary) }
+            try FileManager.default.copyItem(at: file, to: temporary)
+            try FileManager.default.setAttributes(attributes(), ofItemAtPath: temporary.path)
+            try verify(reference, file: temporary)
+            try FileManager.default.moveItem(at: temporary, to: target)
+        }
+        var entries = try catalog(in: folder)
+        if !entries.contains(where: { $0.documentFileName == reference.documentFileName }) {
+            guard entries.count < 10_000 else { throw MobileApplicationError(message: "No more recovery files can be saved on this phone. Your existing recovery files are kept.") }
+            entries.append(reference)
+            let encoded = try JSONEncoder().encode(entries)
+            guard encoded.count <= 4 * 1_024 * 1_024 else { throw MobileApplicationError(message: "No more recovery files can be saved on this phone. Your existing recovery files are kept.") }
+            try write(encoded, to: folder.appendingPathComponent("historical-recovery-index.json"))
+        }
+    }
+    /// The complete original wire document is evidence only. Ordinary portable backup import rejects this format.
+    static func export(_ reference: PhoneRecoveryReference, in folder: URL) throws -> URL {
+        let source = folder.appendingPathComponent(reference.documentFileName)
+        try verify(reference, file: source)
+        if reference.totalBytes <= ApplicationReadWire.assemblyBytes { _ = try reference.document(in: folder) }
+        // A share copy is disposable. The verified original stays in the protected recovery folder.
+        let output = FileManager.default.temporaryDirectory.appendingPathComponent(exportPrefix + UUID().uuidString + ".json")
+        let temporary = output.appendingPathExtension("partial")
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        guard FileManager.default.createFile(atPath: temporary.path, contents: nil, attributes: attributes()) else { throw CocoaError(.fileWriteUnknown) }
+        let sink = try FileHandle(forWritingTo: temporary); defer { try? sink.close() }
+        let input = try FileHandle(forReadingFrom: source); defer { try? input.close() }
+        let encoder = JSONEncoder(); encoder.outputFormatting = .sortedKeys
+        let date = try encoder.encode(ISO8601DateFormatter().string(from: Date()))
+        let scope = try encoder.encode(reference.source)
+        try sink.write(contentsOf: Data("{\"format\":\"career-finder-raw-recovery\",\"version\":1,\"exportedAt\":".utf8))
+        try sink.write(contentsOf: date); try sink.write(contentsOf: Data(",\"source\":".utf8)); try sink.write(contentsOf: scope)
+        try sink.write(contentsOf: Data(",\"documentBase64\":\"".utf8))
+        var count = 0, hash = SHA256(), pending = Data()
+        while let chunk = try input.read(upToCount: 48 * 1_024), !chunk.isEmpty {
+            guard count <= reference.totalBytes - chunk.count else { throw ApplicationReadWire.invalid() }
+            count += chunk.count; hash.update(data: chunk); pending.append(chunk)
+            let usable = pending.count - pending.count % 3
+            if usable > 0 {
+                try sink.write(contentsOf: Data(pending.prefix(usable).base64EncodedString().utf8)); pending.removeFirst(usable)
+            }
+        }
+        if !pending.isEmpty { try sink.write(contentsOf: Data(pending.base64EncodedString().utf8)) }
+        guard count == reference.totalBytes, hash.finalize().map({ String(format: "%02x", $0) }).joined() == reference.sha256 else { throw ApplicationReadWire.invalid() }
+        try sink.write(contentsOf: Data("\"}".utf8)); try sink.synchronize(); try sink.close()
+        try FileManager.default.moveItem(at: temporary, to: output)
+        return output
+    }
+}
+
+/// Owns one disposable share copy. A never-presented share is removed when its owner goes away.
+final class PhoneRecoveryExportLease {
+    let file: URL
+    init(file: URL) { self.file = file }
+    func cleanup() { PhoneRecoveryStorage.removeTemporaryExport(file) }
+    deinit { cleanup() }
+}
+
+/// Preflight intent is durable before a scoped mutation can leave the phone. It contains no body or credential.
+@MainActor final class PhoneOperationJournal {
+    struct Contents: Codable {
+        var version = 1
+        let origin: String
+        let workspaceId: String
+        var entries: [ApplicationMutationAcknowledgement]
+        var intents: [ApplicationMutationIntent]
+        init(origin: String, workspaceId: String, entries: [ApplicationMutationAcknowledgement], intents: [ApplicationMutationIntent] = []) {
+            self.origin = origin; self.workspaceId = workspaceId; self.entries = entries; self.intents = intents
+        }
+        enum CodingKeys: String, CodingKey { case version, origin, workspaceId, entries, intents }
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            version = try c.decode(Int.self, forKey: .version); origin = try c.decode(String.self, forKey: .origin)
+            workspaceId = try c.decode(String.self, forKey: .workspaceId)
+            entries = try c.decode([ApplicationMutationAcknowledgement].self, forKey: .entries)
+            intents = try c.decodeIfPresent([ApplicationMutationIntent].self, forKey: .intents) ?? []
+        }
+    }
+    // Process-wide so another store instance cannot reconcile an operation which is still in flight here.
+    static var inFlightIDs = Set<String>()
+    let origin: String
+    let workspace: String
+    let file: URL
+    init(folder: URL, origin: String, workspace: String) {
+        self.origin = origin; self.workspace = workspace
+        file = folder.appendingPathComponent("pending-operations-" + ApplicationReadWire.sha256(Data((origin + "\0" + workspace).utf8)) + ".json")
+    }
+    private func contents() throws -> Contents {
+        guard FileManager.default.fileExists(atPath: file.path) else { return Contents(origin: origin, workspaceId: workspace, entries: []) }
+        let handle = try FileHandle(forReadingFrom: file); defer { try? handle.close() }
+        let data = try handle.read(upToCount: 4 * 1_024 * 1_024 + 1) ?? Data()
+        guard data.count <= 4 * 1_024 * 1_024 else { throw ApplicationReadWire.invalid() }
+        let value = try JSONDecoder().decode(Contents.self, from: data)
+        let ids = value.entries.map(\.journalID) + value.intents.map(\.journalID)
+        guard value.version == 1, value.origin == origin, value.workspaceId == workspace, ids.count <= 1_000,
+              value.entries.allSatisfy({ $0.valid && $0.workspaceId == workspace }),
+              value.intents.allSatisfy({ $0.valid && $0.workspaceId == workspace }), Set(ids).count == ids.count else { throw ApplicationReadWire.invalid() }
+        return value
+    }
+    func read() throws -> [ApplicationMutationAcknowledgement] { try contents().entries }
+    func pendingIDs() throws -> Set<String> {
+        let value = try contents(); return Set(value.entries.map(\.journalID) + value.intents.map(\.journalID))
+    }
+    func captureReconciliableIDs() throws -> Set<String> { try pendingIDs().subtracting(Self.inFlightIDs) }
+    func begin(_ intent: ApplicationMutationIntent) throws {
+        guard intent.valid, intent.workspaceId == workspace else { throw ApplicationReadWire.invalid() }
+        var value = try contents()
+        guard value.entries.count + value.intents.count < 1_000,
+              !value.entries.contains(where: { $0.journalID == intent.journalID }),
+              !value.intents.contains(where: { $0.journalID == intent.journalID }) else { throw ApplicationReadWire.invalid() }
+        value.intents.append(intent)
+        try PhoneRecoveryStorage.write(JSONEncoder().encode(value), to: file)
+        Self.inFlightIDs.insert(intent.journalID)
+    }
+    func append(_ receipt: ApplicationMutationAcknowledgement) throws {
+        guard receipt.valid, receipt.workspaceId == workspace else { throw ApplicationReadWire.invalid() }
+        var value = try contents()
+        if let existing = value.entries.first(where: { $0.journalID == receipt.journalID }) {
+            guard existing == receipt else { throw ApplicationReadWire.invalid() }; return
+        }
+        if let intent = value.intents.first(where: { $0.journalID == receipt.journalID }), intent.route != receipt.kind { throw ApplicationReadWire.invalid() }
+        value.intents.removeAll { $0.journalID == receipt.journalID }
+        guard value.entries.count + value.intents.count < 1_000 else { throw MobileApplicationError(message: "Earlier changes still need checking. Refresh before making another change.") }
+        value.entries.append(receipt)
+        // Atomic replacement leaves the preflight intent intact if this write fails.
+        try PhoneRecoveryStorage.write(JSONEncoder().encode(value), to: file)
+    }
+    func clearLegacyIntents(capturedIDs: Set<String>) throws {
+        let eligible = capturedIDs.subtracting(Self.inFlightIDs)
+        var value = try contents(); value.intents.removeAll { eligible.contains($0.journalID) }
+        try PhoneRecoveryStorage.write(JSONEncoder().encode(value), to: file)
+    }
+    func clear(capturedIDs: Set<String>, account: String) throws {
+        let eligible = capturedIDs.subtracting(Self.inFlightIDs)
+        var value = try contents()
+        value.entries.removeAll { eligible.contains($0.journalID) && ApplicationReadWire.exact($0.accountId, account) }
+        value.intents.removeAll { eligible.contains($0.journalID) }
+        try PhoneRecoveryStorage.write(JSONEncoder().encode(value), to: file)
+    }
+}
+
 struct PhoneApplicationState: Codable, Equatable {
     var profile = PhoneApplicationProfile()
     var profileNeedsSync = false
@@ -553,6 +1008,11 @@ struct PhoneApplicationState: Codable, Equatable {
     /// Unfinished opportunities that differ from the current draft. Filtered by workspace scope.
     var recoveredOpportunityDrafts: [PhoneRecoveredOpportunity] = []
     var submissionHolds: [PhoneSubmissionHold] = []
+    /// Display-only history is excluded from portable backups and workspace draft transfer.
+    var savedApplicationHistory: PhoneApplicationHistoryCache?
+    /// Scoped references remain with parked drafts; the original protected documents never enter portable v1 backups.
+    var historicalRecovery: [PhoneRecoveryReference] = []
+    var historicalWorkspaceProjectionSHA256: String?
 
     init() {}
     private enum CodingKeys: String, CodingKey {
@@ -560,6 +1020,7 @@ struct PhoneApplicationState: Codable, Equatable {
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
         case applicationRecordSchema, applicationRecords
         case workspaceDraftSchema, workspaceDrafts, recordDrafts, recordDraftAlternatives, recoveredOpportunityDrafts, submissionHolds
+        case savedApplicationHistory, historicalRecovery, historicalWorkspaceProjectionSHA256
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -580,7 +1041,16 @@ struct PhoneApplicationState: Codable, Equatable {
         recordDraftAlternatives = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDraftAlternatives) ?? []
         recoveredOpportunityDrafts = try c.decodeIfPresent([PhoneRecoveredOpportunity].self, forKey: .recoveredOpportunityDrafts) ?? []
         submissionHolds = try c.decodeIfPresent([PhoneSubmissionHold].self, forKey: .submissionHolds) ?? []
-        guard workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
+        historicalWorkspaceProjectionSHA256 = try c.decodeIfPresent(String.self, forKey: .historicalWorkspaceProjectionSHA256)
+        guard historicalWorkspaceProjectionSHA256.map(ApplicationReadWire.hash) ?? true else { throw ApplicationReadWire.invalid() }
+        historicalRecovery = try c.decodeIfPresent([PhoneRecoveryReference].self, forKey: .historicalRecovery) ?? []
+        guard historicalRecovery.count <= 10_000, historicalRecovery.allSatisfy(\.valid),
+              Set(historicalRecovery.map(\.documentFileName)).count == historicalRecovery.count else { throw ApplicationReadWire.invalid() }
+        // A damaged or mismatched derived cache must not block a valid private draft.
+        if let cache = try? c.decode(PhoneApplicationHistoryCache.self, forKey: .savedApplicationHistory),
+           cache.valid, cache.matches(self) { savedApplicationHistory = cache }
+        guard jobs.allSatisfy(PhoneSavedJobMetadata.valid),
+              workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
               recordDrafts.count + recordDraftAlternatives.count <= 200,
               recordDrafts.allSatisfy(\.valid), recordDraftAlternatives.allSatisfy(\.valid),
               recoveredOpportunityDrafts.count <= 200, recoveredOpportunityDrafts.allSatisfy(\.valid),
@@ -614,6 +1084,7 @@ struct PhoneApplicationState: Codable, Equatable {
             latestServerProfile: latestServerProfile, jobs: jobs, opportunityDraft: opportunityDraft)
     }
     mutating func loadDraft(_ draft: PhoneWorkspaceDraft) {
+        savedApplicationHistory = nil; historicalWorkspaceProjectionSHA256 = nil
         profile = draft.profile; profileNeedsSync = draft.profileNeedsSync; profileRevision = draft.profileRevision
         latestServerRevision = draft.latestServerRevision; latestServerProfile = draft.latestServerProfile
         jobs = draft.jobs; opportunityDraft = draft.opportunityDraft
@@ -639,6 +1110,7 @@ struct PhoneApplicationState: Codable, Equatable {
     }
     mutating func connect(address: String, workspace: String, account: String, server: ApplicationServerProfile) {
         let same = workspaceID == workspace && MobileApplicationPolicy.serviceURL(serviceAddress)?.absoluteString == address
+        if !same || credentialAccount != account || !connectionEnabled { savedApplicationHistory = nil; historicalWorkspaceProjectionSHA256 = nil }
         if !same {
             let previous = activeDraft, target = PhoneRecordScope(origin: address, workspaceID: workspace)
             let restored = workspaceDrafts.first { $0.scope == target }
@@ -713,7 +1185,11 @@ struct ApplicationJobMerge {
             if ids.remove(old) != nil { ids.insert(replacement) }
             if mappedAnswers[replacement] == nil, let value = mappedAnswers[old] { mappedAnswers[replacement] = value }
         }
-        jobs = remote + local.filter { byIdentity[MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "")] == nil }
+        let enriched = remote.map { job in
+            let matches = local.filter { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "") }
+            return matches.count == 1 ? PhoneSavedJobMetadata.preserving(job, from: matches[0]) : job
+        }
+        jobs = enriched + local.filter { byIdentity[MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "")] == nil }
         ids.formIntersection(Set(jobs.compactMap { $0["id"]?.string }))
         self.selected = ids; self.answers = mappedAnswers
     }

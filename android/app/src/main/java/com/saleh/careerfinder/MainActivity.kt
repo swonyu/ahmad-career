@@ -1,5 +1,7 @@
 package com.saleh.careerfinder
 
+import com.saleh.careerfinder.HistoricalDisplayText as Text
+
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
@@ -20,8 +22,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -38,6 +43,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -151,6 +158,11 @@ fun CareerApp(model: CareerViewModel) {
     val selectTab: (Int) -> Unit = { selected -> focus.clearFocus(); keyboard?.hide(); tab = selected }
     var pdfScope by rememberSaveable { mutableStateOf<String?>(null) }
     var receiptExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    var historicalExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    val recoveryExporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val captured = historicalExportScope; historicalExportScope = null
+        if (uri != null && captured != null) model.exportHistoricalRecovery(uri, captured)
+    }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val captured = pdfScope; pdfScope = null
         if (uri != null && captured != null) model.choosePDF(uri, captured)
@@ -176,16 +188,26 @@ fun CareerApp(model: CareerViewModel) {
         },
         bottomBar = { PhoneNavigation(tabs, tab, selectTab) }
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding()) {
             val messageHeightLimit = maxHeight * 0.35f
             Column(Modifier.fillMaxSize()) {
                 if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
-                if (state.error != null || state.notice != null || state.testService) {
+                if (state.error != null || state.notice != null || state.testService || state.historicalRecovery != null || state.readRecoveryRequest != null) {
                     // Long notices remain scrollable while the main screen keeps usable height.
                     Column(Modifier.fillMaxWidth().heightIn(max = messageHeightLimit)
                         .verticalScroll(rememberScrollState()).testTag("workspace-messages")) {
-                        if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
                         if (state.error != null || state.notice != null) MessageBanner(state.error ?: state.notice.orEmpty(), state.error != null, model::dismissMessage)
+                        if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
+                        if (state.historicalRecovery != null || state.readRecoveryRequest != null) {
+                            MessageBanner(HISTORICAL_TEXT_NOTICE, true, null)
+                            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                TextButton(onClick = {
+                                    historicalExportScope = state.privateScope
+                                    recoveryExporter.launch("Career-Finder-Original-Recovery-" + LocalDate.now() + ".json")
+                                }, enabled = !state.busy, modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text(l10n("Export original recovery record")) }
+                                TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Refresh")) }
+                            }
+                        }
                     }
                 }
                 Box(Modifier.weight(1f).testTag("workspace-content")) {
@@ -524,6 +546,10 @@ internal fun EmptyState(title: String, body: String, icon: ImageVector = Icons.D
     }
 }
 
+private data class SavedOpportunityItem(val job: Opportunity, val retainedRecord: ApplicationRecordBundle? = null) {
+    val key: String get() = retainedRecord?.let { "record-" + it.identity } ?: job.id
+}
+
 @Composable
 internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit, discover: () -> Unit) {
     val l10n = rememberCareerStrings()
@@ -532,13 +558,23 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
     var removingID by rememberSaveable(state.privateScope) { mutableStateOf<String?>(null) }
     val searchTerms = remember(query) { SavedSearch.terms(query) }
     val matchingJobs = state.jobs.filter { savedOpportunityMatches(it, state.recordFor(it), searchTerms) && filter.includes(state.recordFor(it)) }
-    val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingJobs.sortedBy { state.recordFor(it)?.current?.record?.followUpDate } else matchingJobs
     val orphaned = state.unbookmarkedRecords.filter { savedOpportunityMatches(it.job, it, searchTerms) && filter.includes(it) }
-        .let { if (filter == SavedOpportunityFilter.FOLLOW_UP) it.sortedBy { record -> record.current.record.followUpDate } else it }
+    val matchingItems = matchingJobs.map { SavedOpportunityItem(it) } + orphaned.map { SavedOpportunityItem(it.job, it) }
+    val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingItems.sortedBy {
+        (it.retainedRecord ?: state.recordFor(it.job))?.current?.record?.followUpDate
+    } else matchingItems
     val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
+    val savedCount = state.jobs.size + state.unbookmarkedRecords.size
     val context = LocalContext.current
-    LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Saved jobs", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    val comparison = rememberSavedComparisonSelection(state)
+    val listState = rememberSaveable(state.privateScope, saver = LazyListState.Saver) { LazyListState() }
+    Column(Modifier.fillMaxSize()) {
+    if (comparison.choosing) SavedComparisonBar(state, comparison) { model.state.value }
+    LazyColumn(Modifier.fillMaxWidth().weight(1f).imePadding().testTag("jobs-list"), state = listState,
+        contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item { Heading(if (savedCount == 0) "Saved jobs" else "Saved ($savedCount)", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) {
@@ -549,6 +585,16 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         if (hasRecords) {
+            if (!comparison.choosing) item(key = "compare-launch") {
+                OutlinedButton(onClick = {
+                    if (comparison.owner == SavedComparisonPolicy.owner(model.state.value)) {
+                        focusManager.clearFocus(force = true); keyboard?.hide(); comparison.choosing = true
+                    }
+                }, enabled = state.loaded && !state.busy && !state.storageBlocked,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("saved-comparison-start")) {
+                    Text(l10n("Compare saved openings"))
+                }
+            }
             item { Field("Search saved opportunities", query, { query = it }, type = KeyboardType.Text) }
             item {
                 Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -561,17 +607,21 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         if (!hasRecords) item { EmptyState("No saved jobs yet", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
-        else if (filtered.isEmpty() && orphaned.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
+        else if (filtered.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
             if (filter == SavedOpportunityFilter.FOLLOW_UP) "Add a follow-up date in an application record to see it here." else "Your saved roles are still here. Clear the search to see them again.",
             action = "Show all saved opportunities", onClick = { query = ""; filter = SavedOpportunityFilter.ALL }) }
-        items(filtered, key = Opportunity::id) { job ->
-            Panel {
+        items(filtered, key = SavedOpportunityItem::key) { entry ->
+            val job = entry.job
+            val record = entry.retainedRecord
+            if (record == null) Panel {
                 Text(job.company.ifBlank { l10n("Employer") }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(listOf(job.location, job.country).filter(String::isNotBlank).joinToString(" · ").ifBlank { l10n("Location not recorded") }, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(l10n(if (job.localOnly) "Saved on this phone" else "Saved to your workspace"), style = MaterialTheme.typography.labelMedium)
+                SavedComparisonToggle(state, comparison, job, false) { model.state.value }
                 OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                     .semantics { contentDescription = l10n.format("Open employer page for {0} at {1}", listOf((job.title).toString(), (job.company).toString()))}) { Text(l10n("Open employer page")) }
+                JobShareAction(job.title, job.company, job.sourceName, job.url)
                 ApplicationRecordSummary(state.recordFor(job), { model.openApplicationRecord(job, state.privateScope) }, !state.busy,
                     "Application record for ${job.title} at ${job.company}")
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Sync this opportunity")) }
@@ -583,21 +633,24 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                         accessibilityLabel = "Select ${job.title} at ${job.company} for Auto Apply review")
                     if (job.id in state.selected) TextButton(onClick = review, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Continue to Auto Apply")) }
                 }
-            }
-        }
-        items(orphaned, key = { "record-" + it.identity }) { record ->
-            Panel {
+            } else Panel {
                 Text(record.job.company.ifBlank { l10n("Employer") }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(record.job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(l10n("Application record · saved link removed"), style = MaterialTheme.typography.labelMedium)
+                SavedComparisonToggle(state, comparison, record.job, true) { model.state.value }
                 ApplicationRecordSummary(record, { model.openApplicationRecord(record.job, state.privateScope) }, !state.busy,
                     "Application record for ${record.job.title} at ${record.job.company}")
                 OutlinedButton(onClick = { openLink(context, record.job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Open employer page")) }
+                JobShareAction(record.job.title, record.job.company, record.job.sourceName, record.job.url)
                 TextButton(onClick = { model.restoreRecordedOpportunity(record.identity, state.privateScope) }, enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Save opportunity again")) }
             }
         }
         item { Text(l10n("Saving a link does not verify its availability or submit an application. Automatic applications depend on a supported employer integration."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    }
+    }
+    comparison.presented?.let { keys ->
+        SavedComparisonDialog(state, keys, { model.state.value }) { comparison.presented = null }
     }
     state.jobs.firstOrNull { it.id == removingID && it.localOnly }?.let { job ->
         AlertDialog(onDismissRequest = { if (!state.busy) removingID = null },
@@ -626,7 +679,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
     val plan = state.plan
     var approved by remember(plan?.id, plan?.digest) { mutableStateOf(false) }
     val selectedJobs = state.jobs.filter { it.id in state.selected && !it.localOnly }
-    LazyColumn(Modifier.fillMaxSize().imePadding().testTag("apply-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    var viewportHeight by remember { mutableIntStateOf(0) }
+    LazyColumn(Modifier.fillMaxSize().imePadding().onSizeChanged { viewportHeight = it.height }.testTag("apply-list"),
+        contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Applications", "Prepare your details, choose a role and review your application options.") }
         if (state.connection == null || state.requiresPairing) item {
             Panel {
@@ -685,6 +740,13 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         items(if (state.reviewingRecoveredPlan) emptyList() else selectedJobs, key = { "answer-" + it.id }) { job ->
             val answer = state.answers[job.id] ?: JobAnswers()
             val reviewed = plan?.items?.find { it.jobId == job.id }
+            val messageRequester = remember(job.id) { BringIntoViewRequester() }
+            var messageFocused by remember(job.id) { mutableStateOf(false) }
+            // Re-request after the real list viewport shrinks for the IME.
+            // Ordinary scrolling does not retrigger this effect.
+            LaunchedEffect(job.id, messageFocused, viewportHeight) {
+                if (messageFocused && viewportHeight > 0) messageRequester.bringIntoView()
+            }
             Panel {
                 Text(job.company, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge)
@@ -692,7 +754,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     { model.markAppliedElsewhere(job.id, it) }, enabled = !state.busy)
                 Field("Message for this employer (optional)", answer.comments, {
                     model.editAnswers(job.id) { value -> value.copy(comments = it.take(5000)) }
-                }, singleLine = false, enabled = !state.busy)
+                }, singleLine = false, enabled = !state.busy,
+                    modifier = Modifier.bringIntoViewRequester(messageRequester)
+                        .onFocusChanged { messageFocused = it.isFocused })
                 ConsentChoice("Allow this employer to store and process my application", answer.consentStore, !state.busy) {
                     model.editAnswers(job.id) { value -> value.copy(consentStore = it) }
                 }
@@ -717,7 +781,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         if (plan != null) {
             item { Heading("Review what will be shared.", l10n.format("This review uses profile version {0}. Expires {1}.",
                 listOf(plan.profileRevision.toString(), l10n.dateTime(plan.expiresAt)))) }
-            items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item) }
+            items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item, plan.profileRevision, "${state.privateScope}-${plan.id}-${item.jobId}") }
             item {
                 Panel {
                     val ready = plan.items.count(ReviewItem::canSubmitNow)
@@ -740,7 +804,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
 }
 
 @Composable
-internal fun ReviewCard(item: ReviewItem) {
+internal fun ReviewCard(item: ReviewItem, profileRevision: Int? = null, evidenceKey: String = item.jobId) {
     val l10n = rememberCareerStrings()
     var fingerprint by remember(item.jobId) { mutableStateOf(false) }
     val context = LocalContext.current
@@ -765,6 +829,7 @@ internal fun ReviewCard(item: ReviewItem) {
             TextButton(onClick = { fingerprint = !fingerprint }, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n(if (fingerprint) "Hide file fingerprint" else "Check file fingerprint")) }
             if (fingerprint) Text(item.resume.sha256, style = MaterialTheme.typography.bodySmall)
         }
+        ApplicationCvDetails("review-$evidenceKey", item.resume?.name, profileRevision, prepared = true)
         if (item.reason.isNotBlank()) Text(l10n.message(item.reason), color = MaterialTheme.colorScheme.error)
         if (item.state == "rate_limited") Text(l10n.format("Provider cooldown: {0}", listOf((l10n.dateTime(item.retryAt)).toString())), style = MaterialTheme.typography.bodySmall)
     }
@@ -807,7 +872,7 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
         else if (visible.isEmpty()) item { EmptyState("No receipts match these filters.", "Your other application records are still available.", action = "Show all receipts", onClick = { query = ""; filter = ReceiptFilter.ALL }) }
         items(visible, key = ApplicationReceipt::id) { receipt ->
             Panel {
-                StatusPill(receiptLabel(receipt), receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.testMode)
+                StatusPill(receiptLabel(receipt, l10n), receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.testMode)
                 Text(receipt.title, style = MaterialTheme.typography.titleLarge)
                 Text(receipt.company, color = MaterialTheme.colorScheme.primary)
                 Text(l10n(l10n.dateTime(receipt.date)), style = MaterialTheme.typography.bodySmall)
@@ -822,6 +887,8 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
                     receipt.state == "confirmed" -> "This record lacks verified live evidence and is not counted as a live application."
                     else -> "Review the recorded outcome before preparing another application."
                 }))
+                ApplicationCvDetails("receipt-${state.privateScope}-${receipt.id}", receipt.resumeName, receipt.profileRevision,
+                    prepared = receipt.state == "ready")
                 if (receipt.state == "dispatching" && receipt.planId.isNotBlank() && receipt.planId.length <= 200 && receipt.id.length <= 200) {
                     OutlinedButton(onClick = { model.stopAndCheckReceipt(receipt.id, receipt.planId) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(l10n("Stop")) }
@@ -891,6 +958,20 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         if (state.profileConflict != null) item { ProfileConflictPanel(state, model) }
+        val affectedFields = listOf("First or single name" to profile.firstName, "Last name (optional)" to profile.lastName,
+            "Email" to profile.email, "Phone (optional)" to profile.phone, "City (optional)" to profile.city,
+            "Professional headline (optional)" to profile.headline, "Skills (separate with commas)" to profile.skills,
+            "Roles you want (separate with commas)" to profile.targetRoles).filter { !BoundaryPolicy.validUnicode(it.second) }
+        if (affectedFields.isNotEmpty()) item {
+            Panel {
+                Text(l10n("Historical fields to repair"), style = MaterialTheme.typography.titleMedium)
+                affectedFields.forEach { (label, value) ->
+                    Text(l10n(label), style = MaterialTheme.typography.labelMedium)
+                    Text(value, style = MaterialTheme.typography.bodyMedium)
+                }
+                Text(l10n("Original incomplete characters are shown as escapes here. Edit the affected fields below before saving to the service."), style = MaterialTheme.typography.bodySmall)
+            }
+        }
         item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy, error = errors["firstName"]) }
         item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy, error = errors["lastName"]) }
         item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy,
@@ -1095,10 +1176,10 @@ private fun TargetCountryPicker(value: Set<String>, close: () -> Unit, changed: 
 
 @Composable
 internal fun Field(label: String, value: String, changed: (String) -> Unit, type: KeyboardType = KeyboardType.Text, singleLine: Boolean = true,
-    enabled: Boolean = true, error: String? = null) {
+    enabled: Boolean = true, error: String? = null, modifier: Modifier = Modifier) {
     val l10n = rememberCareerStrings()
     OutlinedTextField(value = value, onValueChange = changed, label = { Text(l10n(label)) },
-        modifier = Modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
+        modifier = modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
         textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = if (type in setOf(KeyboardType.Email, KeyboardType.Uri, KeyboardType.Phone, KeyboardType.Ascii)) TextDirection.Ltr else TextDirection.Content),
         keyboardOptions = KeyboardOptions(keyboardType = type), enabled = enabled, shape = RoundedCornerShape(14.dp),
         isError = error != null, supportingText = if (error != null) { { Text(l10n.message(error)) } } else null)
@@ -1361,7 +1442,7 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
 }
 
 internal fun openLink(context: Context, url: String) {
-    try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.opportunityURL(url).toUri())) }
+    try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.historicalOpportunityURL(url).toUri())) }
     catch (_: Exception) { Toast.makeText(context, CareerStrings(context)("This HTTPS link could not be opened."), Toast.LENGTH_LONG).show() }
 }
 private fun fileSize(bytes: Long, locale: Locale): String = when {
@@ -1371,7 +1452,7 @@ private fun fileSize(bytes: Long, locale: Locale): String = when {
 }
 internal fun dateLabel(value: String): String = try { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault()).format(Instant.parse(value)) } catch (_: Exception) { "Time not recorded" }
 private fun consentLabel(value: Any?): String = when (value) { true -> "Yes"; false -> "No"; else -> "Not provided" }
-private fun receiptLabel(receipt: ApplicationReceipt): String {
+private fun receiptLabel(receipt: ApplicationReceipt, l10n: CareerStrings): String {
     val label = when {
         receipt.verified -> "Confirmed by provider"
         receipt.state == "confirmed" && !receipt.testMode -> "Unverified record"
@@ -1383,5 +1464,6 @@ private fun receiptLabel(receipt: ApplicationReceipt): String {
         receipt.state == "ready" -> "Prepared"
         else -> receipt.state.replaceFirstChar { it.titlecase() }
     }
-    return if (receipt.testMode) "Test receipt · " + label else label
+    val localizedLabel = l10n(label)
+    return if (receipt.testMode) l10n.format("Test receipt · {0}", listOf(localizedLabel)) else localizedLabel
 }

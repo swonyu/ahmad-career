@@ -19,7 +19,9 @@ interface PrivateStore {
     fun remove(name: String)
     fun startFreshPreservingExisting()
     fun names(): Set<String> = emptySet()
+    fun availableBytes(): Long? = null
     fun preservedWorkspaces(): List<PreservedWorkspace> = emptyList()
+    fun namesPreserved(area: String): Set<String> = emptySet()
     fun readPreserved(area: String, name: String): JSONObject? = throw IllegalArgumentException("This storage provider cannot open earlier recovery areas.")
     fun removePreserved(area: String, names: Set<String>): Unit = throw IllegalArgumentException("This storage provider cannot remove earlier recovery areas.")
 }
@@ -121,9 +123,12 @@ class SecureVault(context: Context, namespace: String? = null) : PrivateStore {
         check(!target.baseFile.exists() && !File(target.baseFile.path + ".bak").exists()) { "The local record could not be removed. Try again before leaving this workspace." }
     }
 
-    @Synchronized override fun names(): Set<String> = activeArea().directory.listFiles().orEmpty()
+    private fun names(area: Area): Set<String> = area.directory.listFiles().orEmpty()
         .mapNotNull { it.name.removeSuffix(".bak").takeIf { name -> name.endsWith(".enc") }?.removeSuffix(".enc") }
         .filter { it.matches(Regex("[a-z0-9-]{1,100}")) }.toSet()
+
+    @Synchronized override fun names(): Set<String> = names(activeArea())
+    @Synchronized override fun availableBytes(): Long = android.os.StatFs(root.path).availableBytes
 
     private fun preservedArea(id: String): Area {
         require(id == "original" || id.matches(Regex("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"))) { "Invalid recovery area." }
@@ -145,6 +150,7 @@ class SecureVault(context: Context, namespace: String? = null) : PrivateStore {
     }
 
     @Synchronized override fun readPreserved(area: String, name: String): JSONObject? = read(preservedArea(area), name)
+    @Synchronized override fun namesPreserved(area: String): Set<String> = names(preservedArea(area))
 
     @Synchronized override fun removePreserved(area: String, names: Set<String>) {
         val selected = preservedArea(area)

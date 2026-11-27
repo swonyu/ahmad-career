@@ -1,0 +1,41 @@
+
+> career-finder-phone-service@0.6.0 build
+> node scripts/run-framework.mjs build
+
+{
+  "outputDir": "/Users/saleh/Developer/career-finder-resume-20261118-ea03ff43/hosted/dist",
+  "preview": false,
+  "assetCount": 21,
+  "workerBytes": 5808663,
+  "workerSHA256": "4b3319a3377258189d84107180094f8501c3c57c43de94b81acdf4b50c66c535",
+  "pdfWorker": "/_career/pdf-4cd9c516c8ecdaa72918.js"
+}
+
+> career-finder-phone-service@0.6.0 test:ssr
+> node --test tests/public-bundle-inputs.mjs tests/ssr-runtime.mjs
+
+✔ rejects the actual connector filename convention (0.548041ms)
+✔ retains all existing private directory boundaries (0.069167ms)
+✔ permits public application and package input names (0.451916ms)
+✔ does not confuse similar names or nested words with root private paths (0.057ms)
+✔ rejects a private input anywhere in a public bundle and reports its target (0.071208ms)
+✔ keeps the caller input list unchanged (0.232125ms)
+✔ actual packaged Worker renders all six complete SSR documents in both languages (251.135417ms)
+✔ request-local language preference wins over headers without cross-request state (12.199459ms)
+✔ verified Sites identity stays isolated and internal SSR identity fields grant no authority (8.649792ms)
+✔ invalid browser session renders recovery without falling back to another Sites identity (1.518875ms)
+✔ bootstrap data roundtrips HTML boundary characters and rejects nonconforming data (9.506ms)
+✔ all 21 public assets are served as exact built bytes with correct methods and MIME types (234.878291ms)
+✔ two rendered images retain semantics, dimensions, lazy loading and asynchronous decoding (41.462417ms)
+✔ current CSS, Arabic fonts and hashed production module worker are packaged (10.834417ms)
+✔ routing preserves HEAD, explicit 404/405, canonical paths and no source-file serving (12.466ms)
+✔ production Worker preserves service origin rejection and deployment identity (2.47225ms)
+✔ explicit request helpers retain safe sign-in and temporary redirect semantics (2.199291ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 769.196792

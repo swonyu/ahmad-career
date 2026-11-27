@@ -1,9 +1,22 @@
+import java.net.URI
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// This value is compiled only into the separate acceptance build. It is not
+// an intent, preference, environment variable or ordinary-build routing input.
+val nativeJourneyDiscoveryOrigin = providers.gradleProperty("careerAcceptanceDiscoveryOrigin").orElse("").get()
+if (nativeJourneyDiscoveryOrigin.isNotEmpty()) {
+    val origin = URI(nativeJourneyDiscoveryOrigin)
+    require(origin.scheme == "https" && origin.host == "10.0.2.2" && origin.port in 1024..65535 &&
+        origin.rawUserInfo == null && origin.rawPath.isEmpty() && origin.rawQuery == null && origin.rawFragment == null &&
+        nativeJourneyDiscoveryOrigin == "https://10.0.2.2:${origin.port}") {
+        "The native journey accepts only its exact loopback-alias HTTPS origin."
+    }
+}
 val acceptanceResources = layout.buildDirectory.dir("generated/acceptance-res")
 val prepareAcceptanceCa by tasks.registering {
     val certificatePath = providers.gradleProperty("careerAcceptanceCa")
@@ -32,6 +45,7 @@ android {
         versionCode = 7
         versionName = "0.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "CAREER_ACCEPTANCE_DISCOVERY_ORIGIN", "\"\"")
     }
     buildTypes {
         debug { applicationIdSuffix = ".preview" }
@@ -42,11 +56,17 @@ android {
             versionNameSuffix = "-acceptance"
             matchingFallbacks += listOf("debug")
             resValue("string", "app_name", "Career Finder Acceptance")
+            buildConfigField("String", "CAREER_ACCEPTANCE_DISCOVERY_ORIGIN", "\"$nativeJourneyDiscoveryOrigin\"")
         }
     }
     testBuildType = if (providers.gradleProperty("careerAcceptance").orNull == "true") "acceptance" else "debug"
     sourceSets.getByName("acceptance").res.srcDir(acceptanceResources)
-    buildFeatures { compose = true }
+    // Normal builds contain only the no-op transport boundary. Acceptance owns
+    // its separate implementation; the private capability cannot be installed
+    // into a preview or release APK.
+    sourceSets.getByName("debug").java.srcDir("src/nonAcceptance/java")
+    sourceSets.getByName("release").java.srcDir("src/nonAcceptance/java")
+    buildFeatures { compose = true; buildConfig = true }
     // Both supported languages must be available for the offline in-app picker.
     bundle { language { enableSplit = false } }
     compileOptions {

@@ -1,6 +1,42 @@
 import Foundation
 import Darwin
 
+/// Exercises the real discovery transport without opening a connection.
+private final class DiscoveryStatusProtocol: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        guard let url = request.url, request.httpMethod == "GET",
+              let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              url.absoluteString.hasPrefix(MobileApplicationPolicy.hostedServiceOrigin + "/api/discovery/search?"),
+              let query = parts.queryItems?.first(where: { $0.name == "q" })?.value else {
+            client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
+            return
+        }
+        let status: Int, body: Data
+        switch query {
+        case "Conflict empty":
+            status = 409; body = Data()
+        case "Conflict HTML":
+            status = 409; body = Data("<p>Synthetic proxy response</p>".utf8)
+        case "Conflict other code":
+            status = 409; body = Data(#"{"error":{"code":"synthetic_conflict"}}"#.utf8)
+        case "Conflict oversized":
+            status = 409; body = Data(repeating: 32, count: 4 * 1_024 * 1_024 + 1)
+        case "Temporary service failure":
+            status = 503; body = Data(#"{"error":{"code":"discovery_changed"}}"#.utf8)
+        default:
+            client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
+            return
+        }
+        let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: "HTTP/1.1", headerFields: nil)!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        if !body.isEmpty { client?.urlProtocol(self, didLoad: body) }
+        client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
+}
+
 @MainActor
 private final class DiscoveryStub: CareerDiscoveryServing {
     let directory: DiscoveryCatalog
@@ -58,7 +94,377 @@ private final class DiscoverySuite {
             jobs: jobs ?? fixture.jobs, sources: fixture.sources, nextCursor: cursor, totalMatches: fixture.totalMatches,
             limited: fixture.limited, notice: fixture.notice)
     }
+    private let historySource = "lever:global:synthetic-history"
+    private func historyJob(_ number: Int, source: String = "lever:global:synthetic-history") -> DiscoveryJob {
+        let posting = "20000000-0000-4000-8000-" + String(format: "%012d", number)
+        return DiscoveryJob(id: source + ":" + posting, sourceId: source, sourceName: "Synthetic history board", provider: "lever",
+            title: "Synthetic designer \(number)", company: "Synthetic employer", url: "https://jobs.lever.co/" + String(source.split(separator: ":").last!) + "/" + posting,
+            location: "Toronto", country: "CA", remote: false, summary: "Fictional history observation only", publishedAt: nil, updatedAt: nil,
+            checkedAt: fixture.generatedAt, stale: false)
+    }
+    private func historyStatus(_ count: Int, source: String = "lever:global:synthetic-history", status: String = "fresh", limited: Bool = false,
+                               error: DiscoveryProviderIssue? = nil) -> DiscoverySourceStatus {
+        DiscoverySourceStatus(id: source, name: "Synthetic history board", provider: "lever", boardUrl: "https://jobs.lever.co/" + String(source.split(separator: ":").last!),
+            status: status, checkedAt: fixture.generatedAt, availableCount: count, matchedCount: count, limited: limited, error: error)
+    }
+    private func historyPage(_ numbers: [Int], matched: Int? = nil, cursor: String? = nil, source: String = "lever:global:synthetic-history",
+                             status: String = "fresh", limited: Bool = false, error: DiscoveryProviderIssue? = nil) -> DiscoveryPage {
+        DiscoveryPage(ok: true, version: 1, generatedAt: fixture.generatedAt, status: status == "unavailable" ? "unavailable" : status == "stale" || limited || error != nil ? "partial" : "complete",
+            jobs: numbers.map { historyJob($0, source: source) }, sources: [historyStatus(matched ?? numbers.count, source: source, status: status, limited: limited, error: error)],
+            nextCursor: cursor, totalMatches: matched ?? numbers.count, limited: limited, notice: "Synthetic history coverage")
+    }
+    private func runPagingFailureChecks() async throws {
+        let wire = CareerDiscoveryClient(protocolClasses: [DiscoveryStatusProtocol.self])
+        for words in ["Conflict empty", "Conflict HTML", "Conflict other code", "Conflict oversized"] {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query = DiscoveryQuery(keywords: words)
+            service.handle = { _, _ in self.page(cursor: "expired-cursor") }
+            await model.search()
+            try check(model.canLoadMore, "The initial cursor is available before a paginated conflict")
+            let history = model.searchHistory
+            service.handle = { query, cursor in try await wire.search(query, cursor: cursor) }
+            await model.search(more: true)
+            try check(model.jobs == fixture.jobs && model.searchHistory == history && model.page?.sources.map(\.id) == fixture.sources.map(\.id),
+                "A paginated HTTP conflict preserves the exact prior jobs, boards, and history")
+            try check(model.page?.nextCursor == nil && !model.canLoadMore && model.needsNewSearch && model.canRetrySubmittedSearch,
+                "Every paginated HTTP 409 invalidates the cursor independent of its body")
+            try check(model.error == "These results changed while you were browsing. Start a new search; the previous results are still here.",
+                "The conflict explains that the previous results were kept and a new search is required")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.jobs == fixture.jobs && reopened.page?.nextCursor == nil && !reopened.canLoadMore,
+                "The invalidated token stays cleared after reopening saved results")
+            let callsAfterConflict = service.calls.count
+            await model.search(more: true)
+            try check(service.calls.count == callsAfterConflict, "More cannot send an expired cursor twice")
+            service.handle = { _, _ in self.page() }
+            await model.retrySubmittedSearch()
+            try check(service.calls.last?.1 == nil && service.calls.count == callsAfterConflict + 1 && !model.needsNewSearch,
+                "Retry starts the submitted search without the expired cursor")
+            scenarios += 1
+        }
+        for (words, more) in [("Temporary service failure", true), ("Conflict empty", false)] {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query = DiscoveryQuery(keywords: words)
+            service.handle = { _, _ in self.page(cursor: "still-valid-cursor") }
+            await model.search()
+            service.handle = { query, cursor in try await wire.search(query, cursor: cursor) }
+            await model.search(more: more)
+            try check(model.jobs == fixture.jobs && model.page?.nextCursor == "still-valid-cursor" && model.canLoadMore && !model.needsNewSearch,
+                "A 503 body or a first-page 409 cannot invalidate a prior pagination cursor")
+            try check(model.error == "The discovery service is unavailable. Your saved opportunities are still on this phone.",
+                "A first-page conflict or temporary failure does not claim the old cursor changed")
+            scenarios += 1
+        }
+        for more in [false, true] {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            service.handle = { _, _ in self.historyPage([1, 2]) }; await model.search()
+            service.handle = { _, _ in self.historyPage([2, 3], matched: 3, cursor: "prior-page") }; await model.search()
+            let earlierJobs = model.jobs, earlierHistory = model.searchHistory, earlierResult = model.searchNewResult
+            let earlierTime = model.page?.generatedAt, earlierSources = model.page?.sources.map(\.id)
+            let earlierBytes = try Data(contentsOf: file)
+            model.showNewOnly = true
+            service.handle = { _, _ in self.historyPage([], status: "unavailable") }; await model.search(more: more)
+            try check(model.jobs == earlierJobs && model.searchHistory == earlierHistory && model.searchNewResult == earlierResult && model.showNewOnly,
+                "An all-board outage keeps the earlier results and their New-only comparison")
+            try check(model.page?.generatedAt == earlierTime && model.page?.sources.map(\.id) == earlierSources && model.page?.status == "complete",
+                "An all-board outage cannot replace the provenance attached to retained results")
+            try check(model.restoredResults && !model.canLoadMore && model.canRetrySubmittedSearch,
+                "An outage labels earlier results and offers a fresh retry instead of paging")
+            let saved = try Data(contentsOf: file)
+            try check(saved == earlierBytes, "An all-board outage cannot replace the earlier saved result snapshot")
+            service.handle = { _, _ in self.historyPage([3, 4]) }; await model.retrySubmittedSearch()
+            try check(!model.restoredResults && model.searchNewResult?.newIds == [historyJob(4).id] && service.calls.last?.1 == nil,
+                "Recovery uses a fresh request and compares with the last persisted observation")
+            scenarios += 1
+        }
+    }
+    private func runHistoryChecks() async throws {
+        let query = DiscoveryQuery(keywords: "Designer", location: "Toronto")
+        let empty = DiscoverySearchHistory()
+        func evaluate(_ history: DiscoverySearchHistory, _ page: DiscoveryPage, jobs: [DiscoveryJob]? = nil,
+                      query value: DiscoveryQuery? = nil, previous: DiscoveryNewResult? = nil, now: Int64 = 100) -> (history: DiscoverySearchHistory, result: DiscoveryNewResult?, sources: [String]) {
+            DiscoveryHistoryPolicy.evaluate(history: history, query: value ?? query, page: page, jobs: jobs ?? page.jobs, now: now, previous: previous)
+        }
+        let first = evaluate(empty, historyPage([1, 2]))
+        do {
+            let page = historyPage([2, 3])
+            let compared = evaluate(first.history, page)
+            let result = compared.result!
+            try check(DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A genuine new marker has matching selected and compared board evidence")
+            var noComparison = result; noComparison.comparedSourceIds = []
+            try check(!DiscoveryHistoryPolicy.valid(noComparison, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A selected board alone cannot authorize a new marker without comparison evidence")
+            var missingObservation = compared.history
+            missingObservation.searches[0].boards[0].seenIds.removeAll { $0 == historyJob(3).id }
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: missingObservation),
+                "A new marker needs the retained observation in its board baseline")
+            var unready = compared.history; unready.searches[0].boards[0].ready = false
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: unready),
+                "An unready board cannot justify a new marker")
+            var noNewRoles = result; noNewRoles.newIds = []
+            try check(DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history),
+                "A completed comparison can legitimately contain zero new roles")
+            try check(!DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: unready),
+                "Zero new roles must not present a comparison for an unready board")
+            var missingBoard = compared.history; missingBoard.searches[0].boards = []
+            try check(!DiscoveryHistoryPolicy.valid(noNewRoles, query: query, sources: compared.sources, jobs: page.jobs, history: missingBoard),
+                "A missing board cannot provide comparison coverage, even with no new markers")
+            var foreign = compared.history
+            foreign.searches[0].boards.append(.init(sourceId: "lever:global:other-history", seenIds: [], ready: true))
+            try check(!DiscoveryHistoryPolicy.valid(result, query: query, sources: compared.sources, jobs: page.jobs, history: foreign),
+                "Unrelated boards cannot be hidden behind an otherwise matching query key")
+            var reset = result; reset.baselineReset = true
+            try check(DiscoveryHistoryPolicy.valid(reset, query: query, sources: compared.sources, jobs: page.jobs, history: compared.history)
+                && DiscoveryHistoryPolicy.restoredResult(reset)?.newIds.isEmpty == true
+                && DiscoveryHistoryPolicy.restoredResult(reset)?.comparedSourceIds.isEmpty == true,
+                "Existing readable legacy resets remain readable but their markers never become visible")
+            scenarios += 1
+        }
+        do {
+            let alias = DiscoveryQuery(sources: ["https://jobs.lever.co/synthetic-history/", "https://boards.greenhouse.io/synthetic-second"], keywords: "  DÉSİGNER ", location: " Montréal ")
+            let canonical = DiscoveryQuery(sources: ["greenhouse:synthetic-second", historySource], keywords: "designer", location: "montreal")
+            try check(DiscoveryHistoryPolicy.key(for: alias, sourceIDs: []) == DiscoveryHistoryPolicy.key(for: canonical, sourceIDs: []),
+                      "History keys share canonical aliases/order and the server NFKD/mark/case fold")
+            try check(DiscoveryHistoryPolicy.key(for: query, sourceIDs: [historySource]) != DiscoveryHistoryPolicy.key(for: query, sourceIDs: ["lever:global:other-history"]),
+                      "Default board keys use the actual returned sources, not a catalog assumption")
+            for changed in [DiscoveryQuery(keywords: "Nurse", location: "Toronto"), DiscoveryQuery(keywords: "Designer", location: "Amman"), DiscoveryQuery(keywords: "Designer", location: "Toronto", remoteOnly: true)] {
+                try check(DiscoveryHistoryPolicy.key(for: query, sourceIDs: [historySource]) != DiscoveryHistoryPolicy.key(for: changed, sourceIDs: [historySource]), "Changed filters isolate the baseline")
+            }
+            scenarios += 1
+        }
+        do {
+            try check(first.result?.newIds.isEmpty == true && first.history.searches[0].boards[0].ready && first.sources == [historySource], "The first complete default-source observation is silent")
+            let next = evaluate(first.history, historyPage([2, 3]))
+            try check(next.result?.newIds == [historyJob(3).id], "A/B to B/C marks only C")
+            let reordered = evaluate(next.history, historyPage([3, 2]))
+            let returned = evaluate(reordered.history, historyPage([1, 2]))
+            try check(reordered.result?.newIds.isEmpty == true && returned.result?.newIds.isEmpty == true, "Ordering or disappearance/reappearance never replaces the seen-ID union")
+            try check(first.history.searches[0].boards[0].seenIds == [historyJob(1).id, historyJob(2).id], "Pure evaluation leaves the input history unchanged")
+            scenarios += 1
+        }
+        do {
+            let partial = evaluate(empty, historyPage([1], matched: 2, cursor: "more"))
+            try check(!partial.history.searches[0].boards[0].ready && partial.result?.pendingSourceIds == [historySource], "An incomplete first page does not establish a baseline")
+            let complete = evaluate(partial.history, historyPage([2]))
+            let returned = evaluate(complete.history, historyPage([1, 3]))
+            try check(complete.result?.newIds.isEmpty == true && returned.result?.newIds == [historyJob(3).id], "IDs observed before readiness remain remembered even if absent from the first complete search")
+            let more = evaluate(partial.history, historyPage([1, 2]), previous: partial.result)
+            try check(more.result?.newIds.isEmpty == true && more.result?.baselinedSourceIds == [historySource], "Completing the first paged baseline stays silent")
+            let changed = evaluate(first.history, historyPage([2, 3], matched: 3, cursor: "more"))
+            let later = evaluate(changed.history, historyPage([2, 3, 4]), previous: changed.result)
+            try check(later.result?.newIds == [historyJob(3).id, historyJob(4).id], "More retains earlier new IDs and compares additional accumulated jobs")
+            scenarios += 1
+        }
+        do {
+            for failed in [historyPage([2, 3], status: "stale"), historyPage([], status: "unavailable"), historyPage([2, 3], error: .init(code: "synthetic_failure", message: "Synthetic outage"))] {
+                let value = evaluate(first.history, failed)
+                try check(value.history.searches[0].boards == first.history.searches[0].boards && value.result?.newIds.isEmpty == true,
+                          "A stale, unavailable or errored board cannot change its previous successful history")
+                try check(evaluate(value.history, historyPage([2, 3])).result?.newIds == [historyJob(3).id], "Outage recovery compares with the retained baseline, not an empty board")
+            }
+            let limited = evaluate(empty, historyPage([1, 2], limited: true))
+            let mature = evaluate(first.history, historyPage([2, 3], limited: true))
+            try check(!limited.history.searches[0].boards[0].ready && mature.result?.newIds == [historyJob(3).id] && mature.result?.coverageLimited == true,
+                      "Limited coverage remains pending initially, while mature observed IDs carry an explicit partial-coverage result")
+            scenarios += 1
+        }
+        do {
+            var history = empty
+            for number in 0..<8 { history = evaluate(history, historyPage([1]), query: DiscoveryQuery(keywords: "role-\(number)"), now: Int64(number)).history }
+            let ninth = evaluate(history, historyPage([2]), query: DiscoveryQuery(keywords: "role-8"), now: 8)
+            try check(ninth.history.searches.count == 8 && ninth.result?.baselineReset == true && ninth.result?.newIds.isEmpty == true, "Query overflow evicts a whole old baseline and reports a silent reset")
+            var full = first.history
+            full.searches[0].boards[0].seenIds = (1...1_000).map { historyJob($0).id }
+            let reset = evaluate(full, historyPage([1_001]))
+            try check(reset.history.searches[0].boards[0].seenIds == [historyJob(1_001).id] && reset.result?.baselineReset == true && reset.result?.newIds.isEmpty == true && reset.result?.comparedSourceIds.isEmpty == true,
+                      "Per-board overflow resets the whole baseline without trimming selected older IDs")
+            let later = evaluate(reset.history, historyPage([1_001, 1_002]), previous: reset.result)
+            try check(later.result?.baselineReset == true && later.result?.newIds.isEmpty == true && later.result?.comparedSourceIds.isEmpty == true, "A reset stays silent for the entire More cycle")
+            var duplicated = first.history; duplicated.searches.append(duplicated.searches[0])
+            try check(!DiscoveryHistoryPolicy.valid(duplicated) && evaluate(duplicated, historyPage([2, 3])).result?.baselineReset == true,
+                      "Invalid imported history cannot become a selectively repaired baseline")
+            let mismatched = DiscoverySearchHistory(searches: [.init(key: first.result!.key, lastUsedAt: 1, boards: (0..<4).map {
+                .init(sourceId: "lever:global:unrelated-\($0)", seenIds: [], ready: true)
+            })])
+            let repaired = evaluate(mismatched, historyPage([1, 2]))
+            try check(repaired.result?.baselineReset == true && repaired.result?.newIds.isEmpty == true
+                && repaired.history.searches[0].boards.map(\.sourceId) == [historySource],
+                      "An opaque imported key with unrelated boards resets the entire query instead of adding a fifth board")
+            scenarios += 1
+        }
+        do {
+            let sources = (0..<4).map { "lever:global:synthetic-history-\($0)" }
+            let allJobs = sources.flatMap { source in (1...500).map { historyJob($0, source: source) } }
+            let response = DiscoveryPage(ok: true, version: 1, generatedAt: fixture.generatedAt, status: "complete", jobs: Array(allJobs.prefix(50)),
+                sources: sources.map { historyStatus(500, source: $0) }, nextCursor: nil, totalMatches: 2_000, limited: false, notice: "Synthetic accumulated native pages")
+            let key = DiscoveryHistoryPolicy.key(for: query, sourceIDs: sources)!
+            let old = DiscoverySearchHistory(searches: [.init(key: key, lastUsedAt: 1, boards: sources.map { .init(sourceId: $0, seenIds: [], ready: true) })])
+            let complete = evaluate(old, response, jobs: allJobs)
+            try check(DiscoveryPolicy.maximumStoredJobs == 2_000 && complete.result?.newIds.count == 2_000 && DiscoveryHistoryPolicy.valid(complete.history),
+                      "Native accumulated results retain their existing 2000-job cap while each board/history stays bounded")
+            try check(DiscoveryHistoryPolicy.valid(complete.result!, query: query, sources: sources.sorted(), jobs: allJobs, history: complete.history), "The bounded native result validates with all accumulated identities")
+            var global = complete.history
+            var other = global.searches[0]; other.key = DiscoveryHistoryPolicy.key(for: DiscoveryQuery(keywords: "Other role"), sourceIDs: sources)!; other.lastUsedAt = 0
+            global.searches.append(other)
+            let changedJob = historyJob(501, source: sources[0])
+            let changedPage = DiscoveryPage(ok: true, version: 1, generatedAt: fixture.generatedAt, status: "complete", jobs: [changedJob],
+                sources: sources.map { historyStatus($0 == sources[0] ? 1 : 0, source: $0) }, nextCursor: nil, totalMatches: 1, limited: false, notice: "Synthetic history limit")
+            let bounded = evaluate(global, changedPage)
+            try check(bounded.history.searches.count == 1 && bounded.history.searches[0].key == key && bounded.result?.baselineReset == true
+                && bounded.result?.newIds.isEmpty == true && bounded.result?.comparedSourceIds.isEmpty == true && bounded.history.searches[0].boards.reduce(0, { $0 + $1.seenIds.count }) == 2_001,
+                      "The 4000-ID limit covers all queries and evicts an entire older query without trimming the current board")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2])); let (model, _) = store(service)
+            model.query = query; await model.search()
+            service.handle = { _, _ in self.historyPage([2, 3], matched: 3, cursor: "more") }; await model.search()
+            model.showNewOnly = true; service.handle = { _, _ in self.historyPage([4], matched: 3) }; await model.search(more: true)
+            try check(model.searchNewResult?.newIds == [historyJob(3).id, historyJob(4).id] && model.showNewOnly && model.visibleJobs.count == 2 && model.jobs.count == 3,
+                      "The actual native More path retains frozen earlier markers and the local New-only choice")
+            scenarios += 1
+        }
+        do {
+            // Establish a mature baseline, then load the same search with the
+            // entire board history at capacity. More adds one genuinely new ID.
+            let service = DiscoveryStub(historyPage([1, 2]))
+            let (seed, file) = store(service)
+            seed.query = query; await seed.search()
+            let backup = try seed.exportSnapshot()
+            var full = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var history = full["searchHistory"] as! [String: Any]
+            var searches = history["searches"] as! [[String: Any]]
+            var boards = searches[0]["boards"] as! [[String: Any]]
+            boards[0]["seenIds"] = (1...1_000).map { historyJob($0).id }
+            searches[0]["boards"] = boards; history["searches"] = searches; full["searchHistory"] = history
+            let fullBytes = try JSONSerialization.data(withJSONObject: full)
+            try seed.importSnapshot(fullBytes)
+            service.handle = { _, _ in self.historyPage([1, 2], matched: 3, cursor: "more") }; await seed.search()
+            try check(seed.hasSearchComparison && seed.searchNewResult?.baselineReset == false, "A mature baseline permits the local comparison before the cap")
+            seed.showNewOnly = true
+            service.handle = { _, _ in self.historyPage([1_001], matched: 3) }; await seed.search(more: true)
+            try check(seed.searchNewResult?.baselineReset == true && seed.searchNewResult?.comparedSourceIds.isEmpty == true
+                && seed.newJobIDs.isEmpty && !seed.hasSearchComparison && !seed.showNewOnly && seed.visibleJobs.count == 3,
+                "A board-cap reset during More clears badges, comparison controls and New-only filtering")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.searchNewResult?.baselineReset == true && !reopened.hasSearchComparison && reopened.visibleJobs.count == 3,
+                "Restart preserves the reset notice without suppressing any of the accumulated jobs")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2]))
+            let (seed, file) = store(service)
+            seed.query = query; await seed.search()
+            service.handle = { _, _ in self.historyPage([2, 3]) }; await seed.search()
+            let backup = try seed.exportSnapshot()
+            var legacy = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var result = legacy["newResult"] as! [String: Any]
+            result["baselineReset"] = true; result["coverageLimited"] = false; legacy["newResult"] = result
+            let legacyBytes = try JSONSerialization.data(withJSONObject: legacy)
+            try CareerDiscoveryStore.validateBackup(legacyBytes)
+            try legacyBytes.write(to: file, options: .atomic)
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(!reopened.savedSearchRestoreBlocked && reopened.searchNewResult?.baselineReset == true
+                && reopened.searchNewResult?.coverageLimited == true && reopened.searchNewResult?.comparedSourceIds.isEmpty == true
+                && reopened.newJobIDs.isEmpty && !reopened.hasSearchComparison && !reopened.showNewOnly
+                && reopened.visibleJobs.map(\.id) == [historyJob(2).id, historyJob(3).id],
+                "Legacy reset snapshots are accepted but never display obsolete counts or badges")
+            let retainedBytes = try Data(contentsOf: file)
+            try check(retainedBytes == legacyBytes, "Reading legacy reset metadata does not rewrite original stored bytes")
+            let imported = store(service).0
+            try imported.importSnapshot(legacyBytes)
+            try check(imported.searchNewResult == reopened.searchNewResult && imported.visibleJobs == reopened.visibleJobs,
+                "Legacy import and restart agree on safe reset presentation")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2])); let (model, file) = store(service)
+            model.query = query; await model.search()
+            service.handle = { _, _ in self.historyPage([2, 3]) }; await model.search()
+            let retainedHistory = model.searchHistory, retainedResult = model.searchNewResult, retainedJobs = model.jobs, calls = service.calls.count
+            model.showNewOnly = true
+            try check(model.visibleJobs.map(\.id) == [historyJob(3).id] && model.jobs.count == 2 && service.calls.count == calls, "The native New-only toggle filters locally without dropping results or making a request")
+            model.query = DiscoveryQuery(sources: ["lever:global:other-history"], keywords: "Unsent new draft", location: "Amman")
+            service.handle = { _, _ in self.historyPage([], source: "lever:global:other-history", status: "unavailable") }; await model.search()
+            try check(model.jobs == retainedJobs && model.searchHistory == retainedHistory && model.searchNewResult == retainedResult && model.storageNotice == nil,
+                      "Failed coverage from another board keeps the successful default-source markers and history")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.jobs == retainedJobs && reopened.searchHistory == retainedHistory && reopened.searchNewResult == retainedResult && reopened.newJobCount == 1
+                && reopened.query == model.query && reopened.page?.sources.first?.id == historySource && !reopened.savedSearchRestoreBlocked,
+                      "Restart retains the earlier employer coverage alongside the newer unsent draft")
+            let backup = try reopened.exportSnapshot(), imported = store(service).0
+            try imported.importSnapshot(backup)
+            try check(imported.searchHistory == retainedHistory && imported.searchNewResult == retainedResult && imported.jobs == retainedJobs, "Workspace export/import retains exact historical markers and their successful source identity")
+            var priorEnvelope = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            let unavailable = historyPage([], source: "lever:global:other-history", status: "unavailable")
+            priorEnvelope["page"] = try JSONSerialization.jsonObject(with: JSONEncoder().encode(unavailable))
+            let olderSnapshot = store(service).0
+            try olderSnapshot.importSnapshot(JSONSerialization.data(withJSONObject: priorEnvelope))
+            try check(olderSnapshot.jobs == retainedJobs && olderSnapshot.searchHistory == retainedHistory && olderSnapshot.searchNewResult == retainedResult,
+                      "An older saved search with an unavailable coverage envelope still validates its earlier default-source result")
+            var legacy = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            for key in ["searchHistory", "newResult", "lastSearchSourceIds"] { legacy.removeValue(forKey: key) }
+            let old = store(service).0; try old.importSnapshot(JSONSerialization.data(withJSONObject: legacy))
+            try check(old.searchHistory.searches.isEmpty && old.searchNewResult == nil && old.jobs == retainedJobs, "An older snapshot without history opens unchanged and does not invent new markers")
+            var malformed = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var invalidResult = malformed["newResult"] as! [String: Any]; invalidResult["newIds"] = ["another-owner-or-unobserved-id"]; malformed["newResult"] = invalidResult
+            var rejected = false
+            do { try CareerDiscoveryStore.validateBackup(JSONSerialization.data(withJSONObject: malformed)) } catch { rejected = true }
+            try check(rejected, "Imported new markers must be a subset of retained successful jobs")
+            var unsupported = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            var unsupportedResult = unsupported["newResult"] as! [String: Any]
+            unsupportedResult["comparedSourceIds"] = []; unsupported["newResult"] = unsupportedResult
+            let unsupportedBytes = try JSONSerialization.data(withJSONObject: unsupported)
+            var unsupportedRejected = false
+            do { try CareerDiscoveryStore.validateBackup(unsupportedBytes) } catch { unsupportedRejected = true }
+            try check(unsupportedRejected, "Backup validation rejects a retained job marker without comparison evidence")
+            let beforeInvalidImport = try JSONSerialization.jsonObject(with: imported.exportSnapshot()) as! NSDictionary
+            var importRejected = false
+            do { try imported.importSnapshot(unsupportedBytes) } catch { importRejected = true }
+            let afterInvalidImport = try JSONSerialization.jsonObject(with: imported.exportSnapshot()) as! NSDictionary
+            try check(importRejected && beforeInvalidImport == afterInvalidImport,
+                "Rejected comparison evidence cannot overwrite a previously valid imported workspace")
+            model.attach(to: PhoneRecordScope(origin: "https://synthetic-history.example", workspaceID: "synthetic-b"))
+            try check(model.searchHistory.searches.isEmpty && model.searchNewResult == nil && !model.showNewOnly, "A different account scope cannot inherit another scope's baseline or filter")
+            service.handle = { _, _ in self.historyPage([2, 3]) }; await model.search()
+            try check(model.searchNewResult?.newIds.isEmpty == true, "The other scope establishes its own silent first baseline")
+            model.attach(to: PhoneRecordScope())
+            try check(model.searchHistory == retainedHistory && model.searchNewResult == retainedResult, "Returning to the original scope reopens its original observation history")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2])); let (model, _) = store(service)
+            model.query = query; await model.search()
+            let history = model.searchHistory, result = model.searchNewResult, gate = DiscoveryGate()
+            service.handle = { _, _ in try await gate.wait() }
+            let task = Task { await model.search() }; try await waitUntil { gate.started }
+            model.cancelSearch(); gate.finish(historyPage([2, 3])); await task.value
+            try check(model.searchHistory == history && model.searchNewResult == result && model.jobs.map(\.id) == [historyJob(1).id, historyJob(2).id],
+                      "A late cancelled callback cannot commit new history or markers")
+            let second = DiscoveryGate(); service.handle = { _, _ in try await second.wait() }
+            let pending = Task { await model.search() }; try await waitUntil { second.started }
+            model.attach(to: PhoneRecordScope(origin: "https://synthetic-history.example", workspaceID: "in-flight-other"))
+            second.finish(historyPage([2, 3])); await pending.value
+            try check(model.searchHistory.searches.isEmpty && model.searchNewResult == nil && model.jobs.isEmpty,
+                      "An old account's late response cannot write history after the requestID is retired by a scope switch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(historyPage([1, 2])); let (model, file) = store(service)
+            model.query = query; await model.search()
+            service.handle = { _, _ in self.historyPage([2, 3], matched: 3, cursor: "more") }; await model.search()
+            let history = model.searchHistory
+            try FileManager.default.removeItem(at: file); try FileManager.default.createDirectory(at: file, withIntermediateDirectories: false)
+            model.showNewOnly = true; service.handle = { _, _ in self.historyPage([4], matched: 3) }; await model.search(more: true)
+            try check(model.searchHistory == history && model.searchNewResult == nil && !model.showNewOnly && model.visibleJobs.count == 3 && model.storageNotice != nil,
+                      "A failed vault write keeps public jobs visible and cannot publish unsaved newness metadata")
+            scenarios += 1
+        }
+    }
     func run() async throws {
+        try await runHistoryChecks()
+        try await runPagingFailureChecks()
         do {
             let now = Date(timeIntervalSince1970: 1_795_262_400) // 21 Nov 2026, noon UTC
             for seconds in [0, 60, 3_601, 7_200, 86_400, 20_000_000_000] as [Int64] {
@@ -231,7 +637,7 @@ private final class DiscoverySuite {
             try check(model.jobs.count == 2 && Set(model.jobs.map(\.id)).count == 2, "Pagination deduplicates stable posting IDs")
             try check(service.calls[1].1 == "page-two" && service.calls[1].0 == service.calls[0].0, "Paging preserves the exact search and opaque cursor")
             service.handle = { _, _ in self.page(cursor: "old-cursor") }; await model.search()
-            service.handle = { _, _ in throw DiscoveryFailure(message: "Changed", code: "discovery_changed") }
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Changed", statusCode: 409) }
             await model.search(more: true); let count = service.calls.count; await model.search(more: true)
             try check(model.jobs == fixture.jobs && model.needsNewSearch && !model.canLoadMore && service.calls.count == count, "Changed cursor retains results and blocks repeated paging until explicit new search")
             scenarios += 1
@@ -286,7 +692,7 @@ private final class DiscoverySuite {
                 model.query = submitted
                 let deadline = Date().addingTimeInterval(cooldownPending ? 300 : -1)
                 let originalError = "Synthetic failed search A; previous results are kept."
-                service.handle = { _, _ in throw DiscoveryFailure(message: originalError, code: "discovery_changed", retryAfter: deadline) }
+                service.handle = { _, _ in throw DiscoveryFailure(message: originalError, statusCode: 409, retryAfter: deadline) }
                 await model.search()
                 let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "Unsubmitted query B", location: "Tokyo")
                 model.query = newerDraft
@@ -540,7 +946,7 @@ private final class DiscoverySuite {
             model.query.keywords = "submitted before wait"; await model.search()
             let submitted = model.query, preservedJobs = model.jobs
             let retryDeadline = Date().addingTimeInterval(300)
-            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic service wait", code: "rate_limited", retryAfter: retryDeadline) }
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic service wait", statusCode: 429, retryAfter: retryDeadline) }
             await model.retrySubmittedSearch()
             try check(service.calls.count == 2 && model.retryAfter == retryDeadline, "A submitted retry records the service-requested wait")
             model.query.keywords = "newer draft while waiting"

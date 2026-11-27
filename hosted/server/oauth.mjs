@@ -24,6 +24,26 @@ export const OAUTH_PROVIDERS = Object.freeze({
 const RETURN_PATHS = new Set(['/phone','/account','/connect']);
 const MAX_JSON_BYTES = 2048, PROVIDER_TIMEOUT = 6000, MAX_TOKEN_BYTES = 65536, MAX_JWKS_BYTES = 131072, MAX_USERINFO_BYTES = 16384;
 const MAX_PENDING = 1000, MAX_STARTS_PER_MINUTE = 60, MAX_CLIENT_STARTS = 10;
+// Only these fixed labels and a numeric upstream status may reach diagnostics.
+const CALLBACK_STAGES = new Set(['request_validation','state_claim','account_check','provider_response','token_exchange','jwks_fetch','jwks_validation','identity_verification','claims_validation','userinfo_exchange','userinfo_validation','account_recheck','identity_lookup','identity_commit']);
+const CALLBACK_CODES = new Set(['host_denied','auth_unavailable','invalid_callback','invalid_session','invalid_state','account_changed','provider_not_configured','provider_response_invalid','provider_unavailable','provider_keys_invalid','provider_identity_invalid','provider_email_required','provider_already_linked','connection_unavailable','invalid_request_time','provider_rejected','internal_error']);
+function callbackDiagnostic(sink) {
+  // A new reporter belongs to one callback, never the shared handler/key cache.
+  let stage = 'request_validation', code, upstreamStatus, reported = false;
+  return {
+    at(value) { stage = CALLBACK_STAGES.has(value) ? value : 'request_validation'; code = undefined; upstreamStatus = undefined; },
+    received(value) { if (Number.isInteger(value) && value >= 100 && value <= 599) upstreamStatus = value; },
+    remember(value) { code ??= CALLBACK_CODES.has(value) ? value : 'internal_error'; },
+    report(value) {
+      if (reported) return;
+      reported = true;
+      const entry = {stage,code:code ?? (CALLBACK_CODES.has(value) ? value : 'internal_error'),...(upstreamStatus === undefined ? {} : {upstreamStatus})};
+      // Logging cannot delay, reject or replace the auth result or its cleanup.
+      try { void Promise.resolve(sink(Object.freeze(entry))).catch(() => {}); } catch { /* Observability is best effort. */ }
+    },
+  };
+}
+const writeCallbackDiagnostic = entry => console.warn('career_oauth_callback_failure', JSON.stringify(entry));
 const iso = milliseconds => new Date(milliseconds).toISOString();
 const providerName = value => { if (!Object.hasOwn(OAUTH_PROVIDERS, value)) fail('invalid_provider','Choose Google or LinkedIn.',400); return value; };
 const safeReturn = (value, fallback) => RETURN_PATHS.has(value) ? value : fallback;
@@ -66,13 +86,14 @@ async function requestJSON(request) {
 }
 
 /** Injection is confined to isolated executable tests. Requests and env cannot enable a fixture. */
-export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
+export function createOAuthHandler({fetchImpl = fetch, clock = Date.now, diagnosticSink = writeCallbackDiagnostic} = {}) {
   const keyCache = new Map();
-  async function providerJSON(address, options, maxBytes) {
+  async function providerJSON(address, options, maxBytes, diagnostic) {
     const controller = new AbortController(); let reader;
     const timeout = setTimeout(() => { controller.abort(); reader?.cancel().catch(() => {}); }, PROVIDER_TIMEOUT);
     try {
       const response = await fetchImpl(address,{...options,redirect:'manual',signal:controller.signal});
+      diagnostic?.received(response.status);
       // Start cleanup without making a known rejection wait for upstream
       // cancellation; its promise can reject or remain pending after abort.
       if (response.status !== 200 || !/^application\/(?:json|jwk-set\+json)(?:\s*;|$)/i.test(response.headers.get('content-type') ?? '')) { void response.body?.cancel().catch(() => {}); fail('provider_response_invalid','The provider could not complete this connection. Start again.',502); }
@@ -85,26 +106,32 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       if (!data || typeof data !== 'object' || Array.isArray(data)) fail('provider_response_invalid','The provider returned an invalid response. Start again.',502);
       return data;
     } catch (error) {
-      if (error instanceof ApplicationError) throw error;
+      if (error instanceof ApplicationError) { diagnostic?.remember(error.code); throw error; }
+      diagnostic?.remember('provider_unavailable');
       fail('provider_unavailable','The provider could not be reached. Start again when it is available.',502);
     } finally { clearTimeout(timeout); reader?.releaseLock(); }
   }
-  async function keySet(provider, refresh = false) {
+  async function keySet(provider, refresh = false, diagnostic) {
     const current = keyCache.get(provider);
     if (current && current.expires > clock() && (!refresh || current.loaded > clock() - 30000)) return current.keys;
-    const data = await providerJSON(OAUTH_PROVIDERS[provider].jwks,{method:'GET',headers:{Accept:'application/json'}},MAX_JWKS_BYTES);
-    if (!Array.isArray(data.keys) || data.keys.length < 1 || data.keys.length > 20 || data.keys.some(key => !key || key.kty !== 'RSA' || typeof key.kid !== 'string' || key.kid.length > 250 || 'd' in key || key.alg && key.alg !== 'RS256' || key.use && key.use !== 'sig')) fail('provider_keys_invalid','The provider signing keys are unavailable. Start again later.',502);
+    diagnostic?.at('jwks_fetch');
+    const data = await providerJSON(OAUTH_PROVIDERS[provider].jwks,{method:'GET',headers:{Accept:'application/json'}},MAX_JWKS_BYTES,diagnostic);
+    diagnostic?.at('jwks_validation');
+    if (!Array.isArray(data.keys) || data.keys.length < 1 || data.keys.length > 20 || data.keys.some(key => !key || key.kty !== 'RSA' || typeof key.kid !== 'string' || key.kid.length > 250 || 'd' in key || key.alg && key.alg !== 'RS256' || key.use && key.use !== 'sig')) { diagnostic?.remember('provider_keys_invalid'); fail('provider_keys_invalid','The provider signing keys are unavailable. Start again later.',502); }
     const keys = createLocalJWKSet({keys:data.keys});
     keyCache.set(provider,{keys,loaded:clock(),expires:clock() + 300000});
     return keys;
   }
-  async function verifiedClaims(provider, idToken, config, transaction) {
+  async function verifiedClaims(provider, idToken, config, transaction, diagnostic) {
+    diagnostic?.at('identity_verification');
     if (typeof idToken !== 'string' || idToken.length > 16384) fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401);
     const options = {algorithms:['RS256'],issuer:OAUTH_PROVIDERS[provider].issuer,audience:config.clientId,requiredClaims:['iss','sub','aud','exp','iat','nonce'],maxTokenAge:'10 minutes',clockTolerance:30,currentDate:new Date(clock())};
     let payload;
+    const verify = async refresh => { const keys = await keySet(provider,refresh,diagnostic); diagnostic?.at('identity_verification'); return jwtVerify(idToken,keys,options); };
     try {
-      try { ({payload} = await jwtVerify(idToken,await keySet(provider),options)); }
-      catch (error) { if (error.code !== 'ERR_JWKS_NO_MATCHING_KEY') throw error; ({payload} = await jwtVerify(idToken,await keySet(provider,true),options)); }
+      try { ({payload} = await verify(false)); }
+      catch (error) { if (error.code !== 'ERR_JWKS_NO_MATCHING_KEY') throw error; ({payload} = await verify(true)); }
+      diagnostic?.at('claims_validation');
       // OIDC subjects are bounded ASCII identifiers. Reject before any UTF-8
       // hashing or D1 binding can coerce distinct malformed Unicode values.
       if (typeof payload.sub !== 'string' || !payload.sub || payload.sub.length > 255 || /[^\x21-\x7e]/.test(payload.sub)) throw new Error('subject');
@@ -113,20 +140,23 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       if (payload.iat * 1000 < transaction.created_at - 30000 || payload.iat * 1000 > clock() + 30000) throw new Error('issued-at');
       if (provider === 'google' && !verifiedEmail(payload)) throw new Error('verified-email');
       if (provider === 'google') encodeURIComponent(payload.email);
-    } catch { fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401); }
+    } catch { diagnostic?.remember('provider_identity_invalid'); fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401); }
     let displayName = typeof payload.name === 'string' && payload.name.length <= 500 && !/[\x00-\x1f\x7f]/.test(payload.name) ? payload.name.trim() : '';
     try { encodeURIComponent(displayName); } catch { displayName = ''; }
     // Basic LinkedIn linking does not request or collect email. Direct login
     // requires a fresh verified address before any account/session is written.
     return {subject:payload.sub,email:provider === 'google' || transaction.intent === 'login' ? verifiedEmail(payload) : null,displayName};
   }
-  async function linkedInLoginEmail(claims, token) {
+  async function linkedInLoginEmail(claims, token, diagnostic) {
+    diagnostic?.at('userinfo_validation');
     if (claims.email) { try { encodeURIComponent(claims.email); return claims; } catch { /* Require a usable verified email below. */ } }
     // The official OIDC contract makes email claims optional. One bounded
     // userinfo request can supply them; its subject must match the signed token.
     // This access token exists only for this request and is never persisted.
     if (typeof token.access_token !== 'string' || !token.access_token || token.access_token.length > 8192 || /[\x00-\x20\x7f]/.test(token.access_token)) fail('provider_email_required','LinkedIn did not provide a verified email address. Use ChatGPT or Google to sign in, then connect your LinkedIn profile from Account.',409);
-    const info = await providerJSON(OAUTH_PROVIDERS.linkedin.userinfo,{method:'GET',headers:{Accept:'application/json',Authorization:'Bearer '+token.access_token}},MAX_USERINFO_BYTES);
+    diagnostic?.at('userinfo_exchange');
+    const info = await providerJSON(OAUTH_PROVIDERS.linkedin.userinfo,{method:'GET',headers:{Accept:'application/json',Authorization:'Bearer '+token.access_token}},MAX_USERINFO_BYTES,diagnostic);
+    diagnostic?.at('userinfo_validation');
     if (info.sub !== claims.subject) fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401);
     const email = verifiedEmail(info);
     if (!email) fail('provider_email_required','LinkedIn did not provide a verified email address. Use ChatGPT or Google to sign in, then connect your LinkedIn profile from Account.',409);
@@ -184,6 +214,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
     const url = new URL(request.url), callback = url.pathname.match(/^\/auth\/(google|linkedin)\/callback$/), loginStart = url.pathname.match(/^\/auth\/(google|linkedin)\/start$/);
     if (!/^\/api\/auth(?:\/|$)/.test(url.pathname) && !loginStart && !callback) return null;
     let transaction = null, claimedState = null, callbackProvider = callback?.[1];
+    const diagnostic = callback && request.method === 'GET' ? callbackDiagnostic(diagnosticSink) : null;
     try {
       if (url.origin !== AUTH_ORIGIN || request.headers.get('host') && request.headers.get('host') !== url.host) fail('host_denied','Use the configured Career Finder HTTPS address.',403);
       // Provider callbacks are cross-site top-level navigations; every other API
@@ -314,30 +345,40 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       if (callback && request.method === 'GET') {
         const provider = callbackProvider;
         if (url.search.length > 8192 || ['state','code','error'].some(name => url.searchParams.getAll(name).length > 1)) fail('invalid_callback','This sign-in response is invalid. Start again.',400);
+        diagnostic.at('state_claim');
         const state = url.searchParams.get('state'), browser = cookieValue(request,OAUTH_BROWSER_COOKIE);
         if (!state || !/^[a-f0-9]{64}$/.test(state) || !browser || !/^[a-f0-9]{64}$/.test(browser)) fail('invalid_state','This sign-in request is missing, expired or belongs to another browser. Start again.',401);
         const claim = opaqueToken(); claimedState = sha256(state);
         transaction = await stmt('UPDATE oauth_transactions SET claim=? WHERE state_hash=? AND browser_hash=? AND provider=? AND expires_at>? AND claim IS NULL RETURNING *',claim,claimedState,sha256(browser),provider,clock()).first();
         if (!transaction) fail('invalid_state','This sign-in request was already used or expired. Start again.',401);
+        diagnostic.at('account_check');
         let identity = await resolveBrowserIdentity(request,env,{now:clock()});
         if (transaction.intent === 'link') {
           if (!identity || identity.id !== transaction.owner_id) fail('account_changed','The signed-in account changed. Start the connection again from Account.',409);
           if (!await first('SELECT 1 AS present FROM auth_accounts WHERE owner_id=? AND generation=?',identity.id,transaction.account_generation)) fail('account_changed','This account connection was removed. Start again.',409);
           if (!await first('SELECT 1 AS present FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?)',transaction.lifecycle_key,transaction.lifecycle_generation,transaction.created_at)) fail('account_changed','This account was deleted while the connection was open. Start again.',409);
         } else if (identity) fail('account_changed','Another account signed in while the provider was open. Return to Account before continuing.',409);
-        if (url.searchParams.has('error')) return feedback(transaction.return_to,provider,['access_denied','user_cancelled_login','user_cancelled_authorize'].includes(url.searchParams.get('error')) ? 'cancelled' : 'failed',[clearOAuthBrowserCookie()]);
+        diagnostic.at('provider_response');
+        if (url.searchParams.has('error')) {
+          const cancelled = ['access_denied','user_cancelled_login','user_cancelled_authorize'].includes(url.searchParams.get('error'));
+          if (!cancelled) diagnostic.report('provider_rejected');
+          return feedback(transaction.return_to,provider,cancelled ? 'cancelled' : 'failed',[clearOAuthBrowserCookie()]);
+        }
         const code = url.searchParams.get('code');
         if (!code || code.length > 4096 || /[\x00-\x20\x7f]/.test(code)) fail('invalid_callback','The provider did not return an authorization code. Start again.',400);
         const config = configured(env,provider); if (!config) fail('provider_not_configured','This provider connection is not available yet.',503);
         const form = new URLSearchParams({grant_type:'authorization_code',client_id:config.clientId,client_secret:config.clientSecret,redirect_uri:`${AUTH_ORIGIN}/auth/${provider}/callback`,code});
         if (provider === 'google') form.set('code_verifier',transaction.verifier);
-        const token = await providerJSON(OAUTH_PROVIDERS[provider].token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded',Accept:'application/json'},body:form.toString()},MAX_TOKEN_BYTES);
-        let claims = await verifiedClaims(provider,token.id_token,config,transaction);
-        if (provider === 'linkedin' && transaction.intent === 'login') claims = await linkedInLoginEmail(claims,token);
+        diagnostic.at('token_exchange');
+        const token = await providerJSON(OAUTH_PROVIDERS[provider].token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded',Accept:'application/json'},body:form.toString()},MAX_TOKEN_BYTES,diagnostic);
+        let claims = await verifiedClaims(provider,token.id_token,config,transaction,diagnostic);
+        if (provider === 'linkedin' && transaction.intent === 'login') claims = await linkedInLoginEmail(claims,token,diagnostic);
         // Recheck a local session after provider I/O; sign-out/deletion in another
         // request must not leave authority alive for this delayed callback.
+        diagnostic.at('account_recheck');
         identity = await resolveBrowserIdentity(request,env,{now:clock()});
         if (transaction.intent === 'link' ? !identity || identity.id !== transaction.owner_id : identity !== null) fail('account_changed','The signed-in account changed. Start again.',409);
+        diagnostic.at('identity_lookup');
         await stmt("INSERT OR IGNORE INTO meta(key,value) VALUES('auth_fence_salt',?)",opaqueToken()).run();
         const salt = (await first("SELECT value FROM meta WHERE key='auth_fence_salt'")).value;
         const subjectHash = providerSubjectHash(provider,claims.subject,salt);
@@ -346,6 +387,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
         const ownerId = transaction.intent === 'link' ? identity.id : existing?.owner_id ?? 'career-' + randomUUID();
         const generation = transaction.intent === 'link' ? transaction.account_generation : existing?.generation ?? randomUUID();
         const lifecycle = transaction.intent === 'link' ? {key:transaction.lifecycle_key,generation:transaction.lifecycle_generation} : await captureOwnerLifecycle(env,ownerId,{startedAt:transaction.created_at,now:clock()});
+        diagnostic.at('identity_commit');
         const bound = await stmt(`UPDATE oauth_transactions SET owner_id=?,account_generation=?,lifecycle_key=?,lifecycle_generation=? WHERE state_hash=? AND claim=? AND expires_at>?
           AND NOT EXISTS(SELECT 1 FROM auth_deletion_fences WHERE subject_hash=? AND deleted_at>=oauth_transactions.created_at AND expires_at>?)
           AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)
@@ -375,7 +417,11 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       }
       return json(404,{ok:false,error:{code:'not_found',message:'This account sign-in route does not exist.'}});
     } catch (error) {
-      if (callback && request.method === 'GET') return feedback(transaction?.return_to ?? '/connect',callbackProvider,callbackProvider === 'linkedin' && error instanceof ApplicationError && error.code === 'provider_email_required' ? 'email_required' : 'failed',transaction ? [clearOAuthBrowserCookie()] : []);
+      if (callback && request.method === 'GET') {
+        diagnostic.report(error instanceof ApplicationError ? error.code : 'internal_error');
+        const result = error instanceof ApplicationError && error.code === 'provider_already_linked' && transaction?.intent === 'link' ? 'already_linked' : callbackProvider === 'linkedin' && error instanceof ApplicationError && error.code === 'provider_email_required' ? 'email_required' : 'failed';
+        return feedback(transaction?.return_to ?? '/connect',callbackProvider,result,transaction ? [clearOAuthBrowserCookie()] : []);
+      }
       if (error instanceof ApplicationError) return json(error.status,{ok:false,error:{code:error.code,message:error.message}},error.status === 429 ? {'Retry-After':'60'} : {});
       // Never log or expose provider responses, authorization codes or secrets.
       return json(503,{ok:false,error:{code:'auth_unavailable',message:'Account sign-in is temporarily unavailable. Try again.'}});

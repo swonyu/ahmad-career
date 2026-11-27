@@ -1,6 +1,13 @@
 import {retryAfterDelay} from './retry-after.mjs';
 import {fail,object,text,publicURL,canonical,sha256,applicantName} from './validation.mjs';
 const supported = new Set(['name','email','resume','phone','urls','comments','consentStore','consentMarketing']);
+function postingText(value) {
+  // Unicode mode preserves valid pairs while detecting unpaired surrogate code units.
+  if (/[\uD800-\uDFFF]/u.test(value)) fail('posting_unavailable','The employer posting returned an unreadable response.',503);
+  // Keep valid surrogate pairs intact at the existing UTF-16 length boundary.
+  return value.slice(0,500).replace(/[\uD800-\uDBFF]$/, '');
+}
+
 export function loadConfiguration(env) {
   if (!env.CAREER_CONNECTORS_JSON) return {version:1,connectors:[]};
   if (env.CAREER_CONNECTORS_JSON.length > 1024*1024) fail('invalid_configuration','Connector configuration exceeds the supported size.',503);
@@ -57,7 +64,7 @@ export function makeAdapter(env,{fetchImpl=fetch}={}) {
     if(response.status!==200)fail('posting_unavailable','The employer posting is temporarily unavailable.',503);
     let p;try{p=JSON.parse(body)}catch{fail('posting_unavailable','The employer posting returned an unreadable response.',503)}
     if(!p||p.id!==target.postingId||typeof p.text!=='string'||!p.text.trim())fail('posting_mismatch','The returned posting does not match the selected opportunity.',409);
-    return {...target,title:p.text.slice(0,500),company:target.site,location:typeof p.categories?.location==='string'?p.categories.location.slice(0,500):'',country:typeof p.country==='string'&&/^[A-Z]{2}$/.test(p.country)?p.country:'',workMode:['on-site','hybrid','remote'].includes(p.workplaceType)?p.workplaceType:'',metadataHash:sha256(canonical({id:p.id,text:p.text,categories:p.categories??null,country:p.country??null,workplaceType:p.workplaceType??null,descriptionPlain:p.descriptionPlain??null,additionalPlain:p.additionalPlain??null,lists:p.lists??null}))};
+    return {...target,title:postingText(p.text),company:target.site,location:typeof p.categories?.location==='string'?postingText(p.categories.location):'',country:typeof p.country==='string'&&/^[A-Z]{2}$/.test(p.country)?p.country:'',workMode:['on-site','hybrid','remote'].includes(p.workplaceType)?p.workplaceType:'',metadataHash:sha256(canonical({id:p.id,text:p.text,categories:p.categories??null,country:p.country??null,workplaceType:p.workplaceType??null,descriptionPlain:p.descriptionPlain??null,additionalPlain:p.additionalPlain??null,lists:p.lists??null}))};
   }
   async function submit(target,snapshot,connector,pdfBytes,{timeoutMs=8000}={}) {
     const p=snapshot.profile,a=snapshot.answers,form=new FormData();
@@ -70,7 +77,8 @@ export function makeAdapter(env,{fetchImpl=fetch}={}) {
     let response,body;
     try{response=await fetchImpl(url,{method:'POST',body:form,headers:{Accept:'application/json'},redirect:'manual',signal:AbortSignal.timeout(Math.max(1,Math.min(8000,timeoutMs)))});body=await boundedText(response,128*1024)}catch{return {state:'uncertain',error:{code:'unconfirmed_transport',message:'The request began without a reliable provider result. Reconcile this attempt before applying again.'}}}
     const responseSHA256=sha256(body);let data;try{data=JSON.parse(body)}catch{data=null}
-    if(response.status===200&&data?.ok===true&&typeof data.applicationId==='string'&&data.applicationId.trim()&&data.applicationId.length<=200&&!/[\x00-\x1f\x7f]/.test(data.applicationId))return {state:'confirmed',applicationId:data.applicationId.trim(),responseSHA256};
+    // A malformed receipt ID cannot confirm an application; keep the existing uncertain outcome and response hash.
+    if(response.status===200&&data?.ok===true&&typeof data.applicationId==='string'&&data.applicationId.trim()&&data.applicationId.length<=200&&!/[\x00-\x1f\x7f\uD800-\uDFFF]/u.test(data.applicationId))return {state:'confirmed',applicationId:data.applicationId.trim(),responseSHA256};
     if(response.status===429){const delay=retryAfterDelay(response.headers.get('retry-after'));return {state:'rate_limited',retryDelay:delay,responseSHA256,error:{code:delay===null?'provider_cooldown_unknown':'provider_rate_limited',message:delay===null?'The provider rejected this request for rate limiting, but its waiting period could not be read safely. Reconcile with the employer before any new attempt.':'The provider rejected this request for rate limiting. Review and approve again after the complete cooldown.'}}}
     if([400,401,403,404,422].includes(response.status)&&data?.ok===false)return {state:'rejected',responseSHA256,error:{code:'provider_rejected',message:'The provider explicitly rejected this application. Review the employer form or integration before a corrected attempt.'}};
     return {state:'uncertain',responseSHA256,error:{code:'unconfirmed_response',message:'The provider did not return a documented application receipt. Reconcile this attempt before applying again.'}};

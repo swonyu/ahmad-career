@@ -19,6 +19,7 @@ export default function OAuthFeedback() {
     const controller = new AbortController(), label = provider === "google" ? "Google" : "LinkedIn";
     void (async () => {
       await Promise.resolve(); if (controller.signal.aborted) return;
+      if (result === "already_linked") { setFeedback({ tone: "alert", text: `This ${label} account is already connected to another Career Finder account. To open that account, choose Sign out on Account, then sign in with ${label}. Any saved data stays with its original account.` }); return; }
       if (result === "email_required") { setFeedback({ tone: "alert", text: "LinkedIn did not provide a verified email address. Sign in with ChatGPT or Google, then connect your LinkedIn profile from Account. No new account or session was created." }); return; }
       if (result === "cancelled" || result === "failed") { setFeedback({ tone: result === "cancelled" ? "status" : "alert", text: result === "cancelled" ? `${label} connection was cancelled. You can try again when you are ready.` : `${label} sign-in or connection could not be completed. Check Account before trying again.` }); return; }
       try {

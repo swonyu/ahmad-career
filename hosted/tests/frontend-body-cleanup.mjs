@@ -3,30 +3,57 @@ import test from 'node:test';
 import { setImmediate as nextTurn } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { webcrypto } from 'node:crypto';
 
 // Bundle the production readers together so the phone reader's extensionless
 // import uses the same APIError class. No replacement reader or live service.
 const bundle = await build({
   stdin: {
-    contents: 'export { APIError, readAPI, requestAPI } from "./app/components/api.ts"; export { phoneAPI } from "./app/phone/api.ts";',
+    contents: 'export { APIError, readAPI, requestAPI } from "./app/components/api.ts"; export { phoneAPI } from "./app/phone/api.ts"; export { PhoneReadError } from "./app/phone/read-transport.ts"; export { createReadOutcomeJournal } from "./app/phone/read-outcomes.ts"; export { createPhoneVault } from "./app/phone/vault.ts"; export { blankProfile } from "./app/phone/model.ts";',
     resolveDir: fileURLToPath(new URL('..', import.meta.url)),
     sourcefile: 'frontend-body-cleanup.ts',
   },
   bundle: true, platform: 'node', format: 'esm', write: false,
 });
-const { APIError, readAPI, requestAPI, phoneAPI } = await import(
+const { APIError, readAPI, requestAPI, phoneAPI, PhoneReadError, createReadOutcomeJournal, createPhoneVault, blankProfile } = await import(
   'data:text/javascript;base64,' + Buffer.from(bundle.outputFiles[0].text + '\n//# sourceURL=career-frontend-production.mjs').toString('base64')
 );
 
+const accountId = 'synthetic-cleanup-owner', workspaceId = '00000000-0000-4000-8000-000000000001';
+function mutationJournal() {
+  const rows = new Map();
+  const port = {
+    async read(scope) { return rows.has(scope) ? { exists: true, value: structuredClone(rows.get(scope)) } : { exists: false }; },
+    async compareAndSet(scope, expectedId, value) {
+      const current = rows.get(scope);
+      if (expectedId === null ? rows.has(scope) : current?.envelopeId !== expectedId) return false;
+      rows.set(scope, structuredClone(value)); return true;
+    },
+    async remove(scope, value) { rows.set(scope, structuredClone(value)); },
+    async list(prefix) { return [...rows].filter(([scope, value]) => scope.startsWith(prefix) && !value.reset).map(([scope, value]) => ({ scope, updatedAt: value.updatedAt })); },
+  };
+  return createReadOutcomeJournal(createPhoneVault({ port, crypto: webcrypto }));
+}
+
 const clients = [
   { name: 'account', limit: 256 * 1024, run: options => requestAPI('/api/account/pairing', { method: 'POST', body: {}, ...options }) },
-  { name: 'phone', limit: 12 * 1024 * 1024, run: options => phoneAPI('/api/phone/profile', { method: 'PUT', body: {}, ...options }) },
+  { name: 'phone', limit: 12 * 1024 * 1024, run: options => phoneAPI('/api/phone/profile', { method: 'PUT', body: { expectedRevision: 0 }, expectedAccountId: accountId, expectedWorkspaceId: workspaceId, outcomes: mutationJournal(), ...options }) },
 ];
 
 function installFetch(t, implementation) {
   const requests = [];
+  let admitted, admissionTimer;
+  requests.admitted = new Promise((resolve, reject) => {
+    admitted = () => { clearTimeout(admissionTimer); resolve(); };
+    admissionTimer = setTimeout(() => reject(new Error('Expected synthetic fetch was not admitted within five seconds')), 5000);
+  });
+  // The original promise still rejects for callers awaiting admission. Other
+  // assertions may fail first, so also prevent a detached rejection on cleanup.
+  void requests.admitted.catch(() => {});
+  t.after(() => clearTimeout(admissionTimer));
   t.mock.method(globalThis, 'fetch', async (path, options) => {
     requests.push({ path, options });
+    admitted();
     return implementation(path, options);
   });
   return requests;
@@ -69,6 +96,7 @@ for (const client of clients) for (const mode of ['pending', 'rejected']) {
     let outcome;
     const work = client.run().then(value => { outcome = { value }; }, error => { outcome = { error }; });
     try {
+      await requests.admitted;
       await nextTurn();
       assert.equal(fixture.cancellations(), 1, 'An unread oversized body must be cancelled once');
       assert.ok(outcome, 'The invalid-response result must not wait for cancellation to finish');
@@ -114,11 +142,12 @@ for (const mode of ['pending', 'rejected']) {
 
 for (const client of clients) {
   test(`${client.name} drains finite success and error responses and permits a later explicit request`, async t => {
+    const success = extra => ({ ok: true, ...(client.name === 'phone' ? { profile: { ...blankProfile(), revision: 1 } } : {}), ...extra });
     const cases = [
-      { text: '{"ok":true,"label":"مرحبا"}', status: 200, expected: { ok: true, label: 'مرحبا' } },
+      { text: JSON.stringify(success({ label: 'مرحبا' })), status: 200, expected: success({ label: 'مرحبا' }) },
       { text: '{"ok":false,"error":{"code":"workspace_changed","message":"Refresh the current workspace."}}', status: 409, code: 'workspace_changed' },
       { text: '{"private synthetic invalid JSON"', status: 200, code: 'invalid_response' },
-      { text: '{"ok":true,"recovered":true}', status: 200, expected: { ok: true, recovered: true } },
+      { text: JSON.stringify(success({ recovered: true })), status: 200, expected: success({ recovered: true }) },
     ];
     const fixtures = cases.map(item => {
       const bytes = new TextEncoder().encode(item.text);
@@ -175,10 +204,13 @@ for (const client of clients) {
       const work = client.run({ signal: caller.signal, ...(failure === 'timeout' ? { timeoutMs: 20 } : {}) });
       // Attach rejection handling before triggering a stream failure.
       const result = assert.rejects(work, error => failure === 'caller abort'
-        ? error.name === 'AbortError'
+        ? client.name === 'phone'
+          ? error instanceof PhoneReadError && error.code === 'read_cancelled' && error.intent?.kind === 'profile' && error.operation === null
+          : error.name === 'AbortError'
         : error instanceof APIError && error.code === (failure === 'timeout' ? 'request_timeout' : 'network_unavailable') &&
           !error.message.includes('private synthetic'));
       if (failure !== 'timeout') {
+        await requests.admitted;
         await nextTurn();
         if (failure === 'caller abort') caller.abort();
         else bodyController.error(new Error('private synthetic transport detail'));

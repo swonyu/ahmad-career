@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import test,{after} from 'node:test';
-import {mkdtemp,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {runInNewContext} from 'node:vm';
 import {build} from 'esbuild';
+import ts from 'typescript';
 
 const directory=await mkdtemp(join(tmpdir(),'career-phone-batch-stop-'));
 after(()=>rm(directory,{recursive:true,force:true}));
@@ -23,6 +25,50 @@ function fixture(){
   return{job,plan,current,batch,state,calls,response,controls};
 }
 function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no});return{promise,resolve,reject}}
+
+test('explicit review Stop survives an approval made after the page loaded',async()=>{
+  const source=await readFile(new URL('../app/phone/PhoneApp.tsx',import.meta.url),'utf8');
+  const tree=ts.createSourceFile('PhoneApp.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+  function findAction(node){
+    if(ts.isVariableDeclaration(node)&&ts.isIdentifier(node.name)&&node.name.text==='stopPlan')return node.initializer;
+    return ts.forEachChild(node,findAction);
+  }
+  const action=findAction(tree);
+  assert(action,'Expected the production Stop action');
+  const {outputText}=ts.transpileModule(`globalThis.stopPlan = ${action.getText(tree)}`,{compilerOptions:{target:ts.ScriptTarget.ES2022}});
+
+  const {batch,current,plan,response}=fixture();
+  const staleReview={...plan,approvedAt:null,stopped:false};
+  const steps=[];
+  const context={
+    run:(_label,action)=>action(batch.generation),
+    online:()=>current,
+    snapshotRef:{current:{scope:batch.scope}},
+    holdStop:async(scope,planId)=>{
+      assert.equal(scope,batch.scope);assert.equal(planId,plan.id);
+      steps.push('hold');
+    },
+    phoneAPI:async(path,{method,body})=>{
+      assert.equal(path,'/api/phone/stop');assert.equal(method,'POST');
+      assert.equal(body.expectedWorkspaceId,current.workspaceId);assert.equal(body.planId,plan.id);
+      steps.push('post');
+      if(body.onlyIfUnapproved&&plan.approvedAt)throw Error('review_already_approved');
+      return response;
+    },
+    confirmStopped:async(result,scope,planId)=>{
+      assert.equal(scope,batch.scope);assert.equal(planId,plan.id);assert.equal(result.plan.stopped,true);
+      steps.push('confirm');
+    },
+    acceptPlanResult:async(result,workspace,generation,planId)=>{
+      assert.equal(result,response);assert.equal(workspace,current);assert.equal(generation,batch.generation);assert.equal(planId,plan.id);
+      steps.push('accept');
+    },
+    setNotice:()=>steps.push('notice'),
+  };
+  runInNewContext(outputText,context);
+  await context.stopPlan(staleReview);
+  assert.deepEqual(steps,['hold','post','confirm','accept','notice']);
+});
 
 test('captured batch Stop survives interruption without a duplicate or stale target',async t=>{
   await t.test('one confirmed Stop uses only captured target fields and shares its result',async()=>{

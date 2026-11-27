@@ -25,7 +25,10 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(code, context);
   return context.exports;
 }
-const model = execute(read('app/phone/model.ts'));
+const { APIError } = execute(read('app/components/api.ts'));
+const historicalHelpers = execute(read('app/phone/historical-text.ts'));
+const readTransport = execute(read('app/phone/read-transport.ts'), {}, name => name === '../components/api' ? { APIError } : name === './historical-text' ? historicalHelpers : require(name));
+const model = execute(read('app/phone/model.ts'), {}, name => name === './historical-text' ? historicalHelpers : name === './read-transport' ? readTransport : require(name));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
 const i18n = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const source = process.env.CAREER_SEARCH_CAP_SOURCE
@@ -90,6 +93,8 @@ function render(page, language, overrides = {}) {
   const t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage: page, searchedFilters: filters, filters, searchSources: filters.sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+    searchResultsHeading: { current: null },
+    searchNewResult: null, showNewOnly: false, setShowNewOnly() { assert.fail('No filter change during rendering'); },
     language, t, formatNumber: i18n.formatNumber, displayTime: value => i18n.formatDateTime(value, language),
     same: (a, b) => JSON.stringify(a) === JSON.stringify(b), jobIdentity: model.jobIdentity,
     JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
@@ -100,7 +105,7 @@ function render(page, language, overrides = {}) {
     .map(name => 'const ' + name + ' = ' + declaration(name) + ';').join('\n');
   // Optional new derived values let this same behavioral test render the
   // unpatched baseline and fail on the missing UI, not a fixture dependency.
-  const derived = ['incompleteSearch', 'localResultLimitReached', 'searchSummary']
+  const derived = ['newSearchIDs', 'shownSearchJobs', 'newSearchCount', 'hasSearchComparison', 'incompleteSearch', 'localResultLimitReached', 'searchSummary']
     .map(name => ({ name, value: declaration(name, true) }))
     .filter(entry => entry.value !== null)
     .map(entry => 'const ' + entry.name + ' = ' + entry.value + ';').join('\n');

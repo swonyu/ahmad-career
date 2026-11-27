@@ -89,7 +89,7 @@ class DiscoveryRegressionTest {
         assertTrue(url.rawQuery.contains("q=clinic+%26+care"))
         assertTrue(url.rawQuery.endsWith("remote=remote"))
         assertFalse(url.rawQuery.contains("token"))
-        for (source in listOf("https://evil.invalid/board", "https://jobs.lever.co.evil.invalid/board", "https://user@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board"))
+        for (source in listOf("https://evil.invalid/board", "https://jobs.lever.co.evil.invalid/board", "https://user@jobs.lever.co/board", "https://jobs.lever.co:443/board", "https://jobs.lever.co:/board", "http://jobs.lever.co/board"))
             assertFalse(source, PublicDiscoveryService.supportedSource(source))
         assertTrue(PublicDiscoveryService.supportedSource("https://jobs.eu.lever.co/example-board/00000000-0000-4000-8000-000000000001"))
         try { PublicDiscoveryService.searchURL(DiscoveryFilters(sources = (1..5).map { "greenhouse:board-$it" }), null); fail("Too many sources") }
@@ -125,6 +125,43 @@ class DiscoveryRegressionTest {
         assertTrue(controller.state.value.error.orEmpty().contains("earlier results"))
     }
 
+    @Test fun failedFreshRefreshKeepsRowsButExpiresThePreviousPageToken() {
+        val first = page().copy(nextCursor = "fixture-cursor")
+        val service = Service(first); val controller = controller(service); search(controller)
+        service.failure = java.io.IOException("Synthetic offline"); search(controller)
+        assertEquals(first.jobs, controller.state.value.jobs)
+        assertNull(controller.state.value.nextCursor)
+        assertTrue(controller.state.value.cursorInvalid)
+        assertTrue(controller.state.value.canRetrySubmittedSearch)
+        val calls = service.searches.size
+        search(controller, more = true)
+        assertEquals(calls, service.searches.size)
+        service.failure = null; service.result = page()
+        main { controller.retrySubmittedSearch() }; await { !controller.state.value.loading }
+        assertFalse(controller.state.value.cursorInvalid)
+        assertNull(service.searches.last().second)
+    }
+
+    @Test fun ordinaryMoreFailureCanRetryButMalformedHttp409ExpiresTheToken() {
+        val first = page().copy(jobs = listOf(page().jobs.first()), nextCursor = "fixture-cursor")
+        val service = Service(first); val controller = controller(service); search(controller)
+        service.failure = java.io.IOException("Synthetic offline"); search(controller, more = true)
+        assertEquals(first.jobs, controller.state.value.jobs)
+        assertEquals("fixture-cursor", controller.state.value.nextCursor)
+        assertFalse(controller.state.value.cursorInvalid)
+        service.failure = null; service.result = first
+        search(controller, more = true)
+        assertEquals("fixture-cursor", service.searches.last().second)
+        service.failure = DiscoveryFailure(409, "invalid_response", "Synthetic malformed JSON")
+        search(controller, more = true)
+        assertNull(controller.state.value.nextCursor)
+        assertTrue(controller.state.value.cursorInvalid)
+        assertTrue(controller.state.value.error.orEmpty().contains("changed since the last page"))
+        val calls = service.searches.size
+        search(controller, more = true)
+        assertEquals(calls, service.searches.size)
+    }
+
     @Test fun paginationDeduplicates_andChangedSnapshotRequiresExplicitRestart() {
         val first = page().copy(jobs = listOf(page().jobs.first()), nextCursor = "fixture-cursor")
         val service = Service(first); val controller = controller(service); search(controller)
@@ -146,14 +183,19 @@ class DiscoveryRegressionTest {
     }
 
     @Test fun cancellingSearch_keepsDisplayedResults_andNeverRetriesByItself() {
-        val service = Service(page()); val controller = controller(service); search(controller)
+        val service = Service(page().copy(nextCursor = "fixture-cursor")); val controller = controller(service); search(controller)
         val earlier = controller.state.value.jobs
         val pending = CompletableDeferred<DiscoveryPage>(); gates += pending; service.next = pending
         main { controller.search() }; await { service.searches.size == 2 }
         main { controller.cancelSearch() }
         pending.complete(page().copy(jobs = emptyList())); await { service.lateResultReturned }; instrumentation.waitForIdleSync()
         assertEquals(earlier, controller.state.value.jobs)
+        assertNull(controller.state.value.nextCursor)
+        assertTrue(controller.state.value.cursorInvalid)
+        assertTrue(controller.state.value.canRetrySubmittedSearch)
         assertFalse(controller.state.value.loading)
+        assertEquals(2, service.searches.size)
+        search(controller, more = true)
         assertEquals(2, service.searches.size)
     }
 
@@ -185,7 +227,7 @@ class DiscoveryRegressionTest {
         assertEquals("lever:global:spotify", PublicDiscoveryService.canonicalBoard("https://jobs.lever.co/spotify/00000000-0000-4000-8000-000000000001/apply")?.id)
         assertNull(PublicDiscoveryService.canonicalBoard("https://jobs.eu.lever.co/example-board/123"))
         assertTrue(PublicDiscoveryService.supportedSource("https://jobs.eu.lever.co/example-board/123"))
-        val rejected = listOf("https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board",
+        val rejected = listOf("https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "https://jobs.lever.co:/board", "http://jobs.lever.co/board",
             "https://jobs.lever.co/board%2Fhidden", "https://job-boards.greenhouse.io/canonical/../other", "https://job-boards.greenhouse.io/canonical?extra=1",
             "https://boards.greenhouse.io/embed/job_board?for=one&for=two", "lever:GLOBAL:board", "https://job-boards.greenhouse.io/canonical#section")
         for (raw in rejected) assertNull(raw, PublicDiscoveryService.canonicalBoard(raw))

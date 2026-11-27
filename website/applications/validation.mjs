@@ -16,7 +16,8 @@ export function object(value, allowed, label = 'Request') {
 }
 export function text(value, label, max = 250, optional = true, multiline = false) {
   if (value === undefined && optional) return '';
-  if (typeof value !== 'string' || value.length > max || (multiline ? /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/ : /[\x00-\x1f\x7f]/).test(value)) fail('invalid_field', `${label} is invalid or too long.`);
+  // Unicode mode treats a valid surrogate pair as one code point; only unpaired surrogates match.
+  if (typeof value !== 'string' || value.length > max || /[\uD800-\uDFFF]/u.test(value) || (multiline ? /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/ : /[\x00-\x1f\x7f]/).test(value)) fail('invalid_field', `${label} is invalid or too long.`);
   const result = value.trim();
   if (!optional && !result) fail('required_field', `${label} is required.`);
   return result;
@@ -36,7 +37,8 @@ export function publicURL(value) {
   let u; try { u = new URL(s); } catch { fail('invalid_url', 'Enter a complete public HTTPS URL.'); }
   if (u.protocol !== 'https:' || u.username || u.password || u.port && u.port !== '443' || isIP(u.hostname.replace(/^\[|\]$/g, '')) || !u.hostname.includes('.') || /(^|\.)(localhost|local|internal|test|invalid)$/.test(u.hostname) || /[\s\\]/.test(s)) fail('invalid_url', 'Use a public HTTPS URL without credentials or a custom port.');
   u.hash = '';
-  return u.href;
+  // Encoding Unicode can expand an otherwise short input. Bound the persisted URL.
+  return text(u.href, 'Website URL', 2048, false);
 }
 /** A user-supplied profile URL is neither an OAuth connection nor proof of ownership. */
 export function linkedinProfileURL(value) {

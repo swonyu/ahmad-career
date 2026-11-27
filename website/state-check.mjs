@@ -909,6 +909,18 @@ await check('Incomplete successful detail checks retain earlier jobs and observa
  assert.equal(createApp(app.storage).json('live.jobs[0].lastCheckedAt'),oldTime);
 });
 
+await check('Bounded employer samples retain unobserved leads with their original dates and honor exclusions',()=>{
+ const app=createApp(),gone={...role,id:'sample-excluded'},unknown={...role,id:'sample-unobserved'};
+ app.receive(success([gone,unknown],oldTime));app.changeStatus(gone.id,'Applied');
+ app.receive({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,limited:true,excludedIds:[gone.id]}]});
+ assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[unknown.id]);
+ assert.equal(app.json('live.jobs[0].lastCheckedAt'),oldTime);assert(app.evaluate('unrefreshed(live.jobs[0])'));
+ assert.equal(createApp(app.storage).json('live.jobs[0].lastCheckedAt'),oldTime);
+ assert.equal(app.json("states['sample-excluded']"),'Applied');
+ assert(app.evaluate('coverageMessage(live)').includes('bounded sample'));
+ assert(!app.evaluate('coverageMessage(live)').includes('checks failed'));
+});
+
 await check('Exact successful employer exclusions survive partial failure without deleting tracked history',()=>{
  const app=createApp(),gone={...role,id:'excluded-role'},unknown={...role,id:'unknown-role'};
  app.receive(success([gone,unknown],oldTime));app.changeStatus('excluded-role','Applied');

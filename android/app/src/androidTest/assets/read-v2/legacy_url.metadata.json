@@ -1,0 +1,33 @@
+{
+  "scenario": "legacy_url",
+  "read": {
+    "version": 2,
+    "kind": "workspace",
+    "accountId": "synthetic-workspace-capacity",
+    "workspaceId": "f0f13675-1de7-4328-b1cc-db6a90ca91e7",
+    "asOf": "2026-11-22T20:02:00.002Z",
+    "expiresAt": "2026-11-22T20:07:00.002Z",
+    "sha256": "9444e434921aeaac6dedbcbae2361899c0d8264f08d633d75cbdccddc0c14730",
+    "totalBytes": 15643301,
+    "offset": 0,
+    "byteLength": 4194304,
+    "nextCursor": "eyJ2ZXJzaW9uIjoyLCJhdWRpZW5jZSI6ImFwcGx5IiwiYWNjb3VudEhhc2giOiI2MDE3Nzc4MWQ4OWMwNWZmZjY4MmUxZTMwMzJmYTBhM2RkMTNlMDliZTAwNGQ4YTExYmE3MTNlOGZmMGJiM2ExIiwic2Vzc2lvbkJpbmRpbmciOiI2MGM4MWEyMGQ0OGU2MmI3YzE1OTJlNzQzZDcyZjUzNDFiYzIyMTg3N2RkZmU0ZDJhYTJmZTAwZDc0ZTM0NWU1Iiwid29ya3NwYWNlSWQiOiJmMGYxMzY3NS0xZGU3LTQzMjgtYjFjYy1kYjZhOTBjYTkxZTciLCJraW5kIjoid29ya3NwYWNlIiwicmVzb3VyY2VJZCI6bnVsbCwidmFyaWFudCI6IiIsImFzT2YiOiIyMDI2LTExLTIyVDIwOjAyOjAwLjAwMloiLCJleHBpcmVzQXQiOiIyMDI2LTExLTIyVDIwOjA3OjAwLjAwMloiLCJzaGEyNTYiOiI5NDQ0ZTQzNDkyMWFlYWFjNmRlZGJjYmFlMjM2MTg5OWMwZDgyNjRmMDhkNjMzZDc1Y2JkY2NkZGMwYzE0NzMwIiwidG90YWxCeXRlcyI6MTU2NDMzMDEsIm9mZnNldCI6NDE5NDMwNH0.9e4bfef58b232d045d6fd18b0883423e37e2cfc4894ed07f7b42f4e84338640e",
+    "exportCursor": "eyJ2ZXJzaW9uIjoyLCJhdWRpZW5jZSI6ImFwcGx5IiwiYWNjb3VudEhhc2giOiI2MDE3Nzc4MWQ4OWMwNWZmZjY4MmUxZTMwMzJmYTBhM2RkMTNlMDliZTAwNGQ4YTExYmE3MTNlOGZmMGJiM2ExIiwic2Vzc2lvbkJpbmRpbmciOiI2MGM4MWEyMGQ0OGU2MmI3YzE1OTJlNzQzZDcyZjUzNDFiYzIyMTg3N2RkZmU0ZDJhYTJmZTAwZDc0ZTM0NWU1Iiwid29ya3NwYWNlSWQiOiJmMGYxMzY3NS0xZGU3LTQzMjgtYjFjYy1kYjZhOTBjYTkxZTciLCJraW5kIjoid29ya3NwYWNlIiwicmVzb3VyY2VJZCI6bnVsbCwidmFyaWFudCI6IiIsImFzT2YiOiIyMDI2LTExLTIyVDIwOjAyOjAwLjAwMloiLCJleHBpcmVzQXQiOiIyMDI2LTExLTIyVDIwOjA3OjAwLjAwMloiLCJzaGEyNTYiOiI5NDQ0ZTQzNDkyMWFlYWFjNmRlZGJjYmFlMjM2MTg5OWMwZDgyNjRmMDhkNjMzZDc1Y2JkY2NkZGMwYzE0NzMwIiwidG90YWxCeXRlcyI6MTU2NDMzMDEsIm9mZnNldCI6MH0.54dae7d6ac26d05ac72f5617bb20cfb08cd5e911e0fd1d79e34019cb5d7de9ec"
+  },
+  "productionSourceSHA256": {
+    "applications.mjs": "92151c269dc34ce88c062beb56c00d2bd610963a67ac78883253a0b48f768f12",
+    "read-transport.mjs": "959c700f4a82f8d99478c265673c294f8fa54be40dfaecc6ba3dcb9c2be92422"
+  },
+  "expectedCounts": {
+    "jobs": 200,
+    "attempts": 500,
+    "recoverablePlans": 20
+  },
+  "legacyTextEntries": 0,
+  "expectedLogicalSHA256": "d56324391dcdef201e09bea5853d9834c5c35d763110d907ac8a7cde75737226",
+  "responseHeaders": {
+    "X-Career-Read-Version": "2",
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "evidence": "Local Node actual handler with in-memory SQLite D1 adapter and synthetic R2/provider data. No external calls or native/Worker runtime claims."
+}

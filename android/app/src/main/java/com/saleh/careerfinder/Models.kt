@@ -119,16 +119,29 @@ data class OpportunityDraft(val url: String = "", val title: String = "", val co
     }
 }
 
-data class Opportunity(val id: String, val url: String, val title: String, val company: String, val location: String, val country: String, val localOnly: Boolean = false) {
+data class Opportunity(val id: String, val url: String, val title: String, val company: String, val location: String, val country: String,
+    val localOnly: Boolean = false, val sourceName: String? = null, val checkedAt: String? = null) {
+    // The connected service still receives exactly its existing five public fields.
     fun inputJson() = JSONObject().put("url", url).put("title", title).put("company", company).put("location", location).put("country", country)
-    fun privateJson() = inputJson().put("id", id).put("localOnly", localOnly)
+    fun privateJson() = inputJson().put("id", id).put("localOnly", localOnly).apply {
+        SavedJobMetadata.requireValid(sourceName, checkedAt)
+        sourceName?.let { put("sourceName", it) }; checkedAt?.let { put("checkedAt", it) }
+    }
     companion object {
-        fun fromJson(value: JSONObject, local: Boolean = false) = Opportunity(value.safeString("id"), value.safeString("url"), value.safeString("title"), value.safeString("company"), value.safeString("location"), value.safeString("country"), local || value.optBoolean("localOnly"))
+        fun fromJson(value: JSONObject, local: Boolean = false): Opportunity {
+            val sourceName = SavedJobMetadata.optional(value, "sourceName")
+            val checkedAt = SavedJobMetadata.optional(value, "checkedAt")
+            SavedJobMetadata.requireValid(sourceName, checkedAt)
+            return Opportunity(value.safeString("id"), value.safeString("url"), value.safeString("title"), value.safeString("company"),
+                value.safeString("location"), value.safeString("country"), local || value.optBoolean("localOnly"), sourceName, checkedAt)
+        }
         fun fromServer(value: JSONObject): Opportunity {
             listOf("id", "url", "title", "company", "location", "country").forEach { serviceData(value.opt(it) is String) }
             serviceData(value.getString("id").isNotBlank())
-            BoundaryPolicy.opportunityURL(value.getString("url"))
-            return fromJson(value).copy(localOnly = false)
+            BoundaryPolicy.historicalOpportunityURL(value.getString("url"))
+            // The five-field workspace response does not establish discovery observations.
+            return Opportunity(value.getString("id"), value.getString("url"), value.getString("title"), value.getString("company"),
+                value.getString("location"), value.getString("country"))
         }
     }
 }
@@ -146,6 +159,7 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
             payload!!.serviceLinkedIn()
             listOf("consentStore", "consentMarketing").forEach { serviceData(!payload!!.has(it) || payload.opt(it) is Boolean) }
             val resume = Resume.fromJson(value.optJSONObject("resume"))
+            serviceData(resume == null || ApplicationCvEvidence.validHistoricalRecordedName(resume.name))
             if (value.opt("state") == "ready") serviceData(resume != null && resume.size in 8..BoundaryPolicy.MAX_PDF_BYTES &&
                 resume.sha256.matches(Regex("[a-f0-9]{64}")) && value.optJSONObject("resume")?.opt("mime") == "application/pdf" &&
                 payload!!.getString("name").isNotBlank() && payload.getString("email").isNotBlank())
@@ -159,6 +173,10 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
 data class ReviewPlan(val id: String, val digest: String, val profileRevision: Int, val expiresAt: String, val items: List<ReviewItem>,
     val unapproved: Boolean = false) {
     fun expired(): Boolean = try { !Instant.parse(expiresAt).isAfter(Instant.now()) } catch (_: Exception) { true }
+    val hasHistoricalText: Boolean get() = items.any { item ->
+        listOf(item.reason, item.title, item.company, item.resume?.name.orEmpty()).any { !BoundaryPolicy.validUnicode(it) } ||
+            HistoricalText.malformedStrings(item.payload).isNotEmpty()
+    }
     companion object { fun fromJson(value: JSONObject): ReviewPlan {
         val items = value.requiredObjects("items").map(ReviewItem::fromJson)
         serviceData(items.all { it.jobId.isNotBlank() } && items.map(ReviewItem::jobId).distinct().size == items.size)
@@ -169,7 +187,7 @@ data class ReviewPlan(val id: String, val digest: String, val profileRevision: I
 
 data class ApplicationReceipt(val id: String, val title: String, val company: String, val state: String, val applicationId: String,
     val date: String, val error: String, val evidenceMode: String, val resumeSHA256: String, val provider: String,
-    val planId: String = "") {
+    val planId: String = "", val resumeName: String? = null, val profileRevision: Int? = null) {
     val testMode: Boolean get() = evidenceMode == "test"
     val verified: Boolean get() = BoundaryPolicy.isLiveReceipt(evidenceMode, provider, state, applicationId)
     companion object {
@@ -183,7 +201,7 @@ data class ApplicationReceipt(val id: String, val title: String, val company: St
                 value.safeString("state"), value.safeString("applicationId"), value.safeString("confirmedAt", value.safeString("createdAt")),
                 if (error is JSONObject) error.safeString("message") else if (error is String) error else "",
                 value.safeString("evidenceMode", if (value.safeString("mode") == "test") "test" else "unknown"), value.safeString("resumeSHA256"), value.safeString("provider"),
-                if (plan is String) plan else "")
+                if (plan is String) plan else "", ApplicationCvEvidence.recordedName(value), ApplicationCvEvidence.profileRevision(value))
         }
         fun fromServer(value: JSONObject): ApplicationReceipt {
             serviceData((value.opt("id") is String || value.opt("attemptId") is String) &&
@@ -246,7 +264,14 @@ data class CareerUiState(
     val recoveredOpportunityDrafts: List<OpportunityDraft> = emptyList(),
     val preservedWorkspaceCopies: List<String> = emptyList(),
     val preservedRecoveryWorkspaces: List<PreservedWorkspace> = emptyList(),
-    val workspaceImport: WorkspaceImportPreview? = null
+    val workspaceImport: WorkspaceImportPreview? = null,
+    val historicalRecovery: HistoricalRecoveryReference? = null,
+    val historicalRawStrings: Set<String> = emptySet(),
+    val readRecoveryRequest: ReadRecoveryRequest? = null,
+    val readReconciliationRequired: Boolean = false,
+    val pendingReadAcknowledgments: Int = 0,
+    // Transient ownership token: not encoded in a workspace or portable backup.
+    val comparisonSession: String = java.util.UUID.randomUUID().toString()
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
     val privateScope: String get() = connection?.let { "workspace-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "workspace-unpaired"

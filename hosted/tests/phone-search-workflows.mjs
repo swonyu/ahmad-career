@@ -6,6 +6,8 @@ import { createRequire } from 'node:module';
 import ts from 'typescript';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { setImmediate as yieldEventLoop } from 'node:timers/promises';
+import * as sourceIdentity from '../shared/discovery-source-identity.mjs';
 
 const require = createRequire(import.meta.url);
 const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
@@ -19,9 +21,13 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(code, context);
   return context.exports;
 }
-const model = execute(read('app/phone/model.ts'));
-const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
 const { APIError } = execute(read('app/components/api.ts'));
+const historicalHelpers = execute(read('app/phone/historical-text.ts'));
+const readTransport = execute(read('app/phone/read-transport.ts'), {}, name => name === '../components/api' ? { APIError } : name === './historical-text' ? historicalHelpers : require(name));
+const model = execute(read('app/phone/model.ts'), {}, name => name === './historical-text' ? historicalHelpers : name === './read-transport' ? readTransport : require(name));
+const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../shared/discovery-source-identity.mjs' ? sourceIdentity : require(name));
+const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
+const savedComparison = execute(read('app/phone/saved-comparison.ts'), {}, name => name === './model' ? model : require(name));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
 const i18n = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const source = read('app/phone/PhoneApp.tsx');
@@ -42,7 +48,7 @@ function install(name, scope) {
   const value = name === 'searchJobs'
     // Match a React handler's render-time closure. The later draft edit must
     // reach a pending request through the real ref, not a mutable VM global.
-    ? `((filters, searchSources, searchedFilters, searchPage, restored) => (${declaration(name)}))(filters, searchSources, searchedFilters, searchPage, restored)`
+    ? `((filters, searchSources, searchedFilters, searchPage, restored, searchNewResult, showNewOnly) => (${declaration(name)}))(filters, searchSources, searchedFilters, searchPage, restored, searchNewResult, showNewOnly)`
     : declaration(name);
   const code = ts.transpileModule(`globalThis.${name} = ${value};`, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None },
@@ -69,27 +75,41 @@ function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', er
 // Execute the real search, run, identity, local-data and persistence handlers.
 // Only the transport and encrypted-storage ports are synthetic; any unexpected
 // route or attempted network request fails immediately.
-function harness({ initialPage, restored = false, searchedFilters = submitted() } = {}) {
-  const scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001';
+function deferred() { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; }
+function harness({ initialPage, initialHistory, initialNewResult = null, restored = false, searchedFilters = submitted(), savedFilters = draft(), initialFilters = draft(), scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001', unopened = false } = {}) {
   const snapshot = model.blankSnapshot(scope);
   snapshot.profile.firstName = 'SYNTHETIC_PRIVATE_PROFILE';
-  snapshot.filters = draft();
-  const calls = [], writes = [];
+  snapshot.jobs = [model.jobSchema.parse(job(0))];
+  snapshot.records = [{ ...model.blankRecord(snapshot.jobs[0]), note: 'SYNTHETIC_PRIVATE_NOTE' }];
+  snapshot.filters = plain(savedFilters);
+  const displayedPage = initialPage ?? page({ status: 'partial', jobs: [job(0)], sourceStatus: 'stale', error: { code: 'source_unavailable', message: 'Synthetic source unavailable.' }, nextCursor: 'synthetic-next-page' });
+  snapshot.lastSearch = searchedFilters ? { filters: plain(searchedFilters), page: { ...plain(displayedPage), nextCursor: null } } : null;
+  if (initialHistory) snapshot.searchHistory = plain(initialHistory);
+  if (initialNewResult && snapshot.lastSearch) snapshot.lastSearch.newResult = plain(initialNewResult);
+  const calls = [], writes = [], writeAttempts = [], writeHook = { current: null };
+  let stored = JSON.stringify(snapshot);
   const context = {
-    Error, URL, URLSearchParams, Intl, DOMException, AbortController, APIError, z: require('zod').z,
-    filters: draft(), searchedFilters, searchPage: initialPage ?? page({ status: 'partial', jobs: [job(0)], sourceStatus: 'stale', error: { code: 'source_unavailable', message: 'Synthetic source unavailable.' }, nextCursor: 'synthetic-next-page' }),
+    ...historicalHelpers, PhoneReadError: readTransport.PhoneReadError, Error, URL, URLSearchParams, Intl, DOMException, AbortController, APIError, z: require('zod').z,
+    filters: plain(initialFilters), searchedFilters, searchPage: displayedPage,
     restored, busy: '', busyRef: { current: false }, notice: null, epoch: { current: 3 },
     identityUnverified: { current: false }, identityCheckPending: { current: false }, identityCheckRef: { current() {} },
-    snapshotRef: { current: snapshot }, filterDraftRef: { current: draft() }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
+    account: { id: 'synthetic-search-owner' }, workspaceRef: { current: { workspaceId: '00000000-0000-4000-8000-000000000001' } },
+    snapshotRef: { current: unopened ? null : snapshot }, filterDraftRef: { current: plain(initialFilters) }, startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
     discoveryPageSchema: model.discoveryPageSchema, discoveryPath: model.discoveryPath, jobIdentity: model.jobIdentity,
-    parseSnapshot: model.parseSnapshot,
+    parseSnapshot: model.parseSnapshot, ...searchHistory, searchNewResult: initialNewResult, showNewOnly: false, showNewOnlyRef: { current: false },
     fetch() { assert.fail('Search workflow tests must never contact a network'); },
     setBusy(value) { context.busy = value; }, setNotice(value) { context.notice = value; },
     setSearchPage(value) { context.searchPage = value; }, setSearchedFilters(value) { context.searchedFilters = value; },
     setRestored(value) { context.restored = value; },
+    setSearchNewResult(value) { context.searchNewResult = value; }, setShowNewOnlyState(value) { context.showNewOnly = value; },
     setFiltersState(value) { context.filters = value; },
     putSnapshot(value) { context.snapshotRef.current = value; },
-    async savePhoneSnapshot(owner, value) { assert.equal(owner, scope); writes.push(plain(value)); },
+    async savePhoneSnapshot(owner, value) {
+      const attempted = { scope: owner, value: plain(value) }; writeAttempts.push(attempted);
+      assert.equal(owner, scope, 'A search draft must never be written to another owner scope');
+      await writeHook.current?.(attempted, writeAttempts.length);
+      writes.push(attempted.value); stored = JSON.stringify(attempted.value);
+    },
     storageFailure(error) { throw error; },
     lock() { context.locked = true; context.epoch.current++; },
     phoneAPI(path, options = {}) {
@@ -97,6 +117,9 @@ function harness({ initialPage, restored = false, searchedFilters = submitted() 
       assert.equal(url.pathname, '/api/discovery/search');
       assert.equal(options.method, undefined); assert.equal(options.body, undefined);
       assert(!path.includes('SYNTHETIC_PRIVATE_PROFILE'));
+      assert(!path.includes('SYNTHETIC_PRIVATE_NOTE'));
+      // Match the real HTTP adapter: a pre-aborted signal never admits a fetch.
+      if (options.signal?.aborted) return Promise.reject(new DOMException('Synthetic cancellation', 'AbortError'));
       return new Promise((resolve, reject) => {
         const abort = () => reject(new DOMException('Synthetic cancellation', 'AbortError'));
         options.signal?.addEventListener('abort', abort, { once: true });
@@ -108,8 +131,16 @@ function harness({ initialPage, restored = false, searchedFilters = submitted() 
   };
   Object.defineProperty(context, 'searchSources', { get: () => context.filters.sources });
   vm.createContext(context);
-  for (const name of ['message', 'setFilters', 'assertCurrent', 'local', 'persist', 'run', 'searchJobs']) install(name, context);
-  return { context, calls, writes, edit(value) { context.setFilters(plain(value)); }, search: mode => context.searchJobs(mode) };
+  for (const name of ['same', 'message', 'setFilters', 'setShowNewOnly', 'assertCurrent', 'local', 'persist', 'run', 'searchJobs']) install(name, context);
+  return { context, calls, writes, writeAttempts, writeHook, scope,
+    readSaved() { return plain(model.parseSnapshot(JSON.parse(stored), scope)); },
+    edit(value) { context.setFilters(plain(value)); },
+    search(mode) { install('searchJobs', context); return context.searchJobs(mode); },
+    async admitted(index = 0) {
+      // Flush settled preflight promises without imposing a made-up transport delay.
+      await yieldEventLoop(); assert(calls[index], `Expected synthetic request ${index} to be admitted`); return calls[index];
+    },
+  };
 }
 function requestFilters(call) {
   const params = new URL(call.path, 'https://synthetic.local').searchParams;
@@ -119,6 +150,7 @@ function requestFilters(call) {
 test('retry repeats the displayed search without a cursor and preserves newer visible draft filters', async () => {
   const h = harness(), previous = h.context.searchPage, original = submitted();
   const pending = h.search('retry');
+  await h.admitted();
   assert.equal(h.calls.length, 1); assert.deepEqual(requestFilters(h.calls[0]), original);
   assert.equal(new URL(h.calls[0].path, 'https://synthetic.local').searchParams.has('cursor'), false);
   assert.equal(h.context.searchPage, previous); assert.deepEqual(plain(h.context.filters), draft());
@@ -137,6 +169,7 @@ test('retry repeats the displayed search without a cursor and preserves newer vi
 
 test('a fresh search response does not overwrite text or boards edited while it is pending', async () => {
   const h = harness(), pending = h.search();
+  await h.admitted();
   assert.deepEqual(requestFilters(h.calls[0]), draft());
   h.edit(laterDraft()); h.calls[0].resolve(page()); await pending;
   assert.deepEqual(plain(h.context.filters), laterDraft());
@@ -148,6 +181,7 @@ test('a fresh search response does not overwrite text or boards edited while it 
 test('pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone', async () => {
   const initialPage = page({ jobs: [job(0), job(1)], nextCursor: 'synthetic-next-page' });
   const h = harness({ initialPage }), pending = h.search('more');
+  await h.admitted();
   assert.deepEqual(requestFilters(h.calls[0]), submitted());
   assert.equal(new URL(h.calls[0].path, 'https://synthetic.local').searchParams.get('cursor'), 'synthetic-next-page');
   h.edit(laterDraft());
@@ -159,15 +193,104 @@ test('pagination uses the displayed search and cursor, merges identities, and le
   assert.deepEqual(h.writes[0].lastSearch.filters, submitted());
 });
 
+test('HTTP 409 on More preserves prior results and drafts, then restarts the submitted search without the rejected cursor', async t => {
+  for (const code of ['discovery_changed', 'invalid_response', 'unfamiliar_conflict']) await t.test(code, async () => {
+    const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+    const h = harness({ initialPage: original }), priorFilters = h.context.searchedFilters;
+    const newMarkers = { comparedSourceIds: ['lever:synthetic-a'], newIds: ['synthetic-0'] };
+    h.context.searchNewResult = newMarkers; h.context.showNewOnly = true; h.context.showNewOnlyRef.current = true;
+    const pending = h.search('more'), request = await h.admitted();
+    assert.equal(new URL(request.path, 'https://synthetic.local').searchParams.get('cursor'), 'synthetic-rejected-cursor');
+    h.edit(laterDraft()); request.reject(new APIError('Synthetic page conflict.', 409, code)); await pending;
+    assert.equal(h.context.searchPage, original, 'Displayed jobs, timestamp, source and cursor remain the original page');
+    assert.equal(h.context.restored, true, 'The cursor is no longer usable');
+    assert.equal(h.context.searchedFilters, priorFilters);
+    assert.deepEqual(plain(h.context.filters), laterDraft());
+    assert.deepEqual(h.readSaved().filters, laterDraft());
+    assert.equal(h.context.searchNewResult, newMarkers); assert.equal(h.context.showNewOnlyRef.current, true);
+    assert.equal(h.context.notice.text, 'Synthetic page conflict.');
+    await h.search('more'); assert.equal(h.calls.length, 1, 'A rejected cursor must not be sent again');
+    const restarted = h.search('retry'), fresh = await h.admitted(1);
+    assert.equal(new URL(fresh.path, 'https://synthetic.local').searchParams.has('cursor'), false);
+    assert.deepEqual(requestFilters(fresh), submitted(), 'Restart uses the last submitted search, not the edited form draft');
+    fresh.resolve(page({ jobs: [job(9)] })); await restarted;
+    assert.equal(h.context.restored, false);
+    assert.equal(h.context.searchPage.jobs[0].id, 'synthetic-9');
+    assert.deepEqual(plain(h.context.filters), laterDraft());
+  });
+});
+
+test('a non-409 page outage keeps the cursor retryable while account conflict still locks', async t => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-retryable-cursor' });
+  await t.test('transient 503', async () => {
+    const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+    request.reject(new APIError('Synthetic temporary outage.', 503, 'discovery_unavailable')); await pending;
+    assert.equal(h.context.searchPage, original); assert.equal(h.context.restored, false);
+    assert.equal(h.context.notice.text, 'Synthetic temporary outage.');
+    const retry = h.search('more'), repeated = await h.admitted(1);
+    assert.equal(new URL(repeated.path, 'https://synthetic.local').searchParams.get('cursor'), 'synthetic-retryable-cursor');
+    repeated.resolve(page({ jobs: [job(1)] })); await retry;
+    assert.deepEqual(plain(h.context.searchPage.jobs.map(value => value.id)), ['synthetic-0', 'synthetic-1']);
+  });
+  await t.test('explicit account conflict on 409', async () => {
+    const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+    request.reject(new APIError('Synthetic account changed.', 409, 'account_changed')); await pending;
+    assert.equal(h.context.locked, true); assert.equal(h.context.restored, false);
+    assert.equal(h.context.notice.text, 'Synthetic account changed.');
+    assert.equal(h.calls.length, 1);
+  });
+});
+
+test('an HTTP-looking local draft save failure cannot invalidate a discovery cursor', async () => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-retryable-cursor' });
+  const h = harness({ initialPage: original, savedFilters: submitted() });
+  h.writeHook.current = async () => { throw new APIError('Synthetic local vault conflict.', 409, 'invalid_response'); };
+  await h.search('more');
+  assert.equal(h.calls.length, 0, 'Storage failed before the network read');
+  assert.equal(h.context.searchPage, original);
+  assert.equal(h.context.restored, false);
+  assert.equal(h.context.notice.text, 'Synthetic local vault conflict.');
+});
+
+test('a rejected page cursor retires even when saving edits after the response fails', async () => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+  const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+  h.edit(laterDraft());
+  h.writeHook.current = async () => { throw Error('Synthetic vault quota after network response'); };
+  request.reject(new APIError('Synthetic discovery changed.', 409, 'discovery_changed')); await pending;
+  assert.equal(h.context.searchPage, original);
+  assert.equal(h.context.restored, true, 'The HTTP response invalidates the cursor before local persistence can fail');
+  assert.equal(h.context.notice.text, 'Synthetic vault quota after network response');
+  await h.search('more'); assert.equal(h.calls.length, 1);
+});
+
+test('a same-generation startup scope adoption still retires a rejected page cursor without crossing owners', async t => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+  await t.test('matching startup scope', async () => {
+    const h = harness({ initialPage: original, unopened: true }), pending = h.search('more'), request = await h.admitted();
+    h.context.snapshotRef.current = h.readSaved();
+    request.reject(new APIError('Synthetic discovery changed.', 409, 'invalid_response')); await pending;
+    assert.equal(h.context.restored, true);
+    await h.search('more'); assert.equal(h.calls.length, 1);
+  });
+  await t.test('different account scope', async () => {
+    const h = harness({ initialPage: original, unopened: true }), pending = h.search('more'), request = await h.admitted();
+    h.context.snapshotRef.current = model.blankSnapshot('account:another-synthetic-owner:00000000-0000-4000-8000-000000000002');
+    request.reject(new APIError('Synthetic discovery changed.', 409, 'invalid_response')); await pending;
+    assert.equal(h.context.restored, false, 'A newly adopted different owner cannot inherit search recovery');
+  });
+});
+
 test('failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller', async t => {
   for (const outcome of ['failure', 'cancel']) await t.test(outcome, async () => {
     const h = harness(), previous = h.context.searchPage, priorFilters = h.context.searchedFilters;
-    const pending = h.search('retry'); h.edit(laterDraft());
+    const earlierSaved = h.readSaved(), pending = h.search('retry'); await h.admitted(); h.edit(laterDraft());
     if (outcome === 'cancel') h.context.searchAbort.current.abort();
     else h.calls[0].reject(new APIError('Synthetic service unavailable', 503, 'source_unavailable'));
     await pending;
     assert.equal(h.context.searchPage, previous); assert.equal(h.context.searchedFilters, priorFilters);
-    assert.deepEqual(plain(h.context.filters), laterDraft()); assert.equal(h.writes.length, 0);
+    assert.deepEqual(plain(h.context.filters), laterDraft()); assert.equal(h.writes.length, 1);
+    assert.deepEqual(h.readSaved(), { ...earlierSaved, filters: laterDraft() }, 'Only the latest visible draft changes; earlier results and private records survive reload');
     assert.equal(h.context.searchAbort.current, null); assert.equal(h.context.busyRef.current, false);
     assert.match(h.context.notice.text, outcome === 'cancel' ? /Search cancelled/ : /Synthetic service unavailable/);
   });
@@ -177,6 +300,7 @@ test('late search results cannot cross the existing identity or generation bound
   for (const boundary of ['identity', 'generation']) await t.test(boundary, async () => {
     const h = harness(), previous = h.context.searchPage, priorFilters = h.context.searchedFilters;
     const pending = h.search('retry');
+    await h.admitted();
     if (boundary === 'identity') h.context.identityUnverified.current = true; else h.context.epoch.current++;
     h.calls[0].resolve(page()); await pending;
     assert.equal(h.context.searchPage, previous); assert.equal(h.context.searchedFilters, priorFilters);
@@ -188,15 +312,156 @@ test('late search results cannot cross the existing identity or generation bound
 
 test('pagination retains the 200-result cap and retry refreshes restored results without a stale cursor', async () => {
   const many = page({ jobs: Array.from({ length: 199 }, (_, index) => job(index)), nextCursor: 'page-limit' });
-  const capped = harness({ initialPage: many }), capPending = capped.search('more');
+  const capped = harness({ initialPage: many }), before = capped.readSaved(), priorFilters = capped.context.searchedFilters;
+  const capPending = capped.search('more');
+  await capped.admitted();
+  capped.edit(laterDraft());
+  assert.deepEqual(capped.readSaved(), before, 'Pending edits are not a committed reload snapshot yet');
   capped.calls[0].resolve(page({ jobs: [job(199), job(200)] })); await capPending;
-  assert.equal(capped.context.searchPage, many); assert.equal(capped.writes.length, 0);
-  assert.match(capped.context.notice.text, /200 results/); assert.deepEqual(plain(capped.context.filters), draft());
+  assert.equal(capped.context.searchPage, many); assert.equal(capped.context.searchedFilters, priorFilters);
+  assert.match(capped.context.notice.text, /200 results/); assert.deepEqual(plain(capped.context.filters), laterDraft());
+  assert.deepEqual(capped.readSaved(), { ...before, filters: laterDraft() }, 'The cap preserves the latest draft on reload without changing earlier results or private data');
+  assert.equal(capped.writeAttempts.length, 1); assert.equal(capped.writes.length, 1);
+  assert.equal(capped.context.searchAbort.current, null); assert.equal(capped.context.busyRef.current, false);
   const restored = harness({ restored: true }); await restored.search('more');
   assert.equal(restored.calls.length, 0); assert.equal(restored.context.restored, true);
   const retry = restored.search('retry');
+  await restored.admitted();
   assert.equal(new URL(restored.calls[0].path, 'https://synthetic.local').searchParams.has('cursor'), false);
   restored.calls[0].resolve(page()); await retry; assert.equal(restored.context.restored, false);
+});
+
+test('the attempted draft is durable before a failed fresh Search, with earlier results and private data unchanged on reload', async () => {
+  const h = harness({ savedFilters: submitted() }), before = h.readSaved(), previousPage = h.context.searchPage;
+  const saving = deferred(), release = deferred();
+  h.writeHook.current = async () => { saving.resolve(); await release.promise; };
+  const pending = h.search(); await saving.promise;
+  assert.equal(h.calls.length, 0, 'Discovery must wait for the attempted draft to finish saving');
+  assert.deepEqual(h.readSaved(), before, 'An unfinished storage write is not a committed reload snapshot');
+  assert.equal(h.context.busyRef.current, true);
+  release.resolve(); const request = await h.admitted();
+  assert.deepEqual(requestFilters(request), draft());
+  assert.deepEqual(h.readSaved(), { ...before, filters: draft() });
+  request.reject(new APIError('Synthetic offline response', 0, 'network_unavailable')); await pending;
+  assert.deepEqual(h.readSaved(), { ...before, filters: draft() }, 'Restart restores the attempted draft, not the old successful query');
+  assert.equal(h.context.searchPage, previousPage); assert.deepEqual(plain(h.context.searchedFilters), submitted());
+  assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 1, 'Unchanged failure state must not be written twice');
+  assert.equal(h.context.notice.error, true); assert.match(h.context.notice.text, /Synthetic offline response/);
+  assert.equal(h.context.searchAbort.current, null); assert.equal(h.context.busyRef.current, false);
+});
+
+test('successful Search preserves the preflight draft and then the newer visible draft without changing its submitted query', async () => {
+  const h = harness({ savedFilters: submitted() }), before = h.readSaved(), pending = h.search();
+  const request = await h.admitted();
+  assert.equal(h.writes.length, 1); assert.deepEqual(h.writes[0], { ...before, filters: draft() });
+  h.edit(laterDraft()); request.resolve(page()); await pending;
+  assert.equal(h.writes.length, 2);
+  assert.equal(h.context.liveSearchShown.current, true, 'An accepted live result must block a delayed saved-result restore');
+  assert.deepEqual(h.readSaved().filters, laterDraft()); assert.deepEqual(h.readSaved().lastSearch.filters, draft());
+  assert.equal(h.readSaved().lastSearch.page.jobs[0].id, 'synthetic-9');
+  for (const field of ['profile', 'profileDirty', 'jobs', 'records']) assert.deepEqual(h.readSaved()[field], before[field]);
+});
+
+test('Retry and More save the visible draft but continue the earlier submitted query and paging contract', async t => {
+  for (const mode of ['retry', 'more']) await t.test(mode, async () => {
+    const h = harness({ savedFilters: submitted() }), before = h.readSaved(), pending = h.search(mode);
+    const request = await h.admitted();
+    assert.deepEqual(h.readSaved(), { ...before, filters: draft() });
+    assert.deepEqual(requestFilters(request), submitted());
+    const cursor = new URL(request.path, 'https://synthetic.local').searchParams.get('cursor');
+    assert.equal(cursor, mode === 'more' ? 'synthetic-next-page' : null);
+    h.edit(laterDraft()); request.resolve(page()); await pending;
+    assert.equal(h.writeAttempts.length, 2); assert.equal(h.writes.length, 2);
+    assert.deepEqual(h.readSaved().filters, laterDraft()); assert.deepEqual(h.readSaved().lastSearch.filters, submitted());
+    assert.equal(h.readSaved().lastSearch.page.nextCursor, null);
+  });
+});
+
+test('Cancel during a deferred preflight save admits no fetch and retains the latest edits before returning', async () => {
+  const h = harness({ savedFilters: submitted() }), before = h.readSaved(), previousPage = h.context.searchPage;
+  const saving = deferred(), release = deferred();
+  h.writeHook.current = async () => { saving.resolve(); await release.promise; };
+  const pending = h.search(); await saving.promise;
+  h.edit(laterDraft()); h.context.searchAbort.current.abort();
+  assert.equal(h.calls.length, 0); release.resolve(); await pending;
+  assert.equal(h.calls.length, 0, 'The real adapter rejects pre-aborted signals before admitting a fetch');
+  assert.equal(h.writeAttempts.length, 2); assert.equal(h.writes.length, 2);
+  assert.deepEqual(h.readSaved(), { ...before, filters: laterDraft() });
+  assert.equal(h.context.searchPage, previousPage); assert.deepEqual(plain(h.context.searchedFilters), submitted());
+  assert.match(h.context.notice.text, /Search cancelled/);
+  assert.equal(h.context.searchAbort.current, null); assert.equal(h.context.busyRef.current, false);
+});
+
+function changeBoundary(h, boundary) {
+  if (boundary === 'identity') h.context.identityUnverified.current = true;
+  else if (boundary === 'generation') h.context.epoch.current++;
+  else h.context.snapshotRef.current = model.blankSnapshot('account:another-synthetic-owner:00000000-0000-4000-8000-000000000002');
+}
+
+test('an identity, generation or scope change during a preflight write cannot admit transport or adopt the old snapshot', async t => {
+  for (const boundary of ['identity', 'generation', 'scope']) await t.test(boundary, async () => {
+    const h = harness({ savedFilters: submitted() }), saving = deferred(), release = deferred();
+    const before = h.readSaved(); h.writeHook.current = async () => { saving.resolve(); await release.promise; };
+    const pending = h.search(); await saving.promise; changeBoundary(h, boundary);
+    const currentSnapshot = h.context.snapshotRef.current;
+    release.resolve(); await pending;
+    assert.equal(h.calls.length, 0); assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 1);
+    assert.equal(h.writeAttempts[0].scope, h.scope, 'The already-started write belongs only to the original verified owner');
+    assert.deepEqual(h.readSaved(), { ...before, filters: draft() });
+    assert.equal(h.context.snapshotRef.current, currentSnapshot, 'A late storage completion cannot replace the current page snapshot');
+    assert.equal(h.context.notice.error, true); assert.equal(h.context.busyRef.current, false);
+    assert.equal(h.context.searchAbort.current, null);
+  });
+});
+
+test('a failed transport never saves newer edits after identity, generation or scope changes', async t => {
+  for (const boundary of ['identity', 'generation', 'scope']) await t.test(boundary, async () => {
+    const h = harness(), before = h.readSaved(), previousPage = h.context.searchPage, pending = h.search('retry');
+    const request = await h.admitted(); h.edit(laterDraft()); changeBoundary(h, boundary);
+    request.reject(new APIError('Synthetic late transport failure', 503, 'source_unavailable')); await pending;
+    assert.equal(h.writeAttempts.length, 0); assert.equal(h.writes.length, 0); assert.deepEqual(h.readSaved(), before);
+    assert.equal(h.context.searchPage, previousPage); assert.deepEqual(plain(h.context.filters), laterDraft());
+    assert.equal(h.context.notice.error, true); assert.equal(h.context.searchAbort.current, null);
+  });
+});
+
+test('auth and owner-change errors preserve only the valid preflight write and never save later edits', async t => {
+  for (const [status, code] of [[401, 'invalid_session'], [409, 'account_changed'], [409, 'workspace_changed'], [403, 'sign_in_required']]) await t.test(code, async () => {
+    const h = harness({ savedFilters: submitted() }), before = h.readSaved(), pending = h.search();
+    const request = await h.admitted(); h.edit(laterDraft());
+    request.reject(new APIError('Synthetic owner changed', status, code)); await pending;
+    assert.equal(h.context.locked, true); assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 1);
+    assert.deepEqual(h.readSaved(), { ...before, filters: draft() });
+    assert.equal(h.context.searchAbort.current, null); assert.equal(h.context.busyRef.current, false);
+  });
+});
+
+test('preflight, successful-result and failure-draft storage errors are surfaced once without retrying a write', async t => {
+  for (const phase of ['preflight', 'successful-result', 'failure-draft']) await t.test(phase, async () => {
+    const h = harness({ savedFilters: phase === 'preflight' ? submitted() : draft() }), before = h.readSaved(), previousPage = h.context.searchPage;
+    h.writeHook.current = async () => { throw Error('Synthetic storage quota rejected this write'); };
+    const pending = h.search();
+    if (phase !== 'preflight') {
+      const request = await h.admitted(); h.edit(laterDraft());
+      if (phase === 'successful-result') request.resolve(page());
+      else request.reject(new APIError('Synthetic network failure', 0, 'network_unavailable'));
+    }
+    await pending;
+    assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 0); assert.deepEqual(h.readSaved(), before);
+    assert.equal(h.calls.length, phase === 'preflight' ? 0 : 1);
+    if (phase !== 'successful-result') assert.equal(h.context.searchPage, previousPage);
+    else assert.equal(h.context.searchPage.jobs[0].id, 'synthetic-9', 'A successful public response remains visible even when its local copy cannot be saved');
+    assert.equal(h.context.notice.error, true); assert.match(h.context.notice.text, /Synthetic storage quota/);
+    assert.equal(h.context.searchAbort.current, null); assert.equal(h.context.busyRef.current, false);
+  });
+});
+
+test('an already known storage problem still permits public search without attempting a private draft write', async () => {
+  const h = harness({ savedFilters: submitted() }), before = h.readSaved();
+  h.context.storageProblem = 'Synthetic storage is unavailable';
+  const pending = h.search(), request = await h.admitted(); request.resolve(page()); await pending;
+  assert.equal(h.calls.length, 1); assert.equal(h.writeAttempts.length, 0); assert.deepEqual(h.readSaved(), before);
+  assert.equal(h.context.searchPage.jobs[0].id, 'synthetic-9'); assert.deepEqual(plain(h.context.filters), draft());
 });
 
 let resultsNode, liveStatusNode;
@@ -216,12 +481,15 @@ function renderSearchSurface(node, searchPage, language, overrides = {}) {
   const calls = [], t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage, searchedFilters: submitted(), filters: draft(), searchSources: draft().sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+    searchResultsHeading: { current: null },
+    searchNewResult: null, showNewOnly: false, setShowNewOnly() { assert.fail('A toggle must supply its local setter in the test'); },
     language, t, formatNumber: i18n.formatNumber, displayTime: value => i18n.formatDateTime(value, language),
     same: (a, b) => JSON.stringify(a) === JSON.stringify(b), jobIdentity: model.jobIdentity,
-    JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
+    JobCard: ({ job, newToSearch }) => React.createElement('article', { 'data-synthetic-job': job.id, 'data-new-to-search': newToSearch ? 'true' : undefined }, job.title),
     searchJobs: mode => { calls.push(mode); }, saveJob() {}, setDialog() {}, ...overrides };
   const top = ['discoveryCoverageNotice', 'discoveryLimitNotice'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
-  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nconst localResultLimitReached = ${declaration('localResultLimitReached')};\nconst searchSummary = ${declaration('searchSummary')};\nexports.Results = () => (${node.getText(tree)});`, {
+  const newness = ['newSearchIDs', 'shownSearchJobs', 'newSearchCount', 'hasSearchComparison'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
+  const { Results } = execute(`${top}\n${newness}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nconst localResultLimitReached = ${declaration('localResultLimitReached')};\nconst searchSummary = ${declaration('searchSummary')};\nexports.Results = () => (${node.getText(tree)});`, {
     ...scope, useI18n: () => ({ t, language }),
   });
   const element = Results();
@@ -276,6 +544,35 @@ test('actual retry control stays disabled during work or identity checks and is 
   assert.equal(findButtons(missing.element, 'Retry this search').length, 0);
 });
 
+test('a restored complete page offers a localized page-one retry instead of stale pagination', () => {
+  const value = page({ jobs: [job(0)], nextCursor: 'synthetic-old-cursor' });
+  for (const language of ['en', 'ar']) {
+    const current = renderResults(value, language);
+    assert.equal(findButtons(current.element, current.t('Load more jobs')).length, 1);
+    const old = renderResults(value, language, { restored: true });
+    assert(old.html.includes(old.t('Previous results')));
+    assert.equal(findButtons(old.element, old.t('Load more jobs')).length, 0);
+    const retry = findButtons(old.element, old.t('Retry this search'));
+    assert.equal(retry.length, 1); assert.equal(retry[0].props.disabled, false);
+    retry[0].props.onClick(); assert.deepEqual(old.calls, ['retry']);
+    if (language === 'ar') assert.notEqual(old.t('Retry this search'), 'Retry this search');
+    const rechecking = renderResults(value, language, { restored: true, checkingIdentity: true });
+    assert.equal(findButtons(rechecking.element, rechecking.t('Retry this search'))[0].props.disabled, true);
+  }
+});
+
+test('a restored empty complete page also offers a localized page-one retry', () => {
+  const value = page({ jobs: [], nextCursor: 'synthetic-old-cursor' });
+  for (const language of ['en', 'ar']) {
+    const old = renderResults(value, language, { restored: true });
+    assert(old.html.includes(old.t('Previous results')));
+    assert.equal(findButtons(old.element, old.t('Load more jobs')).length, 0);
+    const retry = findButtons(old.element, old.t('Retry this search'));
+    assert.equal(retry.length, 1);
+    retry[0].props.onClick(); assert.deepEqual(old.calls, ['retry']);
+  }
+});
+
 test('empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages', () => {
   for (const language of ['en', 'ar']) {
     const t = key => i18n.translate(key, language);
@@ -315,7 +612,7 @@ test('due shortcut reveals the promised record after an unrelated Saved search',
   const snapshot = { ...model.blankSnapshot('guest'), jobs: [savedJob], records: [{ ...model.blankRecord(savedJob), followUpDate: '2020-01-01', note: 'Call the recruiter' }] };
   const state = { savedQuery: 'portfolio', savedFilter: 'all', savedStage: 'closed', tab: 'search' };
   const select = () => execute(['jobs', 'records', 'recordsByID', 'recordJobs', 'shownJobs'].map(name => `const ${name} = ${declaration(name)};`).join('\n') + '\nexports.rows = shownJobs;', {
-    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedList: records.matchesSavedList,
+    snapshot, ...state, jobIdentity: model.jobIdentity, jobFromRecord: savedComparison.jobFromRecord, matchesSavedList: records.matchesSavedList,
   }).rows;
   assert.equal(select().length, 0);
   const before = JSON.stringify(snapshot);
@@ -331,6 +628,7 @@ test('due shortcut reveals the promised record after an unrelated Saved search',
 
 test('retry reuses the submitted filters and boards even when unsubmitted form edits differ', async () => {
   const h = harness(), original = plain(h.context.filters), pending = h.search('retry');
+  await h.admitted();
   assert.deepEqual(requestFilters(h.calls[0]), submitted());
   h.calls[0].resolve(page()); await pending;
   assert.deepEqual(plain(h.context.filters), original);
@@ -458,3 +756,281 @@ for (const language of ['en', 'ar']) {
     }
   });
 }
+
+// These cases use real source-scoped discovery identities, unlike the older
+// transport-only stubs above. The production history algorithm and schemas run.
+const historySource = 'lever:global:synthetic-history';
+const historyFilters = () => ({ query: 'Designer', location: 'Toronto', remoteOnly: false, sources: [historySource] });
+const historyJob = number => ({ ...job(number), id: `${historySource}:20000000-0000-4000-8000-${String(number).padStart(12, '0')}`,
+  url: `https://jobs.lever.co/synthetic-history/20000000-0000-4000-8000-${String(number).padStart(12, '0')}`, location: 'Toronto' });
+function historyPage(numbers, { matchedCount = numbers.length, nextCursor = null, sourceStatus = 'fresh', error = null } = {}) {
+  return { ...page({ jobs: numbers.map(historyJob), nextCursor }), sources: [{ ...page().sources[0], id: historySource,
+    boardUrl: 'https://jobs.lever.co/synthetic-history', matchedCount, availableCount: matchedCount, status: sourceStatus, error }] };
+}
+const historyEvaluation = (history, value, previousResult) => searchHistory.evaluateSearchHistory({ history, filters: historyFilters(), page: value, now: 1000, previousResult });
+function historyHarness(options = {}) {
+  return harness({ searchedFilters: null, savedFilters: historyFilters(), initialFilters: historyFilters(), ...options });
+}
+async function completeHistorySearch(h, value, mode) {
+  const index = h.calls.length, pending = h.search(mode), request = await h.admitted(index);
+  request.resolve(value); await pending;
+  assert.equal(h.context.notice, null, h.context.notice?.text);
+}
+
+test('actual search commits a silent A/B baseline then only C with B/C and reload retains the exact result', async () => {
+  const h = historyHarness(), privateBefore = h.readSaved();
+  await completeHistorySearch(h, historyPage([1, 2]));
+  assert.deepEqual(plain(h.context.searchNewResult.newIds), []);
+  assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, []);
+  assert.equal(h.readSaved().searchHistory.searches[0].boards[0].ready, true);
+  await completeHistorySearch(h, historyPage([2, 3]));
+  const saved = h.readSaved();
+  assert.deepEqual(saved.lastSearch.newResult.newIds, [historyJob(3).id]);
+  assert.deepEqual(plain(h.context.searchNewResult), saved.lastSearch.newResult);
+  assert.deepEqual(saved.lastSearch.page.jobs.map(job => job.id), [historyJob(2).id, historyJob(3).id]);
+  assert.equal(saved.lastSearch.page.nextCursor, null);
+  for (const name of ['profile', 'jobs', 'records']) assert.deepEqual(saved[name], privateBefore[name]);
+  for (const call of h.calls) assert.deepEqual([...new URL(call.path, 'https://synthetic.local').searchParams.keys()].sort(), ['location', 'q', 'remote', 'source']);
+});
+
+test('actual More commits accumulated IDs and carries earlier new markers across the current search', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+  const compared = historyEvaluation(baseline.history, firstPage);
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+  h.context.setShowNewOnly(true);
+  await completeHistorySearch(h, historyPage([4], { matchedCount: 3 }), 'more');
+  assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, [historyJob(3).id, historyJob(4).id]);
+  assert.equal(h.context.showNewOnly, true, 'More retains the local display choice');
+  assert.deepEqual(h.readSaved().lastSearch.page.jobs.map(job => job.id), [2, 3, 4].map(value => historyJob(value).id));
+  const visible = renderResults(h.context.searchPage, 'en', { searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly });
+  assert.equal([...visible.html.matchAll(/data-synthetic-job=/g)].length, 2);
+  assert(!visible.html.includes(historyJob(2).id));
+});
+
+for (const [initialOnly, latestOnly] of [[false, true], [true, false]]) {
+  test('More preserves the latest display choice across its frozen render closure: ' + (initialOnly ? 'New' : 'All') + ' to ' + (latestOnly ? 'New' : 'All'), async () => {
+    const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+    const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+    const compared = historyEvaluation(baseline.history, firstPage);
+    const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+    h.context.setShowNewOnly(initialOnly);
+    // search() installs the actual handler with the render's scalar state
+    // captured by value. A later click cannot update that lexical binding.
+    const pending = h.search('more'), request = await h.admitted();
+    const waiting = renderResults(h.context.searchPage, 'en', {
+      searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly,
+      setShowNewOnly: h.context.setShowNewOnly, busy: h.context.busy,
+    });
+    const choices = findButtons(waiting.element, waiting.t(latestOnly ? 'New only' : 'All results'));
+    assert.equal(choices.length, 1);
+    assert(!choices[0].props.disabled, 'The local display choice remains reachable while More is pending');
+    choices[0].props.onClick();
+    assert.equal(h.context.showNewOnly, latestOnly);
+    assert.equal(h.context.showNewOnlyRef.current, latestOnly, 'The actual production setter records current intent synchronously');
+    assert.deepEqual(waiting.calls, [], 'Changing the display filter admits no new request');
+    assert.equal(h.calls.length, 1);
+
+    request.resolve(historyPage([4], { matchedCount: 3 })); await pending;
+    assert.equal(h.context.notice, null, h.context.notice?.text);
+    assert.equal(h.context.showNewOnly, latestOnly, 'The completed request must not restore its captured earlier display choice');
+    assert.equal(h.context.showNewOnlyRef.current, latestOnly);
+    assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, [historyJob(3).id, historyJob(4).id]);
+    assert.deepEqual(plain(h.context.searchPage.jobs.map(job => job.id)), [2, 3, 4].map(value => historyJob(value).id));
+    const final = renderResults(h.context.searchPage, 'en', {
+      searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly,
+      setShowNewOnly: h.context.setShowNewOnly,
+    });
+    assert.equal([...final.html.matchAll(/data-synthetic-job=/g)].length, latestOnly ? 2 : 3);
+    assert.equal(h.calls.length, 1);
+  });
+}
+
+test('a failed final More save reveals all accumulated jobs instead of keeping an unsupported New-only filter', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+  const compared = historyEvaluation(baseline.history, firstPage);
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+  const before = h.readSaved(); h.context.setShowNewOnly(true);
+  h.writeHook.current = async () => { throw Error('Synthetic More history vault failure'); };
+  const pending = h.search('more'), request = await h.admitted(); request.resolve(historyPage([4], { matchedCount: 3 })); await pending;
+  assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 0); assert.deepEqual(h.readSaved(), before);
+  assert.equal(h.context.searchNewResult, null); assert.equal(h.context.showNewOnly, false);
+  assert.deepEqual(plain(h.context.searchPage.jobs.map(job => job.id)), [2, 3, 4].map(value => historyJob(value).id));
+  assert.match(h.context.notice.text, /Synthetic More history vault failure/);
+  for (const language of ['en', 'ar']) {
+    const view = renderResults(h.context.searchPage, language, { searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly });
+    assert.equal([...view.html.matchAll(/data-synthetic-job=/g)].length, 3);
+    assert.equal(findButtons(view.element, view.t('New only')).length, 0);
+    assert(!view.html.includes(view.t('No openings are new in the results compared.')));
+  }
+});
+
+test('actual failure and cancellation preserve history and frozen new markers while retaining later filter drafts', async t => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const compared = historyEvaluation(baseline.history, historyPage([2, 3]));
+  for (const cancel of [false, true]) await t.test(cancel ? 'cancel' : 'network failure', async () => {
+    const h = historyHarness({ searchedFilters: historyFilters(), initialPage: historyPage([2, 3]), initialHistory: compared.history, initialNewResult: compared.result });
+    const before = h.readSaved(), pending = h.search(), request = await h.admitted();
+    h.edit({ ...historyFilters(), query: 'Nurse typed while waiting' });
+    if (cancel) h.context.searchAbort.current.abort();
+    else request.reject(new APIError('Synthetic history request failed', 0, 'network_unavailable'));
+    await pending;
+    const saved = h.readSaved();
+    assert.deepEqual(saved.searchHistory, before.searchHistory);
+    assert.deepEqual(saved.lastSearch, before.lastSearch);
+    assert.deepEqual(plain(h.context.searchNewResult), before.lastSearch.newResult);
+    assert.equal(saved.filters.query, 'Nurse typed while waiting');
+  });
+});
+
+test('an identity change during history search cannot commit a baseline to either owner', async () => {
+  const h = historyHarness(), before = h.readSaved(), pending = h.search(), request = await h.admitted();
+  h.context.epoch.current++; h.context.identityUnverified.current = true;
+  h.context.snapshotRef.current = model.blankSnapshot('account:other-synthetic-owner:new');
+  request.resolve(historyPage([1, 2])); await pending;
+  assert.equal(h.writeAttempts.length, 0); assert.deepEqual(h.readSaved(), before);
+  assert.equal(h.context.snapshotRef.current.searchHistory, undefined);
+  assert.equal(h.context.searchNewResult, null);
+});
+
+test('failed final vault save never publishes or commits an unretained newness result', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: historyPage([1, 2]), initialHistory: baseline.history, initialNewResult: baseline.result });
+  const before = h.readSaved(); h.writeHook.current = async () => { throw Error('Synthetic history vault failure'); };
+  const pending = h.search(), request = await h.admitted(); request.resolve(historyPage([2, 3])); await pending;
+  assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 0);
+  assert.deepEqual(h.readSaved(), before); assert.equal(h.context.searchNewResult, null);
+  assert.match(h.context.notice.text, /Synthetic history vault failure/);
+});
+
+for (const language of ['en', 'ar']) test(`actual new-only controls/count and live summary remain local and truthful in ${language}`, () => {
+  const first = historyEvaluation(undefined, historyPage([1, 2])), next = historyEvaluation(first.history, historyPage([2, 3]));
+  const value = historyPage([2, 3]), untouched = JSON.stringify(value);
+  let showNewOnly = false;
+  const options = () => ({ searchNewResult: next.result, showNewOnly, setShowNewOnly: value => { showNewOnly = value; } });
+  const all = renderResults(value, language, options());
+  const label = all.t('{0} role new to this search', [i18n.formatNumber(1, language)]);
+  assert(all.html.includes(label)); assert.equal([...all.html.matchAll(/data-new-to-search="true"/g)].length, 1);
+  const toggle = findButtons(all.element, all.t('New only'));
+  assert.equal(toggle.length, 1); assert.equal(toggle[0].props['aria-pressed'], false);
+  toggle[0].props.onClick(); assert.equal(showNewOnly, true); assert.deepEqual(all.calls, []);
+  const only = renderResults(value, language, options());
+  assert.equal([...only.html.matchAll(/data-synthetic-job=/g)].length, 1);
+  assert(only.html.includes(historyJob(3).id)); assert(!only.html.includes(historyJob(2).id));
+  assert(only.html.includes(only.t('{0} of {1} shown', [i18n.formatNumber(1, language), i18n.formatNumber(2, language)])));
+  assertLiveSummary(renderLiveStatus(value, language, options()), only.t('{0} job shown. {1}', [i18n.formatNumber(1, language), only.t('Search complete.')]));
+  findButtons(only.element, only.t('All results'))[0].props.onClick(); assert.equal(showNewOnly, false);
+  assert.equal([...renderResults(value, language, options()).html.matchAll(/data-synthetic-job=/g)].length, 2);
+  assert.equal(JSON.stringify(value), untouched); assert.deepEqual(only.calls, []);
+  const initial = renderResults(historyPage([1, 2]), language, { searchNewResult: first.result });
+  assert.equal(findButtons(initial.element, initial.t('New only')).length, 0, 'the initial baseline is silent');
+  const zero = historyEvaluation(next.history, value), zeroOnly = renderResults(value, language, { searchNewResult: zero.result, showNewOnly: true, setShowNewOnly() {} });
+  assert(zeroOnly.html.includes(zeroOnly.t('No openings are new in the results compared.')));
+  assert.equal([...zeroOnly.html.matchAll(/data-synthetic-job=/g)].length, 0);
+});
+
+test('an all-board outage keeps earlier jobs and the latest draft without reviving old pagination', async t => {
+  for (const mode of ['new', 'more']) await t.test(mode, async () => {
+    const previousPage = page({ jobs: [job(7), job(8)], nextCursor: 'earlier-cursor' });
+    const h = harness({ initialPage: previousPage });
+    const previousSaved = h.readSaved();
+    const pending = h.search(mode);
+    const request = await h.admitted();
+    h.edit(laterDraft());
+    request.resolve(page({ status: 'unavailable', jobs: [], sourceStatus: 'unavailable' }));
+    await pending;
+
+    assert.equal(h.context.searchPage, previousPage, 'Earlier results remain visible with their original sources and date');
+    assert.equal(h.context.restored, true, 'Earlier openings are labeled as previous results');
+    assert.equal(h.context.notice?.text, 'Current openings could not be checked.');
+    assert.deepEqual(h.readSaved(), { ...previousSaved, filters: laterDraft() }, 'The outage saves the draft without erasing earlier results or private records');
+    await h.search('more');
+    assert.equal(h.calls.length, 1, 'The old cursor cannot issue a request after the outage');
+
+    const refreshed = h.search('new');
+    const retry = await h.admitted(1);
+    assert.equal(new URL(retry.path, 'https://synthetic.local').searchParams.has('cursor'), false);
+    retry.resolve(page({ jobs: [job(9)] }));
+    await refreshed;
+    assert.equal(h.context.restored, false);
+    assert.deepEqual(plain(h.context.searchPage.jobs), [job(9)]);
+  });
+});
+
+function startupHarness() {
+  const workspaceId = '00000000-0000-4000-8000-000000000001';
+  const scope = `account:synthetic-search-owner:${workspaceId}`;
+  const saved = model.blankSnapshot(scope);
+  saved.filters = { query: 'Designer', location: 'Amman', remoteOnly: true, sources: ['lever:synthetic-a'] };
+  saved.lastSearch = { filters: plain(saved.filters), page: page({ jobs: [job(1)] }) };
+  const remote = { accountId: 'synthetic-search-owner', workspaceId, profile: saved.profile, jobs: [] };
+  const loads = [];
+  const context = {
+    Error, URL, URLSearchParams, Intl, z: require('zod').z,
+    account: { id: remote.accountId }, epoch: { current: 5 }, workspaceRef: { current: remote }, snapshotRef: { current: null },
+    filterDraftRef: { current: { query: '', location: '', remoteOnly: false, sources: [] } },
+    startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, showNewOnlyRef: { current: false },
+    filters: { query: '', location: '', remoteOnly: false, sources: [] }, searchPage: null, searchedFilters: null, restored: false,
+    blankSnapshot: model.blankSnapshot, jobIdentity: model.jobIdentity, restoreRetainedSearchNewResult: searchHistory.restoreRetainedSearchNewResult,
+    loadPhoneSnapshot(owner) { assert.equal(owner, scope); const gate = deferred(); loads.push(gate); return gate.promise; },
+    listPhoneSnapshots(prefix) { assert.equal(prefix, 'account:synthetic-search-owner:'); return Promise.resolve([]); },
+    phoneSafety: { load: () => Promise.resolve({ holds: [], recovery: [] }), list: () => Promise.resolve([]) },
+    lock() { context.locked = true; context.epoch.current++; },
+    setFiltersState(value) { context.filters = value; }, setSnapshot(value) { context.snapshot = value; },
+    setProfile(value) { context.profile = value; }, setSafetyState(value) { context.safetyState = value; },
+    setSafetyError(value) { context.safetyError = value; }, setStorageProblem(value) { context.storageProblem = value; },
+    setStorageCode(value) { context.storageCode = value; }, setSearchPage(value) { context.searchPage = value; },
+    setSearchedFilters(value) { context.searchedFilters = value; }, setRestored(value) { context.restored = value; },
+    setSearchNewResult(value) { context.searchNewResult = value; }, setShowNewOnlyState(value) { context.showNewOnly = value; },
+    setOlderDrafts(value) { context.olderDrafts = value; },
+  };
+  vm.createContext(context);
+  for (const name of ['message', 'withPDF', 'mergeJobs', 'setFilters', 'editFilter', 'putSnapshot', 'setShowNewOnly', 'openSavedWorkspace']) install(name, context);
+  return { context, loads, remote, saved, scope, open: () => context.openSavedWorkspace(remote, 5, () => false) };
+}
+
+test('overlapping startup and visibility loads restore untouched fields once and retain later edits', async () => {
+  const h = startupHarness(), initial = h.open(), visibility = h.open();
+  assert.equal(h.loads.length, 2);
+  h.context.editFilter('query', 'Nurse');
+  h.loads[1].resolve(plain(h.saved)); await visibility;
+  assert.deepEqual(plain(h.context.filters), { query: 'Nurse', location: 'Amman', remoteOnly: true, sources: ['lever:synthetic-a'] });
+  h.context.editFilter('location', 'Jeddah');
+  h.loads[0].resolve(plain(h.saved)); await initial;
+  assert.deepEqual(plain(h.context.filters), { query: 'Nurse', location: 'Jeddah', remoteOnly: true, sources: ['lever:synthetic-a'] });
+  assert.equal(h.context.snapshotRef.current.scope, h.scope);
+  assert.equal(h.context.locked, undefined);
+});
+
+test('an explicitly cleared query and board selection survive saved-filter adoption', async () => {
+  const h = startupHarness(), pending = h.open();
+  h.context.editFilter('query', 'temporary'); h.context.editFilter('query', '');
+  h.context.editFilter('remoteOnly', true); h.context.editFilter('remoteOnly', false);
+  h.context.editFilter('sources', []);
+  h.loads[0].resolve(plain(h.saved)); await pending;
+  assert.deepEqual(plain(h.context.filters), { query: '', location: 'Amman', remoteOnly: false, sources: [] });
+  assert.deepEqual(plain(h.context.snapshotRef.current.filters), h.saved.filters, 'The private saved snapshot remains intact until a valid write');
+});
+
+test('a live result shown during delayed safety restoration is not replaced by stored results', async () => {
+  const h = startupHarness(), safety = deferred();
+  h.context.phoneSafety.load = () => safety.promise;
+  const pending = h.open(); h.loads[0].resolve(plain(h.saved)); await yieldEventLoop();
+  assert.equal(h.context.snapshotRef.current.scope, h.scope);
+  const live = page({ jobs: [job(9)] });
+  h.context.liveSearchShown.current = true; h.context.setSearchPage(live); h.context.setSearchedFilters({ ...h.saved.filters, query: 'Nurse' });
+  safety.resolve({ holds: [], recovery: [] }); await pending;
+  assert.equal(h.context.searchPage, live);
+  assert.equal(h.context.restored, false);
+  assert.equal(h.context.searchedFilters.query, 'Nurse');
+});
+
+test('a changed workspace cannot adopt a pending saved search', async () => {
+  const h = startupHarness(), pending = h.open();
+  h.context.workspaceRef.current = { ...h.remote, workspaceId: '00000000-0000-4000-8000-000000000002' };
+  h.loads[0].resolve(plain(h.saved));
+  await assert.rejects(pending, /workspace changed/);
+  assert.equal(h.context.snapshotRef.current, null);
+  assert.equal(h.context.locked, true);
+});

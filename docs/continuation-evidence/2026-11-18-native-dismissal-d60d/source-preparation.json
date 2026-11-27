@@ -1,0 +1,71 @@
+{
+  "created_utc": "2026-11-18T10:26:28.705678+00:00",
+  "author": "expert_engineering, assigned isolated finishTyping helper owner by root",
+  "worktree": "/Users/saleh/Developer/career-finder-native-dismissal-20261118-d60d62a70f26",
+  "branch": "fix/native-dismissal-20261118-d60d",
+  "base_commit": "0db94c651d37cde774410915dbdd346cc743a458",
+  "changed_files": [
+    "apple/UITests/CareerFinderUITests.swift"
+  ],
+  "source_sha256": "567f688796d08e655d6c47cb0e43874481b76dd5afaff235ffb1fd6cd3b434a3",
+  "baseline_source_sha256": "c4644ab9b28a1ec55cb284b5633e8d80bff07de3084472ae3798ded063736e3f",
+  "patch_sha256": "1e221f8a9df40ecf403e94102622351652c2e4d7096a895262cbadccfcd3573a",
+  "scope_verification": {
+    "outside_finishTyping_byte_identical": true,
+    "all_17_test_method_names_unchanged": true,
+    "missing_Done_branch_and_reachable_real_tap_unchanged": true,
+    "product_unchanged": true,
+    "wait_timeout_seconds": 5,
+    "timeout_increase": false,
+    "diff_check_exit": 0
+  },
+  "confirmed_mechanism": {
+    "failed_ci_run": 44277443136,
+    "raw_log_job": 134710126841,
+    "predicate_read_starts_test_seconds": {
+      "all_keyboard_keys": 243.57,
+      "all_Done_matches": 246.25,
+      "keyboard_exists": 247.87
+    },
+    "failure_test_seconds": 249.41,
+    "nominal_wait_seconds": 5,
+    "first_read_to_failure_seconds": 5.84,
+    "same_source_local_control": "profile-geometry-native-002",
+    "local_read_starts_and_next_assertion_seconds": [
+      81.63,
+      81.67,
+      81.72,
+      81.8
+    ]
+  },
+  "correction": "Wait only on real keyboard absence/nonhittability. After that wait, query original all-key and all-Done postconditions once, then recheck actual keyboard; assert all conditions. Capture original screenshot/AX plus observed values before any final assertion on failure.",
+  "animation_handling": "Actual keyboard transition is observed before broad postconditions. No condition is waived, and a keyboard that remains or becomes hittable during the independent observations fails the final check.",
+  "preserved_conditions": [
+    "Real Done typing action must exist when hittable keyboard keys exist.",
+    "Existing Done typing action must be hittable and receive its real tap.",
+    "Actual keyboard must become absent or nonhittable within unchanged5secondwait.",
+    "No hittable keyboard key remains.",
+    "No existing hittable Done typing action remains.",
+    "Actual keyboard is checked again after the key/action observations."
+  ],
+  "evidence_sources": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-ci-44277443136/failed-accessibility-context.log",
+      "sha256": "1446c693435fefaf17fc21b6185273e22fe8ec9c5f621e32548515911da57a2b"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-ci-44277443136/iphone-log-verification.json",
+      "sha256": "f337c43d141e26380c35bf9379a35633adfa8011382f85a0fce040b1a5247e19"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/receipt.json",
+      "sha256": "2cbfc4e96e1218062528c4d417e63a14f230df01e6d7980839087591da7f0846"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/xcodebuild.log",
+      "sha256": "796bca5eb757d740354c4c13432d3016effeea333c75adbe75fe516efc2fe63f"
+    }
+  ],
+  "qualification": "Prepared source only. Original CI screen-recording inspection and independent UX review pending. Root owns native replay and full CI. No compile, build, test, native action, CI, download, commit or push performed by this author.",
+  "release_status": "Not qualified for integration or release by this preparation receipt."
+}

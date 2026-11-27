@@ -240,6 +240,14 @@
     "arguments": 3
   },
   {
+    "key": "Saved history from {0}. Connect and refresh to check the latest status.",
+    "parts": [
+      "Saved history from ",
+      ". Connect and refresh to check the latest status."
+    ],
+    "arguments": 1
+  },
+  {
     "key": "The search service asked for a short wait. Try again after {0}",
     "parts": [
       "The search service asked for a short wait. Try again after ",
@@ -651,10 +659,26 @@
     "arguments": 1
   },
   {
+    "key": "{0} roles new to this search",
+    "parts": [
+      "",
+      " roles new to this search"
+    ],
+    "arguments": 1
+  },
+  {
     "key": "Open employer board for {0}",
     "parts": [
       "Open employer board for ",
       ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} role new to this search",
+    "parts": [
+      "",
+      " role new to this search"
     ],
     "arguments": 1
   },
@@ -948,6 +972,16 @@
     "arguments": 1
   },
   {
+    "key": "Compare {0} at {1} in {2}",
+    "parts": [
+      "Compare ",
+      " at ",
+      " in ",
+      ""
+    ],
+    "arguments": 3
+  },
+  {
     "key": "Earlier search: {0}",
     "parts": [
       "Earlier search: ",
@@ -1017,6 +1051,23 @@
     "parts": [
       "Last checked: ",
       ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Open job: {0} in {1}",
+    "parts": [
+      "Open job: ",
+      " in ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} of 2 selected",
+    "parts": [
+      "",
+      " of 2 selected"
     ],
     "arguments": 1
   },
@@ -1140,6 +1191,15 @@
       "Source: ",
       " · ",
       ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} of {1} shown",
+    "parts": [
+      "",
+      " of ",
+      " shown"
     ],
     "arguments": 2
   },

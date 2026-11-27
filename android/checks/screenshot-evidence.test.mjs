@@ -58,7 +58,7 @@ test('required paths match the actual success captures declared by the instrumen
   const source = name => fs.readFileSync(path.join(root,
     'android/app/src/androidTest/java/com/saleh/careerfinder', name), 'utf8');
   const declarations = [
-    ['NavigationPhoneAcceptanceTest.kt', 'cache/navigation-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
+    ['NavigationPhoneAcceptanceTest.kt', 'cache/navigation-review-evidence', /\bcapture\(\s*"([a-z0-9-]+)"(?:\s*,\s*awaitComposeIdle\s*=\s*(?:true|false))?\s*\)/g],
     ['LinkedInPhoneAcceptanceTest.kt', 'cache/linkedin-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
     ['NativeLocalizationAcceptanceTest.kt', 'cache/localization-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
     ['PhonePolishAcceptanceTest.kt', 'cache/strict-review-evidence', /\bcaptureConfirmation\("([a-z0-9-]+)"\)/g],

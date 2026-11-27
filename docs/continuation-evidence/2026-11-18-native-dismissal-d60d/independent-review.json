@@ -1,0 +1,60 @@
+{
+  "atUTC": "2026-11-18T10:29:24.197411+00:00",
+  "reviewer": "expert_ux, independent read-only review; no source edits or native execution",
+  "originalCI": 44277443136,
+  "originalHead": "0db94c651d37cde774410915dbdd346cc743a458",
+  "originalUITestsSHA256": "c4644ab9b28a1ec55cb284b5633e8d80bff07de3084472ae3798ded063736e3f",
+  "video": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-ci-44277443136/artifacts/iphone-ui-acceptance-44277443136/career-ui-screenshots/E2687C1D-E7E7-4B73-986D-728CC75E576A.mp4",
+    "sha256": "c41ec5100f82834bf17b57b2ae17233defdb56d65908aeb3d742eaa75ce734f7",
+    "attachmentTimestampUTC": "2026-11-18T09:42:28.316Z",
+    "timeBase": "1/600",
+    "sourceFrameTiming": "frame-timing-238-245.json",
+    "manifest": "frames.json"
+  },
+  "observations": [
+    {
+      "decodedPTS": 239.275,
+      "file": "video-239s-exact.png",
+      "observed": "Actual keyboard, Done typing and secure-field caret visible."
+    },
+    {
+      "decodedPTS": 239.618333,
+      "file": "video-239_6s-exact.png",
+      "observed": "Keyboard is sliding downward; Done typing fades during dismissal; connection sheet remains."
+    },
+    {
+      "decodedPTS": 240.015,
+      "file": "video-240s-exact.png",
+      "observed": "Keyboard and Done typing fully absent; nine secure-value dots retained; connection sheet and navigation Done remain."
+    }
+  ],
+  "timing": {
+    "doneTapLogUTC": "2026-11-18T09:46:26.613169Z",
+    "doneEventLogUTC": "2026-11-18T09:46:27.267193Z",
+    "firstAllKeysPollLogUTC": "2026-11-18T09:46:30.674197Z",
+    "dismissedFrameApproxUTC": "2026-11-18T09:46:28.331Z",
+    "interpretation": "On attachment/log clock alignment, fully dismissed frame precedes first key-enumeration poll by about2.3seconds and follows Done tap by about1.7seconds. These are cross-source approximate alignments, not an instrumented latency guarantee.",
+    "variableFrameRateCaution": "Seeking to241or243seconds yields the later244.655PTS frame; that late frame was not used as proof of timely dismissal."
+  },
+  "visualVerdict": "No product keyboard-dismissal failure established in this retained run. Actual video supports timely visual dismissal followed by expensive timed-observation failure; screenshots cannot establish AX hittability by themselves.",
+  "candidateReview": {
+    "worktree": "/Users/saleh/Developer/career-finder-native-dismissal-20261118-d60d62a70f26",
+    "base": "0db94c651d37cde774410915dbdd346cc743a458",
+    "UITestsSHA256": "567f688796d08e655d6c47cb0e43874481b76dd5afaff235ffb1fd6cd3b434a3",
+    "onlyFinishTypingChanged": true,
+    "allSourceOutsideHelperByteIdentical": true,
+    "same17TestMethods": true,
+    "realTapAndMissingDoneBranchUnchanged": true,
+    "actualKeyboardConditionAndFiveSecondWaitRetained": true,
+    "allOriginalNoHittableKeyAndDonePostconditionsExplicitOutsideTimedPoll": true,
+    "finalKeyboardRecheckAdded": true,
+    "diagnosticScreenshotAndOriginalAXCapturedBeforeFailureAssertions": true,
+    "verdict": "No material issue established in this bounded static delta; suitable for root-owned native qualification. Runtime result pending at this review."
+  },
+  "limits": [
+    "No original post-failure AX attachment exists for the connection dismissal; original video provides visual state and timing.",
+    "No new source changes, tests, CI, builds, downloads or simulator actions by this lane.",
+    "No physical-device or VoiceOver/TalkBack traversal claim."
+  ]
+}

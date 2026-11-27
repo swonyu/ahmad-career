@@ -57,7 +57,7 @@ struct DiscoveryPage: Codable {
     let status: String
     let jobs: [DiscoveryJob]
     let sources: [DiscoverySourceStatus]
-    let nextCursor: String?
+    var nextCursor: String?
     let totalMatches: Int
     let limited: Bool
     let notice: String
@@ -82,7 +82,7 @@ struct DiscoveryQuery: Codable, Equatable {
 }
 struct DiscoveryFailure: LocalizedError {
     let message: String
-    var code: String? = nil
+    var statusCode: Int? = nil
     var retryAfter: Date? = nil
     var errorDescription: String? { message }
 }
@@ -352,8 +352,16 @@ private final class DiscoveryNoRedirect: NSObject, URLSessionTaskDelegate {
 @MainActor
 final class CareerDiscoveryClient: CareerDiscoveryServing {
     private let session: URLSession
-    init() {
+    #if DEBUG
+    private var nativeJourneyTransport: NativeJourneyTransport?
+    convenience init(nativeJourneyTransport: NativeJourneyTransport) {
+        self.init()
+        self.nativeJourneyTransport = nativeJourneyTransport
+    }
+    #endif
+    init(protocolClasses: [AnyClass]? = nil) {
         let config = URLSessionConfiguration.ephemeral
+        if let protocolClasses { config.protocolClasses = protocolClasses }
         config.httpCookieStorage = nil; config.httpShouldSetCookies = false; config.urlCredentialStorage = nil
         config.urlCache = nil; config.requestCachePolicy = .reloadIgnoringLocalCacheData
         config.timeoutIntervalForRequest = 25; config.timeoutIntervalForResource = 35
@@ -361,20 +369,22 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
     }
     deinit { session.invalidateAndCancel() }
     private func fetch<T: Decodable>(_ request: URLRequest, as type: T.Type) async throws -> T {
+        #if DEBUG
+        let request = try nativeJourneyTransport?.map(request, discovery: true) ?? request
+        #endif
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, data.count <= 4 * 1_024 * 1_024 else {
+        guard let http = response as? HTTPURLResponse else {
             throw DiscoveryFailure(message: "The discovery service returned an unreadable response. Try again later.")
         }
         guard (200...299).contains(http.statusCode) else {
-            let fields = (try? JSONDecoder().decode([String: ApplicationValue].self, from: data)) ?? [:]
-            let error = fields["error"]?.object ?? [:]
-            let code = error["code"]?.string ?? fields["code"]?.string
             let retry = DiscoveryPolicy.retryAfterDeadline(http.value(forHTTPHeaderField: "Retry-After"))
-            let message = http.statusCode == 409 ? "These results changed while you were browsing. Start a new search; the previous results are still here."
-                : http.statusCode == 429 ? "Search is temporarily busy. Wait before trying again."
+            let message = http.statusCode == 429 ? "Search is temporarily busy. Wait before trying again."
                 : http.statusCode == 400 ? "Check your board URLs and search fields. Only supported public employer boards can be searched."
                 : "The discovery service is unavailable. Your saved opportunities are still on this phone."
-            throw DiscoveryFailure(message: message, code: code, retryAfter: retry)
+            throw DiscoveryFailure(message: message, statusCode: http.statusCode, retryAfter: retry)
+        }
+        guard data.count <= 4 * 1_024 * 1_024 else {
+            throw DiscoveryFailure(message: "The discovery service returned an unreadable response. Try again later.")
         }
         do { return try JSONDecoder().decode(T.self, from: data) }
         catch { throw DiscoveryFailure(message: "The discovery response could not be read. Previous results are preserved.") }
@@ -389,16 +399,197 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
     }
 }
 
+struct DiscoverySearchHistory: Codable, Equatable {
+    struct Board: Codable, Equatable {
+        var sourceId: String
+        var seenIds: [String]
+        var ready: Bool
+    }
+    struct Search: Codable, Equatable {
+        var key: String
+        var lastUsedAt: Int64
+        var boards: [Board]
+    }
+    var version = 1
+    var searches: [Search] = []
+}
+
+struct DiscoveryNewResult: Codable, Equatable {
+    var key: String
+    var newIds: [String]
+    var comparedSourceIds: [String]
+    var baselinedSourceIds: [String]
+    var pendingSourceIds: [String]
+    var coverageLimited: Bool
+    var baselineReset: Bool
+}
+
+/// Local first-observation evidence, never an employer posting date or closure claim.
+enum DiscoveryHistoryPolicy {
+    static let maximumQueries = 8, maximumBoardIDs = 1_000, maximumTotalIDs = 4_000
+    static let maximumTime: Int64 = 9_007_199_254_740_991
+    private static func sorted(_ values: [String]) -> [String] { Array(Set(values)).sorted() }
+    private static func validID(_ value: String) -> Bool {
+        !value.isEmpty && value.utf16.count <= 250 && !value.unicodeScalars.contains { $0.value <= 0x1f || $0.value == 0x7f }
+    }
+    private static func belongs(_ id: String, to source: String) -> Bool {
+        id.hasPrefix(source + ":") && id.utf16.count > source.utf16.count + 1
+    }
+    private static func canonicalIDs(_ values: [String]) -> [String]? {
+        guard !values.isEmpty, values.count <= DiscoveryPolicy.maximumSources else { return nil }
+        let identities = values.compactMap { DiscoveryPolicy.canonicalBoard($0)?.id }
+        return identities.count == values.count ? sorted(identities) : nil
+    }
+    static func sourceIDs(for query: DiscoveryQuery, defaults: [String]) -> [String]? {
+        canonicalIDs(query.sources.isEmpty ? defaults : query.sources)
+    }
+    private static func fold(_ value: String) -> String {
+        // Match JavaScript trim + NFKD + removal of all Unicode Mark categories.
+        let normalized = value.trimmingCharacters(in: MobileApplicationPolicy.serviceWhitespace).decomposedStringWithCompatibilityMapping
+        return String(String.UnicodeScalarView(normalized.unicodeScalars.filter {
+            switch $0.properties.generalCategory {
+            case .nonspacingMark, .spacingMark, .enclosingMark: return false
+            default: return true
+            }
+        })).lowercased()
+    }
+    static func key(for query: DiscoveryQuery, sourceIDs: [String]) -> String? {
+        guard query.validationError == nil,
+              !(query.keywords + query.location).unicodeScalars.contains(where: { $0.value <= 0x1f || $0.value == 0x7f }),
+              let sources = self.sourceIDs(for: query, defaults: sourceIDs),
+              let bytes = try? JSONSerialization.data(withJSONObject: [1, fold(query.keywords), fold(query.location), query.remoteOnly, sources], options: [.withoutEscapingSlashes]),
+              let value = String(data: bytes, encoding: .utf8), value.utf16.count <= 8_192 else { return nil }
+        return value
+    }
+    static func valid(_ history: DiscoverySearchHistory) -> Bool {
+        guard history.version == 1, history.searches.count <= maximumQueries,
+              Set(history.searches.map(\.key)).count == history.searches.count else { return false }
+        var total = 0
+        for search in history.searches {
+            guard !search.key.isEmpty, search.key.utf16.count <= 8_192,
+                  (0...maximumTime).contains(search.lastUsedAt), search.boards.count <= DiscoveryPolicy.maximumSources,
+                  Set(search.boards.map(\.sourceId)).count == search.boards.count else { return false }
+            for board in search.boards {
+                guard DiscoveryPolicy.canonicalBoard(board.sourceId)?.id == board.sourceId,
+                      board.seenIds.count <= maximumBoardIDs, Set(board.seenIds).count == board.seenIds.count,
+                      board.seenIds.allSatisfy({ validID($0) && belongs($0, to: board.sourceId) }) else { return false }
+                total += board.seenIds.count
+                if total > maximumTotalIDs { return false }
+            }
+        }
+        return true
+    }
+    static func valid(_ result: DiscoveryNewResult, query: DiscoveryQuery, sources: [String], jobs: [DiscoveryJob], history: DiscoverySearchHistory) -> Bool {
+        guard valid(history), let canonical = canonicalIDs(sources), canonical == sources,
+              result.key == key(for: query, sourceIDs: sources),
+              let search = history.searches.first(where: { $0.key == result.key }),
+              search.boards.allSatisfy({ sources.contains($0.sourceId) }),
+              result.newIds.count <= DiscoveryPolicy.maximumStoredJobs, Set(result.newIds).count == result.newIds.count,
+              Set(result.newIds).isSubset(of: Set(jobs.map(\.id))) else { return false }
+        if !query.sources.isEmpty, sourceIDs(for: query, defaults: []) != sources { return false }
+        for values in [result.comparedSourceIds, result.baselinedSourceIds, result.pendingSourceIds] {
+            if values.count > DiscoveryPolicy.maximumSources || Set(values).count != values.count || !Set(values).isSubset(of: Set(sources)) { return false }
+        }
+        if !result.baselineReset {
+            let readySources = Set(search.boards.filter(\.ready).map(\.sourceId))
+            guard Set(result.comparedSourceIds).isSubset(of: readySources) else { return false }
+        }
+        return result.newIds.allSatisfy { id in
+            guard validID(id), let job = jobs.first(where: { $0.id == id }),
+                  sources.contains(job.sourceId), belongs(id, to: job.sourceId) else { return false }
+            // A visible badge needs a retained, ready baseline for the board
+            // actually compared. Legacy reset markers are suppressed on restore.
+            return result.baselineReset || (result.comparedSourceIds.contains(job.sourceId)
+                && search.boards.contains { $0.sourceId == job.sourceId && $0.ready && $0.seenIds.contains(id) })
+        }
+    }
+    // Older snapshots may contain comparison metadata suppressed by a baseline reset.
+    // Normalize only the displayed result, after validating the original saved bytes.
+    static func restoredResult(_ result: DiscoveryNewResult?) -> DiscoveryNewResult? {
+        guard var value = result, value.baselineReset else { return result }
+        value.newIds = []; value.comparedSourceIds = []; value.coverageLimited = true
+        return value
+    }
+    static func evaluate(history input: DiscoverySearchHistory, query: DiscoveryQuery, page: DiscoveryPage, jobs: [DiscoveryJob], now: Int64,
+                         previous: DiscoveryNewResult? = nil) -> (history: DiscoverySearchHistory, result: DiscoveryNewResult?, sources: [String]) {
+        var history = valid(input) ? input : DiscoverySearchHistory()
+        guard (0...maximumTime).contains(now), let sources = sourceIDs(for: query, defaults: page.sources.map(\.id)),
+              let key = key(for: query, sourceIDs: sources) else { return (history, nil, []) }
+        let prior = previous?.key == key ? previous : nil
+        var reset = !valid(input) || prior?.baselineReset == true
+        var limited = page.limited || reset
+        var observed = Dictionary(uniqueKeysWithValues: sources.map { ($0, Set<String>()) })
+        var current = Set<String>(), uncertain = Set<String>()
+        for job in jobs {
+            guard validID(job.id), sources.contains(job.sourceId), belongs(job.id, to: job.sourceId) else { limited = true; continue }
+            current.insert(job.id)
+            if job.stale { uncertain.insert(job.sourceId) } else { observed[job.sourceId]!.insert(job.id) }
+        }
+        guard jobs.count <= DiscoveryPolicy.maximumStoredJobs else {
+            return (history, DiscoveryNewResult(key: key, newIds: [], comparedSourceIds: [], baselinedSourceIds: [], pendingSourceIds: sources, coverageLimited: true, baselineReset: reset), sources)
+        }
+        var search = history.searches.first(where: { $0.key == key }) ?? .init(key: key, lastUsedAt: now, boards: [])
+        if search.boards.contains(where: { !sources.contains($0.sourceId) }) {
+            // Opaque imported keys do not authorize adding unrelated boards.
+            search = .init(key: key, lastUsedAt: now, boards: []); reset = true
+        }
+        var compared = Set((prior?.comparedSourceIds ?? []).filter(sources.contains))
+        var baselined = Set((prior?.baselinedSourceIds ?? []).filter(sources.contains))
+        var newIDs = Set((prior?.newIds ?? []).filter(current.contains))
+        for sourceID in sources {
+            var board = search.boards.first(where: { $0.sourceId == sourceID }) ?? .init(sourceId: sourceID, seenIds: [], ready: false)
+            let statuses = page.sources.filter { $0.id == sourceID }
+            if statuses.count == 1, let status = statuses.first, ["fresh", "cached"].contains(status.status), status.error == nil {
+                let ids = observed[sourceID]!
+                let complete = !status.limited && !uncertain.contains(sourceID) && (0...500).contains(status.matchedCount) && ids.count == status.matchedCount
+                if !complete { limited = true }
+                var seen = Set(board.seenIds)
+                if board.ready && !baselined.contains(sourceID) && !reset {
+                    compared.insert(sourceID); newIDs.formUnion(ids.subtracting(seen))
+                }
+                seen.formUnion(ids)
+                if seen.count > maximumBoardIDs {
+                    board.seenIds = ids.count <= maximumBoardIDs ? ids.sorted() : []
+                    board.ready = complete && ids.count <= maximumBoardIDs; reset = true
+                    if complete { baselined.insert(sourceID) }
+                } else {
+                    board.seenIds = seen.sorted()
+                    if !board.ready && complete { board.ready = true; baselined.insert(sourceID) }
+                }
+            } else { limited = true }
+            search.boards.removeAll { $0.sourceId == sourceID }; search.boards.append(board)
+        }
+        search.lastUsedAt = now
+        history.searches.removeAll { $0.key == key }; history.searches.append(search)
+        while history.searches.count > maximumQueries || history.searches.reduce(0, { $0 + $1.boards.reduce(0, { $0 + $1.seenIds.count }) }) > maximumTotalIDs {
+            guard let oldest = history.searches.filter({ $0.key != key }).min(by: { $0.lastUsedAt == $1.lastUsedAt ? $0.key < $1.key : $0.lastUsedAt < $1.lastUsedAt }) else {
+                // Four bounded board baselines alone always fit the total limit.
+                return (DiscoverySearchHistory(), nil, [])
+            }
+            history.searches.removeAll { $0.key == oldest.key }; reset = true
+        }
+        if reset { newIDs.removeAll(); compared.removeAll(); limited = true }
+        history.searches.sort { $0.lastUsedAt == $1.lastUsedAt ? $0.key < $1.key : $0.lastUsedAt > $1.lastUsedAt }
+        return (history, DiscoveryNewResult(key: key, newIds: newIDs.sorted(), comparedSourceIds: compared.sorted(), baselinedSourceIds: baselined.sorted(),
+            pendingSourceIds: sources.filter { id in !search.boards.contains(where: { $0.sourceId == id && $0.ready }) }, coverageLimited: limited, baselineReset: reset), sources)
+    }
+}
+
 private struct DiscoverySavedState: Codable {
     var schemaVersion = 1
     var query = DiscoveryQuery()
     var lastQuery: DiscoveryQuery?
     var page: DiscoveryPage?
     var jobs: [DiscoveryJob] = []
-    init(query: DiscoveryQuery = DiscoveryQuery(), lastQuery: DiscoveryQuery? = nil, page: DiscoveryPage? = nil, jobs: [DiscoveryJob] = []) {
+    var searchHistory: DiscoverySearchHistory?
+    var newResult: DiscoveryNewResult?
+    var lastSearchSourceIds: [String]?
+    init(query: DiscoveryQuery = DiscoveryQuery(), lastQuery: DiscoveryQuery? = nil, page: DiscoveryPage? = nil, jobs: [DiscoveryJob] = [],
+         searchHistory: DiscoverySearchHistory? = nil, newResult: DiscoveryNewResult? = nil, lastSearchSourceIds: [String]? = nil) {
         self.query = query; self.lastQuery = lastQuery; self.page = page; self.jobs = jobs
+        self.searchHistory = searchHistory; self.newResult = newResult; self.lastSearchSourceIds = lastSearchSourceIds
     }
-    private enum CodingKeys: String, CodingKey { case schemaVersion, query, lastQuery, page, jobs }
+    private enum CodingKeys: String, CodingKey { case schemaVersion, query, lastQuery, page, jobs, searchHistory, newResult, lastSearchSourceIds }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         schemaVersion = try c.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
@@ -406,6 +597,23 @@ private struct DiscoverySavedState: Codable {
         lastQuery = try c.decodeIfPresent(DiscoveryQuery.self, forKey: .lastQuery)
         page = try c.decodeIfPresent(DiscoveryPage.self, forKey: .page)
         jobs = try c.decode([DiscoveryJob].self, forKey: .jobs)
+        searchHistory = try c.decodeIfPresent(DiscoverySearchHistory.self, forKey: .searchHistory)
+        newResult = try c.decodeIfPresent(DiscoveryNewResult.self, forKey: .newResult)
+        lastSearchSourceIds = try c.decodeIfPresent([String].self, forKey: .lastSearchSourceIds)
+    }
+    func validateHistory() throws {
+        if let searchHistory, !DiscoveryHistoryPolicy.valid(searchHistory) { throw CocoaError(.coderInvalidValue) }
+        if let lastSearchSourceIds {
+            guard !lastSearchSourceIds.isEmpty, lastSearchSourceIds.count <= DiscoveryPolicy.maximumSources,
+                  lastSearchSourceIds == Array(Set(lastSearchSourceIds)).sorted(),
+                  lastSearchSourceIds.allSatisfy({ DiscoveryPolicy.canonicalBoard($0)?.id == $0 }) else { throw CocoaError(.coderInvalidValue) }
+        }
+        if let newResult {
+            guard let searchHistory, let lastQuery, let lastSearchSourceIds,
+                  DiscoveryHistoryPolicy.valid(newResult, query: lastQuery, sources: lastSearchSourceIds, jobs: jobs, history: searchHistory) else {
+                throw CocoaError(.coderInvalidValue)
+            }
+        }
     }
 }
 
@@ -425,6 +633,12 @@ final class CareerDiscoveryStore: ObservableObject {
     var savedSearchRestoreBlocked: Bool { !storageReadable }
     @Published private(set) var retryAfter: Date?
     @Published private(set) var needsNewSearch = false
+    @Published private(set) var searchNewResult: DiscoveryNewResult?
+    @Published var showNewOnly = false
+    private(set) var searchHistory = DiscoverySearchHistory()
+    // Failed coverage can replace page while earlier successful jobs remain.
+    // Their comparison identity must not be derived from that failed envelope.
+    private var lastSearchSourceIds: [String]?
     private let service: any CareerDiscoveryServing
     private let baseFile: URL
     private var file: URL
@@ -451,6 +665,7 @@ final class CareerDiscoveryStore: ObservableObject {
         let key = SHA256.hash(data: Data((target.origin + "\u{0}" + target.workspaceID).utf8)).map { String(format: "%02x", $0) }.joined()
         file = target.isLocal ? baseFile : baseFile.deletingLastPathComponent().appendingPathComponent("discovery-" + key + ".json")
         restoring = true; query = DiscoveryQuery(); lastQuery = nil; page = nil; jobs = []; restoredResults = false
+        searchHistory = DiscoverySearchHistory(); searchNewResult = nil; lastSearchSourceIds = nil; showNewOnly = false
         needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; submittedQuery = nil; submittedSearchFailed = false; restoring = false
         restore()
     }
@@ -463,10 +678,12 @@ final class CareerDiscoveryStore: ObservableObject {
               saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
               Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderInvalidValue) }
         if let page = saved.page { try DiscoveryPolicy.validate(page) }
+        try saved.validateHistory()
     }
     func exportSnapshot() throws -> Data {
         guard storageReadable else { throw DiscoveryFailure(message: "The saved search is unreadable and has been preserved. Clear it deliberately or recover its original file before exporting a new workspace backup.") }
-        let bytes = try JSONEncoder().encode(DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs))
+        let bytes = try JSONEncoder().encode(DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs,
+            searchHistory: searchHistory, newResult: searchNewResult, lastSearchSourceIds: lastSearchSourceIds))
         try Self.validateBackup(bytes); return bytes
     }
     func importSnapshot(_ bytes: Data) throws {
@@ -499,12 +716,15 @@ final class CareerDiscoveryStore: ObservableObject {
                   saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
                   Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderReadCorrupt) }
             if let page = saved.page { try DiscoveryPolicy.validate(page) }
+            try saved.validateHistory()
             // A failed same-scope read must keep the live submitted search and its retry state.
             submittedQuery = nil; submittedSearchFailed = false
             storageReadable = true; storageNotice = nil
             let repairedQuery = repaired(saved.query)
             let repairedLast = saved.lastQuery.map(repaired)
             query = repairedQuery; lastQuery = repairedLast; page = saved.page; jobs = saved.jobs
+            searchHistory = saved.searchHistory ?? DiscoverySearchHistory(); searchNewResult = DiscoveryHistoryPolicy.restoredResult(saved.newResult)
+            lastSearchSourceIds = saved.lastSearchSourceIds; showNewOnly = false
             restoredResults = saved.page != nil || !saved.jobs.isEmpty
             if repairedQuery.validationError != nil || repairedLast?.validationError != nil {
                 storageNotice = "These search fields exceed the supported limits. Earlier saved search data is kept."
@@ -528,6 +748,10 @@ final class CareerDiscoveryStore: ObservableObject {
     }
     var canLoadMore: Bool { page?.nextCursor != nil && lastQuery == query && !isSearching && !restoredResults && !needsNewSearch }
     var criteriaChanged: Bool { lastQuery != nil && lastQuery != query }
+    var newJobIDs: Set<String> { searchNewResult?.baselineReset == true ? [] : Set(searchNewResult?.newIds ?? []) }
+    var newJobCount: Int { let ids = newJobIDs; return jobs.filter { ids.contains($0.id) }.count }
+    var visibleJobs: [DiscoveryJob] { let ids = newJobIDs; return showNewOnly && hasSearchComparison ? jobs.filter { ids.contains($0.id) } : jobs }
+    var hasSearchComparison: Bool { searchNewResult?.baselineReset != true && !(searchNewResult?.comparedSourceIds.isEmpty ?? true) }
     func loadCatalog() async {
         guard catalog == nil, !loadingCatalog else { return }
         loadingCatalog = true; catalogError = nil; defer { loadingCatalog = false }
@@ -622,42 +846,62 @@ final class CareerDiscoveryStore: ObservableObject {
                 isSearching = false; requestID = nil; requestTask = nil
                 error = "Your search changed. Search again to use the current fields; previous results are kept."; return
             }
-            if !more && result.status == "unavailable" && result.jobs.isEmpty && !jobs.isEmpty {
-                page = result; restoredResults = true; needsNewSearch = true
+            if result.status == "unavailable" && result.jobs.isEmpty && !jobs.isEmpty {
+                restoredResults = true; needsNewSearch = true
+                submittedQuery = captured; submittedSearchFailed = true
                 isSearching = false; requestID = nil; requestTask = nil
                 error = "The selected boards could not be checked. Previous results are kept; start a new search when the service is available."
-                persist(); return
+                return
             }
             var merged = more ? jobs : []
             var ids = Set(merged.map(\.id))
             for job in result.jobs where ids.insert(job.id).inserted { merged.append(job) }
             guard merged.count <= DiscoveryPolicy.maximumStoredJobs else { throw DiscoveryFailure(message: "This search reached its result limit. Narrow the role or location and search again.") }
+            let previousHistory = searchHistory
+            let familiarity = DiscoveryHistoryPolicy.evaluate(history: searchHistory, query: captured, page: result, jobs: merged,
+                now: Int64(Date().timeIntervalSince1970 * 1_000), previous: more ? searchNewResult : nil)
             jobs = merged; page = result; lastQuery = captured; restoredResults = false; needsNewSearch = false
-            isSearching = false; requestID = nil; requestTask = nil; persist()
+            if !more { showNewOnly = false }
+            if let result = familiarity.result {
+                searchHistory = familiarity.history; searchNewResult = result; lastSearchSourceIds = familiarity.sources
+            } else { searchNewResult = nil; lastSearchSourceIds = nil }
+            if !hasSearchComparison { showNewOnly = false }
+            isSearching = false; requestID = nil; requestTask = nil
+            if !persist() {
+                // A failed local save cannot publish a result as saved history.
+                searchHistory = previousHistory; searchNewResult = nil; lastSearchSourceIds = nil; showNewOnly = false
+            }
         } catch {
             guard requestID == ticket else { return }
             submittedSearchFailed = !more
             isSearching = false; requestID = nil; requestTask = nil
             if let failure = error as? DiscoveryFailure {
                 self.error = failure.message; retryAfter = failure.retryAfter
-                if failure.code == "discovery_changed" { needsNewSearch = true }
+                if more && cursor != nil && failure.statusCode == 409 {
+                    self.error = "These results changed while you were browsing. Start a new search; the previous results are still here."
+                    page?.nextCursor = nil
+                    restoredResults = page != nil; needsNewSearch = true
+                    submittedQuery = captured; submittedSearchFailed = true
+                    persist()
+                }
             }
             else if error is CancellationError || (error as? URLError)?.code == .cancelled {
                 self.error = "Search stopped. Previous results are kept."
             } else { self.error = "Search could not finish. Check your connection and try again; previous results are kept." }
         }
     }
-    private func persist() {
-        guard storageReadable, !restoring else { return }
+    @discardableResult private func persist() -> Bool {
+        guard storageReadable, !restoring else { return false }
         guard query.validationError == nil else {
-            storageNotice = "These search fields exceed the supported limits. Earlier saved search data is kept."; return
+            storageNotice = "These search fields exceed the supported limits. Earlier saved search data is kept."; return false
         }
         do {
-            let saved = DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs)
+            let saved = DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs,
+                searchHistory: searchHistory, newResult: searchNewResult, lastSearchSourceIds: lastSearchSourceIds)
             let data = try JSONEncoder().encode(saved)
             try Self.validateBackup(data); try write(data)
-            storageNotice = nil
-        } catch { storageNotice = "These search results are available now, but could not be saved on this phone." }
+            storageNotice = nil; return true
+        } catch { storageNotice = "These search results are available now, but could not be saved on this phone."; return false }
     }
     private func write(_ bytes: Data) throws {
         try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)

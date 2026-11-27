@@ -53,7 +53,7 @@ function install(context, name, value = declaration(name)) {
   vm.runInContext(compiled.get(key), context); return context[name];
 }
 const bundle = await build({
-  stdin: { contents: 'export * from "./app/phone/vault.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export * from "./app/i18n/core.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
+  stdin: { contents: 'export * from "./app/phone/vault.ts"; export { workspaceFromResponse, acknowledgeWorkspacePublication } from "./app/phone/api.ts"; export { PhoneReadError } from "./app/phone/read-transport.ts"; export { APIError } from "./app/components/api.ts"; export * from "./app/phone/historical-text.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export * from "./app/i18n/core.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
   bundle: true, write: false, platform: "node", format: "esm", target: "node24", logLevel: "silent",
 });
 const production = await import("data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].text + "\n//# sourceURL=phone-recovery-production.mjs").toString("base64"));
@@ -116,8 +116,9 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
   const context = {
     ...production, crypto: webcrypto, DOMException, Error,
     account: { id: "synthetic-a" }, epoch: { current: 1 }, identityUnverified: { current: false },
-    busyRef: { current: false }, recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
+    busyRef: { current: false }, readIssueRef: { current: null }, recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     snapshotRef: { current: saved }, workspaceRef: { current: { workspaceId: uuid(1), activePlanIds: [] } },
+    startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false },
     locked: false, checkingIdentity: false, storageProblem: "", profile: plain(saved.profile), formChanged: false,
     editorDraft: null, dialog: null, dialogDirty: false, closedJobDrafts: { current: new Set() }, quarantine: { current: null }, pdfCheck: { current: null }, discardReturn: { current: null }, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
     safetyState: await safety.load(scope), safetyError: "", notice: null, reloads: 0, navigation: [],
@@ -128,17 +129,60 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
     navigate: tab => context.navigation.push(tab),
     window: { location: { reload() { context.reloads++; } } },
   };
-  for (const [setter, field] of Object.entries({ setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot", setWorkspace: "workspace", setHasQuarantinedEdits: "hasQuarantinedEdits", setRecoveryStatus: "recoveryStatus", setSelected: "selected", setOlderDrafts: "olderDrafts", setSearchPage: "searchPage", setSearchedFilters: "searchedFilters", setEmployerAnswers: "employerAnswers", setCheckingIdentity: "checkingIdentity", setLocked: "locked" })) {
+  for (const [setter, field] of Object.entries({ setReadIssue: "readIssue", setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot", setWorkspace: "workspace", setHasQuarantinedEdits: "hasQuarantinedEdits", setRecoveryStatus: "recoveryStatus", setSelected: "selected", setOlderDrafts: "olderDrafts", setSearchPage: "searchPage", setSearchedFilters: "searchedFilters", setSearchNewResult: "searchNewResult", setShowNewOnly: "showNewOnly", setEmployerAnswers: "employerAnswers", setCheckingIdentity: "checkingIdentity", setLocked: "locked" })) {
     context[setter] = value => { context[field] = typeof value === "function" ? value(context[field]) : value; };
   }
   vm.createContext(context);
-  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "putWorkspace", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "retireRecordRecovery", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "openAddJob", "editAddedJob", "saveJob", "saveAddedJob", "discardDialogEdits", "rememberDiscardOpener", "requestDialogClose", "editRecord", "exportUnfinished", "lock", "recoverLocked"]) install(context, name);
+  for (const name of ["rememberReadIssue", "same", "message", "local", "assertCurrent", "putSnapshot", "putWorkspace", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "retireRecordRecovery", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "openAddJob", "editAddedJob", "saveJob", "saveAddedJob", "discardDialogEdits", "rememberDiscardOpener", "requestDialogClose", "editRecord", "exportUnfinished", "lock", "recoverLocked"]) install(context, name);
   install(context, "openClear", buttonClick("Clear this phone’s saved data"));
   install(context, "openReset", buttonClick("Reset this phone’s data"));
   install(context, "clear", action("Clearing phone data"));
   install(context, "discardConfirmed", action("Discarding recovery copy"));
   return { context, main, safety, mainPort, recoveryPort };
 }
+test("online profile save preserves the local CV until the service confirms the change", async () => {
+  const bytes = Buffer.from("%PDF-1.4 fixture");
+  const digest = Buffer.from(await webcrypto.subtle.digest("SHA-256", bytes)).toString("hex");
+  const metadata = { name: "سيرة.pdf", mime: "application/pdf", size: bytes.length, sha256: digest };
+  const selected = { ...metadata, name: "  سيرة.pdf", dataBase64: bytes.toString("base64") };
+  for (const [draft, reply, accepted] of [
+    [selected, null, false], [selected, { ...metadata, name: "Other.pdf" }, false],
+    [selected, { ...metadata, size: bytes.length + 1 }, false],
+    [selected, { ...metadata, sha256: "b".repeat(64) }, false],
+    [null, metadata, false], [selected, metadata, true], [null, null, true],
+  ]) {
+    const { context, main } = await harness();
+    install(context, "online"); install(context, "withPDF"); install(context, "saveOnlineProfile");
+    const workspace = validWorkspace();
+    workspace.profile.resume = { ...metadata, name: "Previous.pdf" };
+    context.workspaceRef.current = workspace;
+    context.profile = { ...workspace.profile, resume: draft };
+    context.formChanged = true;
+    let writes = 0;
+    context.phoneAPI = async (path, options) => {
+      assert.equal(path, "/api/phone/profile"); assert.equal(options.method, "PUT"); writes++;
+      return { profile: { ...workspace.profile, revision: 1, resume: reply } };
+    };
+    if (accepted) {
+      await context.saveOnlineProfile();
+      assert.equal(context.formChanged, false);
+      assert.equal(context.profile.revision, 1);
+      assert.equal(context.profile.resume?.dataBase64, draft?.dataBase64);
+      assert.equal(context.profile.resume?.name, reply?.name);
+      assert.equal((await main.loadPhoneSnapshot(scope)).profileDirty, false);
+    } else {
+      await assert.rejects(context.saveOnlineProfile(), /did not confirm the CV change/);
+      const restored = await main.loadPhoneSnapshot(scope);
+      assert.deepEqual(restored.profile.resume, draft);
+      assert.equal(restored.profileDirty, true);
+      assert.equal(context.workspaceRef.current, workspace);
+      assert.equal(context.formChanged, true);
+      assert.equal(restored.profile.revision, 0);
+    }
+    assert.equal(writes, 1);
+  }
+});
+
 function markUnfinished(h) {
   const c = h.context;
   c.profile = { ...c.profile, firstName: "Current unsaved profile" }; c.formChanged = true;
@@ -745,9 +789,9 @@ function recordExportFocusHarness({ failDownload = false } = {}) {
   const draft = { ...saved.records[0], stage: "interview", note: "Unfinished note متابعة", followUpDate: "2026-11-30" };
   const initialDraft = JSON.stringify(draft), downloads = [], running = [];
   const forbidMutation = () => { throw new Error("Record export must preserve its editor, draft, recovery identity and saved data"); };
-  class APIError extends Error {}
+  const { APIError } = production;
   const context = vm.createContext({
-    Error, DOMException, APIError, crypto: webcrypto, z: production.z,
+    ...production, Error, DOMException, APIError, crypto: webcrypto, z: production.z,
     document: h.document, dialog: recordDialog, editorDraft: draft, dialogDirty: true,
     profile: saved.profile, formChanged: false, profileRecoveryId: { current: null },
     recordRecoveryId: { current: editorId }, snapshotRef: { current: saved },
@@ -913,9 +957,11 @@ test("partial job links survive encrypted storage and a new page without becomin
 
 test("account lock hides Add fields and restores or exports them only after the original account returns", async () => {
   const h = await harness(), id = beginJobLink(h);
+  h.context.startupFilterEdits.current.add("query"); h.context.liveSearchShown.current = true;
   h.context.lock();
   await h.safety.load(scope); // Wait for the same recovery queue used by lock.
   assert.equal(h.context.dialog, null); assert.equal(h.context.locked, true);
+  assert.equal(h.context.startupFilterEdits.current.size, 0); assert.equal(h.context.liveSearchShown.current, false);
   assert.deepEqual(plain(h.context.quarantine.current.dialog.draft), jobLinkFields);
   assert.equal((await recoveryRows(h)).recovery.find(row => row.id === id).jobLink.company, jobLinkFields.company);
   await h.context.recoverLocked(true);
