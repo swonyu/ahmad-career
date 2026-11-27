@@ -54,7 +54,7 @@ internal object WorkspaceTransfer {
     }
     private fun job(value: JSONObject): Opportunity {
         strings(value, "url", "title", "company", "location", "country")
-        BoundaryPolicy.opportunityURL(value.getString("url"))
+        BoundaryPolicy.historicalOpportunityURL(value.getString("url"))
         require(listOf("title", "company", "location").all { value.getString(it).length <= 500 }) { "Saved job details in this backup exceed the common 500-character limit." }
         val sourceName = SavedJobMetadata.optional(value, "sourceName")
         val checkedAt = SavedJobMetadata.optional(value, "checkedAt")
@@ -78,6 +78,7 @@ internal object WorkspaceTransfer {
         .also { ApplicationCvEvidence.putManualName(it, version.record.manualResumeName) }
 
     fun export(snapshot: CareerUiState, search: JSONObject?, includePDF: Boolean): JSONObject {
+        require(!WorkspaceStorage.hasHistoricalValues(snapshot)) { HISTORICAL_BACKUP_NOTICE }
         val profile = snapshot.profile.apiJson(includeLinkedIn = false).put("linkedin", snapshot.profile.linkedin)
         // Preserve unfinished fields without turning them into a provider payload.
         for (key in listOf("firstName", "lastName", "email", "phone", "city", "country", "headline", "website"))
@@ -112,6 +113,8 @@ internal object WorkspaceTransfer {
     }
 
     fun decode(value: JSONObject, destinationScope: String): WorkspaceImportPreview {
+        require(value.opt("format") != "career-finder-raw-recovery") { "This file preserves original historical evidence. It cannot be imported as a phone backup or used to approve applications." }
+        HistoricalText.requireWellFormed(value)
         require(value.toString().toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Choose a phone workspace backup no larger than 24 MiB." }
         objectOnly(value, setOf("format", "version", "platform", "exportedAt", "source", "data", "extensions"))
         require(value.opt("format") == FORMAT && value.opt("version") == 1) { "Choose a supported Career Finder phone workspace backup." }

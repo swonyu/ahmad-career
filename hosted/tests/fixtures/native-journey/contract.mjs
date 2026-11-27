@@ -7,6 +7,7 @@ const fail = (code, status) => { throw new FixtureError(code, status); };
 export const MAX_BODY_BYTES = 7 * 1024 * 1024 + 32768;
 const routes = new Map([
   ['GET /api/apply/status', 0], ['GET /api/apply/workspace', 0], ['GET /api/apply/receipts', 0],
+  ['GET /api/apply/read', 0], ['GET /api/apply/read-export', 0],
   ['PUT /api/apply/profile', MAX_BODY_BYTES], ['POST /api/apply/jobs', 32768], ['POST /api/apply/prepare', 32768],
   ['GET /api/discovery/sources', 0], ['GET /api/discovery/search', 0],
 ]);
@@ -17,7 +18,15 @@ export function nativeRoute(target, method) {
   if (url.pathname !== pathname || url.origin !== 'https://fixture.invalid') fail('fixture_route_denied', 404);
   if (/^\/api\/(?:apply|phone)\/(?:submit|advance)$/.test(pathname)) fail('fixture_dispatch_denied', 403);
   const key = `${method} ${pathname}`;
-  if (!routes.has(key) || url.search && pathname !== '/api/discovery/search') fail('fixture_route_denied', 404);
+  const recoveryRead = ['/api/apply/read', '/api/apply/read-export'].includes(pathname);
+  if (!routes.has(key) || url.search && pathname !== '/api/discovery/search' && !recoveryRead) fail('fixture_route_denied', 404);
+  if (recoveryRead) {
+    const cursor = url.searchParams.get('cursor');
+    if ([...url.searchParams.keys()].some(name => name !== 'cursor') || url.searchParams.getAll('cursor').length !== 1 ||
+        typeof cursor !== 'string' || cursor.length > 2048 || !/^[-_A-Za-z0-9]+\.[a-f0-9]{64}$/.test(cursor)) fail('fixture_route_denied', 404);
+    // This admits shape only. The unchanged real application handler verifies
+    // cursor signature, native bearer, audience, account, workspace and session.
+  }
   return {pathname, kind: pathname.startsWith('/api/apply/') ? 'application' : 'discovery', maximumBodyBytes: routes.get(key)};
 }
 export function matchesSecret(received, expected) {
@@ -27,10 +36,14 @@ export function matchesSecret(received, expected) {
 export function nativeHeaders(input, logicalOrigin) {
   const source = new Headers(input), result = new Headers();
   for (const name of source.keys()) {
+    if (name === 'x-career-read-version') {
+      if (source.get(name) !== '2') fail('fixture_read_version_denied', 400);
+      continue;
+    }
     if (/^(?:oai-authenticated-user-|x-career-|x-journey-|x-native-journey-|x-forwarded-)/.test(name) ||
         ['cookie', 'forwarded', 'cf-connecting-ip'].includes(name)) fail('fixture_identity_header_denied', 403);
   }
-  for (const name of ['authorization', 'content-type', 'origin', 'sec-fetch-site']) {
+  for (const name of ['authorization', 'content-type', 'origin', 'sec-fetch-site', 'x-career-read-version']) {
     const value = source.get(name);
     if (value !== null) {
       if (value.length > 512) fail('fixture_header_denied', 400);

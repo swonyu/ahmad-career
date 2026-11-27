@@ -1,5 +1,7 @@
 package com.saleh.careerfinder
 
+import com.saleh.careerfinder.HistoricalDisplayText as Text
+
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
@@ -156,6 +158,11 @@ fun CareerApp(model: CareerViewModel) {
     val selectTab: (Int) -> Unit = { selected -> focus.clearFocus(); keyboard?.hide(); tab = selected }
     var pdfScope by rememberSaveable { mutableStateOf<String?>(null) }
     var receiptExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    var historicalExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    val recoveryExporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val captured = historicalExportScope; historicalExportScope = null
+        if (uri != null && captured != null) model.exportHistoricalRecovery(uri, captured)
+    }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val captured = pdfScope; pdfScope = null
         if (uri != null && captured != null) model.choosePDF(uri, captured)
@@ -185,12 +192,22 @@ fun CareerApp(model: CareerViewModel) {
             val messageHeightLimit = maxHeight * 0.35f
             Column(Modifier.fillMaxSize()) {
                 if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
-                if (state.error != null || state.notice != null || state.testService) {
+                if (state.error != null || state.notice != null || state.testService || state.historicalRecovery != null || state.readRecoveryRequest != null) {
                     // Long notices remain scrollable while the main screen keeps usable height.
                     Column(Modifier.fillMaxWidth().heightIn(max = messageHeightLimit)
                         .verticalScroll(rememberScrollState()).testTag("workspace-messages")) {
                         if (state.error != null || state.notice != null) MessageBanner(state.error ?: state.notice.orEmpty(), state.error != null, model::dismissMessage)
                         if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
+                        if (state.historicalRecovery != null || state.readRecoveryRequest != null) {
+                            MessageBanner(HISTORICAL_TEXT_NOTICE, true, null)
+                            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                TextButton(onClick = {
+                                    historicalExportScope = state.privateScope
+                                    recoveryExporter.launch("Career-Finder-Original-Recovery-" + LocalDate.now() + ".json")
+                                }, enabled = !state.busy, modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text(l10n("Export original recovery record")) }
+                                TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Refresh")) }
+                            }
+                        }
                     }
                 }
                 Box(Modifier.weight(1f).testTag("workspace-content")) {
@@ -941,6 +958,20 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         if (state.profileConflict != null) item { ProfileConflictPanel(state, model) }
+        val affectedFields = listOf("First or single name" to profile.firstName, "Last name (optional)" to profile.lastName,
+            "Email" to profile.email, "Phone (optional)" to profile.phone, "City (optional)" to profile.city,
+            "Professional headline (optional)" to profile.headline, "Skills (separate with commas)" to profile.skills,
+            "Roles you want (separate with commas)" to profile.targetRoles).filter { !BoundaryPolicy.validUnicode(it.second) }
+        if (affectedFields.isNotEmpty()) item {
+            Panel {
+                Text(l10n("Historical fields to repair"), style = MaterialTheme.typography.titleMedium)
+                affectedFields.forEach { (label, value) ->
+                    Text(l10n(label), style = MaterialTheme.typography.labelMedium)
+                    Text(value, style = MaterialTheme.typography.bodyMedium)
+                }
+                Text(l10n("Original incomplete characters are shown as escapes here. Edit the affected fields below before saving to the service."), style = MaterialTheme.typography.bodySmall)
+            }
+        }
         item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy, error = errors["firstName"]) }
         item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy, error = errors["lastName"]) }
         item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy,
@@ -1411,7 +1442,7 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
 }
 
 internal fun openLink(context: Context, url: String) {
-    try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.opportunityURL(url).toUri())) }
+    try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.historicalOpportunityURL(url).toUri())) }
     catch (_: Exception) { Toast.makeText(context, CareerStrings(context)("This HTTPS link could not be opened."), Toast.LENGTH_LONG).show() }
 }
 private fun fileSize(bytes: Long, locale: Locale): String = when {

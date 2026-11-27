@@ -48,6 +48,84 @@ class CareerViewModel internal constructor(application: Application, private val
     private val pollMutex = Mutex()
     private var foregroundGeneration = 0L
     private var lastAdvancedPlan: String? = null
+    companion object {
+        // A replaced ViewModel can overlap an older network worker. Both must share the same journal lock and live intents.
+        private val acknowledgmentLock = Any()
+        private val inFlightIntents = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
+    }
+    private fun acknowledgmentName(connection: Connection) = "read-acks-" + BoundaryPolicy.workspaceKey(connection.origin, connection.workspaceId)
+    private fun readAcknowledgments(connection: Connection): List<JSONObject> = synchronized(acknowledgmentLock) {
+        val value = vault.read(acknowledgmentName(connection)) ?: return@synchronized emptyList()
+        require(value.opt("version") == 1 && value.opt("workspaceId") == connection.workspaceId)
+        value.requiredObjects("entries").also { entries ->
+            require(entries.size <= 100 && entries.map { it.getString("id") }.distinct().size == entries.size)
+            entries.forEach { entry ->
+                UUID.fromString(entry.getString("id"))
+                require(entry.opt("phase") in setOf("intent", "acknowledged") && entry.opt("workspaceId") == connection.workspaceId)
+                require(entry.opt("route") in setOf("profile", "jobs", "prepare", "submit", "advance", "stop", "session/revoke"))
+                if (entry.opt("phase") == "acknowledged") {
+                    val operation = entry.getJSONObject("operation")
+                    HistoricalText.requireWellFormed(operation)
+                    require(operation.opt("acknowledged") == true && operation.opt("workspaceId") == connection.workspaceId && !operation.has("sessionToken"))
+                } else require(!entry.has("operation"))
+            }
+        }
+    }
+    private fun writeAcknowledgments(connection: Connection, entries: List<JSONObject>) {
+        vault.write(acknowledgmentName(connection), JSONObject().put("version", 1).put("workspaceId", connection.workspaceId)
+            .put("entries", JSONArray(entries)))
+    }
+    private suspend fun serviceRequest(connection: Connection, method: String, route: String, body: JSONObject? = null): JSONObject {
+        if (method != "GET" && route !in setOf("stop", "session/revoke")) {
+            require(state.value.connection == connection && !state.value.readReconciliationRequired) {
+                "An earlier action still needs checking. Refresh the workspace before starting another one. Stop remains available."
+            }
+        }
+        if (body != null) HistoricalText.requireWellFormed(body)
+        val intentId = if (method == "GET") null else UUID.randomUUID().toString()
+        try {
+            if (intentId != null) {
+                inFlightIntents.add(intentId)
+                withContext(Dispatchers.IO) {
+                    synchronized(acknowledgmentLock) {
+                        val pending = readAcknowledgments(connection)
+                        require(pending.size < 100) { "Refresh earlier actions before starting another one." }
+                        val intent = JSONObject().put("id", intentId).put("phase", "intent").put("route", route)
+                            .put("workspaceId", connection.workspaceId)
+                        // An atomic intent survives if the later ACK write fails. No body or credential is stored.
+                        writeAcknowledgments(connection, pending + intent)
+                        mutable.update { if (it.connection == connection) it.copy(pendingReadAcknowledgments = pending.size + 1) else it }
+                    }
+                }
+            }
+            val response = service.requestWithAcknowledgment(connection, method, route, body) { operation ->
+                // The network worker promotes the durable intent before cancellation can discard its result.
+                synchronized(acknowledgmentLock) {
+                    val pending = readAcknowledgments(connection)
+                    require(intentId != null && pending.any { it.getString("id") == intentId })
+                    val updated = pending.map { entry -> if (entry.getString("id") != intentId) entry else
+                        JSONObject(entry.toString()).put("phase", "acknowledged").put("operation", JSONObject(operation.toString())) }
+                    writeAcknowledgments(connection, updated)
+                }
+            }
+            currentCoroutineContext().ensureActive()
+            require(route == "session/revoke" || state.value.connection == connection) { "The connection changed while the records were loading. The original action was not repeated." }
+            return response
+        } catch (error: Throwable) {
+            if (intentId != null) mutable.update { if (it.connection == connection && it.pendingReadAcknowledgments > 0)
+                it.copy(readReconciliationRequired = true) else it }
+            throw error
+        } finally {
+            if (intentId != null) inFlightIntents.remove(intentId)
+        }
+    }
+    private suspend fun clearAcknowledgments(connection: Connection, ids: Set<String>): Int = withContext(Dispatchers.IO) {
+        synchronized(acknowledgmentLock) {
+            val remaining = readAcknowledgments(connection).filterNot { it.getString("id") in ids }
+            if (ids.isNotEmpty()) writeAcknowledgments(connection, remaining)
+            remaining.size
+        }
+    }
     private class PrivateStorageFailure(val problem: StorageProblem, cause: Throwable) : Exception(cause)
 
     init {
@@ -137,6 +215,8 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         return try {
             val saved = WorkspaceStorage.decode(stored, connection)
+            val pending = if (connection == null) emptyList() else withContext(Dispatchers.IO) { readAcknowledgments(connection) }
+            saved.historicalRecovery?.let { reference -> withContext(Dispatchers.IO) { HistoricalRecoveryStorage.verify(vault, reference) } }
             val journal = readPrivate(holdsName(connection))
             val holds = if (journal == null) emptySet() else {
                 require(journal.opt("schema") == 1)
@@ -148,6 +228,7 @@ class CareerViewModel internal constructor(application: Application, private val
                 if (receipt.planId.isBlank() && cached != null && receipt.id.length <= 200) receipt.copy(planId = cached) else receipt
             }
             saved.copy(receipts = receipts, continuationHolds = saved.continuationHolds + holds,
+                pendingReadAcknowledgments = pending.size, readReconciliationRequired = pending.isNotEmpty(),
                 preservedWorkspaceCopies = preserved.distinct(),
                 preservedRecoveryWorkspaces = withContext(Dispatchers.IO) { vault.preservedWorkspaces() },
                 notice = if (stored == null && preserved.isNotEmpty()) "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want." else null)
@@ -178,6 +259,8 @@ class CareerViewModel internal constructor(application: Application, private val
     }
 
     private fun message(error: Throwable): String = when (error) {
+        is ReadAfterMutationFailure -> error.message.orEmpty()
+        is ReadRecoveryRequired -> error.message.orEmpty()
         is ApiFailure -> if (error.status == 401) "This connection has expired. Pair this phone again to reconnect to your workspace." else error.message
         is IllegalArgumentException -> error.message ?: "Check the entered information."
         else -> "The request could not be completed. Your saved records remain available. For an application, refresh receipts before trying again."
@@ -187,8 +270,14 @@ class CareerViewModel internal constructor(application: Application, private val
         if (!state.value.loaded || state.value.busy || state.value.storageBlocked) return
         mutable.update { it.copy(busy = true, error = null, notice = null) }
         viewModelScope.launch {
-            try { block() }
-            catch (cancel: CancellationException) { throw cancel }
+            try {
+                block()
+                if (state.value.pendingReadAcknowledgments > 0 && state.value.connection != null) refreshInternal()
+            }
+            catch (cancel: CancellationException) {
+                if (state.value.pendingReadAcknowledgments > 0) mutable.update { it.copy(readReconciliationRequired = true) }
+                throw cancel
+            }
             catch (error: Exception) { report(error) }
             finally { mutable.update { it.copy(busy = false) } }
         }
@@ -196,6 +285,16 @@ class CareerViewModel internal constructor(application: Application, private val
 
     private fun report(error: Throwable) {
         if (error is CancellationException) throw error
+        val recovery = when (error) {
+            is ReadRecoveryRequired -> error.recovery
+            is ReadAfterMutationFailure -> error.recovery ?: (error.cause as? ReadRecoveryRequired)?.recovery
+            else -> null
+        }
+        mutable.update {
+            val belongs = recovery != null && it.connection?.origin == recovery.origin && it.connection.workspaceId == recovery.workspaceId
+            it.copy(readReconciliationRequired = it.readReconciliationRequired || it.pendingReadAcknowledgments > 0 || error is ReadAfterMutationFailure,
+                readRecoveryRequest = if (belongs) recovery else it.readRecoveryRequest)
+        }
         if (error is PrivateStorageFailure) {
             draftSave?.cancel()
             polling?.cancel()
@@ -268,7 +367,7 @@ class CareerViewModel internal constructor(application: Application, private val
             restored
         } catch (error: Exception) {
             // The previous phone workspace remains selected if the new session cannot be stored.
-            try { service.request(connection, "POST", "session/revoke", JSONObject()) } catch (_: Exception) { }
+            try { serviceRequest(connection, "POST", "session/revoke", JSONObject()) } catch (_: Exception) { }
             throw error
         }
         polling?.cancel()
@@ -288,7 +387,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val connection = state.value.connection
         if (connection != null) {
             // Only remove the token after the server confirms revocation.
-            try { service.request(connection, "POST", "session/revoke", JSONObject()) }
+            try { serviceRequest(connection, "POST", "session/revoke", JSONObject()) }
             catch (error: ApiFailure) { if (error.status != 401) throw error }
         }
         try { withContext(Dispatchers.IO) { vault.remove("connection") } }
@@ -361,7 +460,7 @@ class CareerViewModel internal constructor(application: Application, private val
                 "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service."
             }
             val response = try {
-                service.request(connection, "PUT", "profile", JSONObject().put("expectedRevision", captured.revision)
+                serviceRequest(connection, "PUT", "profile", JSONObject().put("expectedRevision", captured.revision)
                     .put("profile", captured.apiJson(includeLinkedIn = supportsLinkedIn)))
             } catch (error: ApiFailure) {
                 if (error.status == 409 && error.code == "stale_profile") {
@@ -891,10 +990,12 @@ class CareerViewModel internal constructor(application: Application, private val
     private suspend fun syncInternal(job: Opportunity) {
         val connection = state.value.connection ?: throw IllegalArgumentException("Connect your phone to sync this opportunity.")
         require(job.url.length <= 2048 && job.company.length <= 250) { "This saved link remains on your phone. The connected service accepts employer names up to 250 characters and links up to 2,048 characters; use the employer website or add a shorter corrected link to sync." }
+        // Imported historical links stay readable, but a new service write must fit its encoded limit.
+        BoundaryPolicy.serviceOpportunityURL(job.url)
         val sourceIdentity = BoundaryPolicy.jobIdentity(job.url)
         if (job.localOnly && state.value.applicationRecords[sourceIdentity]?.appliedElsewhere == true)
             requireApplicationStatusChangesAllowed(state.value, setOf(sourceIdentity))
-        val response = service.request(connection, "POST", "jobs", job.inputJson())
+        val response = serviceRequest(connection, "POST", "jobs", job.inputJson())
         val synced = SavedJobMetadata.preserving(Opportunity.fromServer(response.getJSONObject("job")), job)
         require(synced.id.isNotBlank()) { "The service did not return the saved opportunity identity." }
         val destinationIdentity = BoundaryPolicy.jobIdentity(synced.url)
@@ -977,7 +1078,7 @@ class CareerViewModel internal constructor(application: Application, private val
         // The service checks approval and dispatch atomically; a second phone cannot
         // turn this into an automatic stop of an approved/cooldown application.
         for (id in obsolete) {
-            try { service.request(connection, "POST", "stop", JSONObject().put("planId", id).put("onlyIfUnapproved", true)) }
+            try { serviceRequest(connection, "POST", "stop", JSONObject().put("planId", id).put("onlyIfUnapproved", true)) }
             catch (error: ApiFailure) {
                 if (error.code == "review_already_approved") {
                     refreshInternal()
@@ -994,7 +1095,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val request = JSONObject().put("jobIds", JSONArray(ids)).put("answers", answers)
             .put("manualAppliedJobIds", JSONArray(current.manualApplied.filter { it in ids }))
             .apply { if (current.profile.linkedin.isNotEmpty()) put("reviewSchema", 3) }
-        val response = service.request(connection, "POST", "prepare", request)
+        val response = serviceRequest(connection, "POST", "prepare", request)
         val prepared = ReviewPlan.fromJson(response.getJSONObject("plan"))
         val latest = state.value
         if (latest.connection != connection || latest.reviewGeneration != current.reviewGeneration ||
@@ -1020,6 +1121,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val current = state.value
         require(current.liveEnabled || current.testService) { "Automatic employer sending is not enabled for this service. You can still apply directly on the employer’s site." }
         require(current.plan?.id == plan.id && current.plan.digest == plan.digest) { "Prepare a fresh review before applying." }
+        require(!plan.hasHistoricalText) { HISTORICAL_TEXT_NOTICE }
         require(!plan.expired() && !current.profileDirty && current.profile.revision == plan.profileRevision) { "This review has expired or your profile changed. Prepare it again." }
         require(linkedReviewMatchesProfile(plan, current.profile)) { mismatchedLinkedInReview }
         require(!reviewIncludesTrackedApplication(current, plan)) { alreadyAppliedReviewMessage }
@@ -1032,7 +1134,7 @@ class CareerViewModel internal constructor(application: Application, private val
         persist()
         require(plan.id !in state.value.continuationHolds) { "Stop was requested while preparing to send. Review receipts before approving again." }
         val incoming = try {
-            service.request(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true)
+            serviceRequest(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true)
                 .apply { if (plan.items.any { it.payload.safeString("linkedin").isNotEmpty() }) put("reviewSchema", 3) })
                 .requiredObjects("attempts").map(ApplicationReceipt::fromServer)
         } catch (error: Exception) {
@@ -1070,7 +1172,7 @@ class CareerViewModel internal constructor(application: Application, private val
                     mutable.update { it.copy(notice = "Stop is saved on this phone. Reconnect to request the server stop and recover receipts. An already dispatched application can still finish.") }
                     return@launch
                 }
-                service.request(connection, "POST", "stop", JSONObject().put("planId", planId))
+                serviceRequest(connection, "POST", "stop", JSONObject().put("planId", planId))
                 if (state.value.connection != connection) return@launch
                 mutable.update { it.copy(plan = null, obsoleteReviews = it.obsoleteReviews - planId,
                     notice = "Stop requested. Jobs already dispatched still need a confirmed outcome.") }
@@ -1102,7 +1204,7 @@ class CareerViewModel internal constructor(application: Application, private val
                     mutable.update { it.copy(notice = "Stop is saved on this phone. Reconnect to request the server stop and recover receipts. An already dispatched application can still finish.") }
                     return@launch
                 }
-                service.request(connection, "POST", "stop", JSONObject().put("planId", planId).put("onlyIfUnapproved", false))
+                serviceRequest(connection, "POST", "stop", JSONObject().put("planId", planId).put("onlyIfUnapproved", false))
                 if (state.value.connection != connection || state.value.privateScope != captured.privateScope) return@launch
                 mutable.update { it.copy(plan = it.plan?.takeIf { plan -> plan.id != planId }, obsoleteReviews = it.obsoleteReviews - planId,
                     notice = "Stop requested. Jobs already dispatched still need a confirmed outcome.") }
@@ -1118,7 +1220,8 @@ class CareerViewModel internal constructor(application: Application, private val
         val connection = state.value.connection ?: return false
         val sequence = ++refreshSequence
         val saveGeneration = profileSaveGeneration
-        val response = try { service.request(connection, "GET", "workspace") }
+        val pendingIds = withContext(Dispatchers.IO) { readAcknowledgments(connection).map { it.getString("id") }.filterNot { it in inFlightIntents }.toSet() }
+        val response = try { serviceRequest(connection, "GET", "workspace") }
         catch (cancel: CancellationException) { throw cancel }
         catch (error: Exception) {
             if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return false
@@ -1139,6 +1242,14 @@ class CareerViewModel internal constructor(application: Application, private val
         val capabilities = response.optJSONObject("capabilities")
         serviceData(capabilities?.opt("liveEnabled") is Boolean && response.opt("mode") in setOf("test", "local"))
         serviceData(!capabilities!!.has("linkedinProfile") || capabilities.opt("linkedinProfile") is Boolean)
+        val document = (response as? CareerReadResponse)?.document
+        val historical = document?.legacyStrings.orEmpty()
+        val recovery = if (historical.isNotEmpty()) withContext(Dispatchers.IO) {
+            HistoricalRecoveryStorage.save(vault, connection.origin, document!!.metadata, document.bytes.inputStream())
+        } else state.value.historicalRecovery
+        currentCoroutineContext().ensureActive()
+        if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return false
+        val knownHistorical = state.value.historicalRawStrings + historical + HistoricalText.malformedStrings(serverProfile.privateJson())
         acceptedRefresh = sequence
         val nextJobs = serverJobs + state.value.jobs.filter(Opportunity::localOnly)
         mutable.update { it.copy(
@@ -1155,12 +1266,16 @@ class CareerViewModel internal constructor(application: Application, private val
             linkedinProfile = capabilities.opt("linkedinProfile") == true,
             testService = response.safeString("mode") == "test",
             requiresPairing = false,
+            historicalRecovery = recovery, historicalRawStrings = knownHistorical, readRecoveryRequest = null,
             notice = if (activePlans.isEmpty() && it.notice == "The service is processing your approved applications. Receipts show each actual outcome.")
                 "Latest application outcomes are available in Receipts." else it.notice,
             selected = it.selected.intersect(serverJobs.map(Opportunity::id).toSet()),
             plan = it.plan?.takeIf { plan -> plan.profileRevision == serverProfile.revision && !plan.expired() }
         ) }
         persist()
+        val pendingCount = clearAcknowledgments(connection, pendingIds)
+        mutable.update { if (it.connection == connection) it.copy(pendingReadAcknowledgments = pendingCount,
+            readReconciliationRequired = pendingCount > 0) else it }
         rememberObservedReceiptPlans(connection)
         startPolling()
         return true
@@ -1219,7 +1334,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val knownPlans = (current.recoverablePlans + listOfNotNull(current.plan)).distinctBy(ReviewPlan::id).associateBy(ReviewPlan::id)
         val hasTrackedApplications = current.manualApplied.isNotEmpty() || current.applicationRecords.values.any(ApplicationRecordBundle::appliedElsewhere)
         val eligible = current.activePlans.filterNot { id ->
-            if (id in current.continuationHolds) true
+            if (id in current.continuationHolds || knownPlans[id]?.hasHistoricalText == true) true
             else if (hasTrackedApplications && (knownPlans[id]?.let { !reviewTargetsKnown(current, it) || reviewIncludesTrackedApplication(current, it) } != false)) {
                 mutable.update { it.copy(error = "Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone.") }
                 true
@@ -1232,7 +1347,7 @@ class CareerViewModel internal constructor(application: Application, private val
         try {
             // The server rechecks approval, stop state, duplicates and cooldown
             // atomically. This route cannot approve or restart an uncertain attempt.
-            service.request(connection, "POST", "advance", JSONObject().put("planId", planId))
+            serviceRequest(connection, "POST", "advance", JSONObject().put("planId", planId))
         } catch (cancel: CancellationException) { throw cancel }
         catch (error: Exception) {
             if (!canPoll(connection, generation)) return@withLock
@@ -1278,6 +1393,32 @@ class CareerViewModel internal constructor(application: Application, private val
                 if (!pollOnce()) break
             }
         }
+    }
+
+    fun exportHistoricalRecovery(uri: Uri, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed. Open recovery export again." }
+        val connection = state.value.connection
+        val request = state.value.readRecoveryRequest
+        var reference = state.value.historicalRecovery
+        if (request != null) {
+            require(connection != null && request.origin == connection.origin && request.workspaceId == connection.workspaceId)
+            reference = withContext(Dispatchers.IO) {
+                var saved: HistoricalRecoveryReference? = null
+                CareerApi.recoveryStream(connection, request) { input -> saved = HistoricalRecoveryStorage.save(vault, connection.origin, request.metadata, input) }
+                requireNotNull(saved)
+            }
+            require(state.value.privateScope == expectedScope) { "The workspace changed. The protected recovery file is kept with its original workspace." }
+            mutable.update { it.copy(historicalRecovery = reference, readRecoveryRequest = null) }
+            persist()
+        }
+        val chosen = requireNotNull(reference) { "Refresh the workspace before opening recovery export." }
+        withContext(Dispatchers.IO) {
+            HistoricalRecoveryStorage.verify(vault, chosen)
+            getApplication<Application>().contentResolver.openOutputStream(uri, "w")?.use { HistoricalRecoveryStorage.export(vault, chosen, it) }
+                ?: throw IllegalArgumentException("The recovery destination could not be opened. Your phone data is unchanged.")
+        }
+        mutable.update { if (it.privateScope == expectedScope) it.copy(notice =
+            "Original historical records exported. This private recovery file preserves exact text and evidence; it contains no connection token and cannot approve applications.") else it }
     }
 
     fun exportWorkspace(uri: Uri, expectedScope: String, includePDF: Boolean) = action {
@@ -1364,18 +1505,54 @@ class CareerViewModel internal constructor(application: Application, private val
         mutable.update { it.copy(workspaceImport = preview) }
     }
 
+    fun exportPreservedHistoricalRecovery(uri: Uri, copy: PreservedWorkspace, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope && copy in state.value.preservedRecoveryWorkspaces) {
+            "The workspace changed. Reopen recovery settings."
+        }
+        withContext(Dispatchers.IO) {
+            val value = vault.readPreserved(copy.area, copy.record)
+                ?: throw IllegalArgumentException("This earlier workspace is no longer available.")
+            val referenceJSON = value.optJSONObject("historicalText")?.optJSONObject("reference")
+                ?: throw IllegalArgumentException("This earlier copy has no original historical recovery record. Choose Review earlier recovery copy to recover its saved data.")
+            val reference = HistoricalRecoveryReference.decode(referenceJSON, null)
+            val savedConnection = vault.readPreserved(copy.area, "connection")?.let { Connection.fromJson(it) }
+            val canonical = "workspace-" + BoundaryPolicy.workspaceKey(reference.origin, reference.workspaceId)
+            require(copy.record == canonical || savedConnection != null && savedConnection.origin == reference.origin &&
+                savedConnection.workspaceId == reference.workspaceId && copy.record.removePrefix("workspace-") in savedConnection.legacyKeys())
+            val preserved = object : PrivateStore {
+                override fun read(name: String) = vault.readPreserved(copy.area, name)
+                override fun names() = vault.namesPreserved(copy.area)
+                override fun write(name: String, value: JSONObject): Unit = error("Read-only recovery area")
+                override fun remove(name: String): Unit = error("Read-only recovery area")
+                override fun startFreshPreservingExisting(): Unit = error("Read-only recovery area")
+            }
+            HistoricalRecoveryStorage.verify(preserved, reference)
+            getApplication<Application>().contentResolver.openOutputStream(uri, "w")?.use {
+                HistoricalRecoveryStorage.export(preserved, reference, it)
+            } ?: throw IllegalArgumentException("The recovery destination could not be opened. Your phone data is unchanged.")
+        }
+        mutable.update { if (it.privateScope == expectedScope) it.copy(notice =
+            "Original historical records exported. This private recovery file preserves exact text and evidence; it contains no connection token and cannot approve applications.") else it }
+    }
+
     fun deleteRecoveryWorkspace(copy: PreservedWorkspace, expectedScope: String) = action {
         require(state.value.privateScope == expectedScope && copy in state.value.preservedRecoveryWorkspaces) { "The workspace changed. Reopen recovery settings." }
         withContext(Dispatchers.IO) {
             val savedConnection = vault.readPreserved(copy.area, "connection")?.let { runCatching { Connection.fromJson(it) }.getOrNull() }
             val matched = savedConnection?.takeIf { copy.record == workspaceName(it) || copy.record.removePrefix("workspace-") in it.legacyKeys() }
-            val names = mutableSetOf(copy.record, "search-" + copy.record.removePrefix("workspace-"), "holds-" + copy.record.removePrefix("workspace-"))
+            val key = copy.record.removePrefix("workspace-")
+            val keys = mutableSetOf(key)
+            val names = mutableSetOf(copy.record, "search-$key", "holds-$key", "read-acks-$key")
             matched?.let { connection ->
                 names += "connection"
                 (connection.legacyKeys() + BoundaryPolicy.workspaceKey(connection.origin, connection.workspaceId)).forEach { key ->
-                    names += setOf("workspace-$key", "search-$key", "holds-$key")
+                    keys += key
+                    names += setOf("workspace-$key", "search-$key", "holds-$key", "read-acks-$key")
                 }
             }
+            names += vault.namesPreserved(copy.area).filter { name -> keys.any { key ->
+                name.matches(Regex("recovery-" + Regex.escape(key) + "-[a-f0-9]{16}-[0-9]+"))
+            } }
             vault.removePreserved(copy.area, names)
         }
         val remaining = withContext(Dispatchers.IO) { vault.preservedWorkspaces() }
@@ -1496,11 +1673,16 @@ class CareerViewModel internal constructor(application: Application, private val
         discovery.stopPrivateSession(flush = false)
         val aliases = before.connection?.legacyKeys().orEmpty()
         val names = listOf(workspaceName(before.connection), searchName(before.connection), holdsName(before.connection)) +
-            aliases.flatMap { listOf("workspace-$it", "search-$it", "holds-$it") }
+            aliases.flatMap { listOf("workspace-$it", "search-$it", "holds-$it", "read-acks-$it") }
         try {
             diskMutex.withLock { withContext(Dispatchers.IO) {
                 if (before.connection != null) vault.remove("connection")
                 names.distinct().forEach(vault::remove)
+                before.connection?.let { selected ->
+                    vault.remove(acknowledgmentName(selected))
+                    val prefixes = listOf(HistoricalRecoveryStorage.prefix(selected.origin, selected.workspaceId)) + aliases.map { "recovery-$it-" }
+                    vault.names().filter { name -> prefixes.any(name::startsWith) }.forEach(vault::remove)
+                }
             } }
         } catch (error: Exception) {
             throw PrivateStorageFailure(StorageProblem(workspaceName(before.connection), false), error)
@@ -1514,7 +1696,9 @@ class CareerViewModel internal constructor(application: Application, private val
     fun exportReceipts(uri: Uri, expectedScope: String = state.value.privateScope) = action {
         require(state.value.privateScope == expectedScope) { "The workspace changed while choosing the export destination. Export again from the intended account." }
         val connection = state.value.connection ?: throw IllegalArgumentException("Connect to export the current service receipts.")
-        val data = service.request(connection, "GET", "receipts").toString(2).toByteArray(Charsets.UTF_8)
+        val response = serviceRequest(connection, "GET", "receipts")
+        HistoricalText.requireWellFormed(response)
+        val data = response.toString(2).toByteArray(Charsets.UTF_8)
         withContext(Dispatchers.IO) {
             getApplication<Application>().contentResolver.openOutputStream(uri, "w")?.use { it.write(data) }
                 ?: throw IllegalArgumentException("The selected destination could not be opened.")

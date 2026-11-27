@@ -5,7 +5,8 @@ import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import {CHECKPOINTS, CONTROL_LIMITS, CheckpointError, UUID, SHA, canonical, sha256,
-  decodeBoundedJSON, decodeControlRequest, createCheckpointState, discoveryFilename} from './control-state.mjs';
+  decodeBoundedJSON, decodeControlRequest, createCheckpointState, discoveryFilename,
+  operationJournalFilename, needsReconciledJournal} from './control-state.mjs';
 
 const fail = code => { throw new CheckpointError(code); };
 // Failure receipts never serialize a foreign error's message or arbitrary code.
@@ -25,9 +26,11 @@ const FAILURE_CODES = new Set([
   'checkpoint_json_number','checkpoint_json_size','checkpoint_json_utf8',
   'checkpoint_lease_changed','checkpoint_local_job_identity','checkpoint_observation_limit',
   'checkpoint_offline_disk_changed','checkpoint_offline_server_changed','checkpoint_pending_file',
+  'checkpoint_operation_journal_shape',
   'checkpoint_pending_inventory','checkpoint_phone_revision','checkpoint_phone_scope_or_shape',
   'checkpoint_picker_changed_state','checkpoint_prepare_rejected','checkpoint_prepared_snapshot_changed',
   'checkpoint_prepared_snapshot_invalid','checkpoint_primary_job_changed','checkpoint_private_followup_changed',
+  'checkpoint_primary_backup_changed',
   'checkpoint_private_record_mutated','checkpoint_private_records_unexpected','checkpoint_profile_evidence',
   'checkpoint_profile_mutation_rejected','checkpoint_read_rejected','checkpoint_request_age',
   'checkpoint_request_shape_or_sequence','checkpoint_response_changed','checkpoint_response_size',
@@ -123,6 +126,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
   const controlPath = path.join(runnerContainer.path,'Documents','NativeJourneyControl',testID);
   const appRoot = path.join(appContainer.path,'Library','Application Support','CareerFinderUIAcceptance',testID);
   const draftPath = path.join(appRoot,'applications','phone-draft.json');
+  const operationJournalPath = path.join(appRoot,'applications',operationJournalFilename(logicalOrigin,workspaceID));
   // CareerDiscoveryStore.attach(to:) uses the actual owner-scoped filename.
   const discoveryPath = path.join(appRoot,discoveryFilename(logicalOrigin,workspaceID));
   const seedPath = path.join(appRoot,'native-journey-seed-receipt.json');
@@ -236,11 +240,14 @@ export async function createFileCheckpointController({harness, bridge, testID, w
         try { return await stableRead(filename,maximum); }
         catch (error) { if (['checkpoint_file_changed','checkpoint_file_missing'].includes(error.code)) return null; throw error; }
       };
-      const [phone,seed,bootstrap] = await Promise.all([
+      const journalRequired = needsReconciledJournal(state.nextSequence);
+      const [phone,seed,bootstrap,operationJournal] = await Promise.all([
         mutable(draftPath,CONTROL_LIMITS.phoneBytes), stableRead(seedPath,4096,{privateMode:true}),
         stableRead(bootstrapPath,65536,{privateMode:true}),
+        journalRequired ? mutable(operationJournalPath,CONTROL_LIMITS.phoneBytes) : null,
       ]);
       if (phone) remember('phone-draft',phone.bytes);
+      if (operationJournal) remember('operation-journal',operationJournal.bytes);
       remember('seed-receipt',seed.bytes);
       if (bootstrap.sha256 !== bootstrapSHA256) fail('checkpoint_bootstrap_changed');
       guard(deadline); // Preserve returned bytes above; admit no new app read after the budget.
@@ -248,13 +255,14 @@ export async function createFileCheckpointController({harness, bridge, testID, w
       if (state.nextSequence >= 3) discovery = await mutable(discoveryPath,CONTROL_LIMITS.discoveryBytes);
       if (discovery) remember('discovery',discovery.bytes);
       second = await boundedHarness(()=>bridge.evidence(),deadline,value=>remember('evidence-after',jsonBytes(value)));
-      if (!phone || state.nextSequence >= 3 && !discovery || canonical(first) !== canonical(second)) return null;
+      if (!phone || journalRequired && !operationJournal || state.nextSequence >= 3 && !discovery || canonical(first) !== canonical(second)) return null;
       guard(deadline);
       return {proof:second,phone:decodeBoundedJSON(phone.bytes,CONTROL_LIMITS.phoneBytes),
+        operationJournal:operationJournal ? decodeBoundedJSON(operationJournal.bytes,CONTROL_LIMITS.phoneBytes) : null,
         discovery:discovery ? decodeBoundedJSON(discovery.bytes,CONTROL_LIMITS.discoveryBytes) : null,
         seedReceipt:decodeBoundedJSON(seed.bytes,4096),seedReceiptSHA256:seed.sha256,sourceBound:true,
         transportClosed:transportCloseReceipt?.closed === true,
-        originals:{phone,seed,discovery,proof:{bytes:jsonBytes(second)}}};
+        originals:{phone,seed,discovery,operationJournal,proof:{bytes:jsonBytes(second)}}};
     } catch (error) {
       if (!stopped && error?.code === 'fixture_requests_still_running') return null;
       if (error instanceof CheckpointError) throw error;
@@ -267,6 +275,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
       ['response.json',response]];
     if (transportCloseReceipt) entries.push(['transport-close.original.json',jsonBytes(transportCloseReceipt)]);
     if (witness.originals.discovery) entries.push(['discovery.original.json',witness.originals.discovery.bytes]);
+    if (witness.originals.operationJournal) entries.push(['operation-journal.original.json',witness.originals.operationJournal.bytes]);
     const outputs = [];
     for (const [suffix,bytes] of entries) {
       guard(deadline); if (bytes.length > CONTROL_LIMITS.evidenceBytes) fail('checkpoint_retained_size');

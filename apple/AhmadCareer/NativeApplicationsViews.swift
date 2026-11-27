@@ -73,6 +73,60 @@ struct NativeSavedLinkRemoval: View {
     }
 }
 
+private struct NativeHistoricalRecovery: View {
+    @NativeLocalization private var l10n
+    @ObservedObject var model: NativeApplicationsStore
+    @State private var file: URL?
+    @State private var sharing = false
+    @State private var exporting = false
+    @State private var exportTask: Task<Void, Never>?
+    private func export(_ reference: PhoneRecoveryReference? = nil) {
+        guard exportTask == nil else { return }
+        exporting = true
+        exportTask = Task {
+            let result = await model.exportHistoricalRecovery(reference)
+            if !Task.isCancelled { file = result; sharing = result != nil }
+            exporting = false; exportTask = nil
+        }
+    }
+    private func title(_ reference: PhoneRecoveryReference) -> String {
+        let names = ["workspace": "Workspace", "profile": "Profile", "job": "Opportunity", "plan": "Review", "plan-state": "Review", "receipts": "Application receipts"]
+        return l10n(names[reference.kind] ?? "Workspace") + " · " + reference.asOf
+    }
+    var body: some View {
+        if let notice = model.historicalRecoveryNotice {
+            VStack(alignment: .leading, spacing: 12) {
+                Label(l10n("Historical data recovery"), systemImage: "doc.badge.clock").font(.headline)
+                Text(l10n(notice)).font(.footnote).fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("applications.historicalRecovery.notice")
+                if model.pendingRecovery != nil || model.recoveryExportChoices.count <= 1 {
+                    Button(l10n(exporting ? "Preparing recovery file…" : "Export complete recovery file")) { export() }
+                        .disabled(exporting || model.busy || !model.hasHistoricalRecovery)
+                        .accessibilityIdentifier("applications.historicalRecovery.export")
+                } else {
+                    Menu(l10n(exporting ? "Preparing recovery file…" : "Export complete recovery file")) {
+                        ForEach(model.recoveryExportChoices, id: \.documentFileName) { reference in
+                            Button(title(reference)) { export(reference) }
+                        }
+                    }.disabled(exporting || model.busy).accessibilityIdentifier("applications.historicalRecovery.export")
+                }
+                if exporting {
+                    Button(l10n("Cancel recovery download"), role: .cancel) { exportTask?.cancel() }
+                        .accessibilityIdentifier("applications.historicalRecovery.cancel")
+                }
+                Text(l10n("This file keeps a copy of the original records. It is an archive only: it cannot be imported as a profile or used to approve an application or prove it was sent."))
+                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                if model.reconciliationRequired {
+                    Button(l10n("Refresh workspace")) { Task { await model.refresh() } }.disabled(model.busy)
+                        .accessibilityIdentifier("applications.historicalRecovery.refresh")
+                }
+            }
+            .sheet(isPresented: $sharing) { if let file { NativeApplicationShare(items: [file]) } }
+            .onDisappear { exportTask?.cancel() }
+        }
+    }
+}
+
 struct NativeApplicationsScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var model: NativeApplicationsStore
@@ -116,6 +170,7 @@ struct NativeApplicationsScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 header
+                NativeHistoricalRecovery(model: model)
                 if let message = model.message {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "info.circle")
@@ -534,6 +589,18 @@ struct NativeApplicationProfileEditor: View {
                         .font(.subheadline).foregroundStyle(.primary)
                 }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently) } }
+                if model.hasHistoricalRecovery {
+                    Section {
+                        NativeHistoricalRecovery(model: model)
+                        if model.profileNeedsHistoricalRepair {
+                            Text(l10n("Repair replaces unreadable characters with � in this draft. Review every field before saving. Choose a new PDF or remove the current one if its filename is affected."))
+                                .font(.footnote).fixedSize(horizontal: false, vertical: true)
+                            Button(l10n("Repair displayed text in this draft")) {
+                                draft = model.repairedHistoricalProfileDraft(draft)
+                            }.disabled(occupied).accessibilityIdentifier("profile.repairHistoricalText")
+                        }
+                    }
+                }
                 if conflicts {
                     Section {
                         Text(l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
@@ -1344,6 +1411,7 @@ private struct NativeApplicationReview: View {
                         Label(l10n("Test workspace — no real employer application"), systemImage: "testtube.2").foregroundStyle(.orange)
                     }
                 }
+                if model.reviewNeedsHistoricalRepair || model.reconciliationRequired { Section { NativeHistoricalRecovery(model: model) } }
                 ForEach(items.compactMap { NativeApplicationRow($0, idKey: "jobId") }) { row in
                     let item = row.value
                     let job = item["job"]?.object ?? [:]
@@ -1443,7 +1511,8 @@ private struct NativeApplicationReview: View {
                         Label(l10n.format("Auto Apply · jobs: {0}", [String(describing: ready)]), systemImage: "paperplane.fill")
                             .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 10)
                     }.buttonStyle(.borderedProminent).tint(ApplyDesign.actionFill)
-                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync || !model.submissionAvailable)
+                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync || !model.submissionAvailable
+                            || model.reviewNeedsHistoricalRepair || model.profileNeedsHistoricalRepair || model.reconciliationRequired || model.recoveryIntegrityFailed)
                 }
                 if let id = model.plan?["id"]?.string {
                     Section {
@@ -1626,6 +1695,7 @@ struct NativePhoneDataScreen: View {
             }
             if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true) } }
             if let notice = model.message { Section { Text(l10n(notice)).font(.footnote).fixedSize(horizontal: false, vertical: true) } }
+            if model.hasHistoricalRecovery || model.reconciliationRequired { Section { NativeHistoricalRecovery(model: model) } }
             Section(l10n("Export and recovery")) {
                 Button(l10n("Export this phone workspace")) {
                     do {

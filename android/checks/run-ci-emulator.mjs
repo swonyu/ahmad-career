@@ -399,10 +399,17 @@ try {
   const classes=selection.ordinary;
   assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
   assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
+  const pressureMethod='com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace';
+  assert.ok(classes.includes(pressureMethod.split('#')[0]),'The pressure fixture class must remain in ordinary discovery.');
   fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
     discovered,ordinary:classes,ordinaryMinimum:105,requiredRestartClass:selection.restart,
-    requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false},null,2));
-  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},105);
+    requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false,
+    separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',
+      requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
+      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsExcluded:false}},null,2));
+  // This new bounded pressure proof has a dedicated reviewed 192 MiB run. Every
+  // original regression remains selected; a larger generic CI heap is not a product failure.
+  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:pressureMethod},105);
   // Preserve completed preview evidence before the acceptance build and later device work.
   await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
   // Restart is an additional required phase, not an excluded or renamed test.

@@ -1,5 +1,7 @@
 package com.saleh.careerfinder
 
+import com.saleh.careerfinder.HistoricalDisplayText as Text
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -28,6 +30,15 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
     var importingScope by rememberSaveable { mutableStateOf<String?>(null) }
     var deletingScope by remember { mutableStateOf<String?>(null) }
     var deletingRecovery by remember { mutableStateOf<PreservedWorkspace?>(null) }
+    var recoveryExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    var recoveryExportArea by rememberSaveable { mutableStateOf<String?>(null) }
+    var recoveryExportRecord by rememberSaveable { mutableStateOf<String?>(null) }
+    val recoveryExport = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val capturedScope = recoveryExportScope; val area = recoveryExportArea; val record = recoveryExportRecord
+        recoveryExportScope = null; recoveryExportArea = null; recoveryExportRecord = null
+        if (uri != null && capturedScope != null && area != null && record != null)
+            model.exportPreservedHistoricalRecovery(uri, PreservedWorkspace(area, record), capturedScope)
+    }
     val export = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         val captured = exportingScope
         exportingScope = null
@@ -74,6 +85,10 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
                 Text(l10n(if (copy.record == "workspace-unpaired") "Earlier phone draft" else "Earlier connected workspace"), style = MaterialTheme.typography.titleMedium)
                 Text(l10n("Kept when a new private storage area was created. Review it before merging; the earlier encrypted file stays preserved until you explicitly delete this copy."))
                 Action("Review earlier recovery copy", !state.busy) { model.inspectRecoveryWorkspace(copy, scope) }
+                Action("Export original historical records", !state.busy) {
+                    recoveryExportScope = scope; recoveryExportArea = copy.area; recoveryExportRecord = copy.record
+                    recoveryExport.launch("Career-Finder-Original-Recovery-" + LocalDate.now() + ".json")
+                }
                 TextButton(onClick = { deletingRecovery = copy }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Delete this earlier copy…")) }
             } }
             if (state.recordDrafts.isNotEmpty()) item { Text(l10n("Unfinished record edits"), style = MaterialTheme.typography.titleLarge) }

@@ -21,6 +21,32 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
   "$task_root/Checks/OfflineApplicationHistoryCheck.swift" -o "$check_dir/offline-history-check"
 "$check_dir/offline-history-check" "$check_dir/offline-history-fixtures" "$check_dir/offline-history-report.json"
+# Preserve oversized historical records and export their complete recovery archive.
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
+  "$task_root/Checks/HistoricalURLCheck.swift" -o "$check_dir/historical-url-check"
+"$check_dir/historical-url-check" "$check_dir/historical-url-fixtures"
+python3 - "$task_root/Checks/Fixtures" "$check_dir/historical-recovery-fixtures" <<'PY_FIXTURES'
+import gzip, hashlib, json, pathlib, sys
+source = pathlib.Path(sys.argv[1]); destination = pathlib.Path(sys.argv[2])
+destination.mkdir(mode=0o700)
+for fixture in json.loads((source / "manifest.json").read_text()):
+    name = fixture["file"]
+    assert pathlib.Path(name).name == name and name.endswith(".json.gz"), "Unexpected recovery fixture path"
+    archive = source / name
+    assert hashlib.sha256(archive.read_bytes()).hexdigest() == fixture["gzipSHA256"], "Recovery archive changed"
+    assert 0 < fixture["bytes"] <= 64 * 1024 * 1024, "Recovery fixture size is outside the admitted range"
+    with gzip.open(archive, "rb") as compressed:
+        raw = compressed.read(fixture["bytes"] + 1)
+    assert len(raw) == fixture["bytes"] and hashlib.sha256(raw).hexdigest() == fixture["sha256"], "Recovery fixture changed"
+    target = destination / name.removesuffix(".gz")
+    with target.open("xb") as output: output.write(raw)
+    target.chmod(0o600)
+PY_FIXTURES
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
+  "$task_root/Checks/HistoricalRecoveryCheck.swift" -o "$check_dir/historical-recovery-check"
+"$check_dir/historical-recovery-check" "$check_dir/historical-recovery-data" "$check_dir/historical-recovery-fixtures"
 # The preservation/import/export suite runs on the same source without an app target.
 bash "$task_root/Checks/check-native-recovery.sh"
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \

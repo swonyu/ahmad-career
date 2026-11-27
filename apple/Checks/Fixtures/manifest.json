@@ -1,0 +1,23 @@
+[
+  {
+    "file": "valid_unicode-recovery.json.gz",
+    "bytes": 9137477,
+    "sha256": "81ee551481f934c81c266645fe3537bfa324efdd6e9e200205064334ee5b8dfa",
+    "gzipBytes": 143710,
+    "gzipSHA256": "62712811a38b8d6039e8f2d36a044ed5627b41a4a3d466747a6ee04de65e2f4e"
+  },
+  {
+    "file": "surrogate-recovery.json.gz",
+    "bytes": 20373220,
+    "sha256": "fdb7207eb550a878f1efc522594d05a3d3409a8bdecd0d79b7f95c34cf4cafe9",
+    "gzipBytes": 198706,
+    "gzipSHA256": "427845934ba8a331df11e4d82762a7bd7483621d0f99221c0911653d7403c8dd"
+  },
+  {
+    "file": "legacy_url-recovery.json.gz",
+    "bytes": 15643301,
+    "sha256": "9444e434921aeaac6dedbcbae2361899c0d8264f08d633d75cbdccddc0c14730",
+    "gzipBytes": 157979,
+    "gzipSHA256": "4fe91c7713a66aceefa89d3769b694694513f5068af4f17a16818fd46b503b43"
+  }
+]

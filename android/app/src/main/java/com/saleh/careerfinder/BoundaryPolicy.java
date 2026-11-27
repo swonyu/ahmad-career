@@ -59,9 +59,48 @@ public final class BoundaryPolicy {
     }
 
     public static String opportunityURL(String input) {
-        URI uri = httpsURI(input, 4096);
-        String normalized = uri.toASCIIString();
-        return uri.getRawFragment() == null ? normalized : normalized.substring(0, normalized.indexOf('#'));
+        return newOpportunityURL(input, 4096);
+    }
+
+    /** The service bounds the encoded spelling too, independently of the local shortlist limit. */
+    public static String serviceOpportunityURL(String input) {
+        return newOpportunityURL(input, 2048);
+    }
+
+    private static String newOpportunityURL(String input, int maximum) {
+        URI uri = httpsURI(input, maximum);
+        // URI.toASCIIString() normalizes Unicode to NFC. The service's URL parser
+        // preserves code points; encode them first so decomposed names retain their length.
+        String path = uri.getRawPath();
+        java.util.List<String> segments = new java.util.ArrayList<>();
+        if (path != null && !path.isEmpty()) {
+            String[] pieces = path.substring(1).split("/", -1);
+            for (int index = 0; index < pieces.length; index++) {
+                String segment = pieces[index];
+                String dots = segment.toLowerCase(Locale.ROOT).replace("%2e", ".");
+                if (dots.equals("..")) {
+                    if (!segments.isEmpty()) segments.remove(segments.size() - 1);
+                    if (index == pieces.length - 1) segments.add("");
+                } else if (dots.equals(".")) {
+                    if (index == pieces.length - 1) segments.add("");
+                } else segments.add(asciiPreservingUnicode(segment));
+            }
+        }
+        String query = uri.getRawQuery();
+        // HTTPS uses the URL Standard's special-query set, which also escapes apostrophes.
+        if (query != null) query = asciiPreservingUnicode(query).replace("'", "%27");
+        String result = "https://" + uri.getHost().toLowerCase(Locale.ROOT) +
+            (uri.getPort() == -1 || uri.getPort() == 443 ? "" : ":" + uri.getPort()) +
+            "/" + String.join("/", segments) + (query == null ? "" : "?" + query);
+        if (result.length() > maximum) throw new IllegalArgumentException("This link is too long. Use a shorter link.");
+        return result;
+    }
+
+    /** Historical links are bounded by their containing response/file, not today's new-entry limit. */
+    public static String historicalOpportunityURL(String input) {
+        httpsURI(input, Integer.MAX_VALUE);
+        // Preserve exact stored spelling and fragments. This is a read/navigation boundary.
+        return input;
     }
 
     /** Only the public posting fields may cross the Android share sheet boundary. */
@@ -185,7 +224,7 @@ public final class BoundaryPolicy {
 
     /** A stable private-record identity; never changes the original link opened for the user. */
     public static String jobIdentity(String input) {
-        URI uri = httpsURI(input, 4096);
+        URI uri = httpsURI(input, Integer.MAX_VALUE);
         String host = uri.getHost().toLowerCase(Locale.ROOT);
         String path = uri.getRawPath() == null ? "" : asciiPreservingUnicode(uri.getRawPath());
         if ((host.equals("jobs.lever.co") || host.equals("jobs.eu.lever.co")) && (uri.getPort() == -1 || uri.getPort() == 443)) {
@@ -308,7 +347,7 @@ public final class BoundaryPolicy {
 
     public static boolean isConfirmed(String state, String applicationId) {
         return "confirmed".equals(state) && applicationId != null && !applicationId.trim().isEmpty() &&
-            applicationId.length() <= 200 && applicationId.chars().noneMatch(c -> c < 0x20 || c == 0x7f);
+            applicationId.length() <= 200 && validUnicode(applicationId) && applicationId.chars().noneMatch(c -> c < 0x20 || c == 0x7f);
     }
 
     public static boolean isLiveReceipt(String evidenceMode, String provider, String state, String applicationId) {
