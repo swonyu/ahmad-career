@@ -329,8 +329,29 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
 
         // Observe the system's Copy action without choosing it or any destination.
         let sheet = app.otherElements["ActivityListView"]
-        let copy = sheet.cells.matching(NSPredicate(format: "identifier == %@ AND label == %@", "actionGroupCell", "Copy")).element
-        try wait("The system share sheet offers Copy", app: app) { copy.isHittable }
+        try wait("The system share sheet offers a visible, enabled Copy action", app: app) {
+            // UIActivityViewController renders its action list in another process.
+            // Inspect one fresh accessibility tree for both the popup and its cell.
+            guard let root = try? app.snapshot(), finite(root.frame) else { return false }
+            var pending: [any XCUIElementSnapshot] = [root]
+            var sheets: [any XCUIElementSnapshot] = []
+            while let node = pending.popLast() {
+                if node.elementType == .other, node.identifier == "ActivityListView" { sheets.append(node) }
+                pending.append(contentsOf: node.children)
+            }
+            guard sheets.count == 1, let popup = sheets.first, finite(popup.frame) else { return false }
+            pending = popup.children
+            var actions: [any XCUIElementSnapshot] = []
+            while let node = pending.popLast() {
+                if node.elementType == .cell, node.identifier == "actionGroupCell", node.label == "Copy" {
+                    actions.append(node)
+                }
+                pending.append(contentsOf: node.children)
+            }
+            guard actions.count == 1, let copy = actions.first else { return false }
+            return copy.isEnabled && finite(copy.frame) && root.frame.contains(copy.frame)
+                && popup.frame.insetBy(dx: -1, dy: -1).contains(copy.frame)
+        }
         record("system-share-sheet", app: app)
         let close = sheet.buttons["Close"]
         if close.exists {

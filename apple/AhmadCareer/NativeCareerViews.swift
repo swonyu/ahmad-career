@@ -445,9 +445,18 @@ private struct NativeSavedComparisonSheet: View {
                 }
             }.nativeList().navigationTitle(l10n("Compare two openings")).navigationBarTitleDisplayMode(.inline)
                 .accessibilityIdentifier("saved.comparison.content")
-                .toolbar { ToolbarItem(placement: .cancellationAction) {
-                    Button(l10n("Back to Saved"), action: close).accessibilityIdentifier("saved.comparison.close")
-                } }
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    Button(action: close) {
+                        Text(l10n("Back to Saved"))
+                            .padding(.horizontal, 20)
+                            .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Color.careerAccent)
+                    .background(.regularMaterial)
+                    .accessibilityIdentifier("saved.comparison.close")
+                }
         }
     }
 }
