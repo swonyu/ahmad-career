@@ -238,50 +238,32 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
         let label = localized("delete", "حذف")
         let keyboard = app.keyboards.firstMatch
-        let keyQuery = language == "ar" ? keyboard.keys : app.keyboards.keys
-        let keys = keyQuery.matching(NSPredicate(
+        let keys = keyboard.keys.matching(NSPredicate(
             format: "identifier == %@ AND label == %@", "delete", label))
         while ProcessInfo.processInfo.systemUptime < deadline {
-            if language == "ar" {
-                // Use one fresh snapshot of the same keyboard as the live
-                // query. A second key snapshot can exhaust the strict gate.
-                let observed = try? keyboard.snapshot()
-                let keyboardSnapshotEnd = ProcessInfo.processInfo.systemUptime
-                guard keyboardSnapshotEnd < deadline else { break }
-                var frames: [CGRect] = []
-                if let observed, observed.elementType == .keyboard {
-                    var pending: [any XCUIElementSnapshot] = [observed]
-                    while let element = pending.popLast() {
-                        if element.elementType == .key && element.identifier == "delete" && element.label == label {
-                            frames.append(element.frame)
-                        }
-                        pending.append(contentsOf: element.children.reversed())
+            // One snapshot and one live query use the same OS keyboard. A
+            // separate key snapshot can exhaust the strict five-second gate.
+            let observed = try? keyboard.snapshot()
+            let keyboardSnapshotEnd = ProcessInfo.processInfo.systemUptime
+            guard keyboardSnapshotEnd < deadline else { break }
+            var frames: [CGRect] = []
+            if let observed, observed.elementType == .keyboard {
+                var pending: [any XCUIElementSnapshot] = [observed]
+                while let element = pending.popLast() {
+                    if element.elementType == .key && element.identifier == "delete" && element.label == label {
+                        frames.append(element.frame)
                     }
+                    pending.append(contentsOf: element.children.reversed())
                 }
-                print("Native journey Arabic keyboard identities: exact=\(frames.count); snapshot=\(keyboardSnapshotEnd - start)")
-                let positions = frames.count == 1 ? [0] : frames.count == 2 ? [1, 0] : []
-                for index in positions where finite(frames[index]) && frames[index].intersects(bounds) {
-                    guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-                    let hit = keys.element(boundBy: index).isHittable
-                    let finished = ProcessInfo.processInfo.systemUptime
-                    print("Native journey real-key observation: index=\(index); snapshot=\(keyboardSnapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
-                    if hit && finished <= deadline { return }
-                }
-            } else {
-                for index in [0, 1] {
-                    guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-                    let key = keys.element(boundBy: index)
-                    let snapshot = try? key.snapshot()
-                    let snapshotEnd = ProcessInfo.processInfo.systemUptime
-                    guard snapshotEnd < deadline else { break }
-                    if finite(bounds), let snapshot, snapshot.elementType == .key,
-                       snapshot.identifier == "delete", snapshot.label == label,
-                       finite(snapshot.frame), snapshot.frame.intersects(bounds) {
-                        let hit = key.isHittable, finished = ProcessInfo.processInfo.systemUptime
-                        print("Native journey real-key observation: index=\(index); snapshot=\(snapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
-                        if hit && finished <= deadline { return }
-                    }
-                }
+            }
+            print("Native journey keyboard identities: exact=\(frames.count); snapshot=\(keyboardSnapshotEnd - start)")
+            let positions = frames.count == 1 ? [0] : frames.count == 2 ? [1, 0] : []
+            for index in positions where finite(frames[index]) && frames[index].intersects(bounds) {
+                guard ProcessInfo.processInfo.systemUptime < deadline else { break }
+                let hit = keys.element(boundBy: index).isHittable
+                let finished = ProcessInfo.processInfo.systemUptime
+                print("Native journey real-key observation: index=\(index); snapshot=\(keyboardSnapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
+                if hit && finished <= deadline { return }
             }
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
