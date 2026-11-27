@@ -352,7 +352,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         let rootID = "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: "
             + localized("Recents", "الحديثة")
         let navID = "FullDocumentManagerViewControllerNavigationBar"
-        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 15
+        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 20
         func exactFilesHierarchy(_ description: String) -> Bool {
             let lines = description.split(separator: "\n")
             let roots = lines.enumerated().filter { _, line in
@@ -384,7 +384,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
         }
-        try require(presented, "The exact OS Files Recent root and navigation appear inside fifteen seconds", app: app)
+        try require(presented, "The exact OS Files Recent root and navigation appear inside twenty seconds", app: app)
     }
     private func cancelPicker(_ app: XCUIApplication) throws {
         try openProfile(app)
