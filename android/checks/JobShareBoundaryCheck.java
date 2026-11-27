@@ -24,10 +24,14 @@ public final class JobShareBoundaryCheck {
             "Stored line breaks cannot add apparent payload fields");
         check(!payload.contains("PRIVATE_NOTE") && !payload.contains("PRIVATE_CV.pdf") && !payload.contains("private@example.com"),
             "Application note, CV and applicant email have no share payload input");
+        check(BoundaryPolicy.serviceOpportunityURL("https://jobs.example.com/jobs/../secret").equals("https://jobs.example.com/secret"),
+            "New service entries still follow canonical path semantics before their own write boundary");
         for (String invalid : new String[] {
             "http://jobs.example.com/123", "https://user:pass@jobs.example.com/123", "https://localhost/job",
             "https://jobs.internal/posting", "https://127.0.0.1/job", "https://[::1]/job",
             "https://jobs.example.com/jobs/../secret", "https://jobs.example.com/jobs/%2e%2e/secret",
+            "https://jobs.example.com/jobs/.%2E/secret", "https://jobs.example.com/jobs/%2E./secret",
+            "https://jobs.example.com/jobs/%252e%252e/secret",
             "https://jobs.internal./posting", "https://127.0.0.1./job", "https://jobs.example.com./posting",
             "https://jobs.example.com:8443/posting", "javascript:alert(1)",
             "https://jobs.example.com/invite/secret", "https://jobs.example.com/%69nvitation/secret",

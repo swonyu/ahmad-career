@@ -120,9 +120,11 @@ public final class BoundaryPolicy {
     /** A conservative share filter: never remove an unknown query field and guess its destination. */
     public static String shareableJobURL(String input) {
         if (input == null || input.length() > 2048) throw new IllegalArgumentException("Use a public job posting link.");
+        // Validate the original spelling before new-entry canonicalization removes dot segments.
+        // A private path must not become shareable merely because its traversal was normalized away.
+        URI uri = httpsURI(input, 2048);
         String link = opportunityURL(input);
         if (link.length() > 2048) throw new IllegalArgumentException("Use a shorter public job posting link.");
-        URI uri = URI.create(link);
         String host = uri.getHost().toLowerCase(Locale.ROOT);
         if (!host.contains(".") || host.endsWith(".") || host.contains(":") || host.matches("[0-9.]+") ||
             host.matches("(?:.*\\.)?(?:localhost|local|internal|test|invalid)") ||
