@@ -327,6 +327,7 @@ export default function PhoneApp({ account }: { account: Account }) {
 
   useEffect(() => {
     if (!account) return;
+    const recheckWarning = "Your account could not be confirmed. Your unfinished edits are kept on this page; retry when the connection is available.";
     let disposed = false, inFlight = false; let controller: AbortController | null = null;
     const check = () => {
       identityUnverified.current = true; setCheckingIdentity(true);
@@ -345,12 +346,13 @@ export default function PhoneApp({ account }: { account: Account }) {
           if (!snapshotRef.current) await openSavedWorkspace(current, generation, () => disposed);
           if (disposed || generation !== epoch.current) return;
           identityUnverified.current = false; setCheckingIdentity(false);
+          setNotice(previous => previous?.text === recheckWarning ? null : previous);
         }
       }).catch(error => {
         if (disposed || generation !== epoch.current) return;
         if (error instanceof PhoneReadError) rememberReadIssue(error);
         if (error instanceof APIError && error.status === 401) { lockFromEffect(); setNotice({ text: "Your sign-in has ended. Sign in again to open this private workspace.", error: true }); }
-        else setNotice({ text: "Your account could not be confirmed. Your unfinished edits are kept on this page; retry when the connection is available.", error: true });
+        else setNotice({ text: recheckWarning, error: true });
       }).finally(() => { inFlight = false; if (!disposed && identityCheckPending.current && !busyRef.current) check(); });
     };
     identityCheckRef.current = check;

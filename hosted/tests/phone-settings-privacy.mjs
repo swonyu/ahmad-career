@@ -12,16 +12,20 @@ import {renderToStaticMarkup} from 'react-dom/server';
 // test isolates the visibility boundary; browser fixture covers mounted React.
 const source=await readFile(new URL('../app/phone/PhoneApp.tsx',import.meta.url),'utf8');
 const tree=ts.createSourceFile('PhoneApp.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
-let settings,initialLoad,identityWarning;
+let settings,initialLoad,identityWarning,identityCheck;
 function visit(node){
  if(ts.isJsxExpression(node)&&node.getText(tree).startsWith('{checkingIdentity && <section'))identityWarning=node.expression.getText(tree);
  if(ts.isJsxElement(node)&&node.openingElement.attributes.properties.some(prop=>ts.isJsxAttribute(prop)&&prop.name.text==='className'&&prop.initializer&&ts.isStringLiteral(prop.initializer)&&prop.initializer.text==='phone-settings-grid'))settings=node.getText(tree);
  if(ts.isFunctionDeclaration(node)&&node.name?.text==='start')initialLoad=node.getText(tree);
+ if(ts.isCallExpression(node)&&node.expression.getText(tree)==='useEffect'){
+  const effect=node.arguments[0]?.getText(tree);
+  if(effect?.includes('identityCheckRef.current = check'))identityCheck=effect;
+ }
  ts.forEachChild(node,visit);
 }
-visit(tree);assert(settings);assert(initialLoad);assert(identityWarning);
+visit(tree);assert(settings);assert(initialLoad);assert(identityWarning);assert(identityCheck);
 const renderCode=ts.transpileModule('globalThis.renderSettings=()=><>{'+identityWarning+'}{'+settings+'}</>;',{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None,jsx:ts.JsxEmit.React}}).outputText;
-const startCode=ts.transpileModule('globalThis.start='+initialLoad,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None}}).outputText;
+const startCode=ts.transpileModule('globalThis.start='+initialLoad+';globalThis.watchIdentity='+identityCheck,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None}}).outputText;
 function context(overrides={}){
  const account={id:'synthetic-settings-a',email:'private-synthetic-a@example.com',name:'Synthetic A'};
  const values={...productionRead,React,identityUnverified:{current:false},controller:new AbortController(),notice:null,recoveryURL:null,identityCheckRef:{current(){}},t:(source,values=[])=>source.replace(/\{(\d+)\}/g,(_,index)=>String(values[Number(index)]??"")),account,workspace:null,snapshot:null,loading:false,checkingIdentity:false,locked:false,busy:'',formChanged:false,olderDrafts:[],installPrompt:null,tab:'settings',epoch:{current:1},generation:1,cancelled:false,workspaceRef:{current:null},workspaceSchema:{parse:value=>value},window:{location:{reload(){}}},message:error=>error.message,...overrides};
@@ -31,7 +35,7 @@ function context(overrides={}){
  values.SignInOptions=function PublicSignIn(){return React.createElement('div',null,'Public sign-in');};
  values.ProviderConnections=function PrivateConnections(props){return React.createElement('div',{'data-private-connection':props.accountId},'Private connection controls');};
  values.SignOutButton=function PrivateSignOut(){return React.createElement('button',null,'Private sign-out');};
- values.setCheckingIdentity=value=>values.checkingIdentity=value;values.setLoading=value=>values.loading=value;values.setNotice=value=>values.notice=value;
+ values.setCheckingIdentity=value=>values.checkingIdentity=value;values.setLoading=value=>values.loading=value;values.setNotice=value=>values.notice=typeof value==='function'?value(values.notice):value;
  vm.createContext(values);vm.runInContext(renderCode,values);vm.runInContext(startCode,values);
  return values;
 }
@@ -56,4 +60,32 @@ test('loading, revalidation and locked Settings retain public appearance and hid
   assert(!html.includes(values.account.email));assert(!html.includes('data-private-connection'));assert(!html.includes('Private sign-out'));assert.match(html,/Public appearance/);
  }
  const guest=markup(context({account:null}));assert.match(guest,/Public sign-in/);assert(!guest.includes('private-synthetic'));assert(!guest.includes('data-private-connection'));
+});
+
+test('successful identity recheck clears its warning and preserves other notices',async()=>{
+ const workspace={accountId:'synthetic-settings-a',workspaceId:'synthetic-workspace'};
+ let unavailable=true;
+ const events={addEventListener(){},removeEventListener(){}};
+ const values=context({
+  AbortController,workspaceFromResponse:value=>value,workspaceRef:{current:workspace},snapshotRef:{current:{scope:'test'}},
+  identityCheckPending:{current:false},busyRef:{current:false},pdfCheck:{current:null},putWorkspace:async()=>{},
+  document:{...events,visibilityState:'visible'},window:events,
+  phoneAPI:async()=>{if(unavailable)throw new Error('Synthetic recheck unavailable');return workspace;},
+ });
+ const dispose=values.watchIdentity();
+ const recheck=async()=>{values.identityCheckRef.current();await new Promise(resolve=>setImmediate(resolve));};
+ try{
+  await recheck();
+  assert.equal(values.checkingIdentity,true);
+  assert.match(values.notice.text,/Your account could not be confirmed/);
+  unavailable=false;
+  await recheck();
+  assert.equal(values.checkingIdentity,false);
+  assert.equal(values.notice,null);
+
+  const localNotice={text:'Profile saved on this phone.'};
+  values.setNotice(localNotice);
+  await recheck();
+  assert.equal(values.notice,localNotice);
+ }finally{dispose();}
 });
