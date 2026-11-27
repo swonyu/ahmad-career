@@ -1572,8 +1572,6 @@ final class CareerFinderUITests: XCTestCase {
         reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
-        top(app)
-        reveal(app.textFields["application.firstName"], in: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
                            value: "Saved", screenshot: "28a-arabic-first-name-label-accessibility")
         assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: true)

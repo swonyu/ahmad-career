@@ -34,6 +34,7 @@ on:
           - iphone-regressions
           - iphone-saved-actions
           - iphone-search-history
+          - iphone-arabic-profile
           - iphone-ui
           - iphone-documents-en
           - iphone-documents-ar
@@ -270,7 +271,7 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
     runs-on: macos-26
     # The expanded sequential suite needs about 80 minutes on the observed simulator.
@@ -429,6 +430,9 @@ jobs:
               cases=(CareerFinderSearchHistoryUITests/testArabicSearchHistoryAcceptance
                 CareerFinderSearchHistoryUITests/testEnglishSearchHistoryAcceptance)
               ;;
+            iphone-arabic-profile)
+              cases=(CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText)
+              ;;
             *) echo 'Unsupported acceptance scope'; exit 1 ;;
           esac
           if (( ${#cases[@]} )); then
@@ -443,7 +447,7 @@ jobs:
             ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             "${selection[@]}" test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
       - name: Verify every selected regression ran once
-        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' }}
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-arabic-profile' }}
         shell: python
         run: |
           import os, pathlib, re
@@ -484,7 +488,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' && 'PARTIAL-iphone-history-keyboard' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' && 'PARTIAL-iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' && 'PARTIAL-iphone-search-history' || startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') && env.CAREER_UI_ACCEPTANCE_SCOPE || 'iphone-ui-acceptance' }}-${{ github.run_id }}
+          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' && 'PARTIAL-iphone-history-keyboard' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' && 'PARTIAL-iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' && 'PARTIAL-iphone-search-history' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-arabic-profile' && 'PARTIAL-iphone-arabic-profile' || startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') && env.CAREER_UI_ACCEPTANCE_SCOPE || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-selection.json
             ${{ runner.temp }}/career-iphone-input-configuration.json
