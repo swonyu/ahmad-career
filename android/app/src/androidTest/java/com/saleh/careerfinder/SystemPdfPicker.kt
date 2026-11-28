@@ -12,6 +12,7 @@ import android.os.SystemClock
 import android.system.Os
 import android.system.OsConstants
 import android.system.StructPollfd
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -177,14 +178,25 @@ internal class SystemPdfPicker(
         val bounds = fresh.getJSONArray("boundsInScreen")
         val x = ((bounds.getDouble(0) + bounds.getDouble(2)) / 2).toFloat()
         val y = ((bounds.getDouble(1) + bounds.getDouble(3)) / 2).toFloat()
+        evidence("picker-touch-requested-" + name + ".json",
+            JSONObject(fresh.toString()).put("filename", name).put("resolvedSystemComponent", component)
+                .put("touchX", x.toDouble()).put("touchY", y.toDouble())
+                .put("inputSource", InputDevice.SOURCE_TOUCHSCREEN)
+                .put("selectionAcceptance", "pending"))
         require(SystemClock.elapsedRealtime() < deadline) { "No picker touch may begin after the original observation deadline" }
-        val start = SystemClock.uptimeMillis()
-        val down = MotionEvent.obtain(start, start, MotionEvent.ACTION_DOWN, x, y, 0)
-        val up = MotionEvent.obtain(start, start + 50, MotionEvent.ACTION_UP, x, y, 0)
+        val downTime = SystemClock.uptimeMillis()
+        val down = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0).apply {
+            setSource(InputDevice.SOURCE_TOUCHSCREEN)
+        }
         try {
             require(automation.injectInputEvent(down, true))
-            require(automation.injectInputEvent(up, true))
-        } finally { down.recycle(); up.recycle() }
+            SystemClock.sleep(50)
+            val up = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x, y, 0).apply {
+                setSource(InputDevice.SOURCE_TOUCHSCREEN)
+            }
+            try { require(automation.injectInputEvent(up, true)) }
+            finally { up.recycle() }
+        } finally { down.recycle() }
         waitStrict("The actual PDF selection must return from the system picker") { pickerWindows(expected).isEmpty() }
         evidence("picker-selected-" + name + ".json",
             fresh.put("filename", name).put("singlePhysicalTouch", true).put("noModelInjection", true)

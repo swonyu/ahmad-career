@@ -2,6 +2,7 @@ package com.saleh.careerfinder
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Bundle
 import android.util.Base64
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -103,6 +104,9 @@ class PreviewPdfPickerSmokeTest {
         val namespace = UUID.randomUUID().toString()
         val picker = SystemPdfPicker(compose.activity) { name, value ->
             println("PREVIEW_PDF_PICKER_EVIDENCE " + name + " " + value)
+            instrumentation.sendStatus(2, Bundle().apply {
+                putString("previewPdfPickerEvidence", name + " " + value)
+            })
         }
         var failure: Throwable? = null
         try {
