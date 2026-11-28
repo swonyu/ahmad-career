@@ -45,6 +45,7 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   const search = {started:0, completed:0, lastDurationMs:null, lastStatusClass:null};
   const profileWrites = {admitted:0, completed:0, inFlight:0,
     lastAdmittedAtUTC:null, lastCompletedAtUTC:null, lastDurationMs:null, lastStatusClass:null};
+  let profileAcknowledgedAt = null, postProfileWorkspaceRead = null;
   let lastTlsErrorAtMs = null;
   const activeSearches = new Set();
   let server, closing, stopped = false, startupSettled = false, inFlight = 0;
@@ -58,7 +59,8 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   }
   async function handle(request, response) {
     inFlight++;
-    let searchRecord, profileStartedAt = null, profileFinished = false;
+    let searchRecord, profileStartedAt = null, profileNumber = null, profileFinished = false;
+    let workspaceRead, workspaceStartedAt;
     const finishSearch = status => {
       if (!searchRecord) return;
       search.completed++;
@@ -72,6 +74,14 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       profileWrites.lastCompletedAtUTC = new Date().toISOString();
       profileWrites.lastDurationMs = Math.min(1800000, Math.round(performance.now() - profileStartedAt));
       profileWrites.lastStatusClass = Math.floor(status / 100);
+      if (profileNumber === profileWrites.admitted && profileWrites.lastStatusClass === 2) {
+        profileAcknowledgedAt = performance.now();
+      }
+    };
+    const finishWorkspaceRead = status => {
+      if (!workspaceRead) return;
+      workspaceRead.durationMs = Math.min(1800000, Math.round(performance.now() - workspaceStartedAt));
+      workspaceRead.statusClass = Math.floor(status / 100);
     };
     try {
       if (stopped || signal?.aborted) fail('fixture_bridge_closed', 503);
@@ -94,8 +104,16 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       catch (error) { if (error.code === 'fixture_dispatch_denied') harness.recordDispatchRejection(); throw error; }
       if (route.pathname === '/api/apply/profile' && request.method === 'PUT') {
         profileStartedAt = performance.now();
-        profileWrites.admitted++; profileWrites.inFlight++;
+        profileNumber = ++profileWrites.admitted; profileWrites.inFlight++;
         profileWrites.lastAdmittedAtUTC = new Date().toISOString();
+        profileAcknowledgedAt = null; postProfileWorkspaceRead = null;
+      }
+      if (route.pathname === '/api/apply/workspace' && request.method === 'GET' &&
+          profileAcknowledgedAt !== null && postProfileWorkspaceRead === null) {
+        workspaceStartedAt = performance.now();
+        workspaceRead = {delayFromProfileAckMs:Math.min(1800000, Math.round(workspaceStartedAt - profileAcknowledgedAt)),
+          durationMs:null, statusClass:null};
+        postProfileWorkspaceRead = workspaceRead;
       }
       if (route.pathname === '/api/discovery/search') {
         searchRecord = {startedAt:performance.now()};
@@ -140,11 +158,13 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       response.writeHead(result.status, responseHeaders); response.end(reply);
       finishSearch(result.status);
       finishProfile(result.status);
+      finishWorkspaceRead(result.status);
     } catch (error) {
       stats.deniedRequests++;
       const status = error instanceof FixtureError ? error.status : 500;
       finishSearch(status);
       finishProfile(status);
+      finishWorkspaceRead(status);
       publicFailure(response, error instanceof FixtureError ? error.code : 'fixture_bridge_failure', status);
     } finally {
       if (searchRecord) activeSearches.delete(searchRecord);
@@ -198,7 +218,8 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
         const oldest = [...activeSearches].reduce((value, record) => Math.min(value, record.startedAt), Infinity);
         return {search:{...search, inFlight:activeSearches.size,
           oldestInFlightMs:Number.isFinite(oldest) ? Math.min(300000, Math.round(performance.now() - oldest)) : null},
-          profileWrites:{...profileWrites}, apiRequests:stats.apiRequests,
+          profileWrites:{...profileWrites},
+          postProfileWorkspaceRead:postProfileWorkspaceRead && {...postProfileWorkspaceRead}, apiRequests:stats.apiRequests,
           documentRequests:{...stats.documentRequests}, tlsErrors:stats.tlsErrors,
           lastTlsErrorAtUTC:lastTlsErrorAtMs === null ? null : new Date(lastTlsErrorAtMs).toISOString(),
           lastTlsErrorAgeMs:lastTlsErrorAtMs === null ? null : Math.min(1800000, Math.max(0, Date.now() - lastTlsErrorAtMs))};

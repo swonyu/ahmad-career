@@ -284,6 +284,8 @@ def run(language):
                 diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
                 search = diagnostic.get("search") if isinstance(diagnostic.get("search"), dict) else {}
                 profile_writes = diagnostic.get("profileWrites") if isinstance(diagnostic.get("profileWrites"), dict) else {}
+                workspace_read = diagnostic.get("postProfileWorkspaceRead")
+                workspace_read = workspace_read if isinstance(workspace_read, dict) else {}
                 document_requests = diagnostic.get("documentRequests") if isinstance(diagnostic.get("documentRequests"), dict) else {}
                 operation_journal = diagnostic.get("operationJournal") if isinstance(diagnostic.get("operationJournal"), dict) else {}
                 def safe_code(value):
@@ -332,6 +334,12 @@ def run(language):
                             "lastStatusClass": profile_writes.get("lastStatusClass") if type(profile_writes.get("lastStatusClass")) is int
                             and 2 <= profile_writes["lastStatusClass"] <= 5 else None,
                         },
+                        "postProfileWorkspaceRead": {
+                            "delayFromProfileAckMs": safe_count(workspace_read.get("delayFromProfileAckMs"), 1800000),
+                            "durationMs": safe_count(workspace_read.get("durationMs"), 1800000),
+                            "statusClass": workspace_read.get("statusClass") if type(workspace_read.get("statusClass")) is int
+                            and 2 <= workspace_read["statusClass"] <= 5 else None,
+                        } if workspace_read else None,
                         "operationJournal": {
                             "state": operation_journal.get("state") if operation_journal.get("state") in (
                                 "absent", "profile_intent_present", "present_without_profile_intent", "rejected", "unavailable") else None,

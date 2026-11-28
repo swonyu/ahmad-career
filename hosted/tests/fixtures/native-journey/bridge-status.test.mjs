@@ -7,7 +7,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {startNativeJourneyBridge} from './bridge.mjs';
 
-test('failure diagnostics expose bounded search, profile-write and TLS timing', async () => {
+test('failure diagnostics expose bounded search, profile-write, workspace read and TLS timing', async () => {
   const temp = await realpath(await mkdtemp(path.join(tmpdir(), 'career-bridge-status-')));
   const stateDirectory = path.join(temp, 'state');
   await mkdir(stateDirectory, {mode:0o700});
@@ -55,6 +55,7 @@ test('failure diagnostics expose bounded search, profile-write and TLS timing', 
     assert.deepEqual(diagnostic.documentRequests, {'CV-A.pdf':0, 'CV-B.pdf':0});
     assert.equal(diagnostic.lastTlsErrorAtUTC, null);
     assert.equal(diagnostic.lastTlsErrorAgeMs, null);
+    assert.equal(diagnostic.postProfileWorkspaceRead, null);
     const documentResponse = new Promise((resolve, reject) => {
       https.get(`https://127.0.0.1:${port}${bridge.privateConfiguration.documents['CV-A.pdf']}`,
         {ca}, result => {
@@ -87,6 +88,25 @@ test('failure diagnostics expose bounded search, profile-write and TLS timing', 
     assert.match(completed.lastCompletedAtUTC, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
     assert.equal(completed.lastStatusClass, 2);
     assert.ok(completed.lastDurationMs >= 0);
+    assert.equal(bridge.status().postProfileWorkspaceRead, null);
+    function readNative(route) {
+      return new Promise((resolve, reject) => {
+        https.get(`https://127.0.0.1:${port}/api/apply/${route}`, {ca, headers:{authorization:'Bearer synthetic',
+          'x-native-journey-bridge':bridge.privateConfiguration.bridgeToken}}, result => {
+          result.resume(); result.on('end', () => resolve(result.statusCode));
+        }).on('error', reject);
+      });
+    }
+    assert.equal(await readNative('status'), 200);
+    assert.equal(bridge.status().postProfileWorkspaceRead, null);
+    assert.equal(await readNative('workspace'), 200);
+    const read = bridge.status().postProfileWorkspaceRead;
+    assert.deepEqual(Object.keys(read).sort(), ['delayFromProfileAckMs', 'durationMs', 'statusClass']);
+    assert.ok(read.delayFromProfileAckMs >= 0);
+    assert.ok(read.durationMs >= 20);
+    assert.equal(read.statusClass, 2);
+    assert.equal(await readNative('workspace'), 200);
+    assert.deepEqual(bridge.status().postProfileWorkspaceRead, read);
   } finally {
     releaseProfile();
     if (bridge) await bridge.close();
