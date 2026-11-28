@@ -93,9 +93,9 @@ export function translate(source: string, language: Language, values: readonly u
 export function formatNumber(value: number, language: Language, options?: Intl.NumberFormatOptions): string {
   return new Intl.NumberFormat(language === "ar" ? "ar-u-nu-arab" : "en", options).format(value);
 }
-export function formatDateTime(value: string, language: Language): string {
+export function formatDateTime(value: string, language: Language, timeStyle: "short" | "medium" = "short"): string {
   if (!Number.isFinite(Date.parse(value))) return translate("Date unavailable", language);
-  return new Intl.DateTimeFormat(language === "ar" ? "ar-SA-u-ca-gregory-nu-arab" : "en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+  return new Intl.DateTimeFormat(language === "ar" ? "ar-SA-u-ca-gregory-nu-arab" : "en", { dateStyle: "medium", timeStyle }).format(new Date(value));
 }
 export function savedJobsLabel(count: number, language: Language): string {
   if (language === "en") return `${count} saved ${count === 1 ? "job" : "jobs"}`;

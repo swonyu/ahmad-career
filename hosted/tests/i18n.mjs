@@ -65,6 +65,16 @@ test('Arabic counts have zero, one, dual, few, many forms and display Gregorian 
  assert.equal(core.formatDateTime('invalid','ar'),catalog['Date unavailable']);
 });
 
+test('retry deadlines can show seconds without changing ordinary date and time labels',()=>{
+ const deadline='2026-11-17T12:00:07Z';
+ const en=core.formatDateTime(deadline,'en'), ar=core.formatDateTime(deadline,'ar');
+ const enRetry=core.formatDateTime(deadline,'en','medium'), arRetry=core.formatDateTime(deadline,'ar','medium');
+ assert.notEqual(enRetry,en);assert.notEqual(arRetry,ar);
+ assert.match(enRetry,/:07/);assert.match(arRetry,/:٠٧/);
+ assert.doesNotMatch(en,/:07/);assert.doesNotMatch(ar,/:٠٧/);
+ assert.equal(core.formatDateTime('invalid','en','medium'),core.formatDateTime('invalid','en'));
+});
+
 let moduleVersion=0;
 async function fixture({denyWrite=false}={}){
  const values=new Map(),writes=[],window=new EventTarget(),document={cookie:'',documentElement:{lang:'en',dir:'ltr'}};
