@@ -42,6 +42,10 @@ on:
           - iphone-local-files
           - iphone-documents-en
           - iphone-documents-ar
+      legacy_files_runtime:
+        description: Run the focused Files check on iOS 18
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -316,11 +320,12 @@ jobs:
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || inputs.acceptance_scope == 'iphone-local-files' && 'PARTIAL iPhone offline Files import and restart' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || (!startsWith(inputs.acceptance_scope, 'android') && inputs.acceptance_scope != 'iphone-release-build') }}
-    runs-on: macos-26
+    runs-on: ${{ inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime && 'macos-15' || 'macos-26' }}
     # Allow the sequential suite to finish, with time left to export the result bundle.
     timeout-minutes: 125
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
+      CAREER_UI_REQUIRE_IOS18: ${{ inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -337,6 +342,13 @@ jobs:
         run: python3 apple/Checks/test-browser-lifecycle-collection.py
       - name: Verify fresh simulator selection fixtures
         run: python3 apple/Checks/test-simulator-selection.py
+      - name: Select Xcode for the iOS 18 diagnostic
+        if: ${{ env.CAREER_UI_REQUIRE_IOS18 == 'true' }}
+        run: |
+          career_xcode=/Applications/Xcode_26.3.app/Contents/Developer
+          test -d "$career_xcode"
+          DEVELOPER_DIR="$career_xcode" xcodebuild -version
+          printf 'DEVELOPER_DIR=%s\n' "$career_xcode" >> "$GITHUB_ENV"
       - name: Create a fresh iPhone on this disposable hosted runner
         shell: python
         run: |
@@ -348,6 +360,8 @@ jobs:
                   continue
               version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
               if not version or version[0] < 17:
+                  continue
+              if os.environ.get('CAREER_UI_REQUIRE_IOS18') == 'true' and version[0] != 18:
                   continue
               for device in devices:
                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
