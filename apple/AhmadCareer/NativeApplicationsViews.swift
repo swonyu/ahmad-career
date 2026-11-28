@@ -585,6 +585,7 @@ struct NativeApplicationProfileEditor: View {
     @State private var context: ApplicationProfileEditContext
     @State private var pickingPDF = false
     @State private var readingPDF = false
+    @State private var saving = false
     @State private var issue: String?
     @State private var dismissalChoice = false
     @State private var replaceChoice = false
@@ -604,8 +605,9 @@ struct NativeApplicationProfileEditor: View {
         _originallyDirty = State(initialValue: model.profileNeedsSync); _context = State(initialValue: model.editContext)
     }
     private var changed: Bool { draft != original }
-    private var conflicts: Bool { model.hasConflict(for: context) }
-    private var occupied: Bool { model.busy || readingPDF }
+    // The store acknowledges this editor's new revision before refreshing the workspace.
+    private var conflicts: Bool { !saving && model.hasConflict(for: context) }
+    private var occupied: Bool { saving || model.busy || readingPDF }
     var body: some View {
         NavigationStack {
             NativeForm {
@@ -640,7 +642,9 @@ struct NativeApplicationProfileEditor: View {
                         } else {
                             Button(l10n("Refresh service profile")) { Task { await model.refresh() } }
                         }
-                    } header: { Text(l10n("Resolve profile changes")) } footer: {
+                    } header: {
+                        Text(l10n("Resolve profile changes")).accessibilityIdentifier("application.profile.conflict")
+                    } footer: {
                         Text(l10n("Keeping your draft does not upload it. Review the CV and then tap Save. An unchanged CV will use the current service file."))
                     }
                 }
@@ -780,9 +784,10 @@ struct NativeApplicationProfileEditor: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(l10n("Save")) {
+                        saving = true
                         Task {
                             if await model.saveProfile(draft, context: context) { closingIntentionally = true; dismiss() }
-                            else { issue = model.message }
+                            else { issue = model.message; saving = false }
                         }
                     }.disabled(occupied || conflicts)
                 }
@@ -841,7 +846,7 @@ struct NativeApplicationProfileEditor: View {
         }
         .onDisappear {
             model.profileEditing = false
-            if changed && !closingIntentionally && !model.busy {
+            if changed && !closingIntentionally && !saving && !model.busy {
                 _ = model.keepProfileDraft(draft, context: context)
             }
         }
