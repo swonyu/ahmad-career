@@ -196,7 +196,9 @@ internal class SystemPdfPicker(
         require(SystemClock.elapsedRealtime() < deadline) { "Second actual DocumentsUI resolution exceeded original budget" }
         val secondResolutionElapsedMillis = SystemClock.elapsedRealtime() - started
         require(fresh.getJSONArray("boundsInScreen").toString() == selected.getJSONArray("boundsInScreen").toString())
-        val bounds = fresh.getJSONArray("boundsInScreen")
+        require(fresh.getJSONArray("filenameBoundsInScreen").toString() ==
+            selected.getJSONArray("filenameBoundsInScreen").toString())
+        val bounds = fresh.getJSONArray("filenameBoundsInScreen")
         val x = ((bounds.getDouble(0) + bounds.getDouble(2)) / 2).toFloat()
         val y = ((bounds.getDouble(1) + bounds.getDouble(3)) / 2).toFloat()
         evidence("picker-touch-requested-" + name + ".json",
@@ -253,6 +255,7 @@ internal class SystemPdfPicker(
                 val node = queue.removeFirst()
                 try {
                     if (node.packageName?.toString() == packageName && node.isVisibleToUser && node.text?.toString() == filename) {
+                        val filenameBounds = Rect().also(node::getBoundsInScreen)
                         var action = AccessibilityNodeInfo.obtain(node)
                         try {
                             var depth = 0
@@ -262,10 +265,13 @@ internal class SystemPdfPicker(
                             }
                             val bounds = Rect().also(action::getBoundsInScreen)
                             if (action.packageName?.toString() == packageName && action.isVisibleToUser && action.isEnabled &&
-                                action.isClickable && bounds.width() > 0 && bounds.height() > 0 && windowBounds.contains(bounds)) {
+                                action.isClickable && bounds.width() > 0 && bounds.height() > 0 && windowBounds.contains(bounds) &&
+                                filenameBounds.width() > 0 && filenameBounds.height() > 0 &&
+                                bounds.contains(filenameBounds) && windowBounds.contains(filenameBounds)) {
                                 targets += JSONObject().put("package", packageName).put("text", filename)
                                     .put("className", action.className?.toString()).put("resourceID", action.viewIdResourceName ?: JSONObject.NULL)
-                                    .put("boundsInScreen", bounds.json()).put("windowBounds", windowBounds.json())
+                                    .put("boundsInScreen", bounds.json()).put("filenameBoundsInScreen", filenameBounds.json())
+                                    .put("windowBounds", windowBounds.json())
                                     .put("visible", true).put("enabled", true).put("clickable", true)
                             }
                         } finally { action.recycle() }
