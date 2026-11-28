@@ -251,8 +251,11 @@ class SavedComparisonUITestCase: XCTestCase {
         let touchFrame = close.frame.intersection(viewport(app)), appFrame = app.frame
         try require(whole(close, app: app, chrome: true) && finite(touchFrame) && appFrame.contains(touchFrame),
                     "The Back to Saved touch stays on the visible control below the title", app: app)
+        // The localized label is leading-aligned. Touch its visible side of the row.
+        let labelInset = touchFrame.width / 8
+        let touchX = language == "ar" ? touchFrame.maxX - labelInset : touchFrame.minX + labelInset
         app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
-            dx: touchFrame.midX - appFrame.minX, dy: touchFrame.midY - appFrame.minY)).tap()
+            dx: touchX - appFrame.minX, dy: touchFrame.midY - appFrame.minY)).tap()
         let closedTitle = modalTitle!
         try wait("Back to Saved dismisses the actual sheet", app: app) {
             bars(closedTitle, app: app).count == 0 && !item("saved.comparison.content", app: app).exists
