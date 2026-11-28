@@ -411,6 +411,7 @@ jobs:
       - name: Verify simulator boot evidence parser fixtures
         run: python3 apple/Checks/test-simulator-boot.py
       - name: Configure software keyboard preference for the owned CI iPhone
+        if: ${{ !(inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime) }}
         shell: bash
         timeout-minutes: 1
         run: |
