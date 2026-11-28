@@ -525,10 +525,14 @@ test('actual empty unavailable results distinguish missing evidence from a compl
     const unavailable = renderResults(page({ status: 'unavailable', jobs: [], sourceStatus: 'unavailable' }), language);
     assert(unavailable.html.includes(unavailable.t('Current openings could not be checked.')));
     assert(!unavailable.html.includes(unavailable.t('No matching jobs in these boards.')));
+    assert(!unavailable.html.includes(unavailable.t('Search from ')));
+    assert(!unavailable.html.includes(unavailable.t('An employer may close or change a job after this check.')));
     assert.equal(findButtons(unavailable.element, unavailable.t('Retry this search')).length, 1);
     const complete = renderResults(page({ jobs: [] }), language);
     assert(complete.html.includes(complete.t('No matching jobs in these boards.')));
     assert(!complete.html.includes(complete.t('Current openings could not be checked.')));
+    assert(complete.html.includes(complete.t('Search from ')));
+    assert(complete.html.includes(complete.t('An employer may close or change a job after this check.')));
     assert.equal(findButtons(complete.element, complete.t('Retry this search')).length, 0);
     if (language === 'ar') assert.notEqual(unavailable.t('Current openings could not be checked.'), 'Current openings could not be checked.');
   }
