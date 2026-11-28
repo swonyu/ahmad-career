@@ -445,6 +445,8 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         // through the actual address editor before opening its Share menu.
         let tips = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TipView"))
         let tipClose = tips.buttons.matching(NSPredicate(format: "identifier == %@ AND label == %@", "xmark.circle.fill", "Close"))
+        let lateTipTitle = "View Bookmarks, Share Menu, and Open Tabs"
+        var lateTipAlreadyTouched = false
         let compactAddress = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "TabBarItemTitle", "Address"))
         let startPages = safari.collectionViews.matching(NSPredicate(format: "identifier == %@", "StartPageCollectionView"))
         let onboardingCards = startPages.cells.matching(NSPredicate(format: "identifier == %@",
@@ -488,7 +490,10 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
                 return false
             }
         }
-        if firstUse == .tip { _ = touchIfStillLive(tipClose) }
+        if firstUse == .tip {
+            let sameLateTip = tips.staticTexts.matching(NSPredicate(format: "label == %@", lateTipTitle)).count == 1
+            if touchIfStillLive(tipClose) && sameLateTip { lateTipAlreadyTouched = true }
+        }
         try chromeTap(compactAddress.element, app: safari)
         let address = safari.textFields.matching(NSPredicate(format: "identifier == %@ AND label == %@", "URL", "Address"))
         let requestedURL = documentURLs[name]!.absoluteString
@@ -534,11 +539,38 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try wait("The unique Safari More control is wholly visible and hittable", app: safari) {
             moreButtons.count == 1 && whole(moreButtons.element, app: safari, chrome: true)
         }
-        let more = moreButtons.element
-        let safariFrame = safari.frame, moreFrame = more.frame
-        try require(moreButtons.count == 1 && finite(safariFrame) && finite(moreFrame)
-            && safariFrame.contains(moreFrame) && more.isHittable,
+        func physicalMoreFrames() -> (CGRect, CGRect)? {
+            guard moreButtons.count == 1 else { return nil }
+            let frame = safari.frame, button = moreButtons.element, buttonFrame = button.frame
+            guard finite(frame) && finite(buttonFrame) && frame.contains(buttonFrame) && button.isHittable else { return nil }
+            return (frame, buttonFrame)
+        }
+        var moreFrames = physicalMoreFrames()
+        if moreFrames == nil {
+            // Safari can introduce this specific first-use tip after More was
+            // hittable. The tip covers More; only its own live Close may be touched.
+            let popovers = safari.descendants(matching: .popover)
+            let lateTips = popovers.otherElements.matching(NSPredicate(format: "identifier == %@", "TipView"))
+            let lateTitles = lateTips.staticTexts.matching(NSPredicate(format: "label == %@", lateTipTitle))
+            let lateCloses = popovers.buttons.matching(NSPredicate(
+                format: "identifier == %@ AND label == %@", "xmark.circle.fill", "Close"))
+            func exactLateTip() -> Bool {
+                !lateTipAlreadyTouched && popovers.count == 1 && lateTips.count == 1
+                    && lateTitles.count == 1 && lateCloses.count == 1
+                    && whole(lateCloses.element, app: safari, chrome: true)
+            }
+            try wait("The observed Safari Share-menu tip has one live Close", app: safari) { exactLateTip() }
+            try require(exactLateTip(), "Only the same exact Safari tip may be closed once", app: safari)
+            lateCloses.element.tap()
+            lateTipAlreadyTouched = true
+            try wait("The unique Safari More control is wholly visible and hittable", app: safari) {
+                moreButtons.count == 1 && whole(moreButtons.element, app: safari, chrome: true)
+            }
+            moreFrames = physicalMoreFrames()
+        }
+        try require(moreFrames != nil,
             "The exact Safari More button has one fresh, wholly visible physical frame before its single touch", app: safari)
+        let (safariFrame, moreFrame) = moreFrames!
         safari.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: moreFrame.midX - safariFrame.minX, dy: moreFrame.midY - safariFrame.minY)).tap()
         let share = safari.otherElements.matching(NSPredicate(format: "identifier == %@", "TabBarMoreMenu"))
