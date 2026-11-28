@@ -1148,6 +1148,94 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["This opportunity is no longer available here."].waitForExistence(timeout: 5))
     }
 
+#if CAREER_LOCAL_FILES_SMOKE
+    @MainActor
+    func testLocalFilesCVReplacementSurvivesRelaunch() {
+        let id = UUID().uuidString
+        var app = launch(id: id)
+        let title = app.navigationBars["Application profile"]
+        let picker = app.navigationBars["FullDocumentManagerViewControllerNavigationBar"]
+        let emptyCV = "Choose your PDF CV"
+
+        func openProfile() {
+            let profile = app.buttons["home.applicationProfile"]
+            reveal(profile, in: app)
+            profile.tap()
+            XCTAssertTrue(title.waitForExistence(timeout: 10))
+        }
+
+        func tapPickerItem(_ item: XCUIElement, named label: String) {
+            if !item.waitForExistence(timeout: 10) || !item.isHittable {
+                captureObservation("files-item-missing", app: app, details: label)
+                XCTFail("The system Files picker must expose \(label)")
+                return
+            }
+            item.tap()
+        }
+
+        func openPicker(from cv: String) {
+            let button = app.buttons[cv]
+            reveal(button, in: app)
+            button.tap()
+            XCTAssertTrue(picker.waitForExistence(timeout: 10))
+        }
+
+        func checkFingerprint(_ hash: String) {
+            let details = app.buttons["CV fingerprint"]
+            reveal(details, in: app)
+            details.tap()
+            let fingerprint = app.staticTexts[hash]
+            reveal(fingerprint, in: app)
+            XCTAssertEqual(fingerprint.label, hash)
+        }
+
+        func replaceCV(_ current: String, with stem: String, hash: String) {
+            openPicker(from: current)
+            // Files may retain the last browsed directory within this app.
+            let document = app.collectionViews["File View"].cells[stem + ", pdf"]
+            if !document.exists {
+                let files = app.tabBars.buttons["Browse"]
+                if files.isHittable { files.tap() }
+                let local = app.staticTexts["On My iPhone"]
+                if local.isHittable { local.tap() }
+                if !document.exists {
+                    tapPickerItem(app.staticTexts["Career Finder"], named: "Career Finder folder")
+                }
+            }
+            if !document.waitForExistence(timeout: 10) {
+                captureObservation("files-document-missing", app: app, details: stem)
+                XCTFail("Missing exact PDF in the system Files picker: \(stem)")
+                return
+            }
+            capture("system-files-" + stem, app: app)
+            tapPickerItem(document, named: stem)
+            XCTAssertTrue(title.waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons[stem + ".pdf"].waitForExistence(timeout: 10))
+            checkFingerprint(hash)
+            title.buttons["Save"].tap()
+            XCTAssertTrue(title.waitForNonExistence(timeout: 10))
+        }
+
+        let hashA = "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a"
+        let hashB = "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61"
+        openProfile()
+        openPicker(from: emptyCV)
+        tapPickerItem(picker.buttons["Cancel"], named: "Cancel")
+        XCTAssertTrue(app.buttons[emptyCV].waitForExistence(timeout: 10))
+        replaceCV(emptyCV, with: "CV-A", hash: hashA)
+        openProfile()
+        replaceCV("CV-A.pdf", with: "CV-B", hash: hashB)
+        app.terminate()
+        app = launch(id: id)
+        openProfile()
+        let retained = app.buttons["CV-B.pdf"]
+        reveal(retained, in: app)
+        XCTAssertTrue(retained.isHittable)
+        checkFingerprint(hashB)
+        capture("retained-CV-B-after-relaunch", app: app)
+    }
+#endif
+
     @MainActor
     func testProfileReadinessAndSimpleConnectionSetup() {
         let app = launch()

@@ -37,6 +37,7 @@ on:
           - iphone-search-history
           - iphone-arabic-profile
           - iphone-ui
+          - iphone-local-files
           - iphone-documents-en
           - iphone-documents-ar
 
@@ -277,7 +278,7 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || inputs.acceptance_scope == 'iphone-local-files' && 'PARTIAL iPhone offline Files import and restart' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'android' && inputs.acceptance_scope != 'android-picker') }}
     runs-on: macos-26
     # Allow the sequential suite to finish, with time left to export the result bundle.
@@ -411,6 +412,8 @@ jobs:
           set -o pipefail
           cases=()
           selection=()
+          settings=()
+          action="test"
           case "$CAREER_UI_ACCEPTANCE_SCOPE" in
             full) ;;
             iphone-ui)
@@ -440,21 +443,44 @@ jobs:
             iphone-arabic-profile)
               cases=(CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText)
               ;;
+            iphone-local-files)
+              cases=(CareerFinderUITests/testLocalFilesCVReplacementSurvivesRelaunch)
+              settings=("SWIFT_ACTIVE_COMPILATION_CONDITIONS=\$(inherited) DEBUG CAREER_LOCAL_FILES_SMOKE")
+              action="test-without-building"
+              ;;
             *) echo 'Unsupported acceptance scope'; exit 1 ;;
           esac
           if (( ${#cases[@]} )); then
             printf '%s\n' "${cases[@]}" > "$RUNNER_TEMP/career-expected-ui-cases"
             for chosen in "${cases[@]}"; do selection+=("-only-testing:CareerFinderUITests/$chosen"); done
           fi
-          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+          build=(xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance
             -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE,arch=$CAREER_UI_ARCH" \
             -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
-            -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
             ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            "${selection[@]}" test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+            "${settings[@]}")
+          if [[ "$action" == test-without-building ]]; then
+            set -e
+            "${build[@]}" build-for-testing 2>&1 | tee "$RUNNER_TEMP/career-iphone-local-files-build.log"
+            product="$RUNNER_TEMP/career-ui-derived/Build/Products/Debug-iphonesimulator/Career Finder.app"
+            # Only this disposable test build exposes its synthetic inputs in Files.
+            /usr/libexec/PlistBuddy -c 'Add :UIFileSharingEnabled bool true' "$product/Info.plist"
+            /usr/libexec/PlistBuddy -c 'Add :LSSupportsOpeningDocumentsInPlace bool true' "$product/Info.plist"
+            xcrun simctl install "$CAREER_UI_DEVICE" "$product"
+            container="$(xcrun simctl get_app_container "$CAREER_UI_DEVICE" com.ahmadalayed.career data)"
+            printf '%s\n' \
+              'fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a  postman/fixtures/integration-resume.pdf' \
+              '149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61  hosted/tests/fixtures/readable-resume.pdf' |
+              shasum -a 256 -c -
+            mkdir -p "$container/Documents"
+            cp postman/fixtures/integration-resume.pdf "$container/Documents/CV-A.pdf"
+            cp hosted/tests/fixtures/readable-resume.pdf "$container/Documents/CV-B.pdf"
+          fi
+          "${build[@]}" -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
+            "${selection[@]}" "$action" 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
       - name: Verify every selected regression ran once
-        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-arabic-profile' }}
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-arabic-profile' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-local-files' }}
         shell: python
         run: |
           import os, pathlib, re
@@ -504,6 +530,7 @@ jobs:
             ${{ runner.temp }}/career-iphone-boot-devices.stderr
             ${{ runner.temp }}/career-iphone-boot-verification.json
             ${{ runner.temp }}/career-iphone-ui.log
+            ${{ runner.temp }}/career-iphone-local-files-build.log
             ${{ runner.temp }}/career-document-journey.json
             ${{ runner.temp }}/career-browser-lifecycle
             ${{ runner.temp }}/career-focus-lifecycle
