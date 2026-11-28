@@ -83,11 +83,32 @@ internal class SystemPdfPicker(
             ComponentName(info.packageName, info.name)
         }
         val packageName = component.packageName
-        waitStrict("The actual system document picker must own a visible application window") {
-            pickerWindows(packageName).size == 1
+        val componentName = packageName + "/" + component.className
+        val opening = JSONObject().put("resolvedSystemComponent", componentName)
+            .put("resolver", if (resolved == null) "shell-package-query" else "app-package-manager")
+        evidence("picker-opening-" + (pickerNumber + 1) + ".json", opening)
+        var lastRoots: List<String?> = emptyList()
+        var lastWindowTotal = 0
+        try {
+            waitStrict("The actual system document picker must own a visible application window") {
+                val allWindows = automation.windows
+                lastWindowTotal = allWindows.size
+                lastRoots = allWindows.filter { it.type == AccessibilityWindowInfo.TYPE_APPLICATION }.map(::rootPackage)
+                lastRoots.count { it == packageName } == 1
+            }
+        } catch (failure: AssertionError) {
+            // Retain the last sampled window inventory without treating a later observation as a pass.
+            try {
+                val allowed = JSONObject()
+                pickerPackages.forEach { candidate -> allowed.put(candidate, lastRoots.count { it == candidate }) }
+                evidence("picker-window-failure-" + (pickerNumber + 1) + ".json", opening
+                    .put("lastWindowCount", lastWindowTotal).put("lastApplicationWindowCount", lastRoots.size)
+                    .put("lastMissingRootCount", lastRoots.count { it == null }).put("lastPickerRoots", allowed))
+            } catch (captureError: Exception) { failure.addSuppressed(captureError) }
+            throw failure
         }
         pickerPackage = packageName
-        pickerComponent = packageName + "/" + component.className
+        pickerComponent = componentName
         pickerNumber++
         evidence("picker-open-" + pickerNumber + ".json",
             JSONObject().put("schemaVersion", 1).put("resolvedSystemComponent", pickerComponent)
@@ -209,9 +230,12 @@ internal class SystemPdfPicker(
         pickerComponent = null
     }
 
+    private fun rootPackage(window: AccessibilityWindowInfo): String? = window.root?.let { root ->
+        try { root.packageName?.toString() } finally { root.recycle() }
+    }
+
     private fun pickerWindows(packageName: String): List<AccessibilityWindowInfo> = automation.windows.filter { window ->
-        if (window.type != AccessibilityWindowInfo.TYPE_APPLICATION) false
-        else window.root?.let { root -> try { root.packageName?.toString() == packageName } finally { root.recycle() } } == true
+        window.type == AccessibilityWindowInfo.TYPE_APPLICATION && rootPackage(window) == packageName
     }
 
     private fun documentTarget(packageName: String, filename: String, deadline: Long): JSONObject? {
