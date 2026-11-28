@@ -1174,21 +1174,31 @@ final class CareerFinderUITests: XCTestCase {
             item.tap()
         }
 
+        func filesVisible() -> Bool {
+            let hierarchy = app.debugDescription
+            return hierarchy.contains("identifier: 'DOC.browsingRoot Source:")
+                && hierarchy.contains("identifier: '\(pickerID)'")
+        }
+
         func openPicker(from cv: String) {
             let button = app.buttons[cv]
             reveal(button, in: app)
             button.tap()
             // Remote Files may initially draw a blank sheet and omit its
             // navigation bar from the queried app snapshot.
-            let readiness = waitForObservation(timeout: 20) {
-                let hierarchy = app.debugDescription
-                return hierarchy.contains("identifier: 'DOC.browsingRoot Source:")
-                    && hierarchy.contains("identifier: '\(pickerID)'")
-            }
+            let readiness = waitForObservation(timeout: 20, filesVisible)
             if readiness != .completed {
                 captureObservation("files-presentation-incomplete", app: app, details: "Files after tapping \(cv)")
             }
             XCTAssertEqual(readiness, .completed, "The actual system Files hierarchy must finish presenting")
+        }
+
+        func waitForPickerToClose(_ action: String) {
+            let closed = waitForObservation(timeout: 20) { !filesVisible() }
+            if closed != .completed {
+                captureObservation("files-still-open", app: app, details: action)
+            }
+            XCTAssertEqual(closed, .completed, "Files must close after \(action)")
         }
 
         func checkFingerprint(_ hash: String) {
@@ -1210,7 +1220,7 @@ final class CareerFinderUITests: XCTestCase {
                 let local = app.staticTexts["On My iPhone"]
                 if local.isHittable { local.tap() }
                 if !document.exists {
-                    tapPickerItem(app.staticTexts["Career Finder"], named: "Career Finder folder")
+                    tapPickerItem(app.staticTexts["Career Finder PDFs"], named: "Career Finder PDFs folder")
                 }
             }
             if !document.waitForExistence(timeout: 10) {
@@ -1219,7 +1229,15 @@ final class CareerFinderUITests: XCTestCase {
                 return
             }
             capture("system-files-" + stem, app: app)
-            tapPickerItem(document, named: stem)
+            let filenames = document.staticTexts.matching(NSPredicate(format: "label == %@", stem))
+            XCTAssertEqual(filenames.count, 1)
+            let filename = filenames.element.frame, viewport = app.frame
+            XCTAssertTrue(document.isHittable && !filename.isEmpty &&
+                          document.frame.contains(filename) && app.collectionViews["File View"].frame.contains(filename) &&
+                          viewport.contains(filename), "The exact Files filename must be visible within the document cell")
+            app.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: filename.midX - viewport.minX, dy: filename.midY - viewport.minY)).tap()
+            waitForPickerToClose(stem)
             XCTAssertTrue(title.waitForExistence(timeout: 10))
             XCTAssertTrue(app.buttons[stem + ".pdf"].waitForExistence(timeout: 10))
             checkFingerprint(hash)
@@ -1232,6 +1250,7 @@ final class CareerFinderUITests: XCTestCase {
         openProfile()
         openPicker(from: emptyCV)
         tapPickerItem(picker.buttons["Cancel"], named: "Cancel")
+        waitForPickerToClose("cancelling")
         XCTAssertTrue(app.buttons[emptyCV].waitForExistence(timeout: 10))
         replaceCV(emptyCV, with: "CV-A", hash: hashA)
         openProfile()

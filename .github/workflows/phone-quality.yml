@@ -476,11 +476,17 @@ jobs:
             set -e
             "${build[@]}" build-for-testing 2>&1 | tee "$RUNNER_TEMP/career-iphone-local-files-build.log"
             product="$RUNNER_TEMP/career-ui-derived/Build/Products/Debug-iphonesimulator/Career Finder.app"
-            # Only this disposable test build exposes its synthetic inputs in Files.
-            /usr/libexec/PlistBuddy -c 'Add :UIFileSharingEnabled bool true' "$product/Info.plist"
-            /usr/libexec/PlistBuddy -c 'Add :LSSupportsOpeningDocumentsInPlace bool true' "$product/Info.plist"
-            xcrun simctl install "$CAREER_UI_DEVICE" "$product"
-            container="$(xcrun simctl get_app_container "$CAREER_UI_DEVICE" com.ahmadalayed.career data)"
+            # Stage files in a separate provider folder. The app under test
+            # retains its normal Info.plist and reads across the Files boundary.
+            fixture="$RUNNER_TEMP/Career Finder PDFs.app"
+            ditto "$product" "$fixture"
+            plutil -replace CFBundleIdentifier -string com.ahmadalayed.career.test-documents "$fixture/Info.plist"
+            plutil -replace CFBundleDisplayName -string 'Career Finder PDFs' "$fixture/Info.plist"
+            plutil -replace CFBundleName -string 'Career Finder PDFs' "$fixture/Info.plist"
+            /usr/libexec/PlistBuddy -c 'Add :UIFileSharingEnabled bool true' "$fixture/Info.plist"
+            /usr/libexec/PlistBuddy -c 'Add :LSSupportsOpeningDocumentsInPlace bool true' "$fixture/Info.plist"
+            xcrun simctl install "$CAREER_UI_DEVICE" "$fixture"
+            container="$(xcrun simctl get_app_container "$CAREER_UI_DEVICE" com.ahmadalayed.career.test-documents data)"
             printf '%s\n' \
               'fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a  postman/fixtures/integration-resume.pdf' \
               '149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61  hosted/tests/fixtures/readable-resume.pdf' |
