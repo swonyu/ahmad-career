@@ -191,8 +191,21 @@ class SearchHistoryUITestCase: XCTestCase {
             let to = nativeSwitch.coordinate(withNormalizedOffset: CGVector(dx: 1 - fromX, dy: 0.5))
             from.press(forDuration: 0.05, thenDragTo: to)
         }
+        let expectedValue = on ? "1" : "0"
         try wait("The local New-only filter has the requested state", app: app) {
-            (toggle.value as? String) == (on ? "1" : "0") && (nativeSwitch.value as? String) == (on ? "1" : "0")
+            // Observe both values in one live control snapshot under the same deadline.
+            guard let snapshot = try? toggle.snapshot(), snapshot.elementType == .switch,
+                  snapshot.identifier == "discovery.newOnly", snapshot.value as? String == expectedValue else { return false }
+            var descendants = snapshot.children
+            var switchValue: String?
+            while let child = descendants.popLast() {
+                if child.elementType == .switch {
+                    guard switchValue == nil, let value = child.value as? String else { return false }
+                    switchValue = value
+                }
+                descendants.append(contentsOf: child.children)
+            }
+            return switchValue == expectedValue
         }
     }
     func expectation(_ sequences: [String]) {
