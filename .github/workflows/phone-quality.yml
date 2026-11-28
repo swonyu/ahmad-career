@@ -280,8 +280,8 @@ jobs:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'android' && inputs.acceptance_scope != 'android-picker') }}
     runs-on: macos-26
-    # The expanded sequential suite needs about 80 minutes on the observed simulator.
-    timeout-minutes: 115
+    # Allow the sequential suite to finish, with time left to export the result bundle.
+    timeout-minutes: 125
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
@@ -406,7 +406,7 @@ jobs:
       - name: Exercise native phone flows with isolated synthetic data
         if: ${{ !startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') }}
         shell: bash
-        timeout-minutes: 100
+        timeout-minutes: 110
         run: |
           set -o pipefail
           cases=()
