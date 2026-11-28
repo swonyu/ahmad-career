@@ -41,6 +41,12 @@ class SavedComparisonUITestCase: XCTestCase {
     func bars(_ title: String, app: XCUIApplication) -> XCUIElementQuery {
         app.navigationBars.matching(NSPredicate(format: "identifier == %@", title))
     }
+    func navigationBarCount(_ title: String, in hierarchy: String) -> Int {
+        let identifier = "identifier: '\(title)'"
+        return hierarchy.split(separator: "\n").filter {
+            $0.trimmingCharacters(in: .whitespaces).hasPrefix("NavigationBar,") && $0.contains(identifier)
+        }.count
+    }
     func viewport(_ app: XCUIApplication) -> CGRect {
         let frame = app.frame
         var top = frame.minY + 8, bottom = frame.maxY - 8
@@ -203,9 +209,12 @@ class SavedComparisonUITestCase: XCTestCase {
         try reveal(open, app: app, forward: false)
         let savedFrame = open.frame
         try tap(open, app: app)
-        modalTitle = localized("Compare two openings", "مقارنة فرصتين")
+        let comparisonTitle = localized("Compare two openings", "مقارنة فرصتين")
+        modalTitle = comparisonTitle
         try wait("The real comparison sheet opens with its own navigation and content", app: app) {
-            bars(modalTitle!, app: app).count == 1 && item("saved.comparison.content", app: app).exists
+            let hierarchy = app.debugDescription
+            return navigationBarCount(comparisonTitle, in: hierarchy) == 1
+                && hierarchy.contains("identifier: 'saved.comparison.content'")
         }
         // The sheet preserves actual touch order. Traverse that same order so
         // an earlier lazy row is not sought by scrolling farther forward.
@@ -394,11 +403,8 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
         }
         try wait("Cancelling returns to the same public preview", app: app) {
             let hierarchy = app.debugDescription
-            let savedBars = hierarchy.split(separator: "\n").filter {
-                $0.trimmingCharacters(in: .whitespaces).hasPrefix("NavigationBar,")
-                    && $0.contains("identifier: 'Saved opportunity'")
-            }
-            return !hierarchy.contains("identifier: 'ActivityListView'") && savedBars.count == 1
+            return !hierarchy.contains("identifier: 'ActivityListView'")
+                && navigationBarCount("Saved opportunity", in: hierarchy) == 1
                 && hierarchy.contains("identifier: 'jobShare.disclosure', label: '\(publicText)'")
         }
     }
