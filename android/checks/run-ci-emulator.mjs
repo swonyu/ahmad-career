@@ -315,6 +315,26 @@ async function captureNativeFailure(packageName,signal) {
   if(!signal?.aborted)fs.writeFileSync(path.join(evidence,'native-https-failure-diagnostics.json'),JSON.stringify(report,null,2));
 }
 
+async function capturePreviewPickerFailure(signal) {
+  assert.ok(installedPackages.has(restartPackage),'Picker evidence requires the disposable Preview app.');
+  const report={observedAt:new Date().toISOString(),packageName:restartPackage,device:env.ANDROID_SERIAL};
+  try {
+    let screenshot,origin='failure-time-before-uri-cleanup';
+    try {
+      screenshot=await readPNG(['exec-out','run-as',restartPackage,'cat','cache/preview-pdf-picker-failure.png']);
+    } catch {
+      origin='current-device-screen-after-failure';
+      screenshot=await readPNG(['exec-out','screencap','-p']);
+    }
+    if(signal?.aborted)return;
+    const {png,width,height}=screenshot;
+    const file='preview-pdf-picker-failure-screen.png';
+    fs.writeFileSync(path.join(evidence,file),png);
+    report.screen={file,origin,width,height,bytes:png.length,sha256:createHash('sha256').update(png).digest('hex')};
+  } catch(error) {report.screenUnavailable=String(error.message??error).slice(0,300)}
+  if(!signal?.aborted)fs.writeFileSync(path.join(evidence,'preview-pdf-picker-failure-diagnostics.json'),JSON.stringify(report,null,2));
+}
+
 async function preserveFailureEvidence() {
   if(fixture) {
     try {
@@ -368,11 +388,12 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1,re
   const captureDiagnostics=async signal=>{
     if(diagnosticsAttempted)return;
     diagnosticsAttempted=true;
-    await captureNativeFailure(packageName,signal);
+    if(label==='native-https-phone')await captureNativeFailure(packageName,signal);
+    if(label==='preview-pdf-picker-seed')await capturePreviewPickerFailure(signal);
   };
   try {
     const output=await run(adb,args,{log:label+'.log',timeout:15*60000,
-      onTimeout:label==='native-https-phone'?captureDiagnostics:undefined});
+      onTimeout:['native-https-phone','preview-pdf-picker-seed'].includes(label)?captureDiagnostics:undefined});
     const count=Number(output.match(/OK \((\d+) tests?\)/)?.[1]??0);
     assert.ok(count>=minimum,`${label} did not report the required completed test count; inspect its log.`);
     assert.doesNotMatch(output,/FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_STATUS_CODE: -(?:1|2|3|4)\b/);
@@ -386,9 +407,9 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1,re
     console.log(label+': '+count+' instrumented tests passed.');
     return exactExecution;
   } catch(error) {
-    if(label==='native-https-phone'&&!diagnosticsAttempted) {
+    if(['native-https-phone','preview-pdf-picker-seed'].includes(label)&&!diagnosticsAttempted) {
       try {await captureDiagnostics()}
-      catch {console.warn('Native failure diagnostics unavailable.')}
+      catch {console.warn('Phone failure diagnostics unavailable.')}
     }
     throw error;
   }
@@ -420,7 +441,13 @@ try {
   await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'));
   await configure('com.saleh.careerfinder.preview');
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
-  const discovered=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
+  const pickerClass='com.saleh.careerfinder.PreviewPdfPickerSmokeTest';
+  const pickerMethods=['previewPdfPickerSeed_cancelThenSelectAReplaceBAndSave','previewPdfPickerRestore_readsSavedBInNewProcess']
+    .map(name=>pickerClass+'#'+name);
+  const pickerSource=fs.readFileSync(path.join(testDirectory,'PreviewPdfPickerSmokeTest.kt'),'utf8');
+  assert.deepEqual([...pickerSource.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>pickerClass+'#'+match[1]),pickerMethods,
+    'The offline system-picker smoke must contain exactly the selected two phases.');
+  const discovered=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest','PreviewPdfPickerSmokeTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
   const restartSource=path.join(testDirectory,'ApplicationCvHistoryProcessRestartTest.kt');
   const selection=partitionRestartClasses(discovered,fs.readFileSync(restartSource,'utf8'));
   const classes=selection.ordinary;
@@ -444,7 +471,9 @@ try {
     separatelyScopedCapacity:{methods:capacityMethods,ordinaryExcludedBy:'notClass exact methods',requiredSeparatePasses:3},
     separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',requiredSeparatePasses:1,
       requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
-      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true}},null,2));
+      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true},
+    separatelyScopedPicker:{methods:pickerMethods,ordinaryExcludedBy:'class discovery',requiredSeparatePasses:2,
+      source:'PreviewPdfPickerSmokeTest.kt',offline:true,newProcessRestore:true}},null,2));
   // Each large exact-handler case starts without retained ordinary-suite heap.
   await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:isolatedMethods.join(',')},105);
   assert.deepEqual([...results.at(-1).passedMethods].sort(),[...ordinaryMethods].sort(),
@@ -515,6 +544,19 @@ try {
   const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
   const screenshotVerification=screenshotCollector.verify();
   const restartVerification=restartCollector.verify();
+  // The existing 214 Preview/acceptance checks and their evidence are complete before this separate smoke.
+  // Clear only this disposable Preview target, then restore its Arabic phone configuration.
+  assert.match((await device('shell','pm','clear','--user','0',restartPackage)).trim(),/\bSuccess\b/);
+  await configure(restartPackage);
+  await isolatedMethod('preview-pdf-picker-seed',pickerMethods[0]);
+  await isolatedMethod('preview-pdf-picker-restore',pickerMethods[1]);
+  const pickerResults=results.filter(result=>result.label.startsWith('preview-pdf-picker-'));
+  assert.deepEqual(pickerResults.flatMap(result=>result.passedMethods),pickerMethods,
+    'Both offline picker phases must pass once outside the ordinary 214 checks.');
+  fs.writeFileSync(path.join(evidence,'preview-pdf-picker.json'),JSON.stringify({
+    commit:checkout,requiredMethods:pickerMethods,results:pickerResults,
+    originalOrdinaryMethodsRetained:true,previewDataClearBeforeSeed:true,
+    noReinstallOrDataClearBetweenPhases:true},null,2));
   fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'&&restartVerification.result==='passed'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,restartVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
   assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
   assert.equal(restartVerification.result,'passed','Required two-phase restart acceptance is incomplete; inspect cv-restart.json.');

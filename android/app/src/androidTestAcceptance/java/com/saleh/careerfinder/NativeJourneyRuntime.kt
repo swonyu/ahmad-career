@@ -1,14 +1,11 @@
 package com.saleh.careerfinder
 
 import android.app.LocaleManager
-import android.content.ContentValues
 import android.content.Context
 import android.os.Build
-import android.os.Environment
 import android.os.LocaleList
 import android.os.Process
 import android.os.SystemClock
-import android.provider.MediaStore
 import android.system.Os
 import android.system.OsConstants
 import androidx.test.platform.app.InstrumentationRegistry
@@ -268,28 +265,14 @@ internal class NativeJourneyRuntime {
             require(bytes.size == PDF_BYTES && sha(bytes) == PDF_SHA)
             BoundaryPolicy.readPDF(bytes.inputStream())
         } finally { request.disconnect() }
-        require(Build.VERSION.SDK_INT >= 29)
-        val resolver = context.contentResolver
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/CareerFinder-" + testID)
-            put(MediaStore.MediaColumns.IS_PENDING, 1)
-        }
-        val target = checkNotNull(resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values))
         try {
-            android.os.ParcelFileDescriptor.AutoCloseOutputStream(checkNotNull(resolver.openFileDescriptor(target, "w"))).use { output ->
-                output.write(bytes); output.fd.sync()
-            }
-            require(resolver.update(target, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null) == 1)
-            val stored = checkNotNull(resolver.openInputStream(target)).use { it.readBytesBounded(PDF_BYTES + 1) }
-            require(stored.contentEquals(bytes))
+            val target = publishSyntheticPdf(context, name, bytes, testID)
             durableJSON(File(directory, "document-" + name + ".json"), JSONObject().put("schemaVersion", 1)
                 .put("testID", testID).put("filename", name).put("bytes", bytes.size).put("sha256", sha(bytes))
                 .put("mediaStoreURI", target.toString()).put("realPickerSelectionRequired", true)
                 .put("transport", "default TLS; exact private document route; no bearer/cookie/bridge capability"))
+            return target
         } finally { bytes.fill(0) }
-        return target
     }
 
     private fun java.io.InputStream.readBytesBounded(limit: Int): ByteArray {
