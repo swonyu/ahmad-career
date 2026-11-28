@@ -31,12 +31,14 @@ on:
           - full
           - android
           - android-picker
+          - android-connected-picker
           - iphone-connection
           - iphone-regressions
           - iphone-saved-actions
           - iphone-search-history
           - iphone-arabic-profile
           - iphone-ui
+          - iphone-release-build
           - iphone-documents-en
           - iphone-documents-ar
 
@@ -140,8 +142,8 @@ jobs:
           retention-days: 7
 
   android:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'android-picker' && 'PARTIAL Android PDF picker' || 'Android compile, lint and native acceptance' }}
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'android' || inputs.acceptance_scope == 'android-picker' }}
+    name: ${{ inputs.acceptance_scope == 'android-picker' && 'PARTIAL Android PDF picker' || inputs.acceptance_scope == 'android-connected-picker' && 'Android native acceptance with real Files import' || 'Android compile, lint and native acceptance' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || startsWith(inputs.acceptance_scope, 'android') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
@@ -182,6 +184,7 @@ jobs:
           set -o pipefail
           tasks=(:app:assembleDebug :app:assembleDebugAndroidTest)
           if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" != android-picker ]; then tasks+=(:app:lintDebug); fi
+          if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" = android-connected-picker ]; then tasks+=(:app:bundleRelease); fi
           for attempt in 1 2; do
             log="$RUNNER_TEMP/career-android-build-$attempt.log"
             if ./gradlew --no-daemon --max-workers=2 "${tasks[@]}" 2>&1 | tee "$log"; then
@@ -194,6 +197,14 @@ jobs:
               exit 1
             fi
           done
+      - name: Record the unsigned Android release bundle
+        if: ${{ env.CAREER_ANDROID_ACCEPTANCE_SCOPE == 'android-connected-picker' }}
+        shell: bash
+        run: |
+          bundle=android/app/build/outputs/bundle/release/app-release.aab
+          test -s "$bundle"
+          unzip -tq "$bundle"
+          sha256sum "$bundle" | tee "$RUNNER_TEMP/career-android-release.sha256"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -214,16 +225,20 @@ jobs:
           name: ${{ inputs.acceptance_scope == 'android-picker' && format('android-picker-{0}', github.run_id) || format('android-lint-{0}', github.run_id) }}
           path: |
             android/app/build/reports/lint-results-debug.*
+            android/app/build/outputs/bundle/release/app-release.aab
             android/checks/ci-evidence/**
+            ${{ runner.temp }}/career-android-release.sha256
             ${{ runner.temp }}/career-android-build-*.log
           if-no-files-found: ignore
           retention-days: 7
 
   iphone-policy:
     name: iPhone logic and unsigned build
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'iphone-release-build' }}
     runs-on: macos-26
     timeout-minutes: 20
+    env:
+      CAREER_IPHONE_ARCHIVE: ${{ inputs.acceptance_scope == 'iphone-release-build' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -242,16 +257,26 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
+          action="build"
+          archive=()
+          if [[ "$CAREER_IPHONE_ARCHIVE" == true ]]; then
+            action="archive"
+            archive=(-archivePath "$RUNNER_TEMP/CareerFinder.xcarchive")
+          fi
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \
             -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
             -derivedDataPath "$RUNNER_TEMP/career-iphone-derived-data" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            build 2>&1 | tee "$RUNNER_TEMP/career-iphone-build.log"
+            "${archive[@]}" "$action" 2>&1 | tee "$RUNNER_TEMP/career-iphone-build.log"
       - name: Verify the built iPhone product and privacy manifest
         shell: python
         run: |
           import os, pathlib, plistlib
-          product = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app'
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          if os.environ['CAREER_IPHONE_ARCHIVE'] == 'true':
+              product = temp / 'CareerFinder.xcarchive/Products/Applications/Career Finder.app'
+          else:
+              product = temp / 'career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app'
           with (product / 'Info.plist').open('rb') as source:
               info = plistlib.load(source)
           assert info['UIDeviceFamily'] == [1], info.get('UIDeviceFamily')
@@ -267,18 +292,29 @@ jobs:
                      for entry in privacy['NSPrivacyAccessedAPITypes']}
           assert 'E174.1' in reasons.get(disk_space, []), 'Recovery export disk-space reason missing from privacy manifest'
           print('Built an unsigned iPhone-only product with the preserved app identity and recovery export privacy declaration.')
-      - name: Keep the unsigned build log
+      - name: Package the unsigned iPhone archive
+        if: ${{ env.CAREER_IPHONE_ARCHIVE == 'true' }}
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP"
+          ditto -c -k --keepParent CareerFinder.xcarchive CareerFinder.xcarchive.zip
+          unzip -tq CareerFinder.xcarchive.zip
+          shasum -a 256 CareerFinder.xcarchive.zip > career-iphone-release.sha256
+      - name: Keep the unsigned build evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: iphone-build-log-${{ github.run_id }}
-          path: ${{ runner.temp }}/career-iphone-build.log
+          path: |
+            ${{ runner.temp }}/career-iphone-build.log
+            ${{ runner.temp }}/CareerFinder.xcarchive.zip
+            ${{ runner.temp }}/career-iphone-release.sha256
           if-no-files-found: ignore
           retention-days: 7
 
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'android' && inputs.acceptance_scope != 'android-picker') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (!startsWith(inputs.acceptance_scope, 'android') && inputs.acceptance_scope != 'iphone-release-build') }}
     runs-on: macos-26
     # Allow the sequential suite to finish, with time left to export the result bundle.
     timeout-minutes: 125

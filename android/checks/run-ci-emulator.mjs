@@ -29,8 +29,9 @@ let fixture;
 const restartPackage = 'com.saleh.careerfinder.preview';
 const restartNamespace = 'cv-restart-' + randomBytes(16).toString('hex');
 const acceptanceScope=process.env.CAREER_ANDROID_ACCEPTANCE_SCOPE??'full';
-assert.ok(['full','android','android-picker'].includes(acceptanceScope),'Unknown Android CI acceptance scope.');
+assert.ok(['full','android','android-picker','android-connected-picker'].includes(acceptanceScope),'Unknown Android CI acceptance scope.');
 const pickerOnly=acceptanceScope==='android-picker';
+const connectedPicker=acceptanceScope==='android-connected-picker';
 const pickerClass='com.saleh.careerfinder.PreviewPdfPickerSmokeTest';
 const pickerMethods=['previewPdfPickerSeed_cancelThenSelectAReplaceBAndSave','previewPdfPickerRestore_readsSavedBInNewProcess']
   .map(name=>pickerClass+'#'+name);
@@ -566,7 +567,17 @@ try {
     await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'));
     await configure('com.saleh.careerfinder.acceptance');
     const currentPairingCode=fixture.service.createPairingCode().pairingCode;
-    await instrument('native-https-phone','com.saleh.careerfinder.acceptance',['com.saleh.careerfinder.NativeHttpsAcceptanceTest'],{fixtureOrigin:fixture.origin,pairingCode:currentPairingCode,fixtureResumeBase64:fixture.resume.dataBase64,successUrl:fixture.jobs.success,timeoutUrl:fixture.jobs.timeout,cooldownUrl:fixture.jobs.cooldown});
+    await instrument('native-https-phone','com.saleh.careerfinder.acceptance',['com.saleh.careerfinder.NativeHttpsAcceptanceTest'],{
+      fixtureOrigin:fixture.origin,pairingCode:currentPairingCode,fixtureResumeBase64:fixture.resume.dataBase64,
+      successUrl:fixture.jobs.success,timeoutUrl:fixture.jobs.timeout,cooldownUrl:fixture.jobs.cooldown,
+      ...(connectedPicker?{careerUseSystemPdfPicker:true}:{})
+    });
+    if(connectedPicker) {
+      const log=fs.readFileSync(path.join(evidence,'native-https-phone.log'),'utf8');
+      const receipts=log.match(/^INSTRUMENTATION_STATUS: connectedPdfPickerEvidence=selected\r?$/gm)??[];
+      assert.equal(receipts.length,1,'The connected acceptance must verify exactly one real Files selection.');
+      results.at(-1).systemFilesSelection='passed';
+    }
     await screenshotCollector.collect('com.saleh.careerfinder.acceptance',{phase:'native-https-phone'});
     const observations=await fixture.observations();
     fs.writeFileSync(path.join(evidence,'synthetic-provider-observations.json'),JSON.stringify(observations,null,2));
