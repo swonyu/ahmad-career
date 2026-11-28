@@ -437,11 +437,10 @@ async function runPickerSmoke(checkout) {
   assert.deepEqual(pickerResults.flatMap(result=>result.passedMethods),pickerMethods,
     'Both offline picker phases must pass exactly once.');
   fs.writeFileSync(path.join(evidence,'preview-pdf-picker.json'),JSON.stringify({
-    commit:checkout,scope:pickerOnly?'PARTIAL Android PDF picker':'full Android acceptance',
+    commit:checkout,scope:'PARTIAL Android PDF picker',
     requiredMethods:pickerMethods,results:pickerResults,previewDataClearBeforeSeed:true,
     noReinstallOrDataClearBetweenPhases:true,
-    ...(pickerOnly?{ordinarySuite:'not-run',restartSuite:'not-run',acceptanceSuite:'not-run'}:
-      {originalOrdinaryMethodsRetained:true})},null,2));
+    ordinarySuite:'not-run',restartSuite:'not-run',acceptanceSuite:'not-run'},null,2));
 }
 try {
   if(!pickerOnly)await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs'),path.join(root,'android/checks/cv-restart-evidence.test.mjs')],
@@ -462,10 +461,10 @@ try {
   await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'));
   if(!pickerOnly)await configure('com.saleh.careerfinder.preview');
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
-  const pickerSource=fs.readFileSync(path.join(testDirectory,'PreviewPdfPickerSmokeTest.kt'),'utf8');
-  assert.deepEqual([...pickerSource.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>pickerClass+'#'+match[1]),pickerMethods,
-    'The offline system-picker smoke must contain exactly the selected two phases.');
   if(pickerOnly) {
+    const pickerSource=fs.readFileSync(path.join(testDirectory,'PreviewPdfPickerSmokeTest.kt'),'utf8');
+    assert.deepEqual([...pickerSource.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>pickerClass+'#'+match[1]),pickerMethods,
+      'The offline system-picker smoke must contain exactly the selected two phases.');
     const checkout=(await run('git',['rev-parse','HEAD'])).trim();
     assert.equal(checkout,process.env.GITHUB_SHA);
     fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
@@ -503,8 +502,8 @@ try {
       separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',requiredSeparatePasses:1,
         requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
         ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true},
-      separatelyScopedPicker:{methods:pickerMethods,ordinaryExcludedBy:'class discovery',requiredSeparatePasses:2,
-        source:'PreviewPdfPickerSmokeTest.kt',offline:true,newProcessRestore:true}},null,2));
+      supplementaryPicker:{methods:pickerMethods,ordinaryExcludedBy:'class discovery',acceptanceScope:'android-picker',
+        execution:'opt-in/not-run',source:'PreviewPdfPickerSmokeTest.kt',offline:true,newProcessRestore:true}},null,2));
     // Each large exact-handler case starts without retained ordinary-suite heap.
     await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:isolatedMethods.join(',')},105);
     assert.deepEqual([...results.at(-1).passedMethods].sort(),[...ordinaryMethods].sort(),
@@ -575,8 +574,6 @@ try {
     const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
     const screenshotVerification=screenshotCollector.verify();
     const restartVerification=restartCollector.verify();
-    // The existing 214 Preview/acceptance checks and their evidence are complete before this separate smoke.
-    await runPickerSmoke(checkout);
     fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'&&restartVerification.result==='passed'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,restartVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
     assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
     assert.equal(restartVerification.result,'passed','Required two-phase restart acceptance is incomplete; inspect cv-restart.json.');

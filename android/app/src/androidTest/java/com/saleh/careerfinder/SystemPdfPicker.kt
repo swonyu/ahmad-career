@@ -1,5 +1,6 @@
 package com.saleh.careerfinder
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.Instrumentation
 import android.content.ComponentName
 import android.content.Context
@@ -84,15 +85,20 @@ internal class SystemPdfPicker(
         }
         val packageName = component.packageName
         val componentName = packageName + "/" + component.className
+        val serviceInfo = requireNotNull(automation.serviceInfo)
+        val interactiveFlag = AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        val reapplyInteractiveFlag = serviceInfo.flags and interactiveFlag == 0
+        if (reapplyInteractiveFlag) automation.serviceInfo = serviceInfo.apply { flags = flags or interactiveFlag }
         val opening = JSONObject().put("resolvedSystemComponent", componentName)
             .put("resolver", if (resolved == null) "shell-package-query" else "app-package-manager")
+            .put("interactiveWindowFlagReapplied", reapplyInteractiveFlag)
         evidence("picker-opening-" + (pickerNumber + 1) + ".json", opening)
         var lastRoots: List<String?> = emptyList()
-        var lastWindowTotal = 0
+        var lastWindowTypes = emptyList<Int>()
         try {
             waitStrict("The actual system document picker must own a visible application window") {
                 val allWindows = automation.windows
-                lastWindowTotal = allWindows.size
+                lastWindowTypes = allWindows.map { it.type }
                 lastRoots = allWindows.filter { it.type == AccessibilityWindowInfo.TYPE_APPLICATION }.map(::rootPackage)
                 lastRoots.count { it == packageName } == 1
             }
@@ -102,7 +108,8 @@ internal class SystemPdfPicker(
                 val allowed = JSONObject()
                 pickerPackages.forEach { candidate -> allowed.put(candidate, lastRoots.count { it == candidate }) }
                 evidence("picker-window-failure-" + (pickerNumber + 1) + ".json", opening
-                    .put("lastWindowCount", lastWindowTotal).put("lastApplicationWindowCount", lastRoots.size)
+                    .put("lastWindowCount", lastWindowTypes.size).put("lastWindowTypes", JSONArray(lastWindowTypes.take(16)))
+                    .put("lastApplicationWindowCount", lastRoots.size)
                     .put("lastMissingRootCount", lastRoots.count { it == null }).put("lastPickerRoots", allowed))
             } catch (captureError: Exception) { failure.addSuppressed(captureError) }
             throw failure
@@ -206,20 +213,22 @@ internal class SystemPdfPicker(
                 .put("touchX", x.toDouble()).put("touchY", y.toDouble())
                 .put("inputSource", InputDevice.SOURCE_TOUCHSCREEN)
                 .put("selectionAcceptance", "pending"))
-        require(SystemClock.elapsedRealtime() < deadline) { "No picker touch may begin after the original observation deadline" }
         val downTime = SystemClock.uptimeMillis()
-        val down = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0).apply {
-            setSource(InputDevice.SOURCE_TOUCHSCREEN)
+        val touchSource = InputDevice.SOURCE_TOUCHSCREEN
+        val deviceID = InputDevice.getDeviceIds().firstOrNull { InputDevice.getDevice(it)?.supportsSource(touchSource) == true } ?: 0
+        val finger = MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_FINGER }
+        val point = MotionEvent.PointerCoords().apply { this.x = x; this.y = y; size = 1f }
+        fun sendTouch(action: Int, pressure: Float) {
+            point.pressure = pressure
+            val event = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, 1, arrayOf(finger), arrayOf(point),
+                0, 0, 1f, 1f, deviceID, 0, touchSource, 0)
+            try { require(automation.injectInputEvent(event, true)) }
+            finally { event.recycle() }
         }
-        try {
-            require(automation.injectInputEvent(down, true))
-            SystemClock.sleep(50)
-            val up = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x, y, 0).apply {
-                setSource(InputDevice.SOURCE_TOUCHSCREEN)
-            }
-            try { require(automation.injectInputEvent(up, true)) }
-            finally { up.recycle() }
-        } finally { down.recycle() }
+        require(SystemClock.elapsedRealtime() < deadline) { "No picker touch may begin after the original observation deadline" }
+        sendTouch(MotionEvent.ACTION_DOWN, 1f)
+        SystemClock.sleep(50)
+        sendTouch(MotionEvent.ACTION_UP, 0f)
         waitStrict("The actual PDF selection must return from the system picker") { pickerWindows(expected).isEmpty() }
         evidence("picker-selected-" + name + ".json",
             fresh.put("filename", name).put("singlePhysicalTouch", true).put("noModelInjection", true)
