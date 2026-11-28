@@ -302,6 +302,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try nav(save ? localized("Save", "حفظ") : localized("Cancel", "إلغاء"), app: app)
         let observationStart = ProcessInfo.processInfo.systemUptime
         var pollCount = 0
+        var sawConflictDuringOwnSave = false
         try wait("The profile editor closes through its actual action", app: app) {
             pollCount += 1
             let pollStart = ProcessInfo.processInfo.systemUptime
@@ -314,6 +315,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
             }
             var pending: [any XCUIElementSnapshot] = [snapshot]
             var profileButtons = 0, eligibleProfileButtons = 0, editorBars = 0, firstNameFields = 0
+            var conflictHeaders = 0
             while let element = pending.popLast() {
                 if element.elementType == .button && element.identifier == "applications.profile" {
                     profileButtons += 1
@@ -321,16 +323,22 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
                 }
                 if element.elementType == .navigationBar && element.identifier == title { editorBars += 1 }
                 if element.elementType == .textField && element.identifier == "application.firstName" { firstNameFields += 1 }
+                if element.identifier == "application.profile.conflict" { conflictHeaders += 1 }
                 pending.append(contentsOf: element.children)
             }
+            if save && editorBars == 1 && conflictHeaders != 0 { sawConflictDuringOwnSave = true }
             let accepted = profileButtons == 1 && eligibleProfileButtons == 1 && editorBars == 0 && firstNameFields == 0
             if pollCount <= 16 {
                 let now = ProcessInfo.processInfo.systemUptime
                 let elapsedMs = min(300_000, Int((now - observationStart) * 1000))
                 let snapshotMs = min(300_000, Int((now - pollStart) * 1000))
-                print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshotMs=\(snapshotMs) appFrameFinite=\(finite(snapshot.frame)) profileCount=\(min(9, profileButtons)) eligibleProfileCount=\(min(9, eligibleProfileButtons)) editorBarCount=\(min(9, editorBars)) fieldCount=\(min(9, firstNameFields)) accepted=\(accepted)")
+                print("Native journey close poll: poll=\(pollCount) elapsedMs=\(elapsedMs) snapshotMs=\(snapshotMs) appFrameFinite=\(finite(snapshot.frame)) profileCount=\(min(9, profileButtons)) eligibleProfileCount=\(min(9, eligibleProfileButtons)) editorBarCount=\(min(9, editorBars)) fieldCount=\(min(9, firstNameFields)) conflictHeaderCount=\(min(9, conflictHeaders)) accepted=\(accepted)")
             }
             return accepted
+        }
+        if save {
+            try require(!sawConflictDuringOwnSave,
+                "A successful own profile save never exposes the conflict resolution controls", app: app)
         }
         modalNavigationTitle = nil
     }
