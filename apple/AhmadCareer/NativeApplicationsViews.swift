@@ -574,6 +574,47 @@ private struct NativeLabeledInput<Content: View>: View {
     }
 }
 
+#if CAREER_UI_PICKER_COPY_SMOKE
+@MainActor
+private struct NativeCopyPDFPicker: UIViewControllerRepresentable {
+    let onCompletion: (Result<URL, Error>) -> Void
+    let onCancellation: () -> Void
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true)
+        picker.allowsMultipleSelection = false
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ picker: UIDocumentPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onCompletion: onCompletion, onCancellation: onCancellation)
+    }
+
+    @MainActor
+    final class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let onCompletion: (Result<URL, Error>) -> Void
+        let onCancellation: () -> Void
+
+        init(onCompletion: @escaping (Result<URL, Error>) -> Void, onCancellation: @escaping () -> Void) {
+            self.onCompletion = onCompletion
+            self.onCancellation = onCancellation
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            guard let url = urls.first else { onCompletion(.failure(CocoaError(.fileNoSuchFile))); return }
+            onCompletion(.success(url))
+        }
+
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            onCancellation()
+        }
+    }
+}
+#endif
+
 struct NativeApplicationProfileEditor: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
@@ -608,6 +649,25 @@ struct NativeApplicationProfileEditor: View {
     // The store acknowledges this editor's new revision before refreshing the workspace.
     private var conflicts: Bool { !saving && model.hasConflict(for: context) }
     private var occupied: Bool { saving || model.busy || readingPDF }
+    @MainActor
+    private func handlePDFSelection(_ result: Result<URL, Error>) {
+        do {
+            let url = try result.get()
+            Task {
+                readingPDF = true
+                let scoped = url.startAccessingSecurityScopedResource()
+                defer { if scoped { url.stopAccessingSecurityScopedResource() }; readingPDF = false }
+                do {
+                    let bytes = try await Task.detached(priority: .userInitiated) { try MobileApplicationPolicy.readResume(at: url) }.value
+                    try draft.selectResume(bytes, filename: url.lastPathComponent); issue = nil
+                } catch {
+                    if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
+                }
+            }
+        } catch {
+            if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
+        }
+    }
     var body: some View {
         NavigationStack {
             NativeForm {
@@ -793,24 +853,20 @@ struct NativeApplicationProfileEditor: View {
                 }
                 ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) { focusedField = nil } }
             }
-            .fileImporter(isPresented: $pickingPDF, allowedContentTypes: [.pdf]) { result in
-                do {
-                    let url = try result.get()
-                    Task {
-                        readingPDF = true
-                        let scoped = url.startAccessingSecurityScopedResource()
-                        defer { if scoped { url.stopAccessingSecurityScopedResource() }; readingPDF = false }
-                        do {
-                            let bytes = try await Task.detached(priority: .userInitiated) { try MobileApplicationPolicy.readResume(at: url) }.value
-                            try draft.selectResume(bytes, filename: url.lastPathComponent); issue = nil
-                        } catch {
-                            if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
-                        }
-                    }
-                } catch {
-                    if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
-                }
+#if CAREER_UI_PICKER_COPY_SMOKE
+            .sheet(isPresented: $pickingPDF) {
+                NativeCopyPDFPicker(onCompletion: { result in
+                    pickingPDF = false
+                    handlePDFSelection(result)
+                }, onCancellation: {
+                    pickingPDF = false
+                })
             }
+#else
+            .fileImporter(isPresented: $pickingPDF, allowedContentTypes: [.pdf]) { result in
+                handlePDFSelection(result)
+            }
+#endif
             .confirmationDialog(l10n("Keep your profile changes?"), isPresented: $dismissalChoice, titleVisibility: .visible) {
                 Button(l10n("Save draft on this phone")) {
                     if model.keepProfileDraft(draft, context: context) { closingIntentionally = true; dismiss() }

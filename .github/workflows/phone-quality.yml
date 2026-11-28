@@ -481,7 +481,7 @@ jobs:
               ;;
             iphone-local-files)
               cases=(CareerFinderUITests/testLocalFilesCVReplacementSurvivesRelaunch)
-              settings=("SWIFT_ACTIVE_COMPILATION_CONDITIONS=\$(inherited) DEBUG CAREER_LOCAL_FILES_SMOKE")
+              settings=("SWIFT_ACTIVE_COMPILATION_CONDITIONS=\$(inherited) DEBUG CAREER_LOCAL_FILES_SMOKE CAREER_UI_PICKER_COPY_SMOKE")
               action="test-without-building"
               ;;
             *) echo 'Unsupported acceptance scope'; exit 1 ;;
