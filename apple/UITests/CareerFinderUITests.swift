@@ -1153,8 +1153,9 @@ final class CareerFinderUITests: XCTestCase {
     func testLocalFilesCVReplacementSurvivesRelaunch() {
         let id = UUID().uuidString
         var app = launch(id: id)
-        let title = app.navigationBars["Application profile"]
-        let picker = app.navigationBars["FullDocumentManagerViewControllerNavigationBar"]
+        var title: XCUIElement { app.navigationBars["Application profile"] }
+        let pickerID = "FullDocumentManagerViewControllerNavigationBar"
+        var picker: XCUIElement { app.navigationBars.matching(NSPredicate(format: "identifier == %@", pickerID)).element }
         let emptyCV = "Choose your PDF CV"
 
         func openProfile() {
@@ -1177,7 +1178,17 @@ final class CareerFinderUITests: XCTestCase {
             let button = app.buttons[cv]
             reveal(button, in: app)
             button.tap()
-            XCTAssertTrue(picker.waitForExistence(timeout: 10))
+            // Remote Files may initially draw a blank sheet and omit its
+            // navigation bar from the queried app snapshot.
+            let readiness = waitForObservation(timeout: 20) {
+                let hierarchy = app.debugDescription
+                return hierarchy.contains("identifier: 'DOC.browsingRoot Source:")
+                    && hierarchy.contains("identifier: '\(pickerID)'")
+            }
+            if readiness != .completed {
+                captureObservation("files-presentation-incomplete", app: app, details: "Files after tapping \(cv)")
+            }
+            XCTAssertEqual(readiness, .completed, "The actual system Files hierarchy must finish presenting")
         }
 
         func checkFingerprint(_ hash: String) {
