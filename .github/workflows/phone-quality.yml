@@ -440,6 +440,30 @@ jobs:
         shell: bash
         timeout-minutes: 46
         run: python3 apple/Checks/run-ci-document-journey.py "${CAREER_UI_ACCEPTANCE_SCOPE##*-}"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-local-files' }}
+        with:
+          python-version: '3.12'
+      - name: Prepare pinned host simulator input
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-local-files' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/career-picker-hid/dist"
+          cd "$RUNNER_TEMP/career-picker-hid"
+          release=https://github.com/meta/idb/releases/download/v1.7.8
+          wheel=fb_idb-1.7.8-py3-none-any.whl
+          companion=idb-companion.macos-arm64.tar.gz
+          curl --fail --silent --show-error --location --retry 1 --max-time 90 "$release/$wheel" -o "$wheel"
+          curl --fail --silent --show-error --location --retry 1 --max-time 90 "$release/$companion" -o "$companion"
+          printf '%s\n' \
+            "ed8557a4c54ffee53006c1fe63f070cda567949312ab24be56faf987c5a3d04b  $wheel" \
+            "44369a2df0b62e3a1764de61bd09280999c7e9b27ea8f20bff1ea3a9db0302a2  $companion" |
+            shasum -a 256 -c -
+          tar -xzf "$companion" -C dist
+          test -x dist/idb_companion
+          python -m venv venv
+          venv/bin/python -m pip install --disable-pip-version-check "$wheel"
       - name: Exercise native phone flows with isolated synthetic data
         if: ${{ !startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') }}
         shell: bash
@@ -481,7 +505,7 @@ jobs:
               ;;
             iphone-local-files)
               cases=(CareerFinderUITests/testLocalFilesCVReplacementSurvivesRelaunch)
-              settings=("SWIFT_ACTIVE_COMPILATION_CONDITIONS=\$(inherited) DEBUG CAREER_LOCAL_FILES_SMOKE")
+              settings=("SWIFT_ACTIVE_COMPILATION_CONDITIONS=\$(inherited) DEBUG CAREER_LOCAL_FILES_SMOKE CAREER_UI_PICKER_HOST_HID")
               action="test-without-building"
               ;;
             *) echo 'Unsupported acceptance scope'; exit 1 ;;
@@ -518,9 +542,18 @@ jobs:
             mkdir -p "$container/Documents"
             cp postman/fixtures/integration-resume.pdf "$container/Documents/CV-A.pdf"
             cp hosted/tests/fixtures/readable-resume.pdf "$container/Documents/CV-B.pdf"
+            career_hid="$RUNNER_TEMP/career-picker-hid"
+            "$career_hid/venv/bin/python" apple/Checks/drive-picker-hid.py "$CAREER_UI_DEVICE" \
+              "$career_hid/venv/bin/idb" "$career_hid/dist/idb_companion" > "$RUNNER_TEMP/career-picker-hid.log" 2>&1 &
+            career_hid_pid=$!
+            trap 'kill "$career_hid_pid" 2>/dev/null || true' EXIT
           fi
           "${build[@]}" -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
             "${selection[@]}" "$action" 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+          if [[ "$action" == test-without-building ]]; then
+            wait "$career_hid_pid"
+            trap - EXIT
+          fi
       - name: Verify every selected regression ran once
         if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-regressions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-saved-actions' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-search-history' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-arabic-profile' || env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-local-files' }}
         shell: python
@@ -573,6 +606,7 @@ jobs:
             ${{ runner.temp }}/career-iphone-boot-verification.json
             ${{ runner.temp }}/career-iphone-ui.log
             ${{ runner.temp }}/career-iphone-local-files-build.log
+            ${{ runner.temp }}/career-picker-hid.log
             ${{ runner.temp }}/career-document-journey.json
             ${{ runner.temp }}/career-browser-lifecycle
             ${{ runner.temp }}/career-focus-lifecycle

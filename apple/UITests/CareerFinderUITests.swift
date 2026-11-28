@@ -1241,8 +1241,25 @@ final class CareerFinderUITests: XCTestCase {
             XCTAssertTrue(document.isHittable && !filename.isEmpty &&
                           document.frame.contains(filename) && app.collectionViews["File View"].frame.contains(filename) &&
                           viewport.contains(filename), "The exact Files filename must be visible within the document cell")
+#if CAREER_UI_PICKER_HOST_HID
+            do {
+                let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                let request = directory.appendingPathComponent("career-finder-hid-\(stem).json")
+                let point = [
+                    "x": Int((filename.midX - viewport.minX).rounded()),
+                    "y": Int((filename.midY - viewport.minY).rounded()),
+                    "width": Int(viewport.width.rounded()),
+                    "height": Int(viewport.height.rounded())
+                ]
+                try JSONEncoder().encode(point).write(to: request, options: .atomic)
+            } catch {
+                XCTFail("Could not send the verified file location to the host simulator: \(error)")
+                return
+            }
+#else
             app.coordinate(withNormalizedOffset: .zero)
                 .withOffset(CGVector(dx: filename.midX - viewport.minX, dy: filename.midY - viewport.minY)).tap()
+#endif
             waitForPickerToClose(stem)
             XCTAssertTrue(title.waitForExistence(timeout: 10))
             XCTAssertTrue(app.buttons[stem + ".pdf"].waitForExistence(timeout: 10))
