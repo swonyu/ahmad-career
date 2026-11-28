@@ -21,6 +21,7 @@ import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -45,6 +46,7 @@ import org.junit.runner.Description
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.util.UUID
 import javax.net.ssl.SSLException
 
 class TlsBoundaryAcceptanceTest {
@@ -95,6 +97,7 @@ class NativeHttpsAcceptanceTest {
         val args = InstrumentationRegistry.getArguments()
         val origin = args.getString("fixtureOrigin")
         assumeTrue(origin != null && instrumentation.targetContext.packageName == "com.saleh.careerfinder.acceptance")
+        val useSystemPdfPicker = args.getString("careerUseSystemPdfPicker") == "true"
         fixtureDiagnosticsAllowed = true
         val code = requireNotNull(args.getString("pairingCode"))
         val bytes = Base64.decode(requireNotNull(args.getString("fixtureResumeBase64")), Base64.DEFAULT)
@@ -116,14 +119,15 @@ class NativeHttpsAcceptanceTest {
 
         val resolver = instrumentation.targetContext.contentResolver
         val file = step("pdf-document-create") {
-            requireNotNull(resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, ContentValues().apply {
+            if (useSystemPdfPicker) publishSyntheticPdf(compose.activity, "CV-A.pdf", bytes, UUID.randomUUID().toString())
+            else requireNotNull(resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, "Career-Finder-Acceptance.pdf")
                 put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }))
         }
         try {
-            step("pdf-document-write") {
+            if (!useSystemPdfPicker) step("pdf-document-write") {
                 resolver.openOutputStream(file)!!.use { it.write(bytes) }
                 resolver.update(file, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null)
             }
@@ -134,8 +138,40 @@ class NativeHttpsAcceptanceTest {
             step("profile-email-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Email"))) }
             step("profile-email-edit") { compose.onNode(hasText(strings("Email")) and hasSetTextAction()).performTextInput("native-fixture@example.invalid") }
             step("profile-email-keyboard-dismiss") { closeSoftKeyboard() }
-            step("pdf-select") { compose.runOnIdle { model.choosePDF(file) } }
+            if (useSystemPdfPicker) {
+                val picker = SystemPdfPicker(compose.activity) { name, value ->
+                    instrumentation.sendStatus(2, Bundle().apply {
+                        putString("connectedPdfPickerDetail", "$name $value")
+                    })
+                }
+                try {
+                    step("pdf-picker-launch") {
+                        val choice = hasText(strings("Choose PDF résumé"), substring = false) and hasClickAction()
+                        compose.onNodeWithTag("profile-list").performScrollToNode(choice)
+                        assertEquals("Exactly one live PDF action must match", 1,
+                            compose.onAllNodes(choice).fetchSemanticsNodes().size)
+                        val target = compose.onNode(choice)
+                        assertFullyVisible(target)
+                        target.assertIsEnabled().performTouchInput { click() }
+                    }
+                    step("pdf-picker-open") { picker.waitForDocumentPicker() }
+                    step("pdf-select") { picker.selectDocument("CV-A.pdf") }
+                } finally { picker.close() }
+            } else step("pdf-select") { compose.runOnIdle { model.choosePDF(file) } }
             step("pdf-ready") { await { !model.state.value.busy && model.state.value.profile.resume?.sha256 == expectedHash } }
+            if (useSystemPdfPicker) step("pdf-picker-verified") {
+                val state = model.state.value
+                val resume = checkNotNull(state.profile.resume)
+                assertNotNull(state.connection)
+                assertTrue(state.profileDirty)
+                assertNull(state.error)
+                assertEquals("CV-A.pdf", resume.name)
+                assertEquals(expectedHash, resume.sha256)
+                assertEquals(bytes.size.toLong(), resume.size)
+                val selected = Base64.decode(checkNotNull(resume.dataBase64), Base64.DEFAULT)
+                try { assertArrayEquals(bytes, selected) } finally { selected.fill(0) }
+                instrumentation.sendStatus(2, Bundle().apply { putString("connectedPdfPickerEvidence", "selected") })
+            }
             step("profile-content-reachable") {
                 compose.onNodeWithTag("profile-list").assertHeightIsAtLeast(120.dp).assertIsDisplayed()
             }

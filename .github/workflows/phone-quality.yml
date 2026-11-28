@@ -31,6 +31,7 @@ on:
           - full
           - android
           - android-picker
+          - android-connected-picker
           - iphone-connection
           - iphone-regressions
           - iphone-saved-actions
@@ -141,8 +142,8 @@ jobs:
           retention-days: 7
 
   android:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'android-picker' && 'PARTIAL Android PDF picker' || 'Android compile, lint and native acceptance' }}
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'android' || inputs.acceptance_scope == 'android-picker' }}
+    name: ${{ inputs.acceptance_scope == 'android-picker' && 'PARTIAL Android PDF picker' || inputs.acceptance_scope == 'android-connected-picker' && 'Android native acceptance with real Files import' || 'Android compile, lint and native acceptance' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || startsWith(inputs.acceptance_scope, 'android') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
@@ -279,7 +280,7 @@ jobs:
 
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || inputs.acceptance_scope == 'iphone-local-files' && 'PARTIAL iPhone offline Files import and restart' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'android' && inputs.acceptance_scope != 'android-picker') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || !startsWith(inputs.acceptance_scope, 'android') }}
     runs-on: macos-26
     # Allow the sequential suite to finish, with time left to export the result bundle.
     timeout-minutes: 125
