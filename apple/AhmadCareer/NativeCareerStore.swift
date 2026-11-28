@@ -924,7 +924,14 @@ struct ApplicationAttention: Identifiable {
         let history=archived ? "\nArchived saved research; this role is not in the current shortlist.\n" : ""
         let employerEvidence="\n\nEmployer-listed clues (not proof of eligibility):\nExperience level: \(job.experienceLevel.flatMap{$0.isEmpty ? nil:$0} ?? "Not stated")\nEmployment type: \(job.employmentType ?? "Not stated")\nWork arrangement: \(job.mode ?? "Not stated")\n\(job.publicationLabel): \(job.posted.isEmpty ? "Not stated" : job.posted)\n"+((job.requirementNotes ?? []).isEmpty ? "Requirement excerpts unavailable. Read the full employer description." : (job.requirementNotes ?? []).map{"• "+$0}.joined(separator:"\n"))
         let warnings=applicationWarnings(for:job).joined(separator:"\n")
-        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."+employerEvidence+(warnings.isEmpty ? "" : "\n\nLocal tracking advisories:\n"+warnings)
+        let introduction = "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"
+        let requirements = job.requirements.map { "• " + $0 }.joined(separator: "\n")
+        let steps = job.applicationSteps.enumerated().map { index, step in
+            "\(index + 1). \(step[0]): \(step[1])"
+        }.joined(separator: "\n\n")
+        let profileSection = includeProfile ? "\n\n" + profileText : ""
+        let warningsSection = warnings.isEmpty ? "" : "\n\nLocal tracking advisories:\n" + warnings
+        return "\(introduction)\(requirements)\n\nSteps:\n\(steps)\(profileSection)\n\nStatus: \(status(for: job))\n\(salary) Review and submit personally on the employer website.\(employerEvidence)\(warningsSection)"
     }
     private func applicationRecordText(_ id:String)->String {
         let record=applicationRecords[id],draft=recordDrafts[id]
