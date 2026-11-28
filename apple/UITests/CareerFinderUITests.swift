@@ -1151,6 +1151,12 @@ final class CareerFinderUITests: XCTestCase {
 #if CAREER_LOCAL_FILES_SMOKE
     @MainActor
     func testLocalFilesCVReplacementSurvivesRelaunch() {
+        // Bring up the real Files service on this freshly booted simulator
+        // before timing the app's separate document picker presentation.
+        let filesApp = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
+        filesApp.launch()
+        XCTAssertTrue(filesApp.tabBars.buttons["Browse"].waitForExistence(timeout: 20),
+                      "The standalone Files app must finish starting before the picker test")
         let id = UUID().uuidString
         var app = launch(id: id)
         var title: XCUIElement { app.navigationBars["Application profile"] }
