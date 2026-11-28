@@ -325,7 +325,6 @@ jobs:
     timeout-minutes: 125
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
-      CAREER_UI_REQUIRE_IOS18: ${{ inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -343,13 +342,15 @@ jobs:
       - name: Verify fresh simulator selection fixtures
         run: python3 apple/Checks/test-simulator-selection.py
       - name: Select Xcode for the iOS 18 diagnostic
-        if: ${{ env.CAREER_UI_REQUIRE_IOS18 == 'true' }}
+        if: ${{ inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime }}
         run: |
           career_xcode=/Applications/Xcode_26.3.app/Contents/Developer
           test -d "$career_xcode"
           DEVELOPER_DIR="$career_xcode" xcodebuild -version
           printf 'DEVELOPER_DIR=%s\n' "$career_xcode" >> "$GITHUB_ENV"
       - name: Create a fresh iPhone on this disposable hosted runner
+        env:
+          CAREER_UI_REQUIRE_IOS18: ${{ inputs.acceptance_scope == 'iphone-local-files' && inputs.legacy_files_runtime }}
         shell: python
         run: |
           import json, os, pathlib, platform, re, subprocess
