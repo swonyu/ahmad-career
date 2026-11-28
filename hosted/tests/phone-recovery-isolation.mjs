@@ -140,6 +140,40 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
   install(context, "discardConfirmed", action("Discarding recovery copy"));
   return { context, main, safety, mainPort, recoveryPort };
 }
+test("verified recovery reconciles only the interrupted application review", async () => {
+  const { context } = await harness();
+  context.acknowledgeWorkspacePublication = async () => true;
+  const workspace = validWorkspace();
+  const planId = uuid(30), oldReview = { id: planId };
+  const latest = { id: planId, approvedAt: "2026-11-17T12:00:00.000Z" };
+  const issue = new production.PhoneReadError(new Error("Lost advance response"), null, null, {
+    kind: "advance", accountId: workspace.accountId, workspaceId: workspace.workspaceId, planId,
+  });
+  context.plan = oldReview;
+  context.reviewAccepted = true;
+  context.selected = ["synthetic-job"];
+  context.rememberReadIssue(issue);
+  await context.putWorkspace({ ...workspace, recoverablePlans: [latest] });
+  assert.equal(context.plan, latest);
+  assert.equal(context.reviewAccepted, false);
+
+  context.rememberReadIssue(issue);
+  await context.putWorkspace(workspace);
+  assert.equal(context.plan, null);
+  assert.deepEqual(context.selected, ["synthetic-job"]);
+
+  const anotherReview = { id: uuid(31) };
+  context.plan = anotherReview;
+  context.rememberReadIssue(issue);
+  await context.putWorkspace(workspace);
+  assert.equal(context.plan, anotherReview);
+
+  context.plan = oldReview;
+  context.rememberReadIssue(issue);
+  await context.putWorkspace({ ...workspace, workspaceId: uuid(2) });
+  assert.equal(context.plan, oldReview);
+});
+
 test("online profile save preserves the local CV until the service confirms the change", async () => {
   const bytes = Buffer.from("%PDF-1.4 fixture");
   const digest = Buffer.from(await webcrypto.subtle.digest("SHA-256", bytes)).toString("hex");

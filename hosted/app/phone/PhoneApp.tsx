@@ -160,11 +160,21 @@ export default function PhoneApp({ account }: { account: Account }) {
   }
   const putSnapshot = (value: PhoneSnapshot) => { snapshotRef.current = value; setSnapshot(value); };
   const putWorkspace = async (value: Workspace) => {
+    const issue = readIssueRef.current;
     workspaceRef.current = value; setWorkspace(value);
     try {
       const published = await acknowledgeWorkspacePublication(value);
-      if (!published || workspaceRef.current !== value) return;
-      if (readIssueRef.current?.operation || readIssueRef.current?.intent) setNotice({ text: "Online records refreshed. Check the earlier action before trying it again." });
+      if (!published || workspaceRef.current !== value || readIssueRef.current !== issue) return;
+      const action = issue?.operation ?? issue?.intent;
+      if (action) {
+        const { planId, accountId, workspaceId } = action;
+        if (planId && accountId === value.accountId && workspaceId === value.workspaceId) {
+          const recoveredReview = value.recoverablePlans.find(review => review.id === planId) ?? null;
+          setPlan(open => open?.id === planId ? recoveredReview : open);
+          setReviewAccepted(false);
+        }
+        setNotice({ text: "Online records refreshed. Check the earlier action before trying it again." });
+      }
       rememberReadIssue(null);
     } catch (error) {
       if (workspaceRef.current === value) { identityUnverified.current = true; setCheckingIdentity(true); setSafetyError(message(error)); }
