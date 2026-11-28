@@ -1,7 +1,6 @@
 package com.saleh.careerfinder
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Rect
@@ -10,6 +9,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.test.platform.app.InstrumentationRegistry
 import org.json.JSONArray
 import org.json.JSONObject
@@ -40,8 +40,10 @@ internal class SystemPdfPicker(
     }
 
     fun waitForDocumentPicker(): String {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("application/pdf")
-        val resolved = checkNotNull(context.packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY))
+        val intent = ActivityResultContracts.OpenDocument().createIntent(context, arrayOf("application/pdf"))
+        val resolved = checkNotNull(context.packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
+            "The AndroidX PDF picker intent did not resolve in the instrumentation package"
+        }
         val activityInfo = resolved.activityInfo
         val packageName = activityInfo.packageName
         require(packageName in setOf("com.android.documentsui", "com.google.android.documentsui"))
