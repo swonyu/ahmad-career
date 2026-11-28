@@ -28,6 +28,12 @@ const processes = new Set(), lifecycles = new WeakMap(), results = [], installed
 let fixture;
 const restartPackage = 'com.saleh.careerfinder.preview';
 const restartNamespace = 'cv-restart-' + randomBytes(16).toString('hex');
+const acceptanceScope=process.env.CAREER_ANDROID_ACCEPTANCE_SCOPE??'full';
+assert.ok(['full','android','android-picker'].includes(acceptanceScope),'Unknown Android CI acceptance scope.');
+const pickerOnly=acceptanceScope==='android-picker';
+const pickerClass='com.saleh.careerfinder.PreviewPdfPickerSmokeTest';
+const pickerMethods=['previewPdfPickerSeed_cancelThenSelectAReplaceBAndSave','previewPdfPickerRestore_readsSavedBInNewProcess']
+  .map(name=>pickerClass+'#'+name);
 const delay = ms => new Promise(resolve => setTimeout(resolve,ms));
 function own(child) {
   let spawned,spawnFailed,closed;
@@ -422,8 +428,23 @@ async function isolatedMethod(label,method,argumentsMap={}) {
   assert.deepEqual(parseOwnedPackagePids(inactive),[],`${label} needs a stopped app before its fresh instrumentation process.`);
   await instrument(label,packageName,[method],argumentsMap,1,undefined,method);
 }
+async function runPickerSmoke(checkout) {
+  assert.match((await device('shell','pm','clear','--user','0',restartPackage)).trim(),/\bSuccess\b/);
+  await configure(restartPackage);
+  await isolatedMethod('preview-pdf-picker-seed',pickerMethods[0]);
+  await isolatedMethod('preview-pdf-picker-restore',pickerMethods[1]);
+  const pickerResults=results.filter(result=>result.label.startsWith('preview-pdf-picker-'));
+  assert.deepEqual(pickerResults.flatMap(result=>result.passedMethods),pickerMethods,
+    'Both offline picker phases must pass exactly once.');
+  fs.writeFileSync(path.join(evidence,'preview-pdf-picker.json'),JSON.stringify({
+    commit:checkout,scope:pickerOnly?'PARTIAL Android PDF picker':'full Android acceptance',
+    requiredMethods:pickerMethods,results:pickerResults,previewDataClearBeforeSeed:true,
+    noReinstallOrDataClearBetweenPhases:true,
+    ...(pickerOnly?{ordinarySuite:'not-run',restartSuite:'not-run',acceptanceSuite:'not-run'}:
+      {originalOrdinaryMethodsRetained:true})},null,2));
+}
 try {
-  await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs'),path.join(root,'android/checks/cv-restart-evidence.test.mjs')],
+  if(!pickerOnly)await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs'),path.join(root,'android/checks/cv-restart-evidence.test.mjs')],
     {log:'screenshot-evidence-tests.log',timeout:60000});
   await run(path.join(sdk,'cmdline-tools/latest/bin/avdmanager'),['create','avd','--name','CareerFinderCI','--package','system-images;android-36;google_apis;x86_64','--device','pixel_7'],{stdin:'no\n',log:'avd-create.log'});
   await run(adb,['start-server'],{log:'adb.log'});
@@ -439,128 +460,139 @@ try {
   await device('install','-r',path.join(root,'android/app/build/outputs/apk/debug/app-debug.apk'));
   installedPackages.add('com.saleh.careerfinder.preview');
   await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'));
-  await configure('com.saleh.careerfinder.preview');
+  if(!pickerOnly)await configure('com.saleh.careerfinder.preview');
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
-  const pickerClass='com.saleh.careerfinder.PreviewPdfPickerSmokeTest';
-  const pickerMethods=['previewPdfPickerSeed_cancelThenSelectAReplaceBAndSave','previewPdfPickerRestore_readsSavedBInNewProcess']
-    .map(name=>pickerClass+'#'+name);
   const pickerSource=fs.readFileSync(path.join(testDirectory,'PreviewPdfPickerSmokeTest.kt'),'utf8');
   assert.deepEqual([...pickerSource.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>pickerClass+'#'+match[1]),pickerMethods,
     'The offline system-picker smoke must contain exactly the selected two phases.');
-  const discovered=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest','PreviewPdfPickerSmokeTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
-  const restartSource=path.join(testDirectory,'ApplicationCvHistoryProcessRestartTest.kt');
-  const selection=partitionRestartClasses(discovered,fs.readFileSync(restartSource,'utf8'));
-  const classes=selection.ordinary;
-  assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
-  assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
-  const pressureMethod='com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace';
-  assert.ok(classes.includes(pressureMethod.split('#')[0]),'The pressure fixture class must remain in ordinary discovery.');
-  const capacityMethods=['actualHandlerLegacyURL','actualHandlerHistoricalSurrogates','actualHandlerValidUnicode']
-    .map(name=>`com.saleh.careerfinder.CareerReadTransportRegressionTest#${name}`);
-  const isolatedMethods=[...capacityMethods,pressureMethod];
-  const sourceMethods=classes.flatMap(testClass=>{
-    const source=fs.readFileSync(path.join(testDirectory,testClass.split('.').at(-1)+'.kt'),'utf8');
-    return [...source.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>`${testClass}#${match[1]}`);
-  });
-  assert.equal(new Set(sourceMethods).size,sourceMethods.length,'The discovered method inventory contains duplicates.');
-  assert.ok(isolatedMethods.every(method=>sourceMethods.includes(method)),'Every isolated method must exist in the ordinary source inventory.');
-  const ordinaryMethods=sourceMethods.filter(method=>!isolatedMethods.includes(method));
-  fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
-    discovered,ordinary:classes,ordinaryMethods,ordinaryMinimum:105,requiredRestartClass:selection.restart,
-    requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false,
-    separatelyScopedCapacity:{methods:capacityMethods,ordinaryExcludedBy:'notClass exact methods',requiredSeparatePasses:3},
-    separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',requiredSeparatePasses:1,
-      requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
-      ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true},
-    separatelyScopedPicker:{methods:pickerMethods,ordinaryExcludedBy:'class discovery',requiredSeparatePasses:2,
-      source:'PreviewPdfPickerSmokeTest.kt',offline:true,newProcessRestore:true}},null,2));
-  // Each large exact-handler case starts without retained ordinary-suite heap.
-  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:isolatedMethods.join(',')},105);
-  assert.deepEqual([...results.at(-1).passedMethods].sort(),[...ordinaryMethods].sort(),
-    'The ordinary run must execute every source method except the four separately scoped methods.');
-  // Preserve completed preview evidence before the acceptance build and later device work.
-  await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
-  for(const method of capacityMethods)await isolatedMethod('capacity-'+method.split('#')[1],method);
-  await isolatedMethod('historical-recovery-pressure-192mib',pressureMethod,{careerRecoveryPressure192MiB:true});
-  const isolatedResults=results.filter(result=>result.freshProcessBoundary==='force-stop/no-PID');
-  assert.deepEqual(isolatedResults.flatMap(result=>result.passedMethods).sort(),[...isolatedMethods].sort(),
-    'All four isolated methods must pass once in fresh instrumentation processes.');
-  fs.writeFileSync(path.join(evidence,'isolated-methods.json'),JSON.stringify({commit:process.env.GITHUB_SHA,
-    requiredMethods:isolatedMethods,results:isolatedResults},null,2));
-  // Restart is an additional required phase, not an excluded or renamed test.
-  const checkout=(await run('git',['rev-parse','HEAD'])).trim();
-  assert.equal(checkout,process.env.GITHUB_SHA);
-  assert.equal((await run('git',['status','--porcelain','--untracked-files=all','--',
-    'android/app/src','shared/localization'])).trim(),'','Restart requires the unchanged checkout sources.');
-  const sourceFiles=['android/app/build/outputs/apk/debug/app-debug.apk',
-    'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
-    'android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationCvHistoryProcessRestartTest.kt'];
-  const restartHashes=Object.fromEntries(sourceFiles.map(file=>[file,createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
-  fs.writeFileSync(path.join(evidence,'cv-restart-source.json'),JSON.stringify({
-    commit:checkout,namespace:restartNamespace,hashes:restartHashes,packageName:restartPackage},null,2));
-  requireShellV2Features(await device('features'));
-  const restartArguments=phase=>({career_cv_restart_phase:phase,
-    career_cv_restart_namespace:restartNamespace,career_source_sha:checkout});
-  const seedExecution=await instrument('cv-history-restart-seed',restartPackage,
-    [RESTART_CLASS+'#'+RESTART_METHODS.seed],restartArguments('seed'),1,'seed');
-  await device('shell','-T','-n','sync');
-  const seeded=await restartCollector.collect('seed',seedExecution);
-  const packagePids=async()=>{
-    const main=parseOwnedPackagePids(await run(adb,
-      ['-s',env.ANDROID_SERIAL,'shell','-T','-n','/system/bin/toybox','pidof',restartPackage],
-      {timeout:10000,exitCodes:[0,1],withExitCode:true}));
-    const table=await run(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n',
-      '/system/bin/toybox','ps','-A','-w','-o','PID,NAME'],{timeout:10000});
-    return parseOwnedProcessTable(table,main);
-  };
-  const packagePidsBefore=await packagePids();
-  await device('shell','-T','-n','am','force-stop','--user','0',restartPackage);
-  const packagePidsAfter=await packagePids();
-  assert.deepEqual(packagePidsAfter,[],'The owned target process must be absent before restore.');
-  restartCollector.recordProcessBoundary({packageName:restartPackage,forceStopCompleted:true,
-    packagePidsBefore,packagePidsAfter,observedAt:new Date().toISOString(),
-    seedPID:seeded.processID,reinstallOrDataClearBetweenPhases:false});
-  const restoreExecution=await instrument('cv-history-restart-restore',restartPackage,
-    [RESTART_CLASS+'#'+RESTART_METHODS.restore],restartArguments('restore'),1,'restore');
-  await device('shell','-T','-n','sync');
-  await restartCollector.collect('restore',restoreExecution);
-  for(const [file,digest] of Object.entries(restartHashes))
-    assert.equal(createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),digest);
-  assert.equal(restartCollector.verify().result,'passed','The required restart evidence is incomplete.');
-  const {startTLSFixture}=await import('../../website/applications/fixtures/tls-fixture.mjs');
-  fixture=await startTLSFixture({runtimeDir:path.join(runtime,'tls'),port:4943,mockPort:4944});
-  await instrument('normal-preview-tls-boundary','com.saleh.careerfinder.preview',['com.saleh.careerfinder.TlsBoundaryAcceptanceTest'],{fixtureOrigin:fixture.origin});
-  await run(path.join(root,'android/gradlew'),['--no-daemon','--max-workers=2','-PcareerAcceptance=true','-PcareerAcceptanceCa='+fixture.caPath,':app:assembleAcceptance',':app:assembleAcceptanceAndroidTest'],{cwd:path.join(root,'android'),log:'acceptance-build.log',timeout:10*60000});
-  await device('install','-r',path.join(root,'android/app/build/outputs/apk/acceptance/app-acceptance.apk'));
-  installedPackages.add('com.saleh.careerfinder.acceptance');
-  await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'));
-  await configure('com.saleh.careerfinder.acceptance');
-  const currentPairingCode=fixture.service.createPairingCode().pairingCode;
-  await instrument('native-https-phone','com.saleh.careerfinder.acceptance',['com.saleh.careerfinder.NativeHttpsAcceptanceTest'],{fixtureOrigin:fixture.origin,pairingCode:currentPairingCode,fixtureResumeBase64:fixture.resume.dataBase64,successUrl:fixture.jobs.success,timeoutUrl:fixture.jobs.timeout,cooldownUrl:fixture.jobs.cooldown});
-  await screenshotCollector.collect('com.saleh.careerfinder.acceptance',{phase:'native-https-phone'});
-  const observations=await fixture.observations();
-  fs.writeFileSync(path.join(evidence,'synthetic-provider-observations.json'),JSON.stringify(observations,null,2));
-  const providerPOSTCounts=assertSyntheticObservations(observations,fixture.jobs,Buffer.from(fixture.resume.dataBase64,'base64').length);
-  const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
-  const screenshotVerification=screenshotCollector.verify();
-  const restartVerification=restartCollector.verify();
-  // The existing 214 Preview/acceptance checks and their evidence are complete before this separate smoke.
-  // Clear only this disposable Preview target, then restore its Arabic phone configuration.
-  assert.match((await device('shell','pm','clear','--user','0',restartPackage)).trim(),/\bSuccess\b/);
-  await configure(restartPackage);
-  await isolatedMethod('preview-pdf-picker-seed',pickerMethods[0]);
-  await isolatedMethod('preview-pdf-picker-restore',pickerMethods[1]);
-  const pickerResults=results.filter(result=>result.label.startsWith('preview-pdf-picker-'));
-  assert.deepEqual(pickerResults.flatMap(result=>result.passedMethods),pickerMethods,
-    'Both offline picker phases must pass once outside the ordinary 214 checks.');
-  fs.writeFileSync(path.join(evidence,'preview-pdf-picker.json'),JSON.stringify({
-    commit:checkout,requiredMethods:pickerMethods,results:pickerResults,
-    originalOrdinaryMethodsRetained:true,previewDataClearBeforeSeed:true,
-    noReinstallOrDataClearBetweenPhases:true},null,2));
-  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'&&restartVerification.result==='passed'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,restartVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
-  assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
-  assert.equal(restartVerification.result,'passed','Required two-phase restart acceptance is incomplete; inspect cv-restart.json.');
+  if(pickerOnly) {
+    const checkout=(await run('git',['rev-parse','HEAD'])).trim();
+    assert.equal(checkout,process.env.GITHUB_SHA);
+    fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
+      commit:checkout,scope:'PARTIAL Android PDF picker',requiredMethods:pickerMethods,
+      ordinarySuite:'not-run',restartSuite:'not-run',acceptanceSuite:'not-run'},null,2));
+    await runPickerSmoke(checkout);
+    fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({
+      commit:checkout,observedAt:new Date().toISOString(),scope:'PARTIAL Android PDF picker',
+      result:'passed',testsResult:'passed',results,requiredMethods:pickerMethods,
+      pickerEvidence:'preview-pdf-picker.json',ordinarySuite:'not-run',restartSuite:'not-run',
+      acceptanceSuite:'not-run',realEmployerRequests:0,productionAccountsUsed:false},null,2));
+  } else {
+    const discovered=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest','PreviewPdfPickerSmokeTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
+    const restartSource=path.join(testDirectory,'ApplicationCvHistoryProcessRestartTest.kt');
+    const selection=partitionRestartClasses(discovered,fs.readFileSync(restartSource,'utf8'));
+    const classes=selection.ordinary;
+    assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
+    assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
+    const pressureMethod='com.saleh.careerfinder.CareerReadTransportRegressionTest#historicalRecoveryUnderRetainedHeapPressurePreservesEarlierWorkspace';
+    assert.ok(classes.includes(pressureMethod.split('#')[0]),'The pressure fixture class must remain in ordinary discovery.');
+    const capacityMethods=['actualHandlerLegacyURL','actualHandlerHistoricalSurrogates','actualHandlerValidUnicode']
+      .map(name=>`com.saleh.careerfinder.CareerReadTransportRegressionTest#${name}`);
+    const isolatedMethods=[...capacityMethods,pressureMethod];
+    const sourceMethods=classes.flatMap(testClass=>{
+      const source=fs.readFileSync(path.join(testDirectory,testClass.split('.').at(-1)+'.kt'),'utf8');
+      return [...source.matchAll(/@Test\s+fun\s+(\w+)\s*\(/g)].map(match=>`${testClass}#${match[1]}`);
+    });
+    assert.equal(new Set(sourceMethods).size,sourceMethods.length,'The discovered method inventory contains duplicates.');
+    assert.ok(isolatedMethods.every(method=>sourceMethods.includes(method)),'Every isolated method must exist in the ordinary source inventory.');
+    const ordinaryMethods=sourceMethods.filter(method=>!isolatedMethods.includes(method));
+    fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
+      discovered,ordinary:classes,ordinaryMethods,ordinaryMinimum:105,requiredRestartClass:selection.restart,
+      requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false,
+      separatelyScopedCapacity:{methods:capacityMethods,ordinaryExcludedBy:'notClass exact methods',requiredSeparatePasses:3},
+      separatelyScopedPressure:{method:pressureMethod,ordinaryExcludedBy:'notClass exact method',requiredSeparatePasses:1,
+        requiredHeapBytes:192*1024*1024,requiredArgument:'careerRecoveryPressure192MiB=true',
+        ordinaryRunClaimsPressurePass:false,originalRegressionMethodsRetainedAsFreshInvocations:true},
+      separatelyScopedPicker:{methods:pickerMethods,ordinaryExcludedBy:'class discovery',requiredSeparatePasses:2,
+        source:'PreviewPdfPickerSmokeTest.kt',offline:true,newProcessRestore:true}},null,2));
+    // Each large exact-handler case starts without retained ordinary-suite heap.
+    await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{notClass:isolatedMethods.join(',')},105);
+    assert.deepEqual([...results.at(-1).passedMethods].sort(),[...ordinaryMethods].sort(),
+      'The ordinary run must execute every source method except the four separately scoped methods.');
+    // Preserve completed preview evidence before the acceptance build and later device work.
+    await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
+    for(const method of capacityMethods)await isolatedMethod('capacity-'+method.split('#')[1],method);
+    await isolatedMethod('historical-recovery-pressure-192mib',pressureMethod,{careerRecoveryPressure192MiB:true});
+    const isolatedResults=results.filter(result=>result.freshProcessBoundary==='force-stop/no-PID');
+    assert.deepEqual(isolatedResults.flatMap(result=>result.passedMethods).sort(),[...isolatedMethods].sort(),
+      'All four isolated methods must pass once in fresh instrumentation processes.');
+    fs.writeFileSync(path.join(evidence,'isolated-methods.json'),JSON.stringify({commit:process.env.GITHUB_SHA,
+      requiredMethods:isolatedMethods,results:isolatedResults},null,2));
+    // Restart is an additional required phase, not an excluded or renamed test.
+    const checkout=(await run('git',['rev-parse','HEAD'])).trim();
+    assert.equal(checkout,process.env.GITHUB_SHA);
+    assert.equal((await run('git',['status','--porcelain','--untracked-files=all','--',
+      'android/app/src','shared/localization'])).trim(),'','Restart requires the unchanged checkout sources.');
+    const sourceFiles=['android/app/build/outputs/apk/debug/app-debug.apk',
+      'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
+      'android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationCvHistoryProcessRestartTest.kt'];
+    const restartHashes=Object.fromEntries(sourceFiles.map(file=>[file,createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
+    fs.writeFileSync(path.join(evidence,'cv-restart-source.json'),JSON.stringify({
+      commit:checkout,namespace:restartNamespace,hashes:restartHashes,packageName:restartPackage},null,2));
+    requireShellV2Features(await device('features'));
+    const restartArguments=phase=>({career_cv_restart_phase:phase,
+      career_cv_restart_namespace:restartNamespace,career_source_sha:checkout});
+    const seedExecution=await instrument('cv-history-restart-seed',restartPackage,
+      [RESTART_CLASS+'#'+RESTART_METHODS.seed],restartArguments('seed'),1,'seed');
+    await device('shell','-T','-n','sync');
+    const seeded=await restartCollector.collect('seed',seedExecution);
+    const packagePids=async()=>{
+      const main=parseOwnedPackagePids(await run(adb,
+        ['-s',env.ANDROID_SERIAL,'shell','-T','-n','/system/bin/toybox','pidof',restartPackage],
+        {timeout:10000,exitCodes:[0,1],withExitCode:true}));
+      const table=await run(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n',
+        '/system/bin/toybox','ps','-A','-w','-o','PID,NAME'],{timeout:10000});
+      return parseOwnedProcessTable(table,main);
+    };
+    const packagePidsBefore=await packagePids();
+    await device('shell','-T','-n','am','force-stop','--user','0',restartPackage);
+    const packagePidsAfter=await packagePids();
+    assert.deepEqual(packagePidsAfter,[],'The owned target process must be absent before restore.');
+    restartCollector.recordProcessBoundary({packageName:restartPackage,forceStopCompleted:true,
+      packagePidsBefore,packagePidsAfter,observedAt:new Date().toISOString(),
+      seedPID:seeded.processID,reinstallOrDataClearBetweenPhases:false});
+    const restoreExecution=await instrument('cv-history-restart-restore',restartPackage,
+      [RESTART_CLASS+'#'+RESTART_METHODS.restore],restartArguments('restore'),1,'restore');
+    await device('shell','-T','-n','sync');
+    await restartCollector.collect('restore',restoreExecution);
+    for(const [file,digest] of Object.entries(restartHashes))
+      assert.equal(createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),digest);
+    assert.equal(restartCollector.verify().result,'passed','The required restart evidence is incomplete.');
+    const {startTLSFixture}=await import('../../website/applications/fixtures/tls-fixture.mjs');
+    fixture=await startTLSFixture({runtimeDir:path.join(runtime,'tls'),port:4943,mockPort:4944});
+    await instrument('normal-preview-tls-boundary','com.saleh.careerfinder.preview',['com.saleh.careerfinder.TlsBoundaryAcceptanceTest'],{fixtureOrigin:fixture.origin});
+    await run(path.join(root,'android/gradlew'),['--no-daemon','--max-workers=2','-PcareerAcceptance=true','-PcareerAcceptanceCa='+fixture.caPath,':app:assembleAcceptance',':app:assembleAcceptanceAndroidTest'],{cwd:path.join(root,'android'),log:'acceptance-build.log',timeout:10*60000});
+    await device('install','-r',path.join(root,'android/app/build/outputs/apk/acceptance/app-acceptance.apk'));
+    installedPackages.add('com.saleh.careerfinder.acceptance');
+    await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'));
+    await configure('com.saleh.careerfinder.acceptance');
+    const currentPairingCode=fixture.service.createPairingCode().pairingCode;
+    await instrument('native-https-phone','com.saleh.careerfinder.acceptance',['com.saleh.careerfinder.NativeHttpsAcceptanceTest'],{fixtureOrigin:fixture.origin,pairingCode:currentPairingCode,fixtureResumeBase64:fixture.resume.dataBase64,successUrl:fixture.jobs.success,timeoutUrl:fixture.jobs.timeout,cooldownUrl:fixture.jobs.cooldown});
+    await screenshotCollector.collect('com.saleh.careerfinder.acceptance',{phase:'native-https-phone'});
+    const observations=await fixture.observations();
+    fs.writeFileSync(path.join(evidence,'synthetic-provider-observations.json'),JSON.stringify(observations,null,2));
+    const providerPOSTCounts=assertSyntheticObservations(observations,fixture.jobs,Buffer.from(fixture.resume.dataBase64,'base64').length);
+    const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+    const screenshotVerification=screenshotCollector.verify();
+    const restartVerification=restartCollector.verify();
+    // The existing 214 Preview/acceptance checks and their evidence are complete before this separate smoke.
+    await runPickerSmoke(checkout);
+    fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'&&restartVerification.result==='passed'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,restartVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
+    assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
+    assert.equal(restartVerification.result,'passed','Required two-phase restart acceptance is incomplete; inspect cv-restart.json.');
+  }
 } catch(error) {
+  if(pickerOnly) {
+    const reason=String(error.message??error).slice(0,2000);
+    const partial={commit:process.env.GITHUB_SHA,scope:'PARTIAL Android PDF picker',
+      result:'failed',requiredMethods:pickerMethods,results,reason,
+      ordinarySuite:'not-run',restartSuite:'not-run',acceptanceSuite:'not-run'};
+    fs.writeFileSync(path.join(evidence,'preview-pdf-picker.json'),JSON.stringify(partial,null,2));
+    fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({
+      ...partial,observedAt:new Date().toISOString(),testsResult:'incomplete-or-failed',
+      realEmployerRequests:0,productionAccountsUsed:false},null,2));
+    throw error;
+  }
   fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({
     commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:'failed',
     testsResult:'incomplete-or-failed',results,reason:String(error.message??error).slice(0,2000),
@@ -568,7 +600,7 @@ try {
     realEmployerRequests:0,productionAccountsUsed:false},null,2));
   throw error;
 } finally {
-  try {await preserveFailureEvidence()} finally {
+  try {if(!pickerOnly)await preserveFailureEvidence()} finally {
     try {if(fixture)await fixture.close()} finally {
       try {await run(adb,['-s',env.ANDROID_SERIAL,'emu','kill'],{log:'adb.log',timeout:10000})}catch(error){console.warn(`Emulator shutdown: ${error.message}`)}
       const shutdowns=await Promise.allSettled([...processes].map(child=>terminate(child)));

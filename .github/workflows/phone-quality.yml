@@ -30,6 +30,7 @@ on:
         options:
           - full
           - android
+          - android-picker
           - iphone-connection
           - iphone-regressions
           - iphone-saved-actions
@@ -139,10 +140,12 @@ jobs:
           retention-days: 7
 
   android:
-    name: Android compile, lint and native acceptance
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'android' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'android-picker' && 'PARTIAL Android PDF picker' || 'Android compile, lint and native acceptance' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope == 'full' || inputs.acceptance_scope == 'android' || inputs.acceptance_scope == 'android-picker' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    env:
+      CAREER_ANDROID_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -170,15 +173,18 @@ jobs:
           test -d "$ANDROID_HOME/platforms/android-36"
           test -d "$ANDROID_HOME/build-tools/35.0.0"
       - name: Phone URL, PDF and receipt policies
+        if: ${{ env.CAREER_ANDROID_ACCEPTANCE_SCOPE != 'android-picker' }}
         run: bash android/checks/run-policy-checks.sh
       - name: Compile the ordinary preview and its instrumentation
         working-directory: android
         shell: bash
         run: |
           set -o pipefail
+          tasks=(:app:assembleDebug :app:assembleDebugAndroidTest)
+          if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" != android-picker ]; then tasks+=(:app:lintDebug); fi
           for attempt in 1 2; do
             log="$RUNNER_TEMP/career-android-build-$attempt.log"
-            if ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug 2>&1 | tee "$log"; then
+            if ./gradlew --no-daemon --max-workers=2 "${tasks[@]}" 2>&1 | tee "$log"; then
               exit 0
             fi
             if [ "$attempt" -eq 1 ] && grep -Eq 'Received status code 429 from server: Too Many Requests' "$log" && ! grep -Eq '^e: |Compilation error|There were failing tests|Lint found errors' "$log"; then
@@ -198,14 +204,14 @@ jobs:
           test -c /dev/kvm
           sudo chmod a+rw /dev/kvm
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'emulator' 'system-images;android-36;google_apis;x86_64'
-          npm ci --prefix website
+          if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" != android-picker ]; then npm ci --prefix website; fi
       - name: Exercise actual phone, storage, large text, RTL and synthetic HTTPS flows
         run: node android/checks/run-ci-emulator.mjs
-      - name: Keep the lint report
+      - name: Keep Android test evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: android-lint-${{ github.run_id }}
+          name: ${{ inputs.acceptance_scope == 'android-picker' && format('android-picker-{0}', github.run_id) || format('android-lint-{0}', github.run_id) }}
           path: |
             android/app/build/reports/lint-results-debug.*
             android/checks/ci-evidence/**
@@ -272,7 +278,7 @@ jobs:
 
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || inputs.acceptance_scope == 'iphone-regressions' && 'PARTIAL iPhone history and keyboard regressions' || inputs.acceptance_scope == 'iphone-saved-actions' && 'PARTIAL iPhone Saved actions' || inputs.acceptance_scope == 'iphone-search-history' && 'PARTIAL iPhone search history' || inputs.acceptance_scope == 'iphone-arabic-profile' && 'PARTIAL iPhone Arabic profile' || inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'android' && inputs.acceptance_scope != 'android-picker') }}
     runs-on: macos-26
     # The expanded sequential suite needs about 80 minutes on the observed simulator.
     timeout-minutes: 115
