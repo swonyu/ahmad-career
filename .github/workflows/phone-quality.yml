@@ -184,6 +184,7 @@ jobs:
           set -o pipefail
           tasks=(:app:assembleDebug :app:assembleDebugAndroidTest)
           if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" != android-picker ]; then tasks+=(:app:lintDebug); fi
+          if [ "$CAREER_ANDROID_ACCEPTANCE_SCOPE" = android-connected-picker ]; then tasks+=(:app:bundleRelease); fi
           for attempt in 1 2; do
             log="$RUNNER_TEMP/career-android-build-$attempt.log"
             if ./gradlew --no-daemon --max-workers=2 "${tasks[@]}" 2>&1 | tee "$log"; then
@@ -196,6 +197,14 @@ jobs:
               exit 1
             fi
           done
+      - name: Record the unsigned Android release bundle
+        if: ${{ env.CAREER_ANDROID_ACCEPTANCE_SCOPE == 'android-connected-picker' }}
+        shell: bash
+        run: |
+          bundle=android/app/build/outputs/bundle/release/app-release.aab
+          test -s "$bundle"
+          unzip -tq "$bundle"
+          sha256sum "$bundle" | tee "$RUNNER_TEMP/career-android-release.sha256"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -216,7 +225,9 @@ jobs:
           name: ${{ inputs.acceptance_scope == 'android-picker' && format('android-picker-{0}', github.run_id) || format('android-lint-{0}', github.run_id) }}
           path: |
             android/app/build/reports/lint-results-debug.*
+            android/app/build/outputs/bundle/release/app-release.aab
             android/checks/ci-evidence/**
+            ${{ runner.temp }}/career-android-release.sha256
             ${{ runner.temp }}/career-android-build-*.log
           if-no-files-found: ignore
           retention-days: 7
