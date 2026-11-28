@@ -393,8 +393,13 @@ final class CareerFinderSavedComparisonAfterUITests: SavedComparisonUITestCase {
             try chromeTap(sheet.buttons["Close"], app: app)
         }
         try wait("Cancelling returns to the same public preview", app: app) {
-            !app.debugDescription.contains("identifier: 'ActivityListView'")
-                && bars("Saved opportunity", app: app).count == 1 && preview.exists
+            let hierarchy = app.debugDescription
+            let savedBars = hierarchy.split(separator: "\n").filter {
+                $0.trimmingCharacters(in: .whitespaces).hasPrefix("NavigationBar,")
+                    && $0.contains("identifier: 'Saved opportunity'")
+            }
+            return !hierarchy.contains("identifier: 'ActivityListView'") && savedBars.count == 1
+                && hierarchy.contains("identifier: 'jobShare.disclosure', label: '\(publicText)'")
         }
     }
 }
