@@ -513,7 +513,10 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
                     }
                     pending.append(contentsOf: element.children.map { ($0, webView) })
                 }
-                if startPages == 0 && documentTexts == 1 { pdfForeground = true; break }
+                if startPages == 0 && documentTexts == 1
+                    && ProcessInfo.processInfo.systemUptime <= presentationDeadline {
+                    pdfForeground = true; break
+                }
             }
             let remaining = presentationDeadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
