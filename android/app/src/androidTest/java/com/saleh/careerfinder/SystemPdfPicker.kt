@@ -1,10 +1,17 @@
 package com.saleh.careerfinder
 
+import android.app.Instrumentation
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.os.ParcelFileDescriptor
 import android.os.SystemClock
+import android.system.Os
+import android.system.OsConstants
+import android.system.StructPollfd
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -13,19 +20,35 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.test.platform.app.InstrumentationRegistry
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 
 /** The same live DocumentsUI window, target and physical-touch checks in both phone journeys. */
 internal class SystemPdfPicker(
     private val context: Context,
     private val evidence: (String, JSONObject) -> Unit
 ) : AutoCloseable {
+    private companion object {
+        const val RESOLVE_COMMAND =
+            "cmd package resolve-activity --components --user 0 --query-flags 0x10000 -a android.intent.action.OPEN_DOCUMENT -t '*/*' --esa android.intent.extra.MIME_TYPES application/pdf"
+        const val ANDROID_SYSTEM_COMMAND = "cmd package list packages -s --user 0 com.android.documentsui"
+        const val GOOGLE_SYSTEM_COMMAND = "cmd package list packages -s --user 0 com.google.android.documentsui"
+        val pickerPackages = setOf("com.android.documentsui", "com.google.android.documentsui")
+    }
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val automation = instrumentation.uiAutomation
     val windows = PhoneWindowObservation()
+    private val launchMonitor = object : Instrumentation.ActivityMonitor() {
+        @Volatile var started: Intent? = null
+        override fun onStartActivity(intent: Intent): Instrumentation.ActivityResult? {
+            if (intent.action == Intent.ACTION_OPEN_DOCUMENT) started = Intent(intent)
+            return null // Observe the app's real launch without blocking DocumentsUI.
+        }
+    }
     private var pickerPackage: String? = null
     private var pickerComponent: String? = null
     private var pickerNumber = 0
     val active get() = pickerPackage != null
+    init { instrumentation.addMonitor(launchMonitor) }
 
     private fun waitStrict(message: String, predicate: () -> Boolean) {
         val deadline = SystemClock.elapsedRealtime() + 5000
@@ -40,25 +63,80 @@ internal class SystemPdfPicker(
     }
 
     fun waitForDocumentPicker(): String {
-        val intent = ActivityResultContracts.OpenDocument().createIntent(context, arrayOf("application/pdf"))
-        val resolved = checkNotNull(context.packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
-            "The AndroidX PDF picker intent did not resolve in the instrumentation package"
+        val expected = ActivityResultContracts.OpenDocument().createIntent(context, arrayOf("application/pdf"))
+        require(expected.action == Intent.ACTION_OPEN_DOCUMENT && expected.type == "*/*" &&
+            expected.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
+                ?.contentEquals(arrayOf("application/pdf")) == true)
+        waitStrict("The app must actually launch AndroidX OpenDocument for PDF") { launchMonitor.started != null }
+        val launched = checkNotNull(launchMonitor.started)
+        require(launched.filterEquals(expected) && launched.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
+            ?.contentEquals(arrayOf("application/pdf")) == true) { "The observed picker launch must match AndroidX PDF intent" }
+        launchMonitor.started = null
+        val resolved = context.packageManager.resolveActivity(launched, PackageManager.MATCH_DEFAULT_ONLY)
+        val component = if (resolved == null) {
+            shellResolvedSystemComponent()
+        } else {
+            val info = resolved.activityInfo
+            require(info.packageName in pickerPackages && info.name.isNotBlank() &&
+                (info.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0)
+            ComponentName(info.packageName, info.name)
         }
-        val activityInfo = resolved.activityInfo
-        val packageName = activityInfo.packageName
-        require(packageName in setOf("com.android.documentsui", "com.google.android.documentsui"))
-        require(activityInfo.name.isNotBlank() && activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0)
+        val packageName = component.packageName
         waitStrict("The actual system document picker must own a visible application window") {
             pickerWindows(packageName).size == 1
         }
         pickerPackage = packageName
-        pickerComponent = packageName + "/" + activityInfo.name
+        pickerComponent = packageName + "/" + component.className
         pickerNumber++
         evidence("picker-open-" + pickerNumber + ".json",
             JSONObject().put("schemaVersion", 1).put("resolvedSystemComponent", pickerComponent)
                 .put("visibleWindowPackage", packageName).put("visibleApplicationWindowCount", 1)
                 .put("actualOpenDocumentIntent", true).put("syntheticChooserResult", false))
         return packageName
+    }
+
+    private fun shellResolvedSystemComponent(): ComponentName {
+        val component = checkNotNull(ComponentName.unflattenFromString(readShell(RESOLVE_COMMAND))) {
+            "The read-only package resolver did not return one Android component"
+        }
+        val systemCommand = when (component.packageName) {
+            "com.android.documentsui" -> ANDROID_SYSTEM_COMMAND
+            "com.google.android.documentsui" -> GOOGLE_SYSTEM_COMMAND
+            else -> error("The document resolver is not an allowed system picker")
+        }
+        require(component.className.matches(Regex("[A-Za-z_.$][A-Za-z0-9_.$]*")) &&
+            readShell(systemCommand) == "package:" + component.packageName) {
+            "The resolved picker package must be installed as a system package"
+        }
+        return component
+    }
+
+    private fun readShell(command: String): String {
+        require(command in setOf(RESOLVE_COMMAND, ANDROID_SYSTEM_COMMAND, GOOGLE_SYSTEM_COMMAND))
+        val descriptor = automation.executeShellCommand(command)
+        return ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
+            val poll = StructPollfd().apply {
+                fd = descriptor.fileDescriptor
+                events = (OsConstants.POLLIN or OsConstants.POLLHUP).toShort()
+            }
+            val deadline = SystemClock.elapsedRealtime() + 3000
+            val output = ByteArrayOutputStream()
+            val buffer = ByteArray(128)
+            while (true) {
+                val remaining = deadline - SystemClock.elapsedRealtime()
+                require(remaining > 0 && Os.poll(arrayOf(poll), remaining.toInt()) > 0) {
+                    "The read-only package query exceeded its three-second limit"
+                }
+                require((poll.revents.toInt() and (OsConstants.POLLERR or OsConstants.POLLNVAL)) == 0) {
+                    "The package query pipe failed"
+                }
+                val count = input.read(buffer)
+                if (count < 0) return@use output.toString(Charsets.UTF_8.name()).trim()
+                require(output.size() + count <= 512) { "The package query output exceeded 512 bytes" }
+                output.write(buffer, 0, count)
+            }
+            error("Unreachable package query state")
+        }
     }
 
     fun cancelDocumentPicker() {
@@ -166,5 +244,8 @@ internal class SystemPdfPicker(
     }
 
     private fun Rect.json() = JSONArray(listOf(left, top, right, bottom))
-    override fun close() = windows.close()
+    override fun close() {
+        try { instrumentation.removeMonitor(launchMonitor) }
+        finally { windows.close() }
+    }
 }
